@@ -6,13 +6,13 @@ public class Test {
 		NXTMotor A = new NXTMotor(MotorPort.A);
 		TouchSensor T = new TouchSensor(SensorPort.S4);
 		
-		A.setPower(100);
+		A.forward();
 		
 		
 		while(! T.isPressed()){
 			Thread.sleep(200);
 		}
-		A.setPower(0);;
+		A.backward();
 	}
 
 }
