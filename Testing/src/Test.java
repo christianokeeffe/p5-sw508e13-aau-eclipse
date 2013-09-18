@@ -7,7 +7,7 @@ public class Test {
 		TouchSensor T = new TouchSensor(SensorPort.S4);
 		
 		C.forward();
-		
+		C.backward();
 		//MyCoolTest
 		
 		while(! T.isPressed()){
