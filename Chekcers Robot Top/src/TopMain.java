@@ -47,6 +47,8 @@ public class TopMain {
 				LCD.drawString("Done", 0, 0);
 				LCD.refresh();
 				Motor.B.stop();
+				dos.writeBoolean(true);
+				dos.flush();
 				break;
 			}
 			dos.writeBoolean(true);
