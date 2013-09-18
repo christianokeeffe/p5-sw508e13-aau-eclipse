@@ -8,6 +8,7 @@ public class Test {
 		
 		C.forward();
 		
+		//MyCoolTest
 		
 		while(! T.isPressed()){
 			Thread.sleep(200);
