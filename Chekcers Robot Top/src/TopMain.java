@@ -1,6 +1,6 @@
 
 import java.io.*;
-import lejos.nxt.Motor;
+
 import lejos.nxt.*;
 import lejos.nxt.comm.*;
 import lejos.robotics.navigation.*;
@@ -8,7 +8,7 @@ import lejos.robotics.navigation.*;
 public class TopMain {
 
 
-    private static final int yFactor = 180;
+    private static final int yFactor = -220;
 	public static void main(String[] args) throws IOException {
 		DataInputStream dis = null;
 			DataOutputStream dos = null;
@@ -25,8 +25,10 @@ public class TopMain {
 			
         
 			Sound.beepSequenceUp();
-        
-			Motor.A.rotate(dis.readInt());
+			String inputline = dis.readUTF();
+			if(inputline=="move" || inputline!="move"){
+				Motor.A.rotate(dis.readInt()*yFactor);
+			}
 			dos.writeBoolean(true);
 			dos.flush();
         }
