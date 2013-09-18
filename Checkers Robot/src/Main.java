@@ -10,7 +10,7 @@ public class Main {
 		// TODO Auto-generated method stub
 		// Mere og endnu mere
 		MoveFunctions Test = new MoveFunctions();
-		while(true){
+		/*while(true){
 			Test.MoveSensorTo(2, 2);
 			Delay.msDelay(1000);
 			Test.MoveSensorTo(5, 5);
@@ -23,8 +23,9 @@ public class Main {
 			if(Button.waitForAnyPress(1000) != 0){
 				return;
 			}
-		}
-		
+		}*/
+		Test.reset();
+		Button.waitForAnyPress();
 		
 	}
 

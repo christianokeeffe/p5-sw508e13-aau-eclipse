@@ -48,33 +48,55 @@ public class MoveFunctions {
         output=connection.openDataOutputStream();
         Input=connection.openDataInputStream();
     }
+    
+    public void reset() throws IOException{
+    	WriteCommandToTop("reset", null);
+    	
+    }
 
 	public void MoveSensorTo(int x, int y) throws IOException
 	{
+		MoveTopTo(y);
+		MoveButtomTo(x);
+		WaitForTopmoterStop();
+	}
+	
+	public void MoveTopTo(int y) throws IOException{
 		MoveTopMotor(y-PresentY);
 		PresentY = y;
+			
+	}
+	
+	public void MoveButtomTo(int x)
+	{
 		Motor.A.rotate((x-PresentX)*xFactor, true);
 		Motor.B.rotate((x-PresentX)*xFactor,true);
 		PresentX = x;
 		Motor.A.waitComplete();
-		Motor.B.waitComplete();	
-		WaitForTopmoterStop();
+		Motor.B.waitComplete();
 	}
 	
 	private void WaitForTopmoterStop () throws IOException{
 		Input.readBoolean();
 	}
 	
-	private void MoveTopMotor(int y) throws IOException{
+	private <T> void WriteCommandToTop(String Mode, T ContentToWrite) throws IOException{
 		if (connection == null){
 			MakeConnection();
 		}
 		
-
-	    output.writeUTF("move");
+	    output.writeUTF(Mode);
 	    output.flush();
-		output.writeInt(y);
-		output.flush();
-        
+	    if(ContentToWrite != null){
+	    	output.writeUTF(ContentToWrite.toString());
+	    	output.flush();
+		}else{
+			output.writeUTF("");
+	    	output.flush();
+		}
+	}
+	
+	private void MoveTopMotor(int y) throws IOException{
+		WriteCommandToTop("move", y);
 	}
 }
