@@ -15,8 +15,10 @@ import lejos.nxt.remote.RemoteNXT;
 import lejos.robotics.navigation.*;
 
 public class MoveFunctions {
-    private static final int xFactor = 135;
+    private static final int xFactor = 130;
     private BTConnection connection;
+    private int PresentX = 0;
+    private int PresentY = 0;
 
 	DataOutputStream output;
     DataInputStream Input;
@@ -49,9 +51,11 @@ public class MoveFunctions {
 
 	public void MoveSensorTo(int x, int y) throws IOException
 	{
-		MoveTopMotor(y);
-		Motor.A.rotate(x*xFactor, true);
-		Motor.B.rotate(x*xFactor,true);
+		MoveTopMotor(y-PresentY);
+		PresentY = y;
+		Motor.A.rotate((x-PresentX)*xFactor, true);
+		Motor.B.rotate((x-PresentX)*xFactor,true);
+		PresentX = x;
 		Motor.A.waitComplete();
 		Motor.B.waitComplete();	
 		WaitForTopmoterStop();
