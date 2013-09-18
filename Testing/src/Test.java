@@ -12,7 +12,7 @@ public class Test {
 		while(! T.isPressed()){
 			Thread.sleep(200);
 		}
-		A.stop();
+		A.setPower(0);;
 	}
 
 }
