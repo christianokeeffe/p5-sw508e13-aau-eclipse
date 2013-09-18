@@ -15,9 +15,11 @@ import lejos.nxt.remote.RemoteNXT;
 import lejos.robotics.navigation.*;
 
 public class MoveFunctions {
-    private static final int xFactor = 140;
-    private static final int yFactor = 100;
+    private static final int xFactor = 135;
     private BTConnection connection;
+
+	DataOutputStream output;
+    DataInputStream Input;
     
     public void MoveFunction() throws IOException{
     Motor.A.setSpeed(400);
@@ -40,33 +42,35 @@ public class MoveFunctions {
         connection = Bluetooth.connect(receiver);
         if (connection == null)
     		throw new IOException("Connect fail");
+        
+        output=connection.openDataOutputStream();
+        Input=connection.openDataInputStream();
     }
 
 	public void MoveSensorTo(int x, int y) throws IOException
 	{
-		
-		while(true)
-		{
+		MoveTopMotor(y);
 		Motor.A.rotate(x*xFactor, true);
 		Motor.B.rotate(x*xFactor,true);
 		Motor.A.waitComplete();
 		Motor.B.waitComplete();	
-		MoveTopMotor(100);
-		Button.waitForAnyPress();}
+		WaitForTopmoterStop();
 	}
 	
-	private void MoveTopMotor(int z) throws IOException{
+	private void WaitForTopmoterStop () throws IOException{
+		Input.readBoolean();
+	}
+	
+	private void MoveTopMotor(int y) throws IOException{
 		if (connection == null){
 			MakeConnection();
 		}
 		
-		DataOutputStream output = connection.openDataOutputStream();
-	    DataInputStream Input = connection.openDataInputStream();
 
-
-		output.writeInt(z);
+	    output.writeUTF("move");
+	    output.flush();
+		output.writeInt(y);
 		output.flush();
-        Input.readBoolean();
-        Sound.beepSequenceUp();
+        
 	}
 }
