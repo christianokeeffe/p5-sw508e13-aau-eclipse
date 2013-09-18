@@ -8,7 +8,7 @@ import lejos.robotics.navigation.*;
 public class TopMain {
 
 
-    private static final int yFactor = -220;
+    private static final int yFactor = -260;
 	public static void main(String[] args) throws IOException {
 		DataInputStream dis = null;
 			DataOutputStream dos = null;
