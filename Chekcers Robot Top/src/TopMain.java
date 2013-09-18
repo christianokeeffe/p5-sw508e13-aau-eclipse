@@ -19,21 +19,34 @@ public class TopMain {
 			BTConnection btc = Bluetooth.waitForConnection();
 			if (btc == null)
 				throw new IOException("Connect fail");
-
+				
+			TouchSensor zTouch = new TouchSensor(SensorPort.S2);
 			dis = btc.openDataInputStream();
 			dos = btc.openDataOutputStream();
+			
+			Motor.A.setSpeed(1000);
+			Motor.B.setSpeed(200);
+			
 			while(true){
 			
         
 			Sound.beepSequenceUp();
-			String inputline = dis.readUTF();
-			
-			switch(inputline){
+			String inputMode = dis.readUTF();
+			String inputContent = dis.readUTF();
+			switch(inputMode){
 			case "move":
-				Motor.A.rotate(dis.readInt()*yFactor);
+				Motor.A.rotate((Integer.parseInt(inputContent))*yFactor);
 				break;
 			case "reset":
-				LCD.drawString("reset", 0, 0);
+				Motor.B.backward();
+				LCD.drawString("Running", 0, 0);
+				LCD.refresh();
+				while (!zTouch.isPressed()) {
+			    	// try again
+			    }
+				LCD.drawString("Done", 0, 0);
+				LCD.refresh();
+				Motor.B.stop();
 				break;
 			}
 			dos.writeBoolean(true);
