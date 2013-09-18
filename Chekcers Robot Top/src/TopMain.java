@@ -4,6 +4,7 @@ import java.io.*;
 import lejos.nxt.*;
 import lejos.nxt.comm.*;
 import lejos.robotics.navigation.*;
+import lejos.util.Delay;
 
 public class TopMain {
 
@@ -26,8 +27,14 @@ public class TopMain {
         
 			Sound.beepSequenceUp();
 			String inputline = dis.readUTF();
-			if(inputline=="move" || inputline!="move"){
+			
+			switch(inputline){
+			case "move":
 				Motor.A.rotate(dis.readInt()*yFactor);
+				break;
+			case "reset":
+				LCD.drawString("reset", 0, 0);
+				break;
 			}
 			dos.writeBoolean(true);
 			dos.flush();
