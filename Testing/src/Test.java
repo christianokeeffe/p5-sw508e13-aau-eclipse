@@ -3,16 +3,16 @@ import java.lang.*;
 
 public class Test {
 	public static void main(String[] args) throws Exception {
-		NXTMotor A = new NXTMotor(MotorPort.A);
+		NXTMotor C = new NXTMotor(MotorPort.C);
 		TouchSensor T = new TouchSensor(SensorPort.S4);
 		
-		A.forward();
+		C.forward();
 		
 		
 		while(! T.isPressed()){
 			Thread.sleep(200);
 		}
-		A.backward();
+		C.backward();
 	}
 
 }
