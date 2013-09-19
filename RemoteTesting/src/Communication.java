@@ -13,7 +13,7 @@ public class Communication {
 	    try {
 	        LCD.clear();
 	        LCD.drawString("Connecting...",0,0);
-	    	BottomNXT = new RemoteNXT("BottomNXT", Bluetooth.getConnector());
+	    	BottomNXT = new RemoteNXT("CheckBottom", Bluetooth.getConnector());
 	    	LCD.clear();
 	        LCD.drawString("Connected",0,1);
 	        Thread.sleep(2000);
@@ -29,12 +29,13 @@ public class Communication {
 	public Communication() throws InterruptedException {
 		
 		connect();
+		while(true){
 		byte[] message = BottomNXT.receiveMessage(1, 1, true);
-		
+		if(message != null){
 		LCD.drawString(message.toString(), 0, 1);
 		LCD.refresh();
-		
-		
+		}
+		}
 		
 	
 		
