@@ -14,9 +14,9 @@ import lejos.util.Delay;
 
 
 public class RemoteNXTFunctions {
-	RemoteNXT CheckTop = null;
+	RemoteNXT TopNXT = null;
 	private static final int xFactor = -130;
-	private static final int yFactor = -300;
+	private static final int yFactor = -310;
 	private static final int displacementFactor = 4;
     private int PresentX = 0;
     private int PresentY = 0;
@@ -27,12 +27,14 @@ public class RemoteNXTFunctions {
 		connect();
 	    Motor.A.setSpeed(400);
 	    Motor.B.setSpeed(400);
-	    CheckTop.A.setSpeed(100);
-	    CheckTop.B.setSpeed(1000);
+	    TopNXT.A.setSpeed(100);
+	    TopNXT.B.setSpeed(200);
 	    Motor.A.setAcceleration(3000);
 	    Motor.B.setAcceleration(3000);
+	    TopNXT.A.setAcceleration(3000);
+	    TopNXT.B.setAcceleration(3000);
 	    TouchOnY = new TouchSensor(SensorPort.S1);
-	    TouchOnZ = new TouchSensor(CheckTop.S2);
+	    TouchOnZ = new TouchSensor(TopNXT.S2);
 	    Reset();
 	}
 	
@@ -48,11 +50,11 @@ public class RemoteNXTFunctions {
 
 		Motor.A.waitComplete();
 		Motor.B.waitComplete();
-		CheckTop.A.waitComplete();
+		TopNXT.B.waitComplete();
 	}
 	
 	private void MoveTopTo(int y) throws IOException{
-		CheckTop.B.rotate(y*yFactor-PresentY, true);
+		TopNXT.B.rotate(y*yFactor-PresentY, true);
 		PresentY = y*yFactor;
 	}
 	
@@ -62,12 +64,6 @@ public class RemoteNXTFunctions {
 		if(GoToMagnet == true){
 			displacement =  (int) (xFactor*displacementFactor);
 		}
-		LCD.clear();
-		LCD.drawInt(x, 0, 0);
-		LCD.drawInt(displacement, 0, 1);
-		LCD.drawInt(PresentX, 0, 3);
-		LCD.drawInt(x*xFactor-PresentX+displacement, 0, 2);
-		LCD.refresh();
 		MoveBothAAndBMotor(x*xFactor-PresentX+displacement);
 		
 		PresentX = x*xFactor+displacement;
@@ -79,22 +75,20 @@ public class RemoteNXTFunctions {
 	}
 	
 	private void Reset(){
-		CheckTop.B.setSpeed(100);
-		CheckTop.A.backward();
-		CheckTop.B.forward();
+		TopNXT.A.backward();
+		TopNXT.B.forward();
 
 		while(!TouchOnY.isPressed() || !TouchOnZ.isPressed())
 		{
 			if(TouchOnY.isPressed()){
-				CheckTop.B.stop();
+				TopNXT.B.stop();
 			}
 			if(TouchOnZ.isPressed()){
-				CheckTop.A.stop();
+				TopNXT.A.stop();
 			}
 		}
-		CheckTop.B.stop();
-		CheckTop.A.stop();
-		CheckTop.B.setSpeed(1000);
+		TopNXT.B.stop();
+		TopNXT.A.stop();
 	}
 	
 	private void connect() throws InterruptedException{
@@ -102,7 +96,7 @@ public class RemoteNXTFunctions {
 	    try {
 	        LCD.clear();
 	        LCD.drawString("Connecting...",0,0);
-	    	CheckTop = new RemoteNXT("CheckTop", Bluetooth.getConnector());
+	    	TopNXT = new RemoteNXT("CheckTop", Bluetooth.getConnector());
 	    	LCD.clear();
 	        LCD.drawString("Connected",0,1);
 	        Thread.sleep(2000);
