@@ -3,7 +3,7 @@ import java.io.*;
 
 import lejos.nxt.*;
 import lejos.nxt.comm.*;
-import lejos.robotics.navigation.*;
+import lejos.robotics.*;
 import lejos.util.Delay;
 
 public class TopMain {
@@ -23,7 +23,7 @@ public class TopMain {
 			
 			dis = btc.openDataInputStream();
 			dos = btc.openDataOutputStream();
-			
+			ColorSensor cs = new ColorSensor(SensorPort.S1);
 			
 			while(true){
 			
@@ -32,7 +32,22 @@ public class TopMain {
 			String inputMode = dis.readUTF();
 			String inputContent = dis.readUTF();
 			switch(inputMode){
-			case "sensor":
+			case "ColorSensor":
+				ColorSensor.Color ColorTesting = cs.getColor();
+				int Red = ColorTesting.getRed();
+				int Green = ColorTesting.getGreen();
+				int Blue = ColorTesting.getBlue();
+				int Background = ColorTesting.getBackground();
+				int ID = cs.getColorID();
+				
+				dos.write(Red);
+				dos.flush();
+				dos.write(Green);
+				dos.flush();
+				dos.write(Blue);
+				dos.flush();
+				dos.write(Background);
+				dos.write(ID);
 				break;
 			}
 			dos.writeBoolean(true);
