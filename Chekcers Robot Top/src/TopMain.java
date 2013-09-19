@@ -24,13 +24,24 @@ public class TopMain {
 			dis = btc.openDataInputStream();
 			dos = btc.openDataOutputStream();
 			ColorSensor cs = new ColorSensor(SensorPort.S1);
-			
+			LCD.drawString("Test 1", 0, 0);
+			LCD.refresh();
+			Delay.msDelay(3000);
 			while(true){
 			
         
 			Sound.beepSequenceUp();
+			LCD.drawString("Test 2", 0, 0);
+			LCD.refresh();
+			Delay.msDelay(3000);
 			String inputMode = dis.readUTF();
+			LCD.drawString("Test 3", 0, 0);
+			LCD.refresh();
+			Delay.msDelay(3000);
 			String inputContent = dis.readUTF();
+			LCD.drawString("Test 4", 0, 0);
+			LCD.refresh();
+			Delay.msDelay(3000);
 			switch(inputMode){
 			case "ColorSensor":
 				ColorSensor.Color ColorTesting = cs.getColor();
