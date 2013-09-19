@@ -1,16 +1,19 @@
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+
+import javax.bluetooth.RemoteDevice;
 
 import lejos.nxt.ColorSensor;
 import lejos.nxt.LCD;
-import lejos.nxt.LightSensor;
 import lejos.nxt.Motor;
-import lejos.nxt.SensorConstants;
 import lejos.nxt.SensorPort;
+import lejos.nxt.Sound;
 import lejos.nxt.TouchSensor;
+import lejos.nxt.ColorSensor.Color;
+import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.remote.RemoteNXT;
-import lejos.nxt.remote.RemoteSensorPort;
-import lejos.util.Delay;
 
 
 public class RemoteNXTFunctions {
@@ -20,8 +23,11 @@ public class RemoteNXTFunctions {
 	private static final int displacementFactor = 4;
     private int PresentX = 0;
     private int PresentY = 0;
-    TouchSensor TouchOnY;
-    TouchSensor TouchOnZ;
+    private TouchSensor TouchOnY;
+    private TouchSensor TouchOnZ;/*
+    private BTConnection connection;
+    private DataOutputStream output;
+    private DataInputStream Input;*/
 	
 	public RemoteNXTFunctions() throws InterruptedException{
 		connect();
@@ -39,9 +45,10 @@ public class RemoteNXTFunctions {
 	}
 	
 	public ColorSensor.Color GetColorOnField (int x, int y) throws IOException{
-		MoveSensorTo(x, y, false);
-		TopNXT.sendMessage("test".getBytes(), 1);
-		return null;
+		/*MoveSensorTo(x, y, false);*/
+		
+		
+		return new ColorSensor.Color(100, 100, 100, 100, 100);
 	}
 	
 	private void MoveSensorTo(int x, int y, boolean GoToMagnet) throws IOException
@@ -91,7 +98,58 @@ public class RemoteNXTFunctions {
 		TopNXT.B.stop();
 		TopNXT.A.stop();
 	}
+	/*
+	private void WriteCommandToTop(String Mode, String ContentToWrite) throws IOException{
+		if (connection == null){
+			MakeConnection();
+		}
+		
+	    output.writeUTF(Mode);
+	    output.flush();
+	    if(ContentToWrite != null){
+	    	output.writeUTF(ContentToWrite);
+	    	output.flush();
+		}else{
+			output.writeUTF("");
+	    	output.flush();
+		}
+	}
 	
+	private String ReadStringFromTop() throws IOException{
+		if (connection == null){
+			MakeConnection();
+		}
+	    return Input.readUTF();
+	}
+	
+	private int ReadIntFromTop() throws IOException{
+		if (connection == null){
+			MakeConnection();
+		}
+	    return Input.readInt();
+	}
+	
+	private void WaitForTopNXT () throws IOException{
+		Input.readBoolean();
+	}
+	
+	private void MakeConnection() throws IOException{
+    	String name = "CheckTop";
+        
+        Sound.twoBeeps();
+        RemoteDevice receiver = Bluetooth.getKnownDevice(name);
+        
+        if (receiver == null)
+    		throw new IOException("no such device");
+
+        connection = Bluetooth.connect(receiver);
+        if (connection == null)
+    		throw new IOException("Connect fail");
+        
+        output=connection.openDataOutputStream();
+        Input=connection.openDataInputStream();
+    }
+	*/
 	private void connect() throws InterruptedException{
 		// Now connect
 	    try {
