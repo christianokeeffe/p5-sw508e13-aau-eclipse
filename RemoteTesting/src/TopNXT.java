@@ -11,6 +11,6 @@ import lejos.nxt.comm.Bluetooth;
 public class TopNXT {
 	public static void main(String [] args)  throws Exception
 	   {
-		
+		Communication Top = new Communication();
 	   }
 	     }
