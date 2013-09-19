@@ -31,7 +31,8 @@ public class Communication {
 		connect();
 		byte[] message = BottomNXT.receiveMessage(1, 1, true);
 		
-		LCD.drawString(message.toString(), 0, 1);		
+		LCD.drawString(message.toString(), 0, 1);
+		LCD.refresh();
 		
 		
 		
