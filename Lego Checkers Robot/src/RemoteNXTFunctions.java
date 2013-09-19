@@ -15,7 +15,7 @@ import lejos.util.Delay;
 
 public class RemoteNXTFunctions {
 	RemoteNXT CheckTop = null;
-	private static final int xFactor = 130;
+	private static final int xFactor = -130;
 	private static final int yFactor = -300;
 	private static final int displacementFactor = 4;
     private int PresentX = 0;
@@ -28,6 +28,7 @@ public class RemoteNXTFunctions {
 	    Motor.A.setSpeed(400);
 	    Motor.B.setSpeed(400);
 	    CheckTop.A.setSpeed(100);
+	    CheckTop.B.setSpeed(1000);
 	    Motor.A.setAcceleration(3000);
 	    Motor.B.setAcceleration(3000);
 	    TouchOnY = new TouchSensor(SensorPort.S1);
@@ -35,9 +36,9 @@ public class RemoteNXTFunctions {
 	    Reset();
 	}
 	
-	public int GetColorOnField (int x, int y) throws IOException{
+	public ColorSensor.Color GetColorOnField (int x, int y) throws IOException{
 		MoveSensorTo(x, y, false);
-		return 0;
+		return null;
 	}
 	
 	private void MoveSensorTo(int x, int y, boolean GoToMagnet) throws IOException
@@ -51,7 +52,7 @@ public class RemoteNXTFunctions {
 	}
 	
 	private void MoveTopTo(int y) throws IOException{
-		CheckTop.A.rotate(y*yFactor-PresentY, true);
+		CheckTop.B.rotate(y*yFactor-PresentY, true);
 		PresentY = y*yFactor;
 	}
 	
