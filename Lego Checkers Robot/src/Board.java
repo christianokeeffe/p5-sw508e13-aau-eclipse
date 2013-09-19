@@ -8,11 +8,12 @@ import lejos.nxt.ColorSensor;
 public class Board {
 	List<List<Field>> myBoard;
 	char myColor;
+	RemoteNXTFunctions remoteFunctions = null;
 	
-	public Board() throws InterruptedException, IOException
+	public Board(RemoteNXTFunctions remoteFunc) throws InterruptedException, IOException
 	{
 		myColor = this.findMyColor();
-
+		remoteFunctions = remoteFunc;
 			int j,i;
 			
 			for(i=0;i<8;i++){
@@ -164,7 +165,6 @@ public class Board {
 	
 	public boolean isEmptyField(int x, int y) throws InterruptedException, IOException
 	{
-		RemoteNXTFunctions remoteFunctions = new RemoteNXTFunctions();
 		
 		ColorSensor.Color colorResult = remoteFunctions.GetColorOnField(x, y);
 		
@@ -185,8 +185,6 @@ public class Board {
 	
 	public char findMyColor() throws InterruptedException, IOException
 	{
-		RemoteNXTFunctions remoteFunctions = new RemoteNXTFunctions();
-		
 		ColorSensor.Color colorResult = remoteFunctions.GetColorOnField(0, 0);
 		
 		int red = colorResult.getRed();
