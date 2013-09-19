@@ -17,7 +17,7 @@ import lejos.nxt.remote.RemoteNXT;
 
 
 public class RemoteNXTFunctions {
-	RemoteNXT TopNXT = null;
+	RemoteNXT BottomNXT = null;
 	private static final int xFactor = -130;
 	private static final int yFactor = -310;
 	private static final int displacementFactor = 4;
@@ -25,27 +25,28 @@ public class RemoteNXTFunctions {
     private int PresentY = 0;
     private TouchSensor TouchOnY;
     private TouchSensor TouchOnZ;
+    private ColorSensor ColorSensorOnBoard;
 	
 	public RemoteNXTFunctions() throws InterruptedException{
 		connect();
-	    Motor.A.setSpeed(400);
-	    Motor.B.setSpeed(400);
-	    TopNXT.A.setSpeed(100);
-	    TopNXT.B.setSpeed(200);
+		BottomNXT.A.setSpeed(400);
+		BottomNXT.B.setSpeed(400);
+	    Motor.A.setSpeed(100);
+	    Motor.B.setSpeed(1000);
+	    BottomNXT.A.setAcceleration(3000);
+	    BottomNXT.B.setAcceleration(3000);
 	    Motor.A.setAcceleration(3000);
 	    Motor.B.setAcceleration(3000);
-	    TopNXT.A.setAcceleration(3000);
-	    TopNXT.B.setAcceleration(3000);
-	    TouchOnY = new TouchSensor(SensorPort.S1);
-	    TouchOnZ = new TouchSensor(TopNXT.S2);
+	    TouchOnY = new TouchSensor(BottomNXT.S1);
+	    TouchOnZ = new TouchSensor(SensorPort.S2);
+	    ColorSensorOnBoard = new ColorSensor(SensorPort.S1);
 	    Reset();
 	}
 	
 	public ColorSensor.Color GetColorOnField (int x, int y) throws IOException{
 		MoveSensorTo(x, y, false);
 		
-		
-		return new ColorSensor.Color(100, 100, 100, 100, 100);
+		return ColorSensorOnBoard.getColor();
 	}
 	
 	private void MoveSensorTo(int x, int y, boolean GoToMagnet) throws IOException
@@ -53,13 +54,13 @@ public class RemoteNXTFunctions {
 		MoveTopTo(y);
 		MoveButtomTo(x,GoToMagnet);
 
-		Motor.A.waitComplete();
+		BottomNXT.A.waitComplete();
+		BottomNXT.B.waitComplete();
 		Motor.B.waitComplete();
-		TopNXT.B.waitComplete();
 	}
 	
 	private void MoveTopTo(int y) throws IOException{
-		TopNXT.B.rotate(y*yFactor-PresentY, true);
+		Motor.B.rotate(y*yFactor-PresentY, true);
 		PresentY = y*yFactor;
 	}
 	
@@ -75,25 +76,27 @@ public class RemoteNXTFunctions {
 	}
 	
 	private void MoveBothAAndBMotor(int angle){
-		Motor.A.rotate(angle, true);
-		Motor.B.rotate(angle,true);
+		BottomNXT.A.rotate(angle, true);
+		BottomNXT.B.rotate(angle,true);
 	}
 	
 	private void Reset(){
-		TopNXT.A.backward();
-		TopNXT.B.forward();
+		Motor.B.setSpeed(200);
+		Motor.A.backward();
+		Motor.B.forward();
 
 		while(!TouchOnY.isPressed() || !TouchOnZ.isPressed())
 		{
 			if(TouchOnY.isPressed()){
-				TopNXT.B.stop();
+				Motor.B.stop();
 			}
 			if(TouchOnZ.isPressed()){
-				TopNXT.A.stop();
+				Motor.A.stop();
 			}
 		}
-		TopNXT.B.stop();
-		TopNXT.A.stop();
+		Motor.B.stop();
+		Motor.A.stop();
+		Motor.B.setSpeed(1000);
 	}
 	
 	private void connect() throws InterruptedException{
@@ -101,7 +104,7 @@ public class RemoteNXTFunctions {
 	    try {
 	        LCD.clear();
 	        LCD.drawString("Connecting...",0,0);
-	    	TopNXT = new RemoteNXT("CheckTop", Bluetooth.getConnector());
+	    	BottomNXT = new RemoteNXT("CheckBottom", Bluetooth.getConnector());
 	    	LCD.clear();
 	        LCD.drawString("Connected",0,1);
 	        Thread.sleep(2000);
