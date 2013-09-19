@@ -8,7 +8,7 @@ import lejos.nxt.ColorSensor;
 public class Board {
 	List<List<Field>> myBoard;
 	char myColor;
-	RemoteNXTFunctions remoteFunctions = null;
+	RemoteNXTFunctions remoteFunctions;
 	
 	public Board(RemoteNXTFunctions remoteFunc) throws InterruptedException, IOException
 	{

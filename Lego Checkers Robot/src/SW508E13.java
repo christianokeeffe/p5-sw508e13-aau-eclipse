@@ -14,6 +14,8 @@ public class SW508E13 {
 		//checkTopFunc.GetColorOnField(7, 7);
 		Board test = new Board(checkTopFunc);
 		test.analyzeBoard();
+		System.out.println("Hejhej");
+		Button.ENTER.waitForPress();
 		/*ColorSensor.Color Test = checkTopFunc.GetColorOnField(7, 7);
 		LCD.drawString("R" + Test.getRed() + "G" + Test.getGreen() + "B" + Test.getBlue(), 0, 0);
 		LCD.refresh();
