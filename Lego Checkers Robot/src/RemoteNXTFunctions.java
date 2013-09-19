@@ -40,6 +40,7 @@ public class RemoteNXTFunctions {
 	
 	public ColorSensor.Color GetColorOnField (int x, int y) throws IOException{
 		MoveSensorTo(x, y, false);
+		TopNXT.sendMessage("test".getBytes(), 1);
 		return null;
 	}
 	
