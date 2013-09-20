@@ -304,4 +304,51 @@ public class Board {
 			return 'r';
 		}
 	}
+	
+	//panicMode
+	private void findMissingPiece(boolean wasKing) throws InterruptedException, IOException
+	{
+		int i,j;
+		
+		for(i=0;i<8;i++)
+		{	
+			for(j=0;j<8;j++)
+			{
+				if((i+j)%2 == 0)
+				{
+					if(myBoard.get(i).get(j).pieceColor != 'r' && myBoard.get(i).get(j).pieceColor != 'w')
+					{
+						if(!isEmptyField(i, j))
+						{
+							myBoard.get(i).get(j).pieceColor = findOpponentColor();
+							myBoard.get(i).get(j).isKing = wasKing;
+							findDeadPieces();
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	private void findDeadPieces() throws InterruptedException, IOException
+	{
+		int i,j;
+		for(i=0;i<8;i++)
+		{	
+			for(j=0;j<8;j++)
+			{
+				if((i+j)%2 == 0)
+				{
+					if(myBoard.get(i).get(j).pieceColor == 'r' || myBoard.get(i).get(j).pieceColor == 'w')
+					{
+						if(isEmptyField(i, j))
+						{
+							myBoard.get(i).get(j).pieceColor = ' ';
+							myBoard.get(i).get(j).isKing = false;
+						}
+					}
+				}
+			}
+		}
+	}
 }
