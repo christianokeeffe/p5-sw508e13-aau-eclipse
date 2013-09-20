@@ -71,26 +71,23 @@ public class Board {
 		myBoard.get(3).get(3).moveable = true;
 		myBoard.get(3).get(3).pieceColor = 'w';
 		
+		int i = 0;
 		for (List<Field> f : myBoard) {
-			this.checkMovement(f);
+			this.checkMovement(f,i);
+			i++;
 		}
 		
 		return true;
 	}
 	
-	private boolean checkMovement(List<Field> fields) throws InterruptedException, IOException
+	private boolean checkMovement(List<Field> fields, int i) throws InterruptedException, IOException
 	{
+		int j;
 		
-		int i=0, j=0, k=0;
-		
-		for(k=0; k<fields.size(); k++)
+		for(j=0; j<fields.size(); j++)
 		{
-		
-			LCD.drawString("isEmptyField called", 0, 0);
-			LCD.refresh();
-			
 			Field field = new Field();
-		    field = fields.get(k);
+		    field = fields.get(j);
 			 
 		    if(field.moveable)
 		    {
@@ -107,9 +104,7 @@ public class Board {
 					}
 		    	}
 		    }
-		    j++;
 		}
-		i++;
 		
 		return true;
 	}
