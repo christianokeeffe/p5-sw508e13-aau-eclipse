@@ -185,16 +185,41 @@ public class Board {
 		return true;
 	}
 	
-	
 	public boolean isEmptyField(int x, int y) throws InterruptedException, IOException
 	{
 		
-		return true;
+		ColorSensor.Color colorResult = remoteFunctions.GetColorOnField(x, y);
+		
+		int red = colorResult.getRed();
+		int green = colorResult.getGreen();
+		int blue = colorResult.getBlue();
+		
+		if(red < 50 && green < 50 && blue < 50)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	
 	public char findMyColor() throws InterruptedException, IOException
 	{
-		return 'w';
+		ColorSensor.Color colorResult = remoteFunctions.GetColorOnField(0, 0);
+		
+		int red = colorResult.getRed();
+		int green = colorResult.getGreen();
+		int blue = colorResult.getBlue();
+		
+		if(red > 150 && green <= 50 && blue <= 50)
+		{
+			return 'r';
+		}
+		else
+		{
+			return 'w';
+		}
 	}
 }
