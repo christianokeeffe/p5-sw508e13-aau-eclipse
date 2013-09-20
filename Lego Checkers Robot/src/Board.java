@@ -16,6 +16,7 @@ public class Board {
 	{
 		remoteFunctions = remoteFunc;
 		myColor = findMyColor();
+		
 			int j,i;
 			
 			for(i=0;i<8;i++){
@@ -65,7 +66,7 @@ public class Board {
 	
 	public boolean analyzeBoard() throws InterruptedException, IOException
 	{
-		
+		// Test case, should be removed after used
 		myBoard.get(3).get(3).isKing = true;
 		myBoard.get(3).get(3).moveable = true;
 		myBoard.get(3).get(3).pieceColor = 'w';
@@ -98,83 +99,11 @@ public class Board {
 		    	{
 					if(field.isKing)
 					{
-						if((i > 0 && i < 7) && (j > 0 && j < 7))
-						{
-							if(!this.isEmptyField(i-1, j-1))
-							{
-								//King moved here
-							}
-							else if(!this.isEmptyField(i+1, j-1))
-							{
-								//King moved here
-							}
-							else if(!this.isEmptyField(i+1, j+1))
-							{
-								//King moved here
-							}
-							else if(!this.isEmptyField(i-1, j+1))
-							{
-								//King moved here
-							}
-						}
-						else if(i==0 && j==0)
-						{
-							if(!this.isEmptyField(i+1, j+1))
-							{
-								//King moved here
-							}
-						}
-						else if(i==7 && j==7)
-						{
-							if(!this.isEmptyField(i-1, j-1))
-							{
-								//King moved here
-							}
-						}
-						else if(i == 0 && j!=0 && j!= 7)
-						{
-							if(!this.isEmptyField(i+1, j+1))
-							{
-								//King moved here
-							}
-							if(!this.isEmptyField(i+1, j-1))
-							{
-								//King moved here
-							}
-						}
-						else if(j == 0 && i!=0 && i!= 7)
-						{
-							if(!this.isEmptyField(i+1, j+1))
-							{
-								//King moved here
-							}
-							if(!this.isEmptyField(i-1, j+1))
-							{
-								//King moved here
-							}
-						}
-						else if(j == 7 && i!=0 && i!= 7)
-						{
-							if(!this.isEmptyField(i+1, j-1))
-							{
-								//King moved here
-							}
-							if(!this.isEmptyField(i-1, j-1))
-							{
-								//King moved here
-							}
-						}
-						else if(i == 7 && j!=0 && j!= 7)
-						{
-							if(!this.isEmptyField(i-1, j-1))
-							{
-								//King moved here
-							}
-							if(!this.isEmptyField(i-1, j+1))
-							{
-								//King moved here
-							}
-						}
+						checkKingMove(field,i,j);
+					}
+					else
+					{
+						checkPeasantMove(field,i,j);
 					}
 		    	}
 		    }
@@ -183,6 +112,138 @@ public class Board {
 		i++;
 		
 		return true;
+	}
+	
+	private void checkPeasantMove(Field field, int i, int j) throws InterruptedException, IOException
+	{
+		if((i > 0 && i < 7) && (j > 0 && j < 7))
+		{
+			if(!this.isEmptyField(i-1, j-1))
+			{
+				//white peasant moved here
+			}
+			else if(!this.isEmptyField(i-1, j+1))
+			{
+				//white peasant moved here
+			}
+		}
+		else if(i==7 && j==7)
+		{
+			if(!this.isEmptyField(i-1, j-1))
+			{
+				//white peasant moved here
+			}
+		}
+		else if(i == 0 && j!= 7)
+		{
+			//upgrade white peasant to king
+		}
+		else if(j == 0 && i!=0 && i!= 7)
+		{
+			if(!this.isEmptyField(i-1, j+1))
+			{
+				//white peasant moved here
+			}
+		}
+		else if(j == 7 && i!=0 && i!= 7)
+		{
+			if(!this.isEmptyField(i-1, j-1))
+			{
+				//white peasant moved here
+			}
+		}
+		else if(i == 7 && j!=0 && j!= 7)
+		{
+			if(!this.isEmptyField(i-1, j-1))
+			{
+				//white peasant moved here
+			}
+			if(!this.isEmptyField(i-1, j+1))
+			{
+				//white peasant moved here
+			}
+		}
+	}
+	
+	private void checkKingMove(Field field, int i, int j) throws InterruptedException, IOException
+	{
+		if((i > 0 && i < 7) && (j > 0 && j < 7))
+		{
+			if(!this.isEmptyField(i-1, j-1))
+			{
+				//King moved here
+			}
+			else if(!this.isEmptyField(i+1, j-1))
+			{
+				//King moved here
+			}
+			else if(!this.isEmptyField(i+1, j+1))
+			{
+				//King moved here
+			}
+			else if(!this.isEmptyField(i-1, j+1))
+			{
+				//King moved here
+			}
+		}
+		else if(i==0 && j==0)
+		{
+			if(!this.isEmptyField(i+1, j+1))
+			{
+				//King moved here
+			}
+		}
+		else if(i==7 && j==7)
+		{
+			if(!this.isEmptyField(i-1, j-1))
+			{
+				//King moved here
+			}
+		}
+		else if(i == 0 && j!=0 && j!= 7)
+		{
+			if(!this.isEmptyField(i+1, j+1))
+			{
+				//King moved here
+			}
+			if(!this.isEmptyField(i+1, j-1))
+			{
+				//King moved here
+			}
+		}
+		else if(j == 0 && i!=0 && i!= 7)
+		{
+			if(!this.isEmptyField(i+1, j+1))
+			{
+				//King moved here
+			}
+			if(!this.isEmptyField(i-1, j+1))
+			{
+				//King moved here
+			}
+		}
+		else if(j == 7 && i!=0 && i!= 7)
+		{
+			if(!this.isEmptyField(i+1, j-1))
+			{
+				//King moved here
+			}
+			if(!this.isEmptyField(i-1, j-1))
+			{
+				//King moved here
+			}
+		}
+		else if(i == 7 && j!=0 && j!= 7)
+		{
+			if(!this.isEmptyField(i-1, j-1))
+			{
+				//King moved here
+			}
+			if(!this.isEmptyField(i-1, j+1))
+			{
+				//King moved here
+			}
+		}
 	}
 	
 	public boolean isEmptyField(int x, int y) throws InterruptedException, IOException
@@ -220,6 +281,18 @@ public class Board {
 		else
 		{
 			return 'w';
+		}
+	}
+	
+	private char findOpponentColor()
+	{
+		if(myColor == 'r')
+		{
+			return 'w';
+		}
+		else
+		{
+			return 'r';
 		}
 	}
 }
