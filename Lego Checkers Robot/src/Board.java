@@ -192,65 +192,65 @@ public class Board {
 			}
 			else if(!this.isEmptyField(i-1, j+1))
 			{
-				//King moved here
+				movePiece(field, i-1, j+1, i, j);
 			}
 		}
 		else if(i==0 && j==0)
 		{
 			if(!this.isEmptyField(i+1, j+1))
 			{
-				//King moved here
+				movePiece(field, i+1, j+1, i, j);
 			}
 		}
 		else if(i==7 && j==7)
 		{
 			if(!this.isEmptyField(i-1, j-1))
 			{
-				//King moved here
+				movePiece(field, i-1, j-1, i, j);
 			}
 		}
 		else if(i == 0 && j!=0 && j!= 7)
 		{
 			if(!this.isEmptyField(i+1, j+1))
 			{
-				//King moved here
+				movePiece(field, i+1, j+1, i, j);
 			}
 			if(!this.isEmptyField(i+1, j-1))
 			{
-				//King moved here
+				movePiece(field, i+1, j-1, i, j);
 			}
 		}
 		else if(j == 0 && i!=0 && i!= 7)
 		{
 			if(!this.isEmptyField(i+1, j+1))
 			{
-				//King moved here
+				movePiece(field, i+1, j+1, i, j);
 			}
 			if(!this.isEmptyField(i-1, j+1))
 			{
-				//King moved here
+				movePiece(field, i-1, j+1, i, j);
 			}
 		}
 		else if(j == 7 && i!=0 && i!= 7)
 		{
 			if(!this.isEmptyField(i+1, j-1))
 			{
-				//King moved here
+				movePiece(field, i+1, j-1, i, j);
 			}
 			if(!this.isEmptyField(i-1, j-1))
 			{
-				//King moved here
+				movePiece(field, i-1, j-1, i, j);
 			}
 		}
 		else if(i == 7 && j!=0 && j!= 7)
 		{
 			if(!this.isEmptyField(i-1, j-1))
 			{
-				//King moved here
+				movePiece(field, i-1, j-1, i, j);
 			}
 			if(!this.isEmptyField(i-1, j+1))
 			{
-				//King moved here
+				movePiece(field, i-1, j+1, i, j);
 			}
 		}
 	}
