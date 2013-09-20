@@ -78,7 +78,7 @@ public class Board {
 		return true;
 	}
 	
-	public boolean checkMovement(List<Field> fields) throws InterruptedException, IOException
+	private boolean checkMovement(List<Field> fields) throws InterruptedException, IOException
 	{
 		
 		int i=0, j=0, k=0;
@@ -114,24 +114,33 @@ public class Board {
 		return true;
 	}
 	
+	private void movePiece(Field field, int x, int y, int a, int b)
+	{
+		myBoard.get(x).get(y).isKing = field.isKing;
+		myBoard.get(x).get(y).pieceColor = field.pieceColor;
+		
+		myBoard.get(a).get(b).isKing = false;
+		myBoard.get(a).get(b).pieceColor = ' ';
+	}
+	
 	private void checkPeasantMove(Field field, int i, int j) throws InterruptedException, IOException
 	{
 		if((i > 0 && i < 7) && (j > 0 && j < 7))
 		{
 			if(!this.isEmptyField(i-1, j-1))
 			{
-				//white peasant moved here
+				movePiece(field, i-1, j-1, i, j);
 			}
 			else if(!this.isEmptyField(i-1, j+1))
 			{
-				//white peasant moved here
+				movePiece(field, i-1, j+1, i, j);
 			}
 		}
 		else if(i==7 && j==7)
 		{
 			if(!this.isEmptyField(i-1, j-1))
 			{
-				//white peasant moved here
+				movePiece(field, i-1, j-1, i, j);
 			}
 		}
 		else if(i == 0 && j!= 7)
@@ -142,25 +151,25 @@ public class Board {
 		{
 			if(!this.isEmptyField(i-1, j+1))
 			{
-				//white peasant moved here
+				movePiece(field, i-1, j+1, i, j);
 			}
 		}
 		else if(j == 7 && i!=0 && i!= 7)
 		{
 			if(!this.isEmptyField(i-1, j-1))
 			{
-				//white peasant moved here
+				movePiece(field, i-1, j-1, i, j);
 			}
 		}
 		else if(i == 7 && j!=0 && j!= 7)
 		{
 			if(!this.isEmptyField(i-1, j-1))
 			{
-				//white peasant moved here
+				movePiece(field, i-1, j-1, i, j);
 			}
 			if(!this.isEmptyField(i-1, j+1))
 			{
-				//white peasant moved here
+				movePiece(field, i-1, j+1, i, j);
 			}
 		}
 	}
@@ -171,15 +180,15 @@ public class Board {
 		{
 			if(!this.isEmptyField(i-1, j-1))
 			{
-				//King moved here
+				movePiece(field, i-1, j-1, i, j);
 			}
 			else if(!this.isEmptyField(i+1, j-1))
 			{
-				//King moved here
+				movePiece(field, i+1, j-1, i, j);
 			}
 			else if(!this.isEmptyField(i+1, j+1))
 			{
-				//King moved here
+				movePiece(field, i+1, j+1, i, j);
 			}
 			else if(!this.isEmptyField(i-1, j+1))
 			{
@@ -246,7 +255,7 @@ public class Board {
 		}
 	}
 	
-	public boolean isEmptyField(int x, int y) throws InterruptedException, IOException
+	private boolean isEmptyField(int x, int y) throws InterruptedException, IOException
 	{
 		
 		ColorSensor.Color colorResult = remoteFunctions.GetColorOnField(x, y);
@@ -266,7 +275,7 @@ public class Board {
 	}
 
 	
-	public char findMyColor() throws InterruptedException, IOException
+	private char findMyColor() throws InterruptedException, IOException
 	{
 		ColorSensor.Color colorResult = remoteFunctions.GetColorOnField(0, 0);
 		
