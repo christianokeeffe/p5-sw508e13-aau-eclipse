@@ -309,7 +309,9 @@ public class Board {
 	private void findMissingPiece(boolean wasKing) throws InterruptedException, IOException
 	{
 		int i,j;
+		boolean deadFlag = false;
 		
+		outerloop:
 		for(i=0;i<8;i++)
 		{	
 			for(j=0;j<8;j++)
@@ -322,11 +324,16 @@ public class Board {
 						{
 							myBoard.get(i).get(j).pieceColor = findOpponentColor();
 							myBoard.get(i).get(j).isKing = wasKing;
-							findDeadPieces();
+							deadFlag = true;
+							break outerloop;
 						}
 					}
 				}
 			}
+		}
+		if(deadFlag)
+		{
+			findDeadPieces();
 		}
 	}
 	
