@@ -118,6 +118,11 @@ public class Board {
 		myBoard.get(a).get(b).pieceColor = ' ';
 	}
 	
+	private void upgradeKing(int x, int y)
+	{
+		myBoard.get(x).get(y).isKing = true;
+	}
+	
 	private void checkPeasantMove(Field field, int i, int j) throws InterruptedException, IOException
 	{
 		if((i > 0 && i < 7) && (j > 0 && j < 7))
@@ -140,7 +145,7 @@ public class Board {
 		}
 		else if(i == 0 && j!= 7)
 		{
-			//upgrade white peasant to king
+			upgradeKing(i,j);
 		}
 		else if(j == 0 && i!=0 && i!= 7)
 		{
