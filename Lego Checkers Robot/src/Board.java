@@ -273,7 +273,79 @@ public class Board {
 			return false;
 		}
 	}
-
+	
+	private void checkMove(int i, int j, int x, int y) throws InterruptedException, IOException
+	{
+		if((i > 0 && i < 7) && (j > 0 && j < 7))
+		{
+			if(this.isEmptyField(i-1, j-1))
+			{
+				myBoard.get(i-1).get(j-1).moveable = true;
+			}
+			else if(this.isEmptyField(i-1, j+1))
+			{
+				myBoard.get(i-1).get(j+1).moveable = true;
+			}
+		}
+		
+		if((x > 0 && x < 7) && (y > 0 && y < 7))
+		{
+			if(x-1 != i && y-1 != j)
+			{
+				if(!this.isEmptyField(x-1, y-1))
+				{
+					if(this.isEmptyField(x, y - 2))
+					{
+						myBoard.get(x-1).get(y-1).moveable = true;
+					}
+					
+					if(this.isEmptyField(x + 1, y + 1))
+					{
+						myBoard.get(x).get(y).moveable = true;
+					}
+					else
+					{
+						if(y + 2 <= 7){
+							if(this.isEmptyField(x, y + 2))
+							{
+								myBoard.get(x + 1).get(y + 1).moveable = true;
+							}
+						}
+					}
+					
+					if(this.isEmptyField(x + 1, y - 1))
+					{
+						myBoard.get(x).get(y).moveable = true;
+					}
+					else
+					{
+						if(y - 2 >= 0){
+							if(this.isEmptyField(x, y - 2))
+							{
+								myBoard.get(x + 1).get(y - 1).moveable = true;
+							}
+						}
+					}
+					
+					if(!this.isEmptyField(x + 1, y - 1) && !this.isEmptyField(x + 1, y + 1))
+					{
+						myBoard.get(x).get(y).moveable = false;
+					}
+				}
+			}
+			
+			if(x-1 != i && y+1 != j)
+			{
+				if(!this.isEmptyField(x-1, y+1))
+				{
+					if(this.isEmptyField(x, y + 2))
+					{
+						myBoard.get(x-1).get(y+1).moveable = true;
+					}
+				}
+			}
+		}
+	}
 	
 	private char findMyColor() throws InterruptedException, IOException
 	{
