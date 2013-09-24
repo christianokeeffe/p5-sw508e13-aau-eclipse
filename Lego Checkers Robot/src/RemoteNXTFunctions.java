@@ -18,19 +18,20 @@ import lejos.nxt.remote.RemoteNXT;
 
 public class RemoteNXTFunctions {
 	RemoteNXT BottomNXT = null;
-	private static final int xFactor = -130;
+	private static final int xFactor = -340;
 	private static final int yFactor = -310;
 	private static final int displacementFactor = 4;
-    private int PresentX = 0;
+    private int PresentX = (int)(-xFactor*2.75);
     private int PresentY = 0;
     private TouchSensor TouchOnY;
     private TouchSensor TouchOnZ;
+    private TouchSensor TouchOnX;
     private ColorSensor ColorSensorOnBoard;
 	
 	public RemoteNXTFunctions() throws InterruptedException{
 		connect();
-		BottomNXT.A.setSpeed(3000);
-		BottomNXT.B.setSpeed(3000);
+		BottomNXT.A.setSpeed(400);
+		BottomNXT.B.setSpeed(400);
 	    Motor.A.setSpeed(100);
 	    Motor.B.setSpeed(1000);
 	    BottomNXT.A.setAcceleration(1000);
@@ -39,6 +40,7 @@ public class RemoteNXTFunctions {
 	    Motor.B.setAcceleration(3000);
 	    TouchOnY = new TouchSensor(BottomNXT.S1);
 	    TouchOnZ = new TouchSensor(SensorPort.S2);
+	    TouchOnX = new TouchSensor(BottomNXT.S2);
 	    ColorSensorOnBoard = new ColorSensor(SensorPort.S1);
 	    Reset();
 	}
@@ -84,8 +86,10 @@ public class RemoteNXTFunctions {
 		Motor.B.setSpeed(200);
 		Motor.A.backward();
 		Motor.B.forward();
+		BottomNXT.A.forward();
+		BottomNXT.B.forward();
 
-		while(!TouchOnY.isPressed() || !TouchOnZ.isPressed())
+		while(!TouchOnY.isPressed() || !TouchOnZ.isPressed()|| !TouchOnX.isPressed())
 		{
 			if(TouchOnY.isPressed()){
 				Motor.B.stop();
@@ -93,9 +97,15 @@ public class RemoteNXTFunctions {
 			if(TouchOnZ.isPressed()){
 				Motor.A.stop();
 			}
+			if(TouchOnX.isPressed()){
+				BottomNXT.A.stop();
+				BottomNXT.B.stop();
+			}
 		}
 		Motor.B.stop();
 		Motor.A.stop();
+		BottomNXT.A.stop();
+		BottomNXT.B.stop();
 		Motor.B.setSpeed(1000);
 	}
 	
