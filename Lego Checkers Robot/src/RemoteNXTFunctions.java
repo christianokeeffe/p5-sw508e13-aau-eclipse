@@ -29,12 +29,12 @@ public class RemoteNXTFunctions {
 	
 	public RemoteNXTFunctions() throws InterruptedException{
 		connect();
-		BottomNXT.A.setSpeed(400);
-		BottomNXT.B.setSpeed(400);
+		BottomNXT.A.setSpeed(3000);
+		BottomNXT.B.setSpeed(3000);
 	    Motor.A.setSpeed(100);
 	    Motor.B.setSpeed(1000);
-	    BottomNXT.A.setAcceleration(3000);
-	    BottomNXT.B.setAcceleration(3000);
+	    BottomNXT.A.setAcceleration(1000);
+	    BottomNXT.B.setAcceleration(1000);
 	    Motor.A.setAcceleration(3000);
 	    Motor.B.setAcceleration(3000);
 	    TouchOnY = new TouchSensor(BottomNXT.S1);
