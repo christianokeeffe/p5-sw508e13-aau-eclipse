@@ -12,16 +12,18 @@ public class SW508E13 {
 
 	public static void main(String[] args) throws InterruptedException, IOException {
 		RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
+		
 		List<Field> FlytteListe = new ArrayList<Field>();
 		FlytteListe.add(new Field(4,5));
-		FlytteListe.add(new Field(6,3));
+		//FlytteListe.add(new Field(6,3));
 		checkTopFunc.MoveAndTakePiece(new Field(2,3), FlytteListe);
 		FlytteListe.clear();
+		/*
 		FlytteListe.add(new Field(3,0));
 		checkTopFunc.MoveAndTakePiece(new Field(2,1), FlytteListe);
 		Delay.msDelay(10000);
-		Board test = new Board(checkTopFunc);
-		test.analyzeBoard();
+		*/
+		checkTopFunc.CheckersBoard.analyzeBoard();
 		//LCD.drawString("Donedonedone", 0, 0);
 		//LCD.refresh();
 		Button.ENTER.waitForPress();
