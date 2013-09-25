@@ -50,18 +50,13 @@ public class RemoteNXTFunctions {
 		return ColorSensorOnBoard.getColor();
 	}
 	
-	public void MoveAndTakePiece(Field FromField, Field ToField, List<Field> FieldsToStopOnTheWay) throws IOException
+	public void MoveAndTakePiece(Field FromField, List<Field> FieldsToStopOnTheWay) throws IOException
 	{
 		Field PresentField = FromField;
 		Field TrashField = new Field();
 		TrashField.x = 3;
 		TrashField.y = -2;
 		List<Field> TakenPieces = new ArrayList<Field>();
-		
-		if(FieldsToStopOnTheWay == null){
-			FieldsToStopOnTheWay = new ArrayList<Field>();
-		}
-		FieldsToStopOnTheWay.add(ToField);
 		
 		for(int i = 0; i < FieldsToStopOnTheWay.size(); i++)
 		{
