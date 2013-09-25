@@ -25,7 +25,7 @@ public class Board {
 				for(j=0;j<8;j++)
 				{
 					Field temp = new Field();
-					if((i+j)%2 == 0)
+					if((i+j)%2 == 1)
 					{
 						temp.allowedField = true;
 						
