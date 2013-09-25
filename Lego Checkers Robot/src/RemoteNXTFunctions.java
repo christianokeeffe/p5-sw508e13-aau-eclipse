@@ -58,7 +58,7 @@ public class RemoteNXTFunctions {
 		Field PresentField = FromField;
 		
 		if(FieldsToStopOnTheWay != null){
-			
+		
 		}
 	}
 	

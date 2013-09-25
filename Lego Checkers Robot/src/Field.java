@@ -4,4 +4,6 @@ public class Field {
 	public boolean allowedField;
 	public boolean moveable = false;
 	public boolean isKing = false;
+	public int x;
+	public int y;
 }
