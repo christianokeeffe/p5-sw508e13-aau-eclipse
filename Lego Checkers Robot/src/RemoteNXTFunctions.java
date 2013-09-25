@@ -1,6 +1,7 @@
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.bluetooth.RemoteDevice;
@@ -59,9 +60,32 @@ public class RemoteNXTFunctions {
 	public void MoveAndTakePiece(Field FromField, Field ToField, List<Field> FieldsToStopOnTheWay)
 	{
 		Field PresentField = FromField;
+		List<Field> TakenPieces = new ArrayList<Field>();
 		
-		if(FieldsToStopOnTheWay != null){
+		if(FieldsToStopOnTheWay == null){
+			FieldsToStopOnTheWay = new ArrayList<Field>();
+		}
+		FieldsToStopOnTheWay.add(ToField);
 		
+		for(int i = 0; i < FieldsToStopOnTheWay.size(); i++)
+		{
+			//TakenPieces.add(MovePieceOverField(PresentField,FieldsToStopOnTheWay.get(i)));
+			PresentField = FieldsToStopOnTheWay.get(i);
+		}
+	}
+	
+	private Field MovePieceOverField(Field FromField, Field ToField) throws IOException{
+		MovePieceFromTo(FromField, ToField);
+		
+		if(Math.abs(FromField.x - ToField.x) == 2){
+			Field ReturnField = new Field();
+			ReturnField.x = (FromField.x + ToField.x)/2;
+			ReturnField.y = (FromField.y + ToField.y)/2;
+			return ReturnField;
+		}
+		else
+		{
+			return null;
 		}
 	}
 	
