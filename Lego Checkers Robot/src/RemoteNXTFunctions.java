@@ -1,6 +1,7 @@
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import javax.bluetooth.RemoteDevice;
 
@@ -13,6 +14,7 @@ import lejos.nxt.TouchSensor;
 import lejos.nxt.ColorSensor.Color;
 import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
+import lejos.nxt.remote.FirmwareInfo;
 import lejos.nxt.remote.RemoteNXT;
 
 
@@ -49,6 +51,15 @@ public class RemoteNXTFunctions {
 		MoveSensorTo(x, y, false);
 		
 		return ColorSensorOnBoard.getColor();
+	}
+	
+	public void MoveAndTakePiece(Field FromField, Field ToField, List<Field> FieldsToStopOnTheWay)
+	{
+		Field PresentField = FromField;
+		
+		if(FieldsToStopOnTheWay != null){
+			
+		}
 	}
 	
 	private void MoveSensorTo(int x, int y, boolean GoToMagnet) throws IOException
