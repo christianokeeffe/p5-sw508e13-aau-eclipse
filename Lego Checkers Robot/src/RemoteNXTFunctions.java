@@ -54,7 +54,7 @@ public class RemoteNXTFunctions {
 		return ColorSensorOnBoard.getColor();
 	}
 	
-	public void MoveAndTakePiece(Field FromField, List<Field> FieldsToStopOnTheWay) throws IOException
+	public void MoveAndTakePiece(Field FromField, List<Field> FieldsToStopOnTheWay) throws IOException, InterruptedException
 	{
 		Field PresentField = FromField;
 		Field TrashField = new Field();
@@ -76,7 +76,7 @@ public class RemoteNXTFunctions {
 		}
 	}
 	
-	private Field MovePieceOverField(Field FromField, Field ToField) throws IOException{
+	private Field MovePieceOverField(Field FromField, Field ToField) throws IOException, InterruptedException{
 		MovePiece(FromField, ToField);
 		
 		if(Math.abs(FromField.x - ToField.x) == 2){
@@ -117,7 +117,7 @@ public class RemoteNXTFunctions {
 		presentY = y*yFactor+displacement;
 	}
 	
-	private void MovePiece(Field FromField, Field ToField) throws IOException
+	private void MovePiece(Field FromField, Field ToField) throws IOException, InterruptedException
 	{
 		MoveSensorTo(FromField.x,FromField.y,true);
 		Motor.A.rotate(zFactor);

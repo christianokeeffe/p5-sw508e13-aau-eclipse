@@ -109,7 +109,7 @@ public class Board {
 		return true;
 	}
 	
-	private void movePiece(Field FromField, int x, int y, int a, int b)
+	private void movePiece(Field FromField, int x, int y, int a, int b) throws InterruptedException, IOException
 	{
 		if((a >= 0 && a <= 7) && (b >= 0 && b <= 7))
 		{
@@ -118,6 +118,8 @@ public class Board {
 			
 			myBoard.get(x).get(y).isKing = false;
 			myBoard.get(x).get(y).pieceColor = ' ';
+			
+			this.updatePeasantMoveables(a, b, x, y);
 		}
 		else
 		{
@@ -126,7 +128,7 @@ public class Board {
 		}
 	}
 	
-	public void movePiece(Field FromField, Field ToField)
+	public void movePiece(Field FromField, Field ToField) throws InterruptedException, IOException
 	{
 		movePiece(FromField,FromField.x, FromField.y, ToField.x, ToField.y);
 	}
@@ -311,7 +313,7 @@ public class Board {
 		}
 	}
 	
-	private void checkMove(int i, int j, int x, int y) throws InterruptedException, IOException
+	private void updatePeasantMoveables(int i, int j, int x, int y) throws InterruptedException, IOException
 	{
 		if((i > 0 && i < 7) && (j > 0 && j < 7))
 		{
