@@ -1,4 +1,6 @@
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
@@ -10,6 +12,14 @@ public class SW508E13 {
 
 	public static void main(String[] args) throws InterruptedException, IOException {
 		RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
+		List<Field> FlytteListe = new ArrayList<Field>();
+		FlytteListe.add(new Field(5,4));
+		FlytteListe.add(new Field(3,6));
+		checkTopFunc.MoveAndTakePiece(new Field(3,2), FlytteListe);
+		FlytteListe.clear();
+		FlytteListe.add(new Field(0,3));
+		checkTopFunc.MoveAndTakePiece(new Field(1,2), FlytteListe);
+		
 		Board test = new Board(checkTopFunc);
 		test.analyzeBoard();
 		//LCD.drawString("Donedonedone", 0, 0);
