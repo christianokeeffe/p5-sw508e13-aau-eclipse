@@ -13,11 +13,11 @@ public class SW508E13 {
 	public static void main(String[] args) throws InterruptedException, IOException {
 		RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
 		
-		List<Field> FlytteListe = new ArrayList<Field>();
-		FlytteListe.add(new Field(4,5));
+		//List<Field> FlytteListe = new ArrayList<Field>();
+		//FlytteListe.add(new Field(4,5));
 		//FlytteListe.add(new Field(6,3));
-		checkTopFunc.MoveAndTakePiece(new Field(2,3), FlytteListe);
-		FlytteListe.clear();
+		//checkTopFunc.MoveAndTakePiece(new Field(2,3), FlytteListe);
+		//FlytteListe.clear();
 		/*
 		FlytteListe.add(new Field(3,0));
 		checkTopFunc.MoveAndTakePiece(new Field(2,1), FlytteListe);
