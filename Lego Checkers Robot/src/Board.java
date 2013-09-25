@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lejos.nxt.ColorSensor;
-import lejos.nxt.LCD;
 
 
 public class Board {
@@ -115,13 +114,18 @@ public class Board {
 		return true;
 	}
 	
-	private void movePiece(Field field, int x, int y, int a, int b)
+	private void movePiece(Field FromField, int x, int y, int a, int b)
 	{
-		myBoard.get(x).get(y).isKing = field.isKing;
-		myBoard.get(x).get(y).pieceColor = field.pieceColor;
+		myBoard.get(x).get(y).isKing = FromField.isKing;
+		myBoard.get(x).get(y).pieceColor = FromField.pieceColor;
 		
 		myBoard.get(a).get(b).isKing = false;
 		myBoard.get(a).get(b).pieceColor = ' ';
+	}
+	
+	public void movePiece(Field FromField, Field ToField)
+	{
+		movePiece(FromField,FromField.x, FromField.y, ToField.x, ToField.y);
 	}
 	
 	private void upgradeKing(int x, int y)

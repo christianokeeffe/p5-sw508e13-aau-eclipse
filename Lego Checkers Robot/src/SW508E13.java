@@ -1,7 +1,6 @@
 import java.io.IOException;
 
 import lejos.nxt.Button;
-import lejos.nxt.ColorSensor;
 import lejos.nxt.LCD;
 import lejos.util.Delay;
 
