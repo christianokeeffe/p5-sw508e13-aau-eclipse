@@ -65,20 +65,6 @@ public class Board {
 	
 	public boolean analyzeBoard() throws InterruptedException, IOException
 	{
-		// Test case, should be removed after used
-		myBoard.get(4).get(5).isKing = true;
-		myBoard.get(4).get(5).moveable = true;
-		myBoard.get(4).get(5).pieceColor = 'w';
-		
-		myBoard.get(3).get(6).isKing = false;
-		myBoard.get(3).get(6).moveable = false;
-		myBoard.get(3).get(6).pieceColor = ' ';
-		
-		myBoard.get(5).get(6).isKing = false;
-		myBoard.get(5).get(6).moveable = false;
-		myBoard.get(5).get(6).pieceColor = ' ';
-		
-		
 		int i = 0;
 		for (List<Field> f : myBoard) {
 			this.checkMovement(f,i);
@@ -467,7 +453,7 @@ public class Board {
 		{	
 			for(j=0;j<8;j++)
 			{
-				if((i+j)%2 == 0)
+				if((i+j)%2 == 1)
 				{
 					if(myBoard.get(i).get(j).pieceColor == 'r' || myBoard.get(i).get(j).pieceColor == 'w')
 					{
