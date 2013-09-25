@@ -111,6 +111,14 @@ public class RemoteNXTFunctions {
 		BottomNXT.B.rotate(angle,true);
 	}
 	
+	private void ResetZ(){
+		Motor.A.backward();
+		while(!TouchOnZ.isPressed()){
+			if(TouchOnZ.isPressed()){
+				Motor.A.stop();
+			}
+		}
+	}
 	private void Reset(){
 		Motor.B.setSpeed(200);
 		Motor.A.backward();
