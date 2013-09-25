@@ -5,6 +5,8 @@ import java.util.List;
 import lejos.nxt.ColorSensor;
 import lejos.nxt.LCD;
 import lejos.nxt.Motor;
+import lejos.nxt.MotorPort;
+import lejos.nxt.NXTMotor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.TouchSensor;
 import lejos.nxt.comm.Bluetooth;
@@ -25,6 +27,7 @@ public class RemoteNXTFunctions {
     private TouchSensor TouchOnX;
     private ColorSensor ColorSensorOnBoard;
     Board CheckersBoard;
+    NXTMotor ZMotor;
 	
 	public RemoteNXTFunctions() throws InterruptedException, IOException{
 		connect();
@@ -40,6 +43,7 @@ public class RemoteNXTFunctions {
 	    TouchOnZ = new TouchSensor(SensorPort.S2);
 	    TouchOnX = new TouchSensor(BottomNXT.S2);
 	    ColorSensorOnBoard = new ColorSensor(SensorPort.S1);
+	    ZMotor = new NXTMotor(MotorPort.C);
 	    Reset();
 	    CheckersBoard = new Board(this);
 	}
@@ -117,11 +121,11 @@ public class RemoteNXTFunctions {
 	{
 		MoveSensorTo(FromField.x,FromField.y,true);
 		Motor.A.rotate(zFactor);
-		Motor.C.forward();
+		ZMotor.setPower(100);
 		Motor.A.rotate(-(zFactor/2));
 		MoveSensorTo(ToField.x,ToField.y,true);
 		Motor.A.rotate(zFactor/2);
-		Motor.C.stop();
+		ZMotor.setPower(0);
 		Delay.msDelay(500);
 		ResetZ();
 		CheckersBoard.movePiece(FromField, ToField);
