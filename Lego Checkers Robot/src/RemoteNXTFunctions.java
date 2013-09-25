@@ -16,7 +16,7 @@ public class RemoteNXTFunctions {
 	RemoteNXT BottomNXT = null;
 	private static final int xFactor = -345;
 	private static final int yFactor = -300;
-	private static final int zFactor = 330;
+	private static final int zFactor = 300;
 	private static final int displacementFactor = 4;
     private int PresentX = (int)(-xFactor*2.75);
     private int PresentY = 0;
@@ -54,7 +54,7 @@ public class RemoteNXTFunctions {
 	{
 		Field PresentField = FromField;
 		Field TrashField = new Field();
-		TrashField.x = -2;
+		TrashField.x = -4;
 		TrashField.y = 3;
 		List<Field> TakenPieces = new ArrayList<Field>();
 		
