@@ -66,9 +66,18 @@ public class Board {
 	public boolean analyzeBoard() throws InterruptedException, IOException
 	{
 		// Test case, should be removed after used
-		/*myBoard.get(3).get(4).isKing = true;
-		myBoard.get(3).get(4).moveable = true;
-		myBoard.get(3).get(4).pieceColor = 'w';*/
+		myBoard.get(4).get(5).isKing = true;
+		myBoard.get(4).get(5).moveable = true;
+		myBoard.get(4).get(5).pieceColor = 'w';
+		
+		myBoard.get(3).get(6).isKing = false;
+		myBoard.get(3).get(6).moveable = false;
+		myBoard.get(3).get(6).pieceColor = ' ';
+		
+		myBoard.get(3).get(8).isKing = false;
+		myBoard.get(3).get(8).moveable = false;
+		myBoard.get(3).get(8).pieceColor = ' ';
+		
 		
 		int i = 0;
 		for (List<Field> f : myBoard) {
@@ -116,7 +125,7 @@ public class Board {
 	
 	private void movePiece(Field FromField, int x, int y, int a, int b)
 	{
-		if((x >= 0 && x <= 7) && (y >= 0 && y <= 7))
+		if((a >= 0 && a <= 7) && (b >= 0 && b <= 7))
 		{
 			myBoard.get(a).get(b).isKing = FromField.isKing;
 			myBoard.get(a).get(b).pieceColor = FromField.pieceColor;
