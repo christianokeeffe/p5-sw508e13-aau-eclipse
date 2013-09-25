@@ -1,22 +1,13 @@
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.bluetooth.RemoteDevice;
-
 import lejos.nxt.ColorSensor;
 import lejos.nxt.LCD;
 import lejos.nxt.Motor;
-import lejos.nxt.BasicMotor;
 import lejos.nxt.SensorPort;
-import lejos.nxt.Sound;
 import lejos.nxt.TouchSensor;
-import lejos.nxt.ColorSensor.Color;
-import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
-import lejos.nxt.remote.FirmwareInfo;
 import lejos.nxt.remote.RemoteNXT;
 import lejos.util.Delay;
 
@@ -33,8 +24,9 @@ public class RemoteNXTFunctions {
     private TouchSensor TouchOnZ;
     private TouchSensor TouchOnX;
     private ColorSensor ColorSensorOnBoard;
+    Board CheckersBoard;
 	
-	public RemoteNXTFunctions() throws InterruptedException{
+	public RemoteNXTFunctions() throws InterruptedException, IOException{
 		connect();
 		BottomNXT.A.setSpeed(400);
 		BottomNXT.B.setSpeed(400);
@@ -49,6 +41,7 @@ public class RemoteNXTFunctions {
 	    TouchOnX = new TouchSensor(BottomNXT.S2);
 	    ColorSensorOnBoard = new ColorSensor(SensorPort.S1);
 	    Reset();
+	    CheckersBoard = new Board(this);
 	}
 	
 	public ColorSensor.Color GetColorOnField (int x, int y) throws IOException{
@@ -57,9 +50,12 @@ public class RemoteNXTFunctions {
 		return ColorSensorOnBoard.getColor();
 	}
 	
-	public void MoveAndTakePiece(Field FromField, Field ToField, List<Field> FieldsToStopOnTheWay)
+	public void MoveAndTakePiece(Field FromField, Field ToField, List<Field> FieldsToStopOnTheWay) throws IOException
 	{
 		Field PresentField = FromField;
+		Field TrashField = new Field();
+		TrashField.x = 3;
+		TrashField.y = -2;
 		List<Field> TakenPieces = new ArrayList<Field>();
 		
 		if(FieldsToStopOnTheWay == null){
@@ -69,8 +65,15 @@ public class RemoteNXTFunctions {
 		
 		for(int i = 0; i < FieldsToStopOnTheWay.size(); i++)
 		{
-			//TakenPieces.add(MovePieceOverField(PresentField,FieldsToStopOnTheWay.get(i)));
+			Field JumpedField = MovePieceOverField(PresentField,FieldsToStopOnTheWay.get(i));
+			if(JumpedField != null){
+				TakenPieces.add(JumpedField);
+			}
 			PresentField = FieldsToStopOnTheWay.get(i);
+		}
+		
+		for(int i = 0; i < TakenPieces.size(); i++){
+			MovePiece(TakenPieces.get(i), TrashField);
 		}
 	}
 	
@@ -115,18 +118,18 @@ public class RemoteNXTFunctions {
 		PresentX = x*xFactor+displacement;
 	}
 	
-	private void MovePiece(Field Fromfield, Field Tofield) throws IOException
+	private void MovePiece(Field FromField, Field ToField) throws IOException
 	{
-		MoveSensorTo(Fromfield.x,Fromfield.y,true);
+		MoveSensorTo(FromField.x,FromField.y,true);
 		Motor.A.rotate(zFactor);
 		Motor.C.forward();
 		Motor.A.rotate(-(zFactor/2));
-		MoveSensorTo(Tofield.x,Tofield.y,true);
+		MoveSensorTo(ToField.x,ToField.y,true);
 		Motor.A.rotate(zFactor/2);
 		Motor.C.stop();
 		Delay.msDelay(500);
 		ResetZ();
-		
+		CheckersBoard.movePiece(FromField, ToField);
 	}
 	
 	
