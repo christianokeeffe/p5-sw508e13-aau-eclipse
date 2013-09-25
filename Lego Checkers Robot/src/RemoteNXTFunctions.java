@@ -17,7 +17,7 @@ public class RemoteNXTFunctions {
 	private static final int xFactor = -345;
 	private static final int yFactor = -300;
 	private static final int zFactor = 230;
-	private static final int displacementFactor = 3;
+	private static final double displacementFactor = 3.2;
     private int PresentX = (int)(-xFactor*2.75);
     private int PresentY = 0;
     private TouchSensor TouchOnY;
