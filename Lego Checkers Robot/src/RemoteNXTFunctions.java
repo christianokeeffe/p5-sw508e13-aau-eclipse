@@ -75,7 +75,7 @@ public class RemoteNXTFunctions {
 	}
 	
 	private Field MovePieceOverField(Field FromField, Field ToField) throws IOException{
-		MovePieceFromTo(FromField, ToField);
+		MovePiece(FromField, ToField);
 		
 		if(Math.abs(FromField.x - ToField.x) == 2){
 			Field ReturnField = new Field();
@@ -115,7 +115,7 @@ public class RemoteNXTFunctions {
 		PresentX = x*xFactor+displacement;
 	}
 	
-	private void MovePieceFromTo(Field Fromfield, Field Tofield) throws IOException
+	private void MovePiece(Field Fromfield, Field Tofield) throws IOException
 	{
 		MoveSensorTo(Fromfield.x,Fromfield.y,true);
 		Motor.A.rotate(zFactor);
