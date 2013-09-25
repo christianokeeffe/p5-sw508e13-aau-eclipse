@@ -54,8 +54,8 @@ public class RemoteNXTFunctions {
 	{
 		Field PresentField = FromField;
 		Field TrashField = new Field();
-		TrashField.x = 3;
-		TrashField.y = -2;
+		TrashField.x = -2;
+		TrashField.y = 3;
 		List<Field> TakenPieces = new ArrayList<Field>();
 		
 		for(int i = 0; i < FieldsToStopOnTheWay.size(); i++)

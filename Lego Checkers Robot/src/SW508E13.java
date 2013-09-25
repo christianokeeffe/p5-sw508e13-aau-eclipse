@@ -19,7 +19,7 @@ public class SW508E13 {
 		FlytteListe.clear();
 		FlytteListe.add(new Field(0,3));
 		checkTopFunc.MoveAndTakePiece(new Field(1,2), FlytteListe);
-		
+		Delay.msDelay(10000);
 		Board test = new Board(checkTopFunc);
 		test.analyzeBoard();
 		//LCD.drawString("Donedonedone", 0, 0);
