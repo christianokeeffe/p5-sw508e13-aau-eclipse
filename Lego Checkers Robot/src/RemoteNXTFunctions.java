@@ -77,6 +77,12 @@ public class RemoteNXTFunctions {
 		PresentX = x*xFactor+displacement;
 	}
 	
+	private void MovePieceFromTo(int Fromfield, int Tofield, boolean GoToMagnet)
+	{
+		
+	}
+	
+	
 	private void MoveBothAAndBMotor(int angle){
 		BottomNXT.A.rotate(angle, true);
 		BottomNXT.B.rotate(angle,true);
