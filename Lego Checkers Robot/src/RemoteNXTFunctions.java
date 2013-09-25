@@ -125,7 +125,7 @@ public class RemoteNXTFunctions {
 		Motor.A.rotate(zFactor/2);
 		Motor.C.stop();
 		Delay.msDelay(500);
-		Motor.A.rotate(-zFactor);
+		ResetZ();
 		
 	}
 	
