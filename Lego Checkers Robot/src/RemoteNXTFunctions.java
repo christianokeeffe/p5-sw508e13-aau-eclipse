@@ -17,6 +17,7 @@ import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.remote.FirmwareInfo;
 import lejos.nxt.remote.RemoteNXT;
+import lejos.util.Delay;
 
 
 public class RemoteNXTFunctions {
@@ -94,7 +95,13 @@ public class RemoteNXTFunctions {
 	{
 		MoveSensorTo(Fromfield.x,Fromfield.y,true);
 		Motor.A.rotate(zFactor);
-		BasicMotor.
+		Motor.C.forward();
+		Motor.A.rotate(-(zFactor/2));
+		MoveSensorTo(Tofield.x,Tofield.y,true);
+		Motor.A.rotate(zFactor/2);
+		Motor.C.stop();
+		Delay.msDelay(500);
+		Motor.A.rotate(-zFactor);
 		
 	}
 	
