@@ -14,9 +14,9 @@ public class SW508E13 {
 		RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
 		
 		List<Field> FlytteListe = new ArrayList<Field>();
-		FlytteListe.add(new Field(4,5));
-		FlytteListe.add(new Field(6,3));
-		checkTopFunc.MoveAndTakePiece(new Field(2,3), FlytteListe);
+		FlytteListe.add(new Field(5,4));
+		FlytteListe.add(new Field(3,6));
+		checkTopFunc.MoveAndTakePiece(new Field(3,2), FlytteListe);
 		FlytteListe.clear();
 		/*
 		FlytteListe.add(new Field(3,0));

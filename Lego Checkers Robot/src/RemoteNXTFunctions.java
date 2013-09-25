@@ -16,15 +16,15 @@ import lejos.util.Delay;
 
 public class RemoteNXTFunctions {
 	RemoteNXT BottomNXT = null;
-	private static final int xFactor = -345;
-	private static final int yFactor = -300;
+	private static final int yFactor = -345;
+	private static final int xFactor = -300;
 	private static final int zFactor = 230;
 	private static final double displacementFactor = 3.2;
-    private int PresentX = (int)(-xFactor*2.75);
-    private int PresentY = 0;
-    private TouchSensor TouchOnY;
-    private TouchSensor TouchOnZ;
+    private int presentY = (int)(-yFactor*2.75);
+    private int presentX = 0;
     private TouchSensor TouchOnX;
+    private TouchSensor TouchOnZ;
+    private TouchSensor TouchOnY;
     private ColorSensor ColorSensorOnBoard;
     Board CheckersBoard;
     NXTMotor ZMotor;
@@ -39,9 +39,9 @@ public class RemoteNXTFunctions {
 	    BottomNXT.B.setAcceleration(1000);
 	    Motor.A.setAcceleration(3000);
 	    Motor.B.setAcceleration(3000);
-	    TouchOnY = new TouchSensor(BottomNXT.S1);
+	    TouchOnX = new TouchSensor(BottomNXT.S1);
 	    TouchOnZ = new TouchSensor(SensorPort.S2);
-	    TouchOnX = new TouchSensor(BottomNXT.S2);
+	    TouchOnY = new TouchSensor(BottomNXT.S2);
 	    ColorSensorOnBoard = new ColorSensor(SensorPort.S1);
 	    ZMotor = new NXTMotor(MotorPort.C);
 	    Reset();
@@ -58,8 +58,8 @@ public class RemoteNXTFunctions {
 	{
 		Field PresentField = FromField;
 		Field TrashField = new Field();
-		TrashField.x = -4;
-		TrashField.y = 3;
+		TrashField.y = -4;
+		TrashField.x = 3;
 		List<Field> TakenPieces = new ArrayList<Field>();
 		
 		for(int i = 0; i < FieldsToStopOnTheWay.size(); i++)
@@ -93,28 +93,28 @@ public class RemoteNXTFunctions {
 	
 	private void MoveSensorTo(int x, int y, boolean GoToMagnet) throws IOException
 	{
-		MoveTopTo(y);
-		MoveButtomTo(x,GoToMagnet);
+		MoveTopTo(x);
+		MoveButtomTo(y,GoToMagnet);
 
 		BottomNXT.A.waitComplete();
 		BottomNXT.B.waitComplete();
 		Motor.B.waitComplete();
 	}
 	
-	private void MoveTopTo(int y) throws IOException{
-		Motor.B.rotate(y*yFactor-PresentY, true);
-		PresentY = y*yFactor;
+	private void MoveTopTo(int x) throws IOException{
+		Motor.B.rotate(x*xFactor-presentX, true);
+		presentX = x*xFactor;
 	}
 	
-	private void MoveButtomTo(int x, boolean GoToMagnet)
+	private void MoveButtomTo(int y, boolean GoToMagnet)
 	{
 		int displacement = 0;
 		if(GoToMagnet == true){
-			displacement =  (int) (xFactor*displacementFactor);
+			displacement =  (int) (yFactor*displacementFactor);
 		}
-		MoveBothAAndBMotor(x*xFactor-PresentX+displacement);
+		MoveBothAAndBMotor(y*yFactor-presentY+displacement);
 		
-		PresentX = x*xFactor+displacement;
+		presentY = y*yFactor+displacement;
 	}
 	
 	private void MovePiece(Field FromField, Field ToField) throws IOException
@@ -152,15 +152,15 @@ public class RemoteNXTFunctions {
 		BottomNXT.A.forward();
 		BottomNXT.B.forward();
 
-		while(!TouchOnY.isPressed() || !TouchOnZ.isPressed()|| !TouchOnX.isPressed())
+		while(!TouchOnX.isPressed() || !TouchOnZ.isPressed()|| !TouchOnY.isPressed())
 		{
-			if(TouchOnY.isPressed()){
+			if(TouchOnX.isPressed()){
 				Motor.B.stop();
 			}
 			if(TouchOnZ.isPressed()){
 				Motor.A.stop();
 			}
-			if(TouchOnX.isPressed()){
+			if(TouchOnY.isPressed()){
 				BottomNXT.A.stop();
 				BottomNXT.B.stop();
 			}
