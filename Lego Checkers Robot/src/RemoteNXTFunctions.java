@@ -8,6 +8,7 @@ import javax.bluetooth.RemoteDevice;
 import lejos.nxt.ColorSensor;
 import lejos.nxt.LCD;
 import lejos.nxt.Motor;
+import lejos.nxt.BasicMotor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.Sound;
 import lejos.nxt.TouchSensor;
@@ -22,6 +23,7 @@ public class RemoteNXTFunctions {
 	RemoteNXT BottomNXT = null;
 	private static final int xFactor = -340;
 	private static final int yFactor = -310;
+	private static final int zFactor = 330;
 	private static final int displacementFactor = 4;
     private int PresentX = (int)(-xFactor*2.75);
     private int PresentY = 0;
@@ -88,8 +90,11 @@ public class RemoteNXTFunctions {
 		PresentX = x*xFactor+displacement;
 	}
 	
-	private void MovePieceFromTo(int Fromfield, int Tofield, boolean GoToMagnet)
+	private void MovePieceFromTo(Field Fromfield, Field Tofield) throws IOException
 	{
+		MoveSensorTo(Fromfield.x,Fromfield.y,true);
+		Motor.A.rotate(zFactor);
+		BasicMotor.
 		
 	}
 	
