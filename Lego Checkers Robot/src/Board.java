@@ -74,9 +74,9 @@ public class Board {
 		myBoard.get(3).get(6).moveable = false;
 		myBoard.get(3).get(6).pieceColor = ' ';
 		
-		myBoard.get(3).get(8).isKing = false;
-		myBoard.get(3).get(8).moveable = false;
-		myBoard.get(3).get(8).pieceColor = ' ';
+		myBoard.get(5).get(6).isKing = false;
+		myBoard.get(5).get(6).moveable = false;
+		myBoard.get(5).get(6).pieceColor = ' ';
 		
 		
 		int i = 0;
@@ -135,8 +135,8 @@ public class Board {
 		}
 		else
 		{
-			myBoard.get(a).get(b).isKing = false;
-			myBoard.get(a).get(b).pieceColor = ' ';
+			myBoard.get(x).get(y).isKing = false;
+			myBoard.get(x).get(y).pieceColor = ' ';
 		}
 	}
 	
