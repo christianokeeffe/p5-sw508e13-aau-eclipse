@@ -14,8 +14,8 @@ import lejos.util.Delay;
 
 public class RemoteNXTFunctions {
 	RemoteNXT BottomNXT = null;
-	private static final int xFactor = -340;
-	private static final int yFactor = -310;
+	private static final int xFactor = -345;
+	private static final int yFactor = -300;
 	private static final int zFactor = 330;
 	private static final int displacementFactor = 4;
     private int PresentX = (int)(-xFactor*2.75);
