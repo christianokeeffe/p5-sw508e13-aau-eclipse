@@ -10,13 +10,10 @@ public class SW508E13 {
 
 	public static void main(String[] args) throws InterruptedException, IOException {
 		RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
-		checkTopFunc.GetColorOnField(0, 0);
-		Delay.msDelay(3000);
-		checkTopFunc.GetColorOnField(7, 7);
 		Board test = new Board(checkTopFunc);
 		test.analyzeBoard();
-		LCD.drawString("Donedonedone", 0, 0);
-		LCD.refresh();
+		//LCD.drawString("Donedonedone", 0, 0);
+		//LCD.refresh();
 		Button.ENTER.waitForPress();
 		/*ColorSensor.Color Test = checkTopFunc.GetColorOnField(7, 7);
 		LCD.drawString("R" + Test.getRed() + "G" + Test.getGreen() + "B" + Test.getBlue(), 0, 0);
