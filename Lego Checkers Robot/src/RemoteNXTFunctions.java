@@ -123,7 +123,7 @@ public class RemoteNXTFunctions {
 		Motor.A.rotate(zFactor);
 		ZMotor.setPower(100);
 		Motor.A.rotate(-(zFactor/2));
-		MoveSensorTo(ToField.x,ToField.y,true);
+		MoveSensorTo(ToField.x,ToField.y,true); 
 		Motor.A.rotate(zFactor/2);
 		ZMotor.setPower(0);
 		Delay.msDelay(500);
