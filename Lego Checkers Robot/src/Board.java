@@ -116,11 +116,19 @@ public class Board {
 	
 	private void movePiece(Field FromField, int x, int y, int a, int b)
 	{
-		myBoard.get(x).get(y).isKing = FromField.isKing;
-		myBoard.get(x).get(y).pieceColor = FromField.pieceColor;
-		
-		myBoard.get(a).get(b).isKing = false;
-		myBoard.get(a).get(b).pieceColor = ' ';
+		if((x >= 0 && x <= 7) && (y >= 0 && y <= 7))
+		{
+			myBoard.get(a).get(b).isKing = FromField.isKing;
+			myBoard.get(a).get(b).pieceColor = FromField.pieceColor;
+			
+			myBoard.get(x).get(y).isKing = false;
+			myBoard.get(x).get(y).pieceColor = ' ';
+		}
+		else
+		{
+			myBoard.get(a).get(b).isKing = false;
+			myBoard.get(a).get(b).pieceColor = ' ';
+		}
 	}
 	
 	public void movePiece(Field FromField, Field ToField)
