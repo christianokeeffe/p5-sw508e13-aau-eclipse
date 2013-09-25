@@ -43,13 +43,13 @@ public class Board {
 							{
 								temp.moveable = true;
 							}
-							if(myColor != 'r')
+							if(myColor == 'r')
 							{
 								temp.pieceColor = 'w';
 							}
 							else
 							{
-								temp.pieceColor = myColor;
+								temp.pieceColor = 'r';
 							}
 						}
 					}
@@ -67,9 +67,9 @@ public class Board {
 	public boolean analyzeBoard() throws InterruptedException, IOException
 	{
 		// Test case, should be removed after used
-		myBoard.get(3).get(3).isKing = true;
-		myBoard.get(3).get(3).moveable = true;
-		myBoard.get(3).get(3).pieceColor = 'w';
+		/*myBoard.get(3).get(4).isKing = true;
+		myBoard.get(3).get(4).moveable = true;
+		myBoard.get(3).get(4).pieceColor = 'w';*/
 		
 		int i = 0;
 		for (List<Field> f : myBoard) {
@@ -89,18 +89,24 @@ public class Board {
 			Field field = new Field();
 		    field = fields.get(j);
 			 
-		    if(field.moveable)
+		    if(field.moveable && field.pieceColor != myColor)
 		    {
-		    	
 		    	if(this.isEmptyField(i, j))
 		    	{
 					if(field.isKing)
 					{
-						checkKingMove(field,i,j);
+						if (checkKingMove(field,i,j))
+						{
+							j = 8;
+						}
 					}
 					else
 					{
-						checkPeasantMove(field,i,j);
+						if (checkPeasantMove(field,i,j))
+						{
+							j = 8;
+						}
+						
 					}
 		    	}
 		    }
@@ -123,17 +129,19 @@ public class Board {
 		myBoard.get(x).get(y).isKing = true;
 	}
 	
-	private void checkPeasantMove(Field field, int i, int j) throws InterruptedException, IOException
+	private boolean checkPeasantMove(Field field, int i, int j) throws InterruptedException, IOException
 	{
 		if((i > 0 && i < 7) && (j > 0 && j < 7))
 		{
 			if(!this.isEmptyField(i-1, j-1))
 			{
 				movePiece(field, i-1, j-1, i, j);
+				return true;
 			}
 			else if(!this.isEmptyField(i-1, j+1))
 			{
 				movePiece(field, i-1, j+1, i, j);
+				return true;
 			}
 		}
 		else if(i==7 && j==7)
@@ -141,17 +149,20 @@ public class Board {
 			if(!this.isEmptyField(i-1, j-1))
 			{
 				movePiece(field, i-1, j-1, i, j);
+				return true;
 			}
 		}
 		else if(i == 0 && j!= 7)
 		{
 			upgradeKing(i,j);
+			return true;
 		}
 		else if(j == 0 && i!=0 && i!= 7)
 		{
 			if(!this.isEmptyField(i-1, j+1))
 			{
 				movePiece(field, i-1, j+1, i, j);
+				return true;
 			}
 		}
 		else if(j == 7 && i!=0 && i!= 7)
@@ -159,6 +170,7 @@ public class Board {
 			if(!this.isEmptyField(i-1, j-1))
 			{
 				movePiece(field, i-1, j-1, i, j);
+				return true;
 			}
 		}
 		else if(i == 7 && j!=0 && j!= 7)
@@ -166,33 +178,40 @@ public class Board {
 			if(!this.isEmptyField(i-1, j-1))
 			{
 				movePiece(field, i-1, j-1, i, j);
+				return true;
 			}
 			if(!this.isEmptyField(i-1, j+1))
 			{
 				movePiece(field, i-1, j+1, i, j);
+				return true;
 			}
 		}
+		return false;
 	}
 	
-	private void checkKingMove(Field field, int i, int j) throws InterruptedException, IOException
+	private boolean checkKingMove(Field field, int i, int j) throws InterruptedException, IOException
 	{
 		if((i > 0 && i < 7) && (j > 0 && j < 7))
 		{
 			if(!this.isEmptyField(i-1, j-1))
 			{
 				movePiece(field, i-1, j-1, i, j);
+				return true;
 			}
 			else if(!this.isEmptyField(i+1, j-1))
 			{
 				movePiece(field, i+1, j-1, i, j);
+				return true;
 			}
 			else if(!this.isEmptyField(i+1, j+1))
 			{
 				movePiece(field, i+1, j+1, i, j);
+				return true;
 			}
 			else if(!this.isEmptyField(i-1, j+1))
 			{
 				movePiece(field, i-1, j+1, i, j);
+				return true;
 			}
 		}
 		else if(i==0 && j==0)
@@ -200,6 +219,7 @@ public class Board {
 			if(!this.isEmptyField(i+1, j+1))
 			{
 				movePiece(field, i+1, j+1, i, j);
+				return true;
 			}
 		}
 		else if(i==7 && j==7)
@@ -207,6 +227,7 @@ public class Board {
 			if(!this.isEmptyField(i-1, j-1))
 			{
 				movePiece(field, i-1, j-1, i, j);
+				return true;
 			}
 		}
 		else if(i == 0 && j!=0 && j!= 7)
@@ -214,10 +235,12 @@ public class Board {
 			if(!this.isEmptyField(i+1, j+1))
 			{
 				movePiece(field, i+1, j+1, i, j);
+				return true;
 			}
 			if(!this.isEmptyField(i+1, j-1))
 			{
 				movePiece(field, i+1, j-1, i, j);
+				return true;
 			}
 		}
 		else if(j == 0 && i!=0 && i!= 7)
@@ -225,10 +248,12 @@ public class Board {
 			if(!this.isEmptyField(i+1, j+1))
 			{
 				movePiece(field, i+1, j+1, i, j);
+				return true;
 			}
 			if(!this.isEmptyField(i-1, j+1))
 			{
 				movePiece(field, i-1, j+1, i, j);
+				return true;
 			}
 		}
 		else if(j == 7 && i!=0 && i!= 7)
@@ -236,10 +261,12 @@ public class Board {
 			if(!this.isEmptyField(i+1, j-1))
 			{
 				movePiece(field, i+1, j-1, i, j);
+				return true;
 			}
 			if(!this.isEmptyField(i-1, j-1))
 			{
 				movePiece(field, i-1, j-1, i, j);
+				return true;
 			}
 		}
 		else if(i == 7 && j!=0 && j!= 7)
@@ -247,12 +274,15 @@ public class Board {
 			if(!this.isEmptyField(i-1, j-1))
 			{
 				movePiece(field, i-1, j-1, i, j);
+				return true;
 			}
 			if(!this.isEmptyField(i-1, j+1))
 			{
 				movePiece(field, i-1, j+1, i, j);
+				return true;
 			}
 		}
+		return false;
 	}
 	
 	private boolean isEmptyField(int x, int y) throws InterruptedException, IOException
@@ -349,13 +379,13 @@ public class Board {
 	
 	private char findMyColor() throws InterruptedException, IOException
 	{
-		ColorSensor.Color colorResult = remoteFunctions.GetColorOnField(0, 0);
+		ColorSensor.Color colorResult = remoteFunctions.GetColorOnField(0, 1);
 		
 		int red = colorResult.getRed();
 		int green = colorResult.getGreen();
 		int blue = colorResult.getBlue();
 		
-		if(red > 150 && green <= 50 && blue <= 50)
+		if(red > 150 && green <= 100 && blue <= 100)
 		{
 			return 'r';
 		}
