@@ -8,8 +8,9 @@ import lejos.nxt.LCD;
 
 public class Board {
 	
-	List<List<Field>> myBoard = new ArrayList<List<Field>>();
-
+	//List<List<Field>> myBoard = new ArrayList<List<Field>>();
+	Field[][] myBoard = new Field[8][8];
+	
 	char myColor;
 	RemoteNXTFunctions remoteFunctions;
 	
@@ -23,10 +24,9 @@ public class Board {
 		
 		int x,y;
 		
-		for(y = 0; y<8; y++)
+		for(x = 0; x<8; x++)
 		{
-			List<Field> row  = new ArrayList<Field>();
-			for(x=0; x<8; x++)
+			for(y=0; y<8; y++)
 			{
 				Field temp = new Field();
 				temp.x = x;
@@ -59,17 +59,17 @@ public class Board {
 				{
 					temp.allowedField = false;
 				}
-				row.add(temp);
+				myBoard[x][y] = temp;
 			}
-			myBoard.add(row);
 		}
 	}
 	
 	
 	public boolean analyzeBoard() throws InterruptedException, IOException
-	{	
-	
-		for (List<Field> f : myBoard) 
+	{			
+		myBoard[0][5].isKing= true;
+		
+		for (Field[] f : myBoard) 
 		{
 			for (Field field : f) 
 			{
@@ -85,7 +85,9 @@ public class Board {
 						
 						if(field.isKing)
 						{
-							//check king here
+							if(this.checkKingMove(field)){
+								
+							}
 						}
 						else
 						{	
@@ -107,20 +109,21 @@ public class Board {
 		
 		if((toField_x >= 0 && toField_x <= 7) && (toField_y >= 0 && toField_y <= 7))
 		{
-			myBoard.get(toField_x).get(toField_y).isKing = FromField.isKing;
-			myBoard.get(toField_x).get(toField_y).pieceColor = FromField.pieceColor;
+			myBoard[toField_x][toField_y].isKing = FromField.isKing;
+			myBoard[toField_x][toField_y].pieceColor = FromField.pieceColor;
 			
-			myBoard.get(FromField.x).get(FromField.y).isKing = false;
-			myBoard.get(FromField.x).get(FromField.y).pieceColor = ' ';
+			myBoard[FromField.x][FromField.y].isKing = false;
+			myBoard[FromField.x][FromField.y].pieceColor = ' ';
 			
 			
 			//this.updatePeasantMoveables(a, b, x, y);
 		}
 		else
 		{
-			myBoard.get(FromField.x).get(FromField.y).isKing = false;
-			myBoard.get(FromField.x).get(FromField.y).pieceColor = ' ';
+			myBoard[FromField.x][FromField.y].isKing = false;
+			myBoard[FromField.x][FromField.y].pieceColor = ' ';
 		}
+		
 	}
 	
 	public void movePiece(Field FromField, Field ToField) throws InterruptedException, IOException
@@ -130,21 +133,20 @@ public class Board {
 	
 	private void upgradeKing(Field field)
 	{
-		myBoard.get(field.x).get(field.y).isKing = true;
+		myBoard[field.x][field.y].isKing = true;
 	}
 	
 	
 	private boolean checkPeasantMove(Field field) throws InterruptedException, IOException
 	{
-		
 		if((field.x > 0 && field.x < 7) && (field.y > 0 && field.y <= 7))
 		{
-			if(!this.isEmptyField(field.x-1, field.y-1))
+			if(myBoard[field.x-1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x-1, field.y-1))
 			{
 				movePiece(field, field.x-1, field.y-1);
 				return true;
 			}
-			else if(!this.isEmptyField(field.x+1, field.y-1))
+			else if(myBoard[field.x+1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x+1, field.y-1))
 			{
 				movePiece(field, field.x+1, field.y-1);
 				return true;
@@ -152,7 +154,7 @@ public class Board {
 		}
 		else if(field.x==0 && field.y==7)
 		{
-			if(!this.isEmptyField(field.x+1, field.y-1))
+			if(myBoard[field.x+1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x+1, field.y-1))
 			{
 				movePiece(field, field.x+1, field.y-1);
 				return true;
@@ -165,7 +167,7 @@ public class Board {
 		}
 		else if(field.x == 0 && field.y!=0 && field.y!= 7)
 		{
-			if(!this.isEmptyField(field.x+1, field.y-1))
+			if(myBoard[field.x+1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x+1, field.y-1))
 			{
 				movePiece(field, field.x+1, field.y-1);
 				return true;
@@ -173,7 +175,7 @@ public class Board {
 		}
 		else if(field.x == 7 && field.y!=0 && field.y!= 7)
 		{
-			if(!this.isEmptyField(field.x-1, field.y-1))
+			if(myBoard[field.x-1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x-1, field.y-1))
 			{
 				movePiece(field, field.x-1, field.y-1);
 				return true;
@@ -182,103 +184,102 @@ public class Board {
 		return false;
 	}
 	
-	/*
-	private boolean checkKingMove(Field field, int i, int j) throws InterruptedException, IOException
+	
+	private boolean checkKingMove(Field field) throws InterruptedException, IOException
 	{
-		if((i > 0 && i < 7) && (j > 0 && j < 7))
+		if((field.x > 0 && field.x < 7) && (field.y > 0 && field.y < 7))
 		{
-			if(!this.isEmptyField(i-1, j-1))
+			if(myBoard[field.x-1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x-1, field.y-1))
 			{
-				movePiece(field, i-1, j-1, i, j);
+				movePiece(field, field.x-1, field.y-1);
 				return true;
 			}
-			else if(!this.isEmptyField(i+1, j-1))
+			else if(myBoard[field.x+1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x+1, field.y-1))
 			{
-				movePiece(field, i+1, j-1, i, j);
+				movePiece(field, field.x+1, field.y-1);
 				return true;
 			}
-			else if(!this.isEmptyField(i+1, j+1))
+			else if(myBoard[field.x+1][field.y+1].pieceColor != ' ' && !this.isEmptyField(field.x+1, field.y+1))
 			{
-				movePiece(field, i+1, j+1, i, j);
+				movePiece(field, field.x+1, field.y+1);
 				return true;
 			}
-			else if(!this.isEmptyField(i-1, j+1))
+			else if(myBoard[field.x-1][field.y+1].pieceColor != ' ' && !this.isEmptyField(field.x-1, field.y+1))
 			{
-				movePiece(field, i-1, j+1, i, j);
+				movePiece(field, field.x-1, field.y+1);
 				return true;
 			}
 		}
-		else if(i==0 && j==0)
+		else if(field.x==7 && field.y==0)
 		{
-			if(!this.isEmptyField(i+1, j+1))
+			if(myBoard[field.x-1][field.y+1].pieceColor != ' ' && !this.isEmptyField(field.x-1, field.y+1))
 			{
-				movePiece(field, i+1, j+1, i, j);
+				movePiece(field, field.x-1, field.y+1);
 				return true;
 			}
 		}
-		else if(i==7 && j==7)
+		else if(field.x==0 && field.y==7)
 		{
-			if(!this.isEmptyField(i-1, j-1))
+			if(myBoard[field.x+1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x+1, field.y-1))
 			{
-				movePiece(field, i-1, j-1, i, j);
+				movePiece(field, field.x+1, field.y-1);
 				return true;
 			}
 		}
-		else if(i == 0 && j!=0 && j!= 7)
+		else if(field.x == 0 && field.y!=0 && field.y!= 7)
 		{
-			if(!this.isEmptyField(i+1, j+1))
+			if(myBoard[field.x+1][field.y+1].pieceColor != ' ' && !this.isEmptyField(field.x+1, field.y+1))
 			{
-				movePiece(field, i+1, j+1, i, j);
+				movePiece(field, field.x+1, field.y+1);
 				return true;
 			}
-			if(!this.isEmptyField(i+1, j-1))
+			if(myBoard[field.x+1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x+1, field.y-1))
 			{
-				movePiece(field, i+1, j-1, i, j);
+				movePiece(field, field.x+1, field.y-1);
 				return true;
 			}
 		}
-		else if(j == 0 && i!=0 && i!= 7)
+		else if(field.y == 0 && field.x!=0 && field.x!= 7)
 		{
-			if(!this.isEmptyField(i+1, j+1))
+			if(myBoard[field.x+1][field.y+1].pieceColor != ' ' && !this.isEmptyField(field.x+1, field.y+1))
 			{
-				movePiece(field, i+1, j+1, i, j);
+				movePiece(field, field.x+1, field.y+1);
 				return true;
 			}
-			if(!this.isEmptyField(i-1, j+1))
+			if(myBoard[field.x-1][field.y+1].pieceColor != ' ' && !this.isEmptyField(field.x-1, field.y+1))
 			{
-				movePiece(field, i-1, j+1, i, j);
+				movePiece(field, field.x-1, field.y+1);
 				return true;
 			}
 		}
-		else if(j == 7 && i!=0 && i!= 7)
+		else if(field.y == 7 && field.x!=0 && field.x!= 7)
 		{
-			if(!this.isEmptyField(i+1, j-1))
+			if(myBoard[field.x+1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x+1, field.y-1))
 			{
-				movePiece(field, i+1, j-1, i, j);
+				movePiece(field, field.x+1, field.y-1);
 				return true;
 			}
-			if(!this.isEmptyField(i-1, j-1))
+			if(myBoard[field.x-1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x-1, field.y-1))
 			{
-				movePiece(field, i-1, j-1, i, j);
+				movePiece(field, field.x-1, field.y-1);
 				return true;
 			}
 		}
-		else if(i == 7 && j!=0 && j!= 7)
+		else if(field.x == 7 && field.y!=0 && field.y!= 7)
 		{
-			if(!this.isEmptyField(i-1, j-1))
+			if(myBoard[field.x-1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x-1, field.y-1))
 			{
-				movePiece(field, i-1, j-1, i, j);
+				movePiece(field, field.x-1, field.y-1);
 				return true;
 			}
-			if(!this.isEmptyField(i-1, j+1))
+			if(myBoard[field.x-1][field.y+1].pieceColor != ' ' && !this.isEmptyField(field.x-1, field.y+1))
 			{
-				movePiece(field, i-1, j+1, i, j);
+				movePiece(field, field.x-1, field.y+1);
 				return true;
 			}
 		}
 		return false;
 	}
-	*/
 	
 	private boolean isEmptyField(int x, int y) throws InterruptedException, IOException
 	{	
@@ -483,6 +484,7 @@ public class Board {
 			findDeadPieces();
 		}
 	}
+	*/
 	
 	private void findDeadPieces() throws InterruptedException, IOException
 	{
@@ -493,17 +495,17 @@ public class Board {
 			{
 				if((i+j)%2 == 1)
 				{
-					if(myBoard.get(i).get(j).pieceColor == 'r' || myBoard.get(i).get(j).pieceColor == 'w')
+					if(myBoard[i][j].pieceColor == 'r' || myBoard[i][j].pieceColor == 'w')
 					{
 						if(isEmptyField(i, j))
 						{
-							myBoard.get(i).get(j).pieceColor = ' ';
-							myBoard.get(i).get(j).isKing = false;
+							myBoard[i][j].pieceColor = ' ';
+							myBoard[i][j].isKing = false;
 						}
 					}
 				}
 			}
 		}
 	}
-	*/
+	
 }
