@@ -15,75 +15,76 @@ import lejos.util.Delay;
 
 
 public class RemoteNXTFunctions {
-	RemoteNXT BottomNXT = null;
+	RemoteNXT bottomNXT = null;
 	private static final int yFactor = -345;
 	private static final int xFactor = -300;
 	private static final int zFactor = 230;
 	private static final double displacementFactor = 3.2;
     private int presentY = (int)(-yFactor*2.75);
     private int presentX = 0;
-    private TouchSensor TouchOnX;
-    private TouchSensor TouchOnZ;
-    private TouchSensor TouchOnY;
-    private ColorSensor ColorSensorOnBoard;
-    Board CheckersBoard;
-    NXTMotor ZMotor;
+    private TouchSensor xAxisTouchSensor;
+    private TouchSensor zAxisTouchSensor;
+    private TouchSensor yAxisTouchSensor;
+    private ColorSensor boardColorSensor;
+    Board checkersBoard;
+    NXTMotor electromagnet;
+    Field trashField = new Field();
 	
 	public RemoteNXTFunctions() throws InterruptedException, IOException{
 		connect();
-		BottomNXT.A.setSpeed(400);
-		BottomNXT.B.setSpeed(400);
+		bottomNXT.A.setSpeed(400);
+		bottomNXT.B.setSpeed(400);
 	    Motor.A.setSpeed(100);
 	    Motor.B.setSpeed(1000);
-	    BottomNXT.A.setAcceleration(1000);
-	    BottomNXT.B.setAcceleration(1000);
+	    bottomNXT.A.setAcceleration(1000);
+	    bottomNXT.B.setAcceleration(1000);
 	    Motor.A.setAcceleration(3000);
 	    Motor.B.setAcceleration(3000);
-	    TouchOnX = new TouchSensor(BottomNXT.S1);
-	    TouchOnZ = new TouchSensor(SensorPort.S2);
-	    TouchOnY = new TouchSensor(BottomNXT.S2);
-	    ColorSensorOnBoard = new ColorSensor(SensorPort.S1);
-	    ZMotor = new NXTMotor(MotorPort.C);
-	    Reset();
-	    CheckersBoard = new Board(this);
+	    xAxisTouchSensor = new TouchSensor(bottomNXT.S1);
+	    zAxisTouchSensor = new TouchSensor(SensorPort.S2);
+	    yAxisTouchSensor = new TouchSensor(bottomNXT.S2);
+	    boardColorSensor = new ColorSensor(SensorPort.S1);
+	    electromagnet = new NXTMotor(MotorPort.C);
+	    resetMotors();
+	    checkersBoard = new Board(this);
+	    trashField.y = -4;
+		trashField.x = 3;
 	}
 	
-	public ColorSensor.Color GetColorOnField (int x, int y) throws IOException{
-		MoveSensorTo(x, y, false);
+	public ColorSensor.Color getColorOnField (int x, int y) throws IOException{
+		moveSensorTo(x, y, false);
 		
-		return ColorSensorOnBoard.getColor();
+		return boardColorSensor.getColor();
 	}
 	
-	public void MoveAndTakePiece(Field FromField, List<Field> FieldsToStopOnTheWay) throws IOException, InterruptedException
+	public void takePiece(Field fromField, List<Field> fieldsToStopOnTheWay) throws IOException, InterruptedException
 	{
-		Field PresentField = FromField;
-		Field TrashField = new Field();
-		TrashField.y = -4;
-		TrashField.x = 3;
-		List<Field> TakenPieces = new ArrayList<Field>();
+		Field presentField = fromField;
 		
-		for(int i = 0; i < FieldsToStopOnTheWay.size(); i++)
+		List<Field> takenPieces = new ArrayList<Field>();
+		
+		for(int i = 0; i < fieldsToStopOnTheWay.size(); i++)
 		{
-			Field JumpedField = MovePieceOverField(PresentField,FieldsToStopOnTheWay.get(i));
-			if(JumpedField != null){
-				TakenPieces.add(JumpedField);
+			Field jumpedField = movePieceOverField(presentField,fieldsToStopOnTheWay.get(i));
+			if(jumpedField != null){
+				takenPieces.add(jumpedField);
 			}
-			PresentField = FieldsToStopOnTheWay.get(i);
+			presentField = fieldsToStopOnTheWay.get(i);
 		}
 		
-		for(int i = 0; i < TakenPieces.size(); i++){
-			MovePiece(TakenPieces.get(i), TrashField);
+		for(int i = 0; i < takenPieces.size(); i++){
+			movePiece(takenPieces.get(i), trashField);
 		}
 	}
 	
-	private Field MovePieceOverField(Field FromField, Field ToField) throws IOException, InterruptedException{
-		MovePiece(FromField, ToField);
+	private Field movePieceOverField(Field fromField, Field toField) throws IOException, InterruptedException{
+		movePiece(fromField, toField);
 		
-		if(Math.abs(FromField.x - ToField.x) == 2){
-			Field ReturnField = new Field();
-			ReturnField.x = (FromField.x + ToField.x)/2;
-			ReturnField.y = (FromField.y + ToField.y)/2;
-			return ReturnField;
+		if(Math.abs(fromField.x - toField.x) == 2){
+			Field returnField = new Field();
+			returnField.x = (fromField.x + toField.x)/2;
+			returnField.y = (fromField.y + toField.y)/2;
+			return returnField;
 		}
 		else
 		{
@@ -91,84 +92,83 @@ public class RemoteNXTFunctions {
 		}
 	}
 	
-	private void MoveSensorTo(int x, int y, boolean GoToMagnet) throws IOException
+	private void moveSensorTo(int x, int y, boolean goToMagnet) throws IOException
 	{
-		MoveTopTo(x);
-		MoveButtomTo(y,GoToMagnet);
+		adjustAngleAxisX(x);
+		moveYAxisMotors(y,goToMagnet);
 
-		BottomNXT.A.waitComplete();
-		BottomNXT.B.waitComplete();
+		bottomNXT.A.waitComplete();
+		bottomNXT.B.waitComplete();
 		Motor.B.waitComplete();
 	}
 	
-	private void MoveTopTo(int x) throws IOException{
-		Motor.B.rotate(x*xFactor-presentX, true);
-		presentX = x*xFactor;
-	}
-	
-	private void MoveButtomTo(int y, boolean GoToMagnet)
+	private void moveYAxisMotors(int y, boolean GoToMagnet)
 	{
 		int displacement = 0;
 		if(GoToMagnet == true){
 			displacement =  (int) (yFactor*displacementFactor);
 		}
-		MoveBothAAndBMotor(y*yFactor-presentY+displacement);
+		adjustAngleAxisY(y*yFactor-presentY+displacement);
 		
 		presentY = y*yFactor+displacement;
 	}
 	
-	private void MovePiece(Field FromField, Field ToField) throws IOException, InterruptedException
+	public void movePiece(Field FromField, Field ToField) throws IOException, InterruptedException
 	{
-		MoveSensorTo(FromField.x,FromField.y,true);
+		moveSensorTo(FromField.x,FromField.y,true);
 		Motor.A.rotate(zFactor);
-		ZMotor.setPower(100);
+		electromagnet.setPower(100);
 		Motor.A.rotate(-(zFactor/2));
-		MoveSensorTo(ToField.x,ToField.y,true); 
+		moveSensorTo(ToField.x,ToField.y,true); 
 		Motor.A.rotate(zFactor/2);
-		ZMotor.setPower(0);
+		electromagnet.setPower(0);
 		Delay.msDelay(500);
-		ResetZ();
-		CheckersBoard.movePiece(FromField, ToField);
+		resetMotorZ();
+		checkersBoard.movePiece(FromField, ToField);
 	}
 	
-	
-	private void MoveBothAAndBMotor(int angle){
-		BottomNXT.A.rotate(angle, true);
-		BottomNXT.B.rotate(angle,true);
+	private void adjustAngleAxisX(int angle) throws IOException{
+		Motor.B.rotate(angle*xFactor-presentX, true);
+		presentX = angle*xFactor;
 	}
 	
-	private void ResetZ(){
+	private void adjustAngleAxisY(int angle){
+		bottomNXT.A.rotate(angle, true);
+		bottomNXT.B.rotate(angle,true);
+	}
+	
+	private void resetMotorZ(){
 		Motor.A.backward();
-		while(!TouchOnZ.isPressed()){
-			if(TouchOnZ.isPressed()){
+		while(!zAxisTouchSensor.isPressed()){
+			if(zAxisTouchSensor.isPressed()){
 				Motor.A.stop();
 			}
 		}
 	}
-	private void Reset(){
+	private void resetMotors(){
 		Motor.B.setSpeed(200);
 		Motor.A.backward();
 		Motor.B.forward();
-		BottomNXT.A.forward();
-		BottomNXT.B.forward();
+		bottomNXT.A.forward();
+		bottomNXT.B.forward();
 
-		while(!TouchOnX.isPressed() || !TouchOnZ.isPressed()|| !TouchOnY.isPressed())
+		while(!xAxisTouchSensor.isPressed() || !zAxisTouchSensor.isPressed()|| !yAxisTouchSensor.isPressed())
 		{
-			if(TouchOnX.isPressed()){
+			if(xAxisTouchSensor.isPressed()){
 				Motor.B.stop();
 			}
-			if(TouchOnZ.isPressed()){
+			if(zAxisTouchSensor.isPressed()){
 				Motor.A.stop();
 			}
-			if(TouchOnY.isPressed()){
-				BottomNXT.A.stop();
-				BottomNXT.B.stop();
+			if(yAxisTouchSensor.isPressed()){
+				bottomNXT.A.stop();
+				bottomNXT.B.stop();
 			}
 		}
 		Motor.B.stop();
 		Motor.A.stop();
-		BottomNXT.A.stop();
-		BottomNXT.B.stop();
+		bottomNXT.A.stop();
+		bottomNXT.B.stop();
 		Motor.B.setSpeed(1000);
 	}
 	
@@ -177,7 +177,7 @@ public class RemoteNXTFunctions {
 	    try {
 	        LCD.clear();
 	        LCD.drawString("Connecting...",0,0);
-	    	BottomNXT = new RemoteNXT("CheckBottom", Bluetooth.getConnector());
+	    	bottomNXT = new RemoteNXT("CheckBottom", Bluetooth.getConnector());
 	    	LCD.clear();
 	        LCD.drawString("Connected",0,1);
 	        Thread.sleep(2000);
