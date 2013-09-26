@@ -3,201 +3,186 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lejos.nxt.ColorSensor;
+import lejos.nxt.LCD;
 
 
 public class Board {
 	
 	List<List<Field>> myBoard = new ArrayList<List<Field>>();
+
 	char myColor;
 	RemoteNXTFunctions remoteFunctions;
+	
+	int globa_y = 0;
 	
 	public Board(RemoteNXTFunctions remoteFunc) throws InterruptedException, IOException
 	{
 		remoteFunctions = remoteFunc;
 		myColor = findMyColor();
 		
-			int j,i;
-			
-			for(i=0;i<8;i++){
+		
+		int x,y;
+		
+		for(y = 0; y<8; y++)
+		{
+			List<Field> row  = new ArrayList<Field>();
+			for(x=0; x<8; x++)
+			{
+				Field temp = new Field();
+				temp.x = x;
+				temp.y = y;
 				
-				List<Field> Columns = new ArrayList<Field>();
-				for(j=0;j<8;j++)
+				if((x+y)%2 == 1)
 				{
-					Field temp = new Field();
-					if((i+j)%2 == 1)
+					temp.allowedField = true;
+					
+					if(y < 3)
 					{
-						temp.allowedField = true;
+						temp.pieceColor = myColor;
 						
-						if(i < 3)
+						if(y == 2)
 						{
-							if(i == 2)
-							{
-								temp.moveable = true;
-							}
-							temp.pieceColor = myColor;
-						}
-						else if(i > 4)
-						{
-							if(i == 5)
-							{
-								temp.moveable = true;
-							}
-							if(myColor == 'r')
-							{
-								temp.pieceColor = 'w';
-							}
-							else
-							{
-								temp.pieceColor = 'r';
-							}
+							temp.moveable = true;
 						}
 					}
-					else
+					
+					if(y > 4)
 					{
-						temp.allowedField = false;
+						temp.pieceColor = this.findOpponentColor();
+						if(y==5)
+						{
+							temp.moveable = true;
+						}
 					}
-					Columns.add(temp);
 				}
-				myBoard.add(Columns);
+				else
+				{
+					temp.allowedField = false;
+				}
+				row.add(temp);
+			}
+			myBoard.add(row);
 		}
 	}
 	
 	
 	public boolean analyzeBoard() throws InterruptedException, IOException
-	{
-		int i = 0;
-		for (List<Field> f : myBoard) {
-			this.checkMovement(f,i);
-			i++;
-		}
-		
-		return true;
-	}
+	{	
 	
-	private boolean checkMovement(List<Field> fields, int i) throws InterruptedException, IOException
-	{
-		int j;
-		
-		for(j=0; j<fields.size(); j++)
+		for (List<Field> f : myBoard) 
 		{
-			Field field = new Field();
-		    field = fields.get(j);
-			 
-		    if(field.moveable && field.pieceColor != myColor)
-		    {
-		    	if(this.isEmptyField(i, j))
-		    	{
-					if(field.isKing)
+			for (Field field : f) 
+			{
+				
+				if(field.moveable && field.pieceColor != myColor)
+				{
+					LCD.drawString("x: " + field.x + " y: " + field.y, 0, globa_y);
+					LCD.refresh();
+					globa_y++;
+					
+					if(this.isEmptyField(field))
 					{
-						if (checkKingMove(field,i,j))
-						{
-							j = 8;
-						}
-					}
-					else
-					{
-						if (checkPeasantMove(field,i,j))
-						{
-							j = 8;
-						}
 						
+						if(field.isKing)
+						{
+							//check king here
+						}
+						else
+						{	
+							if(this.checkPeasantMove(field))
+							{
+								//Break the loop
+							}
+						}
 					}
-		    	}
-		    }
+				}
+			}
 		}
 		
 		return true;
 	}
 	
-	private void movePiece(Field FromField, int x, int y, int a, int b) throws InterruptedException, IOException
+	private void movePiece(Field FromField, int toField_x, int toField_y) throws InterruptedException, IOException
 	{
-		if((a >= 0 && a <= 7) && (b >= 0 && b <= 7))
+		
+		if((toField_x >= 0 && toField_x <= 7) && (toField_y >= 0 && toField_y <= 7))
 		{
-			myBoard.get(a).get(b).isKing = FromField.isKing;
-			myBoard.get(a).get(b).pieceColor = FromField.pieceColor;
+			myBoard.get(toField_x).get(toField_y).isKing = FromField.isKing;
+			myBoard.get(toField_x).get(toField_y).pieceColor = FromField.pieceColor;
 			
-			myBoard.get(x).get(y).isKing = false;
-			myBoard.get(x).get(y).pieceColor = ' ';
+			myBoard.get(FromField.x).get(FromField.y).isKing = false;
+			myBoard.get(FromField.x).get(FromField.y).pieceColor = ' ';
 			
-			this.updatePeasantMoveables(a, b, x, y);
+			
+			//this.updatePeasantMoveables(a, b, x, y);
 		}
 		else
 		{
-			myBoard.get(x).get(y).isKing = false;
-			myBoard.get(x).get(y).pieceColor = ' ';
+			myBoard.get(FromField.x).get(FromField.y).isKing = false;
+			myBoard.get(FromField.x).get(FromField.y).pieceColor = ' ';
 		}
 	}
 	
 	public void movePiece(Field FromField, Field ToField) throws InterruptedException, IOException
 	{
-		movePiece(FromField,FromField.x, FromField.y, ToField.x, ToField.y);
+		movePiece(FromField, ToField.x, ToField.y);
 	}
 	
-	private void upgradeKing(int x, int y)
+	private void upgradeKing(Field field)
 	{
-		myBoard.get(x).get(y).isKing = true;
+		myBoard.get(field.x).get(field.y).isKing = true;
 	}
 	
-	private boolean checkPeasantMove(Field field, int i, int j) throws InterruptedException, IOException
+	
+	private boolean checkPeasantMove(Field field) throws InterruptedException, IOException
 	{
-		if((i > 0 && i < 7) && (j > 0 && j < 7))
+		
+		if((field.x > 0 && field.x < 7) && (field.y > 0 && field.y <= 7))
 		{
-			if(!this.isEmptyField(i-1, j-1))
+			if(!this.isEmptyField(field.x-1, field.y-1))
 			{
-				movePiece(field, i-1, j-1, i, j);
+				movePiece(field, field.x-1, field.y-1);
 				return true;
 			}
-			else if(!this.isEmptyField(i-1, j+1))
+			else if(!this.isEmptyField(field.x+1, field.y-1))
 			{
-				movePiece(field, i-1, j+1, i, j);
+				movePiece(field, field.x+1, field.y-1);
 				return true;
 			}
 		}
-		else if(i==7 && j==7)
+		else if(field.x==0 && field.y==7)
 		{
-			if(!this.isEmptyField(i-1, j-1))
+			if(!this.isEmptyField(field.x+1, field.y-1))
 			{
-				movePiece(field, i-1, j-1, i, j);
+				movePiece(field, field.x+1, field.y-1);
 				return true;
 			}
 		}
-		else if(i == 0 && j!= 7)
+		else if(field.x != 0 && field.y == 0)
 		{
-			upgradeKing(i,j);
+			upgradeKing(field);
 			return true;
 		}
-		else if(j == 0 && i!=0 && i!= 7)
+		else if(field.x == 0 && field.y!=0 && field.y!= 7)
 		{
-			if(!this.isEmptyField(i-1, j+1))
+			if(!this.isEmptyField(field.x+1, field.y-1))
 			{
-				movePiece(field, i-1, j+1, i, j);
+				movePiece(field, field.x+1, field.y-1);
 				return true;
 			}
 		}
-		else if(j == 7 && i!=0 && i!= 7)
+		else if(field.x == 7 && field.y!=0 && field.y!= 7)
 		{
-			if(!this.isEmptyField(i-1, j-1))
+			if(!this.isEmptyField(field.x-1, field.y-1))
 			{
-				movePiece(field, i-1, j-1, i, j);
-				return true;
-			}
-		}
-		else if(i == 7 && j!=0 && j!= 7)
-		{
-			if(!this.isEmptyField(i-1, j-1))
-			{
-				movePiece(field, i-1, j-1, i, j);
-				return true;
-			}
-			if(!this.isEmptyField(i-1, j+1))
-			{
-				movePiece(field, i-1, j+1, i, j);
+				movePiece(field, field.x-1, field.y-1);
 				return true;
 			}
 		}
 		return false;
 	}
 	
+	/*
 	private boolean checkKingMove(Field field, int i, int j) throws InterruptedException, IOException
 	{
 		if((i > 0 && i < 7) && (j > 0 && j < 7))
@@ -293,10 +278,10 @@ public class Board {
 		}
 		return false;
 	}
+	*/
 	
 	private boolean isEmptyField(int x, int y) throws InterruptedException, IOException
-	{
-		
+	{	
 		ColorSensor.Color colorResult = remoteFunctions.GetColorOnField(x, y);
 		
 		int red = colorResult.getRed();
@@ -313,19 +298,68 @@ public class Board {
 		}
 	}
 	
+	private boolean isEmptyField(Field inputField) throws InterruptedException, IOException
+	{	
+		ColorSensor.Color colorResult = remoteFunctions.GetColorOnField(inputField.x, inputField.y);
+		
+		int red = colorResult.getRed();
+		int green = colorResult.getGreen();
+		int blue = colorResult.getBlue();
+		
+		if(red < 50 && green < 50 && blue < 50)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	/*
 	private void updatePeasantMoveables(int i, int j, int x, int y) throws InterruptedException, IOException
 	{
-		if((i > 0 && i < 7) && (j > 0 && j < 7))
+		LCD.drawString("Field : x:" + x + " y:" + y, 0 , globa_y);
+		LCD.refresh();
+		globa_y++;
+		
+		LCD.drawString("Field : i:" + i + " i:" + j, 0 , globa_y);
+		LCD.refresh();
+		globa_y++;
+		
+		if((i>0 && i<7) && (j > 0 && j<7))
 		{
-			if(this.isEmptyField(i-1, j-1))
+			//Check forward
+			
+			if(this.isEmptyField(j-1, i-1))
 			{
-				myBoard.get(i-1).get(j-1).moveable = true;
+				//bla
 			}
-			else if(this.isEmptyField(i-1, j+1))
+			
+			if(this.isEmptyField(j+1, i-1))
 			{
-				myBoard.get(i-1).get(j+1).moveable = true;
+				//bla
 			}
 		}
+
+		//from x,y to i,j
+		if((i > 0 && i < 7) && (j > 0 && j < 7))
+		{
+			//Checking forward
+			if(this.isEmptyField(i-1, j-1)  || this.isEmptyField(i+1, j-1))
+			{
+				myBoard.get(i).get(j).moveable = true;
+			}
+			
+			LCD.drawString("Field : x:" + y + " y:" + x, 0 , globa_y);
+			LCD.refresh();
+			globa_y++;
+			
+			LCD.drawString("Field : i:" + i + " j:" + j, 0 , globa_y);
+			LCD.refresh();
+			globa_y++;		
+		}
+		
 		
 		if((x > 0 && x < 7) && (y > 0 && y < 7))
 		{
@@ -385,6 +419,7 @@ public class Board {
 			}
 		}
 	}
+*/
 	
 	private char findMyColor() throws InterruptedException, IOException
 	{
@@ -416,6 +451,7 @@ public class Board {
 		}
 	}
 	
+	/*
 	//panicMode
 	private void findMissingPiece(boolean wasKing) throws InterruptedException, IOException
 	{
@@ -469,4 +505,5 @@ public class Board {
 			}
 		}
 	}
+	*/
 }
