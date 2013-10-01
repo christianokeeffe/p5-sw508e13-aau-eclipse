@@ -67,33 +67,33 @@ public class Board {
 	
 	public boolean analyzeBoard() throws InterruptedException, IOException
 	{			
-		myBoard[0][5].isKing= true;
 		
-		for (Field[] f : myBoard) 
+		myBoard[3][2].pieceColor = ' ';
+		myBoard[5][2].pieceColor = ' ';
+		myBoard[2][3].pieceColor = 'r';
+		myBoard[4][3].pieceColor = 'r';
+		
+		OUTERMOST: for (Field[] f : myBoard) 
 		{
 			for (Field field : f) 
 			{
 				
 				if(field.moveable && field.pieceColor != myColor)
 				{
-					LCD.drawString("x: " + field.x + " y: " + field.y, 0, globa_y);
-					LCD.refresh();
-					globa_y++;
-					
 					if(this.isEmptyField(field))
 					{
 						
 						if(field.isKing)
 						{
 							if(this.checkKingMove(field)){
-								
+								break OUTERMOST;
 							}
 						}
 						else
 						{	
 							if(this.checkPeasantMove(field))
 							{
-								//Break the loop
+								break OUTERMOST;
 							}
 						}
 					}
@@ -116,7 +116,7 @@ public class Board {
 			myBoard[FromField.x][FromField.y].pieceColor = ' ';
 			
 			
-			//this.updatePeasantMoveables(a, b, x, y);
+			this.updatePeasantMoveables(toField_x, toField_y, FromField);
 		}
 		else
 		{
@@ -141,12 +141,12 @@ public class Board {
 	{
 		if((field.x > 0 && field.x < 7) && (field.y > 0 && field.y <= 7))
 		{
-			if(myBoard[field.x-1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x-1, field.y-1))
+			if(myBoard[field.x-1][field.y-1].pieceColor == ' ' && !this.isEmptyField(field.x-1, field.y-1))
 			{
 				movePiece(field, field.x-1, field.y-1);
 				return true;
 			}
-			else if(myBoard[field.x+1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x+1, field.y-1))
+			else if(myBoard[field.x+1][field.y-1].pieceColor == ' ' && !this.isEmptyField(field.x+1, field.y-1))
 			{
 				movePiece(field, field.x+1, field.y-1);
 				return true;
@@ -154,7 +154,7 @@ public class Board {
 		}
 		else if(field.x==0 && field.y==7)
 		{
-			if(myBoard[field.x+1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x+1, field.y-1))
+			if(myBoard[field.x+1][field.y-1].pieceColor == ' ' && !this.isEmptyField(field.x+1, field.y-1))
 			{
 				movePiece(field, field.x+1, field.y-1);
 				return true;
@@ -167,7 +167,7 @@ public class Board {
 		}
 		else if(field.x == 0 && field.y!=0 && field.y!= 7)
 		{
-			if(myBoard[field.x+1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x+1, field.y-1))
+			if(myBoard[field.x+1][field.y-1].pieceColor == ' ' && !this.isEmptyField(field.x+1, field.y-1))
 			{
 				movePiece(field, field.x+1, field.y-1);
 				return true;
@@ -175,7 +175,7 @@ public class Board {
 		}
 		else if(field.x == 7 && field.y!=0 && field.y!= 7)
 		{
-			if(myBoard[field.x-1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x-1, field.y-1))
+			if(myBoard[field.x-1][field.y-1].pieceColor == ' ' && !this.isEmptyField(field.x-1, field.y-1))
 			{
 				movePiece(field, field.x-1, field.y-1);
 				return true;
@@ -189,22 +189,22 @@ public class Board {
 	{
 		if((field.x > 0 && field.x < 7) && (field.y > 0 && field.y < 7))
 		{
-			if(myBoard[field.x-1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x-1, field.y-1))
+			if(myBoard[field.x-1][field.y-1].pieceColor == ' ' && !this.isEmptyField(field.x-1, field.y-1))
 			{
 				movePiece(field, field.x-1, field.y-1);
 				return true;
 			}
-			else if(myBoard[field.x+1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x+1, field.y-1))
+			else if(myBoard[field.x+1][field.y-1].pieceColor == ' ' && !this.isEmptyField(field.x+1, field.y-1))
 			{
 				movePiece(field, field.x+1, field.y-1);
 				return true;
 			}
-			else if(myBoard[field.x+1][field.y+1].pieceColor != ' ' && !this.isEmptyField(field.x+1, field.y+1))
+			else if(myBoard[field.x+1][field.y+1].pieceColor == ' ' && !this.isEmptyField(field.x+1, field.y+1))
 			{
 				movePiece(field, field.x+1, field.y+1);
 				return true;
 			}
-			else if(myBoard[field.x-1][field.y+1].pieceColor != ' ' && !this.isEmptyField(field.x-1, field.y+1))
+			else if(myBoard[field.x-1][field.y+1].pieceColor == ' ' && !this.isEmptyField(field.x-1, field.y+1))
 			{
 				movePiece(field, field.x-1, field.y+1);
 				return true;
@@ -212,7 +212,7 @@ public class Board {
 		}
 		else if(field.x==7 && field.y==0)
 		{
-			if(myBoard[field.x-1][field.y+1].pieceColor != ' ' && !this.isEmptyField(field.x-1, field.y+1))
+			if(myBoard[field.x-1][field.y+1].pieceColor == ' ' && !this.isEmptyField(field.x-1, field.y+1))
 			{
 				movePiece(field, field.x-1, field.y+1);
 				return true;
@@ -220,7 +220,7 @@ public class Board {
 		}
 		else if(field.x==0 && field.y==7)
 		{
-			if(myBoard[field.x+1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x+1, field.y-1))
+			if(myBoard[field.x+1][field.y-1].pieceColor == ' ' && !this.isEmptyField(field.x+1, field.y-1))
 			{
 				movePiece(field, field.x+1, field.y-1);
 				return true;
@@ -228,12 +228,12 @@ public class Board {
 		}
 		else if(field.x == 0 && field.y!=0 && field.y!= 7)
 		{
-			if(myBoard[field.x+1][field.y+1].pieceColor != ' ' && !this.isEmptyField(field.x+1, field.y+1))
+			if(myBoard[field.x+1][field.y+1].pieceColor == ' ' && !this.isEmptyField(field.x+1, field.y+1))
 			{
 				movePiece(field, field.x+1, field.y+1);
 				return true;
 			}
-			if(myBoard[field.x+1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x+1, field.y-1))
+			if(myBoard[field.x+1][field.y-1].pieceColor == ' ' && !this.isEmptyField(field.x+1, field.y-1))
 			{
 				movePiece(field, field.x+1, field.y-1);
 				return true;
@@ -241,12 +241,12 @@ public class Board {
 		}
 		else if(field.y == 0 && field.x!=0 && field.x!= 7)
 		{
-			if(myBoard[field.x+1][field.y+1].pieceColor != ' ' && !this.isEmptyField(field.x+1, field.y+1))
+			if(myBoard[field.x+1][field.y+1].pieceColor == ' ' && !this.isEmptyField(field.x+1, field.y+1))
 			{
 				movePiece(field, field.x+1, field.y+1);
 				return true;
 			}
-			if(myBoard[field.x-1][field.y+1].pieceColor != ' ' && !this.isEmptyField(field.x-1, field.y+1))
+			if(myBoard[field.x-1][field.y+1].pieceColor == ' ' && !this.isEmptyField(field.x-1, field.y+1))
 			{
 				movePiece(field, field.x-1, field.y+1);
 				return true;
@@ -254,12 +254,12 @@ public class Board {
 		}
 		else if(field.y == 7 && field.x!=0 && field.x!= 7)
 		{
-			if(myBoard[field.x+1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x+1, field.y-1))
+			if(myBoard[field.x+1][field.y-1].pieceColor == ' ' && !this.isEmptyField(field.x+1, field.y-1))
 			{
 				movePiece(field, field.x+1, field.y-1);
 				return true;
 			}
-			if(myBoard[field.x-1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x-1, field.y-1))
+			if(myBoard[field.x-1][field.y-1].pieceColor == ' ' && !this.isEmptyField(field.x-1, field.y-1))
 			{
 				movePiece(field, field.x-1, field.y-1);
 				return true;
@@ -267,12 +267,12 @@ public class Board {
 		}
 		else if(field.x == 7 && field.y!=0 && field.y!= 7)
 		{
-			if(myBoard[field.x-1][field.y-1].pieceColor != ' ' && !this.isEmptyField(field.x-1, field.y-1))
+			if(myBoard[field.x-1][field.y-1].pieceColor == ' ' && !this.isEmptyField(field.x-1, field.y-1))
 			{
 				movePiece(field, field.x-1, field.y-1);
 				return true;
 			}
-			if(myBoard[field.x-1][field.y+1].pieceColor != ' ' && !this.isEmptyField(field.x-1, field.y+1))
+			if(myBoard[field.x-1][field.y+1].pieceColor == ' ' && !this.isEmptyField(field.x-1, field.y+1))
 			{
 				movePiece(field, field.x-1, field.y+1);
 				return true;
@@ -283,7 +283,12 @@ public class Board {
 	
 	private boolean isEmptyField(int x, int y) throws InterruptedException, IOException
 	{	
-		ColorSensor.Color colorResult = remoteFunctions.GetColorOnField(x, y);
+		if(x > 7 || x < 0 || y > 7 || y < 0)
+		{
+			return false;
+		}
+		
+		ColorSensor.Color colorResult = remoteFunctions.getColorOnField(x, y);
 		
 		int red = colorResult.getRed();
 		int green = colorResult.getGreen();
@@ -301,7 +306,7 @@ public class Board {
 	
 	private boolean isEmptyField(Field inputField) throws InterruptedException, IOException
 	{	
-		ColorSensor.Color colorResult = remoteFunctions.GetColorOnField(inputField.x, inputField.y);
+		ColorSensor.Color colorResult = remoteFunctions.getColorOnField(inputField.x, inputField.y);
 		
 		int red = colorResult.getRed();
 		int green = colorResult.getGreen();
@@ -317,114 +322,96 @@ public class Board {
 		}
 	}
 	
-	/*
-	private void updatePeasantMoveables(int i, int j, int x, int y) throws InterruptedException, IOException
+	private boolean containsPiece(int x, int y)
 	{
-		LCD.drawString("Field : x:" + x + " y:" + y, 0 , globa_y);
-		LCD.refresh();
-		globa_y++;
-		
-		LCD.drawString("Field : i:" + i + " i:" + j, 0 , globa_y);
-		LCD.refresh();
-		globa_y++;
-		
-		if((i>0 && i<7) && (j > 0 && j<7))
+		if(x <= 7 && y <= 7 && x >= 0 && y >= 0)
 		{
-			//Check forward
-			
-			if(this.isEmptyField(j-1, i-1))
+			if(myBoard[x][y].pieceColor == ' ')
 			{
-				//bla
+				return false;
+			}
+			else
+			{
+				return true;
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	private void updatePeasantMoveables(int destination_x, int destination_y, Field fromField) throws InterruptedException, IOException
+	{
+		//Mangler: Slå sammen så både peasant og king bliver tjekket i samme metode
+		
+		
+		//Checking destination moveables
+		if((destination_x > 0 && destination_x < 7) && (destination_y > 0 && destination_y < 7))
+		{
+			//Checking forward
+			if(this.containsPiece(destination_x-1, destination_y-1) || this.containsPiece(destination_x+1, destination_y-1))
+			{
+				myBoard[destination_x][destination_y].moveable = true;
+			}
+			else
+			{
+				if(this.containsPiece(destination_x-2, destination_y-2)  || this.containsPiece(destination_x+2, destination_y-2))
+				{
+					myBoard[destination_x][destination_y].moveable = true;
+				}
 			}
 			
-			if(this.isEmptyField(j+1, i-1))
+			//update of moveable variable for king pieces
+			if(fromField.isKing && !fromField.moveable){
+				if(this.containsPiece(destination_x-1, destination_y+1) || this.containsPiece(destination_x+1, destination_y+1))
+				{
+					myBoard[destination_x][destination_y].moveable = true;
+				}
+				else
+				{
+					if(this.containsPiece(destination_x-2, destination_y+2)  || this.containsPiece(destination_x+2, destination_y+2))
+					{
+						myBoard[destination_x][destination_y].moveable = true;
+					}
+				}
+			}
+		}
+		
+		//Checking fromfield
+		if((fromField.x > 0 && fromField.x < 7) && (fromField.y > 0 && fromField.y < 7))
+		{
+			//Checking moved pieces old backwards neighbors
+			if(this.containsPiece(fromField.x-1,fromField.y+1))
 			{
-				//bla
+				myBoard[fromField.x-1][fromField.y+1].moveable = true;
+			}
+			if(this.containsPiece(fromField.x+1,fromField.y+1))
+			{
+				myBoard[fromField.x+1][fromField.y+1].moveable = true;
+			}			
+			
+			if(fromField.x-1 != destination_x && fromField.y-1 != destination_y)
+			{
+				if(myBoard[fromField.x-1][fromField.y-1].pieceColor == myColor)
+				{
+					myBoard[fromField.x-1][fromField.y-1].moveable = true;
+				}
+			}
+			else if(fromField.x+1 != destination_x && fromField.y-1 != destination_y)
+			{
+				if(myBoard[fromField.x+1][fromField.y-1].pieceColor == myColor)
+				{
+					myBoard[fromField.x+1][fromField.y-1].moveable = true;
+				}
 			}
 		}
 
-		//from x,y to i,j
-		if((i > 0 && i < 7) && (j > 0 && j < 7))
-		{
-			//Checking forward
-			if(this.isEmptyField(i-1, j-1)  || this.isEmptyField(i+1, j-1))
-			{
-				myBoard.get(i).get(j).moveable = true;
-			}
-			
-			LCD.drawString("Field : x:" + y + " y:" + x, 0 , globa_y);
-			LCD.refresh();
-			globa_y++;
-			
-			LCD.drawString("Field : i:" + i + " j:" + j, 0 , globa_y);
-			LCD.refresh();
-			globa_y++;		
-		}
-		
-		
-		if((x > 0 && x < 7) && (y > 0 && y < 7))
-		{
-			if(x-1 != i && y-1 != j)
-			{
-				if(!this.isEmptyField(x-1, y-1))
-				{
-					if(this.isEmptyField(x, y - 2))
-					{
-						myBoard.get(x-1).get(y-1).moveable = true;
-					}
-					
-					if(this.isEmptyField(x + 1, y + 1))
-					{
-						myBoard.get(x).get(y).moveable = true;
-					}
-					else
-					{
-						if(y + 2 <= 7){
-							if(this.isEmptyField(x, y + 2))
-							{
-								myBoard.get(x + 1).get(y + 1).moveable = true;
-							}
-						}
-					}
-					
-					if(this.isEmptyField(x + 1, y - 1))
-					{
-						myBoard.get(x).get(y).moveable = true;
-					}
-					else
-					{
-						if(y - 2 >= 0){
-							if(this.isEmptyField(x, y - 2))
-							{
-								myBoard.get(x + 1).get(y - 1).moveable = true;
-							}
-						}
-					}
-					
-					if(!this.isEmptyField(x + 1, y - 1) && !this.isEmptyField(x + 1, y + 1))
-					{
-						myBoard.get(x).get(y).moveable = false;
-					}
-				}
-			}
-			
-			if(x-1 != i && y+1 != j)
-			{
-				if(!this.isEmptyField(x-1, y+1))
-				{
-					if(this.isEmptyField(x, y + 2))
-					{
-						myBoard.get(x-1).get(y+1).moveable = true;
-					}
-				}
-			}
-		}
 	}
-*/
 	
 	private char findMyColor() throws InterruptedException, IOException
 	{
-		ColorSensor.Color colorResult = remoteFunctions.GetColorOnField(0, 1);
+		ColorSensor.Color colorResult = remoteFunctions.getColorOnField(0, 1);
 		
 		int red = colorResult.getRed();
 		int green = colorResult.getGreen();
@@ -452,28 +439,28 @@ public class Board {
 		}
 	}
 	
-	/*
+
 	//panicMode
 	private void findMissingPiece(boolean wasKing) throws InterruptedException, IOException
 	{
 		int i,j;
 		boolean deadFlag = false;
 		
-		outerloop:
-		for(i=0;i<8;i++)
+		
+		OUTERLOOP: for(i=0;i<8;i++)
 		{	
 			for(j=0;j<8;j++)
 			{
 				if((i+j)%2 == 0)
 				{
-					if(myBoard.get(i).get(j).pieceColor != 'r' && myBoard.get(i).get(j).pieceColor != 'w')
+					if(myBoard[i][j].pieceColor != 'r' && myBoard[i][j].pieceColor != 'w')
 					{
 						if(!isEmptyField(i, j))
 						{
-							myBoard.get(i).get(j).pieceColor = findOpponentColor();
-							myBoard.get(i).get(j).isKing = wasKing;
+							myBoard[i][j].pieceColor = findOpponentColor();
+							myBoard[i][j].isKing = wasKing;
 							deadFlag = true;
-							break outerloop;
+							break OUTERLOOP;
 						}
 					}
 				}
@@ -484,7 +471,7 @@ public class Board {
 			findDeadPieces();
 		}
 	}
-	*/
+
 	
 	private void findDeadPieces() throws InterruptedException, IOException
 	{
