@@ -32,25 +32,30 @@ public class RemoteNXTFunctions {
     Board checkersBoard;
     NXTMotor electromagnet;
     private NXTRegulatedMotor MotorX;
+    private RemoteMotor MotorYLeft;
+    private RemoteMotor MotorYRight;
+    private NXTRegulatedMotor MotorZ;
+    
     /*NXTRegulatedMotor motorX = Motor.A;
     NXTRegulatedMotor motorZ = Motor.B;
     RemoteMotor motorYLeft = bottomNXT.A;
     RemoteMotor motorRightAxisY = bottomNXT.B; */
-    NXTRegulatedMotor motorX = Motor.A;
     Field trashField = new Field();
 	
 	public RemoteNXTFunctions() throws InterruptedException, IOException{
 		connect();
 		MotorX = new NXTRegulatedMotor(MotorPort.A);
+		MotorZ = new NXTRegulatedMotor(MotorPort.B);
 		/*Motor.A.setSpeed(100); /* xAxis motor */
 		MotorX.setSpeed(100);
-	    Motor.B.setSpeed(1000);/* zAxis motor */
+	    MotorZ.setSpeed(1000);
 		bottomNXT.A.setSpeed(400);/* yAxis motors */
 		bottomNXT.B.setSpeed(400); /* yAxis motors */
 		bottomNXT.A.setAcceleration(1000);
+		
 	    bottomNXT.B.setAcceleration(1000); 
-	    Motor.A.setAcceleration(3000);
-	    Motor.B.setAcceleration(3000); 
+	    MotorX.setAcceleration(3000);
+	    MotorZ.setAcceleration(3000); 
 	    
 	    touchSensorX = new TouchSensor(bottomNXT.S1);
 	    touchSensorZ = new TouchSensor(SensorPort.S2);
@@ -72,11 +77,11 @@ public class RemoteNXTFunctions {
 	public void movePiece(Field FromField, Field ToField) throws IOException, InterruptedException
 	{
 		moveSensorTo(FromField.x,FromField.y,true);
-		Motor.A.rotate(zFactor);
+		MotorX.rotate(zFactor);
 		electromagnet.setPower(100);
-		Motor.A.rotate(-(zFactor/2));
+		MotorX.rotate(-(zFactor/2));
 		moveSensorTo(ToField.x,ToField.y,true); 
-		Motor.A.rotate(zFactor/2);
+		MotorX.rotate(zFactor/2);
 		electromagnet.setPower(0);
 		Delay.msDelay(500);
 		resetMotorZ();
@@ -125,7 +130,7 @@ public class RemoteNXTFunctions {
 
 		bottomNXT.A.waitComplete();
 		bottomNXT.B.waitComplete();
-		Motor.B.waitComplete();
+		MotorZ.waitComplete();
 	}
 	
 	private void moveMotorsAxisY(int y, boolean GoToMagnet)
@@ -140,7 +145,7 @@ public class RemoteNXTFunctions {
 	}
 	
 	private void adjustAngleAxisX(int angle) throws IOException{
-		Motor.B.rotate(angle*xFactor-presentX, true);
+		MotorZ.rotate(angle*xFactor-presentX, true);
 		presentX = angle*xFactor;
 	}
 	
@@ -150,39 +155,39 @@ public class RemoteNXTFunctions {
 	}
 	
 	private void resetMotorZ(){
-		Motor.A.backward();
+		MotorX.backward();
 		while(!touchSensorZ.isPressed()){
 			if(touchSensorZ.isPressed()){
-				Motor.A.stop();
+				MotorX.stop();
 			}
 		}
 	}
 	
 	private void resetMotors(){
-		Motor.B.setSpeed(200);
-		Motor.A.backward();
-		Motor.B.forward();
+		MotorZ.setSpeed(200);
+		MotorX.backward();
+		MotorZ.forward();
 		bottomNXT.A.forward();
 		bottomNXT.B.forward();
 
 		while(!touchSensorX.isPressed() || !touchSensorZ.isPressed()|| !touchSensorY.isPressed())
 		{
 			if(touchSensorX.isPressed()){
-				Motor.B.stop();
+				MotorZ.stop();
 			}
 			if(touchSensorZ.isPressed()){
-				Motor.A.stop();
+				MotorX.stop();
 			}
 			if(touchSensorY.isPressed()){
 				bottomNXT.A.stop();
 				bottomNXT.B.stop();
 			}
 		}
-		Motor.B.stop();
-		Motor.A.stop();
+		MotorZ.stop();
+		MotorX.stop();
 		bottomNXT.A.stop();
 		bottomNXT.B.stop();
-		Motor.B.setSpeed(1000);
+		MotorZ.setSpeed(1000);
 	}
 	
 	private void connect() throws InterruptedException{
