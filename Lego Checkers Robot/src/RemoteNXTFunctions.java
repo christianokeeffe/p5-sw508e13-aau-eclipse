@@ -9,6 +9,7 @@ import lejos.nxt.MotorPort;
 import lejos.nxt.NXTMotor;
 import lejos.nxt.NXTRegulatedMotor;
 import lejos.nxt.SensorPort;
+import lejos.nxt.TachoMotorPort;
 import lejos.nxt.TouchSensor;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.remote.RemoteMotor;
@@ -30,15 +31,19 @@ public class RemoteNXTFunctions {
     private ColorSensor boardColorSensor;
     Board checkersBoard;
     NXTMotor electromagnet;
+    private NXTRegulatedMotor MotorX;
     /*NXTRegulatedMotor motorX = Motor.A;
     NXTRegulatedMotor motorZ = Motor.B;
     RemoteMotor motorYLeft = bottomNXT.A;
     RemoteMotor motorRightAxisY = bottomNXT.B; */
+    NXTRegulatedMotor motorX = Motor.A;
     Field trashField = new Field();
 	
 	public RemoteNXTFunctions() throws InterruptedException, IOException{
 		connect();
-		Motor.A.setSpeed(100); /* xAxis motor */
+		MotorX = new NXTRegulatedMotor(MotorPort.A);
+		/*Motor.A.setSpeed(100); /* xAxis motor */
+		MotorX.setSpeed(100);
 	    Motor.B.setSpeed(1000);/* zAxis motor */
 		bottomNXT.A.setSpeed(400);/* yAxis motors */
 		bottomNXT.B.setSpeed(400); /* yAxis motors */
@@ -46,17 +51,7 @@ public class RemoteNXTFunctions {
 	    bottomNXT.B.setAcceleration(1000); 
 	    Motor.A.setAcceleration(3000);
 	    Motor.B.setAcceleration(3000); 
-		
-		bottomNXT.A.setSpeed(400);
-		bottomNXT.B.setSpeed(400);
-		bottomNXT.A.setAcceleration(3000);
-		bottomNXT.B.setAcceleration(3000);
-		
-		Motor.A.setSpeed(100);
-		Motor.B.setSpeed(1000);
-	    Motor.A.setAcceleration(1000);
-	    Motor.B.setAcceleration(1000);
-		
+	    
 	    touchSensorX = new TouchSensor(bottomNXT.S1);
 	    touchSensorZ = new TouchSensor(SensorPort.S2);
 	    touchSensorY = new TouchSensor(bottomNXT.S2);
