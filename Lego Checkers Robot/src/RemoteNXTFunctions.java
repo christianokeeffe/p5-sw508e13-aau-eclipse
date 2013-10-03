@@ -31,10 +31,11 @@ public class RemoteNXTFunctions {
     private ColorSensor boardColorSensor;
     Board checkersBoard;
     NXTMotor electromagnet;
-    private NXTRegulatedMotor motorZ;
-    private RemoteMotor MotorYLeft;
-    private RemoteMotor MotorYRight;
     private NXTRegulatedMotor motorX;
+    private NXTRegulatedMotor motorZ;
+    private NXTRegulatedMotor motorYLeft;
+    private NXTRegulatedMotor motorYRight;
+    
     
     /*NXTRegulatedMotor motorX = Motor.A;
     NXTRegulatedMotor motorZ = Motor.B;
@@ -44,15 +45,18 @@ public class RemoteNXTFunctions {
 	
 	public RemoteNXTFunctions() throws InterruptedException, IOException{
 		connect();
+		motorYLeft = new NXTRegulatedMotor((TachoMotorPort) bottomNXT.A);
+		motorYRight = new NXTRegulatedMotor((TachoMotorPort) bottomNXT.B);
 		motorZ = new NXTRegulatedMotor(MotorPort.A);
 		motorX = new NXTRegulatedMotor(MotorPort.B);
 		/*Motor.A.setSpeed(100); /* xAxis motor */
+		motorYLeft.setSpeed(400);
+		motorYRight.setSpeed(400);
 		motorZ.setSpeed(100);
 	    motorX.setSpeed(1000);
-		bottomNXT.A.setSpeed(400);/* yAxis motors */
-		bottomNXT.B.setSpeed(400); /* yAxis motors */
+	    /*bottomNXT.A.setSpeed(400); yAxis motors 
+		bottomNXT.B.setSpeed(400);  yAxis motors */
 		bottomNXT.A.setAcceleration(1000);
-		
 	    bottomNXT.B.setAcceleration(1000); 
 	    motorZ.setAcceleration(3000);
 	    motorX.setAcceleration(3000); 
