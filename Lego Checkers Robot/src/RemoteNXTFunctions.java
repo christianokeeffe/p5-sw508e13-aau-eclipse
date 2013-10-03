@@ -31,36 +31,24 @@ public class RemoteNXTFunctions {
     private ColorSensor boardColorSensor;
     Board checkersBoard;
     NXTMotor electromagnet;
-    private NXTRegulatedMotor motorX;
     private NXTRegulatedMotor motorZ;
-    private NXTRegulatedMotor motorYLeft;
-    private NXTRegulatedMotor motorYRight;
-    
-    
-    /*NXTRegulatedMotor motorX = Motor.A;
-    NXTRegulatedMotor motorZ = Motor.B;
-    RemoteMotor motorYLeft = bottomNXT.A;
-    RemoteMotor motorRightAxisY = bottomNXT.B; */
+    private NXTRegulatedMotor motorX;
     Field trashField = new Field();
 	
 	public RemoteNXTFunctions() throws InterruptedException, IOException{
 		connect();
-		motorYLeft = new NXTRegulatedMotor((TachoMotorPort) bottomNXT.A);
-		motorYRight = new NXTRegulatedMotor((TachoMotorPort) bottomNXT.B);
 		motorZ = new NXTRegulatedMotor(MotorPort.A);
 		motorX = new NXTRegulatedMotor(MotorPort.B);
-		/*Motor.A.setSpeed(100); /* xAxis motor */
-		motorYLeft.setSpeed(400);
-		motorYRight.setSpeed(400);
 		motorZ.setSpeed(100);
 	    motorX.setSpeed(1000);
-	    /*bottomNXT.A.setSpeed(400); yAxis motors 
-		bottomNXT.B.setSpeed(400);  yAxis motors */
-		bottomNXT.A.setAcceleration(1000);
-	    bottomNXT.B.setAcceleration(1000); 
 	    motorZ.setAcceleration(3000);
 	    motorX.setAcceleration(3000); 
 	    
+		bottomNXT.A.setSpeed(400);/* Left yAxis motor */
+		bottomNXT.B.setSpeed(400); /* Right yAxis motor */
+		bottomNXT.A.setAcceleration(1000);
+	    bottomNXT.B.setAcceleration(1000);
+	       
 	    touchSensorX = new TouchSensor(bottomNXT.S1);
 	    touchSensorZ = new TouchSensor(SensorPort.S2);
 	    touchSensorY = new TouchSensor(bottomNXT.S2);
