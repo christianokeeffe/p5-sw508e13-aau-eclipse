@@ -27,12 +27,13 @@ public class SW508E13 {
 		checkTopFunc.checkersBoard.analyzeBoard();
 		LCD.drawString("Donedonedone", 0, 0);
 		LCD.refresh();
+		checkTopFunc.getColorOnField(7, 0);
 		Button.ENTER.waitForPress();
 		/*ColorSensor.Color Test = checkTopFunc.GetColorOnField(7, 7);
 		LCD.drawString("R" + Test.getRed() + "G" + Test.getGreen() + "B" + Test.getBlue(), 0, 0);
 		LCD.refresh();
 		Delay.msDelay(10000);
-		checkTopFunc.GetColorOnField(2, 2);*/
+		*/
 	}
 
 }
