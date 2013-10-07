@@ -1,9 +1,5 @@
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import lejos.nxt.ColorSensor;
-import lejos.nxt.LCD;
 
 
 public class Board {
@@ -12,26 +8,6 @@ public class Board {
 
 	char myColor, opponentColor;
 	RemoteNXTFunctions remoteFunctions;
-	
-	public void test()
-	{
-		for(Field[] f : myBoard){
-			for(Field tester : f){
-				if(tester.moveable)
-				{
-					try {
-						this.isEmptyField(tester.x, tester.y);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-	}
 	
 	public Board(RemoteNXTFunctions remoteFunc) throws InterruptedException, IOException
 	{
@@ -94,7 +70,6 @@ public class Board {
 
 	public boolean analyzeBoard() throws InterruptedException, IOException
 	{	
-		myBoard[3][4].pieceColor = 'r';
 		OUTERMOST: for (Field[] f : myBoard) 
 		{
 			for (Field field : f) 
@@ -111,7 +86,6 @@ public class Board {
 				}
 			}
 		}
-		this.test();
 		return true;
 	}
 
@@ -382,7 +356,7 @@ public class Board {
 				return true;
 			}
 		}
-
+		
 		return pieceFound;
 	}
 
