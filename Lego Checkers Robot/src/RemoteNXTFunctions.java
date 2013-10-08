@@ -23,7 +23,7 @@ public class RemoteNXTFunctions {
 	private static final int xFactor = -300;
 	private static final int zFactor = 230;
 	private static final double displacementFactor = 3.2;
-    private int presentY = (int)(-yFactor*2.75);
+    private int presentY = (int)(-yFactor*2.50);
     private int presentX = 0;
     private TouchSensor touchSensorX;
     private TouchSensor touchSensorZ;
