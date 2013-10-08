@@ -1,5 +1,7 @@
 import java.io.IOException;
+
 import lejos.nxt.ColorSensor;
+import lejos.nxt.LCD;
 
 
 public class Board {
@@ -372,8 +374,9 @@ public class Board {
 		int green = colorResult.getGreen();
 		int blue = colorResult.getBlue();
 		
-		boolean testRed = (red >= 100 && red <= 160) && (green >= 10 && green <= 50) && (blue >= 5 && blue <= 60);
-		boolean testWhite = (red >= 100 && red <= 175) && (green >= 80 && green <= 200) && (blue >= 80 && blue <= 200);
+		//Limits for red and white color
+		boolean testRed = (red >= 100 && red <= 230) && (green >= 10 && green <= 85) && (blue >= 5 && blue <= 85);
+		boolean testWhite = (red >= 100 && red <= 240) && (green >= 90 && green <= 240) && (blue >= 90 && blue <= 240);
 		
 		if(!testRed && !testWhite)
 		{
@@ -509,17 +512,13 @@ public class Board {
 		int green = colorResult.getGreen();
 		int blue = colorResult.getBlue();
 
-		if((red >= 100 && red <= 160) && (green >= 10 && green <= 50) && (blue >= 5 && blue <= 60))
+		if((red >= 100 && red <= 230) && (green >= 10 && green <= 85) && (blue >= 5 && blue <= 85))
 		{
 			return 'r';
 		}
-		else if((red >= 100 && red <= 160) && (green >= 10 && green <= 50) && (blue >= 5 && blue <= 60))
-		{
-			return 'w';
-		}
 		else
 		{
-			return ' ';
+			return 'w';
 		}
 	}
 
