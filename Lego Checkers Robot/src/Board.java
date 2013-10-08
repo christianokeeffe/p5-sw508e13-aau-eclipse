@@ -540,15 +540,31 @@ public class Board {
 	public void findMissingPiece() throws InterruptedException, IOException
 	{
 		int i,j;
+		boolean changer = true;
 
 		for(i=0;i<8;i++)
 		{	
-			for(j=0;j<8;j++)
+			if(changer)
 			{
-				if((i+j)%2 == 1)
+				for(j=0;j<8;j++)
 				{
-					myBoard[i][j].pieceColor = getColor(i, j);
+					if((i+j)%2 == 1)
+					{
+						myBoard[i][j].pieceColor = getColor(i, j);
+					}
 				}
+				changer = false;
+			}
+			else
+			{
+				for(j=7;j>=0;j--)
+				{
+					if((i+j)%2 == 1)
+					{
+						myBoard[i][j].pieceColor = getColor(i, j);
+					}
+				}
+				changer = true;
 			}
 		}
 		
