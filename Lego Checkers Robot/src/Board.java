@@ -368,8 +368,14 @@ public class Board {
 		}
 
 		ColorSensor.Color colorResult = remoteFunctions.getColorOnField(x, y);
-
-		if(colorResult.getRed() < 50 && colorResult.getGreen() < 50 && colorResult.getBlue() < 50)
+		int red = colorResult.getRed();
+		int green = colorResult.getGreen();
+		int blue = colorResult.getBlue();
+		
+		boolean testRed = (red >= 100 && red <= 160) && (green >= 10 && green <= 50) && (blue >= 5 && blue <= 60);
+		boolean testWhite = (red >= 100 && red <= 175) && (green >= 80 && green <= 200) && (blue >= 80 && blue <= 200);
+		
+		if(!testRed && !testWhite)
 		{
 			return true;
 		}
@@ -503,13 +509,17 @@ public class Board {
 		int green = colorResult.getGreen();
 		int blue = colorResult.getBlue();
 
-		if(red > 150 && green <= 100 && blue <= 100)
+		if((red >= 100 && red <= 160) && (green >= 10 && green <= 50) && (blue >= 5 && blue <= 60))
 		{
 			return 'r';
 		}
-		else
+		else if((red >= 100 && red <= 160) && (green >= 10 && green <= 50) && (blue >= 5 && blue <= 60))
 		{
 			return 'w';
+		}
+		else
+		{
+			return ' ';
 		}
 	}
 
