@@ -540,7 +540,7 @@ public class Board {
 
 
 	//panicMode
-	private void findMissingPiece() throws InterruptedException, IOException
+	public void findMissingPiece() throws InterruptedException, IOException
 	{
 		int i,j;
 
