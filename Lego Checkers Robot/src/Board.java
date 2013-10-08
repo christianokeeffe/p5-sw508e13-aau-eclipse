@@ -350,13 +350,8 @@ public class Board {
 				}
 			}
 
-			Field missingPiece = this.findMissingPiece(field.isKing);
-
-			if(missingPiece.x != 0 && missingPiece.y != 0)
-			{
-				this.movePiece(field, missingPiece.x, missingPiece.y);
-				return true;
-			}
+			this.findMissingPiece();
+			return true;
 		}
 		
 		return pieceFound;
@@ -369,16 +364,9 @@ public class Board {
 			return false;
 		}
 
-		ColorSensor.Color colorResult = remoteFunctions.getColorOnField(x, y);
-		int red = colorResult.getRed();
-		int green = colorResult.getGreen();
-		int blue = colorResult.getBlue();
+		char color = getColor(x, y);
 		
-		//Limits for red and white color
-		boolean testRed = (red >= 100 && red <= 230) && (green >= 10 && green <= 85) && (blue >= 5 && blue <= 85);
-		boolean testWhite = (red >= 100 && red <= 240) && (green >= 90 && green <= 240) && (blue >= 90 && blue <= 240);
-		
-		if(!testRed && !testWhite)
+		if(color == ' ')
 		{
 			return true;
 		}
@@ -506,20 +494,7 @@ public class Board {
 
 	private char findMyColor() throws InterruptedException, IOException
 	{
-		ColorSensor.Color colorResult = remoteFunctions.getColorOnField(0, 1);
-
-		int red = colorResult.getRed();
-		int green = colorResult.getGreen();
-		int blue = colorResult.getBlue();
-
-		if((red >= 100 && red <= 230) && (green >= 10 && green <= 85) && (blue >= 5 && blue <= 85))
-		{
-			return 'r';
-		}
-		else
-		{
-			return 'w';
-		}
+		return getColor(0,1);
 	}
 
 	private char findOpponentColor()
@@ -537,55 +512,49 @@ public class Board {
 			return ' ';
 		}
 	}
-
-
-	//panicMode
-	private Field findMissingPiece(boolean wasKing) throws InterruptedException, IOException
+	
+	private char getColor(int x, int y) throws IOException
 	{
-		int i,j;
+		ColorSensor.Color colorResult = remoteFunctions.getColorOnField(0, 1);
 
-		for(i=0;i<8;i++)
-		{	
-			for(j=0;j<8;j++)
-			{
-				if((i+j)%2 == 0)
-				{
-					if(myBoard[i][j].pieceColor != 'r' && myBoard[i][j].pieceColor != 'w')
-					{
-						if(!isEmptyField(i, j))
-						{
-							myBoard[i][j].pieceColor = opponentColor;
-							myBoard[i][j].isKing = wasKing;
-							this.findDeadPieces();
-							return myBoard[i][j];
-						}
-					}
-				}
-			}
+		int red = colorResult.getRed();
+		int green = colorResult.getGreen();
+		int blue = colorResult.getBlue();
+		
+		boolean testRed = (red >= 100 && red <= 230) && (green >= 10 && green <= 85) && (blue >= 5 && blue <= 85);
+		boolean testWhite = (red >= 100 && red <= 240) && (green >= 90 && green <= 240) && (blue >= 90 && blue <= 240);
+
+		if(!testRed && !testWhite)
+		{
+			return ' ';
 		}
-
-		return myBoard[0][0];
+		else if(testRed)
+		{
+			return 'r';
+		}
+		else
+		{
+			return 'w';
+		}
 	}
 
 
-	private void findDeadPieces() throws InterruptedException, IOException
+	//panicMode
+	private void findMissingPiece() throws InterruptedException, IOException
 	{
 		int i,j;
+
 		for(i=0;i<8;i++)
 		{	
 			for(j=0;j<8;j++)
 			{
 				if((i+j)%2 == 1)
 				{
-					if(myBoard[i][j].pieceColor == 'r' || myBoard[i][j].pieceColor == 'w')
-					{
-						if(isEmptyField(i, j))
-						{
-							myBoard[i][j].emptyThisField();
-						}
-					}
+					myBoard[i][j].pieceColor = getColor(i, j);
 				}
 			}
 		}
+		
+		this.updateMoveables();
 	}
 }
