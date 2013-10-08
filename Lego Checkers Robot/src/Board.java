@@ -1,8 +1,5 @@
 import java.io.IOException;
-
 import lejos.nxt.ColorSensor;
-import lejos.nxt.LCD;
-
 
 public class Board {
 
@@ -515,7 +512,7 @@ public class Board {
 	
 	private char getColor(int x, int y) throws IOException
 	{
-		ColorSensor.Color colorResult = remoteFunctions.getColorOnField(0, 1);
+		ColorSensor.Color colorResult = remoteFunctions.getColorOnField(x, y);
 
 		int red = colorResult.getRed();
 		int green = colorResult.getGreen();
