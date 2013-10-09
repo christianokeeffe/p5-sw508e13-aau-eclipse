@@ -27,22 +27,25 @@ public class SW508E13 {
 		
 		while(!Button.ESCAPE.isDown())
 		{
-			Button.ENTER.waitForPress();
-			if(changer)
-			{
-				checkTopFunc.checkersBoard.analyzeBoard();
-				changer = false;
-				checkTopFunc.getColorOnField(4, -2);
+			if (Button.ENTER.isDown()){
+				if(changer)
+				{
+					checkTopFunc.checkersBoard.analyzeBoard();
+					changer = false;
+					checkTopFunc.getColorOnField(4, -2);
+				}
+				else
+				{
+					checkTopFunc.checkersBoard.findMissingPiece();
+					changer = true;
+					checkTopFunc.getColorOnField(4, -2);
+				}
 			}
-			else
-			{
-				checkTopFunc.checkersBoard.findMissingPiece();
-				changer = true;
-				checkTopFunc.getColorOnField(4, -2);
+			else if(Button.RIGHT.isDown()){
+				checkTopFunc.checkersBoard.testRedPieces();
 			}
+			Delay.msDelay(1000);
 		}
-		
-		
 		//code for printing a piece color
 			/*
 			

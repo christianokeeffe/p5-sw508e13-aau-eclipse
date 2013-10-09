@@ -1,4 +1,5 @@
 import java.io.IOException;
+
 import lejos.nxt.ColorSensor;
 
 public class Board {
@@ -52,6 +53,20 @@ public class Board {
 					temp.allowedField = false;
 				}
 				myBoard[x][y] = temp;
+			}
+		}
+	}
+	
+	//Only a method for testing - delete before release
+	public void testRedPieces() throws InterruptedException, IOException{
+		for(Field[] f : myBoard)
+		{
+			for(Field field : f)
+			{
+				if(field.pieceColor == 'r')
+				{
+					this.isEmptyField(field.x, field.y);
+				}
 			}
 		}
 	}
