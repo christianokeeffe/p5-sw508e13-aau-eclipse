@@ -3,8 +3,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lejos.nxt.Button;
+import lejos.nxt.ButtonListener;
 import lejos.nxt.ColorSensor;
 import lejos.nxt.LCD;
+import lejos.nxt.TouchSensor;
 import lejos.util.Delay;
 
 
@@ -20,11 +22,26 @@ public class SW508E13 {
 		checkTopFunc.takePiece(new Field(3,2), FlytteListe);*/
 		
 		//Delay.msDelay(10000);
-		checkTopFunc.checkersBoard.analyzeBoard();
-		LCD.drawString("Donedonedone", 0, 0);
-		LCD.refresh();
-		checkTopFunc.getColorOnField(3, 0);
-		Button.ENTER.waitForPress();
+		
+		boolean changer = true;
+		
+		while(!Button.ESCAPE.isDown())
+		{
+			Button.ENTER.waitForPress();
+			if(changer)
+			{
+				checkTopFunc.checkersBoard.analyzeBoard();
+				changer = false;
+				checkTopFunc.getColorOnField(4, -2);
+			}
+			else
+			{
+				checkTopFunc.checkersBoard.findMissingPiece();
+				changer = true;
+				checkTopFunc.getColorOnField(4, -2);
+			}
+		}
+		
 		
 		//code for printing a piece color
 			/*
