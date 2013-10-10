@@ -1,35 +1,33 @@
 
 public class Field {
-	public char pieceColor = ' ';
 	public boolean allowedField;
-	public boolean moveable = false;
-	public boolean isKing = false;
 	public boolean visited = false;
 	public int x;
 	public int y;
 	
+	private Piece pieceOnField;
 	public Field(){};
 	public Field(int inputx, int inputy){
 		x = inputx;
 		y = inputy;
 	}
 	
+	public void setPieceOnField(Piece inputPiece)
+	{
+		pieceOnField = inputPiece;
+		if(pieceOnField != null)
+		{
+			pieceOnField.x = x;
+			pieceOnField.y = y;
+		}
+	}
+	public Piece getPieceOnField(){
+		return pieceOnField;
+	}
+	
 	public void emptyThisField()
 	{
-		this.isKing = false;
-		this.moveable = false;
-		this.pieceColor = ' ';
+		pieceOnField = null;
 	}
 	
-	public void adoptPropterties(Field oldField)
-	{
-		this.moveable = oldField.moveable;
-		this.isKing = oldField.isKing;
-		this.pieceColor = oldField.pieceColor;
-	}
-	
-	public void upgradeKing()
-	{
-		this.isKing = true;
-	}
 }
