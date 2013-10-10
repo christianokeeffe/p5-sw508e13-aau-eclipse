@@ -27,4 +27,9 @@ public class Field {
 		this.isKing = oldField.isKing;
 		this.pieceColor = oldField.pieceColor;
 	}
+	
+	public void upgradeKing()
+	{
+		this.isKing = true;
+	}
 }

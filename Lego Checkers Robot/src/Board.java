@@ -1,19 +1,19 @@
 import java.io.IOException;
 
-import lejos.nxt.ColorSensor;
+import lejos.robotics.Color;
 
 public class Board {
 
 	Field[][] myBoard = new Field[8][8];
 
-	char myColor, opponentColor;
+	char myPeasentColor, myKingColor, opponentPeasentColor, opponentKingColor;
 	RemoteNXTFunctions remoteFunctions;
 	
 	public Board(RemoteNXTFunctions remoteFunc) throws InterruptedException, IOException
 	{
 		remoteFunctions = remoteFunc;
-		myColor = findMyColor();
-		opponentColor = findOpponentColor();
+		findMyColors();
+		findOpponentColors();
 
 		int x,y;
 
@@ -31,7 +31,7 @@ public class Board {
 
 					if(y < 3)
 					{
-						temp.pieceColor = myColor;
+						temp.pieceColor = myPeasentColor;
 
 						if(y == 2)
 						{
@@ -41,7 +41,7 @@ public class Board {
 
 					if(y > 4)
 					{
-						temp.pieceColor = opponentColor;
+						temp.pieceColor = opponentPeasentColor;
 						if(y==5)
 						{
 							temp.moveable = true;
@@ -63,7 +63,7 @@ public class Board {
 		{
 			for(Field field : f)
 			{
-				if(field.pieceColor == 'r')
+				if(field.pieceColor == 'r' || field.pieceColor == 'b')
 				{
 					this.isEmptyField(field.x, field.y);
 				}
@@ -88,7 +88,7 @@ public class Board {
 		{
 			for (Field field : f) 
 			{
-				if(field.moveable && field.pieceColor != myColor)
+				if(field.moveable && field.pieceColor != myPeasentColor && field.pieceColor != myKingColor)
 				{
 					if(this.isEmptyField(field.x, field.y))
 					{
@@ -124,11 +124,6 @@ public class Board {
 		movePiece(FromField, ToField.x, ToField.y);
 	}
 
-	private void upgradeKing(Field field)
-	{
-		myBoard[field.x][field.y].isKing = true;
-	}
-
 	private boolean checkJumps(Field field, boolean isKing) throws InterruptedException, IOException
 	{
 		boolean foundPiece = false;
@@ -137,7 +132,7 @@ public class Board {
 		{
 			if(field.x-1 > 0 && field.x-1 < 7 && field.y-1 > 0 && field.y-1 < 7)
 			{
-				if(myBoard[field.x-1][field.y-1].pieceColor == myColor)
+				if(myBoard[field.x-1][field.y-1].pieceColor == myPeasentColor || myBoard[field.x-1][field.y-1].pieceColor == myKingColor)
 				{
 					if(!this.containsPiece(field.x-2, field.y-2) && !myBoard[field.x-2][field.y-2].visited)
 					{
@@ -165,7 +160,7 @@ public class Board {
 		{
 			if(field.x+1 > 0 && field.x+1 < 7 && field.y-1 > 0 && field.y-1 < 7)
 			{
-				if(myBoard[field.x+1][field.y-1].pieceColor == myColor)
+				if(myBoard[field.x+1][field.y-1].pieceColor == myPeasentColor || myBoard[field.x+1][field.y-1].pieceColor == myKingColor)
 				{
 					if(!this.containsPiece(field.x+2, field.y-2) && !myBoard[field.x+2][field.y-2].visited)
 					{
@@ -193,7 +188,7 @@ public class Board {
 		{
 			if(field.x+1 > 0 && field.x+1 < 7 && field.y+1 > 0 && field.y+1 < 7)
 			{
-				if(myBoard[field.x+1][field.y+1].pieceColor == myColor)
+				if(myBoard[field.x+1][field.y+1].pieceColor == myPeasentColor || myBoard[field.x+1][field.y+1].pieceColor == myKingColor)
 				{
 					if(!this.containsPiece(field.x+2, field.y+2) && !myBoard[field.x+2][field.y+2].visited)
 					{
@@ -221,7 +216,7 @@ public class Board {
 		{
 			if(field.x-1 > 0 && field.x-1 < 7 && field.y+1 > 0 && field.y+1 < 7)
 			{
-				if(myBoard[field.x-1][field.y+1].pieceColor == myColor)
+				if(myBoard[field.x-1][field.y+1].pieceColor == myPeasentColor || myBoard[field.x-1][field.y+1].pieceColor == myKingColor)
 				{
 					if(!this.containsPiece(field.x-2, field.y+2) && !myBoard[field.x-2][field.y+2].visited)
 					{
@@ -306,7 +301,7 @@ public class Board {
 					}
 				}
 				else {
-					upgradeKing(field);
+					myBoard[field.x][field.y].upgradeKing();
 					return true;
 				}
 			}
@@ -357,7 +352,7 @@ public class Board {
 				}
 				else
 				{
-					upgradeKing(field);
+					myBoard[field.x][field.y].upgradeKing();
 					return true;
 				}
 			}
@@ -419,7 +414,7 @@ public class Board {
 					moveable = false;
 					//Check moveables for robot
 
-					if(field.pieceColor == myColor)
+					if(field.pieceColor == myPeasentColor || field.pieceColor == myKingColor)
 					{
 						//Check simple move for peasant
 						if(((field.x - 1 >= 0 && field.x - 1 <= 7 && field.y+1 >= 0 && field.y+1 <= 7) && !this.containsPiece(field.x-1, field.y+1)) || ((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y+1 >= 0 && field.y+1 <= 7) && !this.containsPiece(field.x+1, field.y+1)))
@@ -428,11 +423,11 @@ public class Board {
 						}
 
 						//Check whether a peasant jump is possible
-						if((field.x - 1 >= 0 && field.x -1 <= 7 && field.y+1 >= 0 && field.y+1 <= 7) && myBoard[field.x-1][field.y+1].pieceColor == opponentColor && !this.containsPiece(field.x-2, field.y+2))
+						if((field.x - 1 >= 0 && field.x -1 <= 7 && field.y+1 >= 0 && field.y+1 <= 7) && (myBoard[field.x-1][field.y+1].pieceColor == opponentPeasentColor || myBoard[field.x-1][field.y+1].pieceColor == opponentKingColor) && !this.containsPiece(field.x-2, field.y+2))
 						{
 							moveable = true;
 						}
-						else if((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y+1 >= 0 && field.y+1 <= 7) && myBoard[field.x+1][field.y+1].pieceColor == opponentColor && !this.containsPiece(field.x+2, field.y+2))
+						else if((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y+1 >= 0 && field.y+1 <= 7) && (myBoard[field.x+1][field.y+1].pieceColor == opponentPeasentColor || myBoard[field.x+1][field.y+1].pieceColor == opponentKingColor) && !this.containsPiece(field.x+2, field.y+2))
 						{
 							moveable = true;
 						}
@@ -447,11 +442,11 @@ public class Board {
 							}
 
 							//Check whether a king jump is possible
-							if((field.x - 1 >= 0 && field.x -1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && myBoard[field.x-1][field.y-1].pieceColor == opponentColor && !this.containsPiece(field.x-2, field.y-2))
+							if((field.x - 1 >= 0 && field.x -1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && (myBoard[field.x-1][field.y-1].pieceColor == opponentPeasentColor || myBoard[field.x-1][field.y-1].pieceColor == opponentKingColor) && !this.containsPiece(field.x-2, field.y-2))
 							{
 								moveable = true;
 							}
-							else if((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && myBoard[field.x+1][field.y-1].pieceColor == opponentColor && !this.containsPiece(field.x+2, field.y-2))
+							else if((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && (myBoard[field.x+1][field.y-1].pieceColor == opponentPeasentColor || myBoard[field.x+1][field.y-1].pieceColor == opponentKingColor) && !this.containsPiece(field.x+2, field.y-2))
 							{
 								moveable = true;
 							}
@@ -459,7 +454,7 @@ public class Board {
 					}
 
 					//Check moveable for human
-					else if(field.pieceColor == opponentColor)
+					else if(field.pieceColor == opponentPeasentColor || field.pieceColor == opponentKingColor)
 					{
 						//Check simple move for peasant
 						if(((field.x - 1 >= 0 && field.x - 1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && !this.containsPiece(field.x-1, field.y-1)) || ((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && !this.containsPiece(field.x+1, field.y-1)))
@@ -468,11 +463,11 @@ public class Board {
 						}
 
 						//Check whether a peasant jump is possible
-						if((field.x - 1 >= 0 && field.x -1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && myBoard[field.x-1][field.y-1].pieceColor == myColor && !this.containsPiece(field.x-2, field.y-2))
+						if((field.x - 1 >= 0 && field.x -1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && (myBoard[field.x-1][field.y-1].pieceColor == myPeasentColor || myBoard[field.x-1][field.y-1].pieceColor == myKingColor) && !this.containsPiece(field.x-2, field.y-2))
 						{
 							moveable = true;
 						}
-						else if((field.x + 1 >= 0 && field.x +1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && myBoard[field.x+1][field.y-1].pieceColor == myColor && !this.containsPiece(field.x+2, field.y-2))
+						else if((field.x + 1 >= 0 && field.x +1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && (myBoard[field.x+1][field.y-1].pieceColor == myPeasentColor || myBoard[field.x+1][field.y-1].pieceColor == myKingColor) && !this.containsPiece(field.x+2, field.y-2))
 						{
 							moveable = true;
 						}
@@ -487,11 +482,11 @@ public class Board {
 							}
 
 							//Check whether a king jump is possible
-							if((field.x - 1 >= 0 && field.x -1 <= 7 && field.y+1 >= 0 && field.y+1 <= 7) && myBoard[field.x-1][field.y+1].pieceColor == myColor && !this.containsPiece(field.x-2, field.y+2))
+							if((field.x - 1 >= 0 && field.x -1 <= 7 && field.y+1 >= 0 && field.y+1 <= 7) && (myBoard[field.x-1][field.y+1].pieceColor == myPeasentColor || myBoard[field.x-1][field.y+1].pieceColor == myKingColor) && !this.containsPiece(field.x-2, field.y+2))
 							{
 								moveable = true;
 							}
-							else if((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && myBoard[field.x+1][field.y+1].pieceColor == myColor && !this.containsPiece(field.x+2, field.y+2))
+							else if((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && (myBoard[field.x+1][field.y+1].pieceColor == myPeasentColor || myBoard[field.x+1][field.y+1].pieceColor == myKingColor) && !this.containsPiece(field.x+2, field.y+2))
 							{
 								moveable = true;
 							}
@@ -504,49 +499,60 @@ public class Board {
 		}
 	}
 
-	private char findMyColor() throws InterruptedException, IOException
+	private void findMyColors() throws InterruptedException, IOException
 	{
-		return getColor(0,1);
+		myPeasentColor = getColor(0,1);
+		if(myPeasentColor == 'r')
+		{
+			myKingColor = 'b';
+		}
+		else
+		{
+			myKingColor = 'g';
+		}
 	}
 
-	private char findOpponentColor()
+	private void findOpponentColors()
 	{
-		if(myColor == 'r')
+		if(myPeasentColor == 'r')
 		{
-			return 'w';
+			opponentPeasentColor = 'w';
+			opponentKingColor = 'g';
 		}
-		else if(myColor == 'w')
+		else
 		{
-			return 'r';
-		}
-		else 
-		{
-			return ' ';
+			opponentPeasentColor = 'r';
+			opponentKingColor = 'b';
 		}
 	}
 	
 	private char getColor(int x, int y) throws IOException
 	{
-		ColorSensor.Color colorResult = remoteFunctions.getColorOnField(x, y);
+		Color colorResult = remoteFunctions.getColorOnField(x, y);
 
 		int red = colorResult.getRed();
 		int green = colorResult.getGreen();
 		int blue = colorResult.getBlue();
 		
-		boolean testRed = (red >= 100 && red <= 230) && (green >= 10 && green <= 85) && (blue >= 5 && blue <= 85);
-		boolean testWhite = (red >= 100 && red <= 240) && (green >= 90 && green <= 240) && (blue >= 90 && blue <= 240);
-
-		if(!testRed && !testWhite)
-		{
-			return ' ';
-		}
-		else if(testRed)
+		if(red > 5 && green < 5 && blue < 5)
 		{
 			return 'r';
 		}
-		else
+		else if(red > 0 && green > 0 && blue > 0)
 		{
 			return 'w';
+		}
+		else if(green > 0 && red < 5 && blue < 5)
+		{
+			return 'g';
+		}
+		else if(blue > 0 && red < 5 && green < 5)
+		{
+			return 'b';
+		}
+		else
+		{
+			return ' ';
 		}
 	}
 

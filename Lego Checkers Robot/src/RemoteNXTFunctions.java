@@ -2,18 +2,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import lejos.nxt.ColorSensor;
+import lejos.nxt.addon.ColorHTSensor;
 import lejos.nxt.LCD;
-import lejos.nxt.Motor;
 import lejos.nxt.MotorPort;
 import lejos.nxt.NXTMotor;
 import lejos.nxt.NXTRegulatedMotor;
 import lejos.nxt.SensorPort;
-import lejos.nxt.TachoMotorPort;
 import lejos.nxt.TouchSensor;
 import lejos.nxt.comm.Bluetooth;
-import lejos.nxt.remote.RemoteMotor;
 import lejos.nxt.remote.RemoteNXT;
+import lejos.robotics.Color;
 import lejos.util.Delay;
 
 
@@ -28,7 +26,7 @@ public class RemoteNXTFunctions {
     private TouchSensor touchSensorX;
     private TouchSensor touchSensorZ;
     private TouchSensor touchSensorY;
-    private ColorSensor boardColorSensor;
+    private ColorHTSensor boardColorSensor;
     Board checkersBoard;
     NXTMotor electromagnet;
     private NXTRegulatedMotor motorZ;
@@ -52,17 +50,29 @@ public class RemoteNXTFunctions {
 	    touchSensorX = new TouchSensor(bottomNXT.S1);
 	    touchSensorZ = new TouchSensor(SensorPort.S2);
 	    touchSensorY = new TouchSensor(bottomNXT.S2);
-	    boardColorSensor = new ColorSensor(SensorPort.S1);
+	    boardColorSensor = new ColorHTSensor(SensorPort.S1);
 	    electromagnet = new NXTMotor(MotorPort.C);
 	    resetMotors();
+	    initColorSensor();
 	    checkersBoard = new Board(this);
 	    trashField.y = -4;
 		trashField.x = 3;
 	}
 	
-	public ColorSensor.Color getColorOnField (int x, int y) throws IOException{
+	private void initColorSensor() throws IOException
+	{
+		getColorOnField(0, 3);
+		Delay.msDelay(250);
+		boardColorSensor.initWhiteBalance();
+		Delay.msDelay(250);
+		getColorOnField(0, 4);
+		Delay.msDelay(250);
+		boardColorSensor.initBlackLevel();
+		Delay.msDelay(250);
+	}
+	
+	public Color getColorOnField (int x, int y) throws IOException{
 		moveSensorTo(x, y, false);
-		
 		return boardColorSensor.getColor();
 	}
 	
