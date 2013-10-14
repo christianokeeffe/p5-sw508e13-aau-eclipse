@@ -254,7 +254,7 @@ public class Board {
 
 		if(!pieceFound)
 		{
-			if((field.x > 0 && field.x < 7) && (field.y > 0 && field.y <= 7))
+			if(checkBounds(field.x,field.y))
 			{
 				if(!containsPiece(field.x-1,field.y-1) && !this.isEmptyField(field.x-1, field.y-1))
 				{
