@@ -1,7 +1,9 @@
 import java.io.IOException;
 
+import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.robotics.Color;
+import lejos.util.Delay;
 
 public class Board {
 
@@ -109,12 +111,10 @@ public class Board {
 
 	private void movePiece(Field fromField, int toField_x, int toField_y) throws InterruptedException, IOException
 	{
-		if((toField_x >= 0 && toField_x <= 7) && (toField_y >= 0 && toField_y <= 7))
+		if(checkBounds(toField_x,toField_y))
 		{	
 			myBoard[toField_x][toField_y].setPieceOnField(fromField.getPieceOnField());
 			fromField.emptyThisField();
-
-			this.updateMoveables();
 		}
 		else
 		{
@@ -370,6 +370,45 @@ public class Board {
 
 	private boolean isEmptyField(int x, int y) throws InterruptedException, IOException
 	{	
+		boolean jump = myBoard[x][y].getPieceOnField().canJump;
+		boolean move = myBoard[x][y].getPieceOnField().isMoveable;
+		boolean crown = myBoard[x][y].getPieceOnField().isCrowned;
+		int xCoordinate = myBoard[x][y].getPieceOnField().x;
+		int yCoordinate = myBoard[x][y].getPieceOnField().y;
+		boolean visited = myBoard[x][y].visited;
+		boolean allowed = myBoard[x][y].allowedField;
+		
+		LCD.clear();
+		if (jump)
+			LCD.drawString("jump true", 0, 0);
+		else
+			LCD.drawString("jump false", 0, 0);
+		if(move)
+			LCD.drawString("move true", 0, 1);
+		else
+			LCD.drawString("move false", 0, 1);
+		if(crown)
+			LCD.drawString("crown true", 0, 2);
+		else
+			LCD.drawString("crown false", 0, 2);
+		if(visited)
+			LCD.drawString("visited true", 0, 3);
+		else
+			LCD.drawString("visited false", 0, 3);
+		if(allowed)
+			LCD.drawString("allowed true", 0, 4);
+		else
+			LCD.drawString("allowed false", 0, 4);
+		
+		LCD.drawInt(xCoordinate, 0, 5);
+		LCD.drawInt(yCoordinate, 2, 5);
+		
+		LCD.refresh();
+		while(!Button.ENTER.isDown())
+		{
+			
+		}
+		
 		if(x > 7 || x < 0 || y > 7 || y < 0)
 		{
 			return false;
@@ -385,6 +424,7 @@ public class Board {
 		{
 			return false;
 		}
+		
 	}
 
 	private boolean containsPiece(int x, int y)
@@ -402,6 +442,7 @@ public class Board {
 	private void updateMoveables()
 	{
 		boolean moveable;
+		boolean canJump;
 		for(Field[] f : myBoard)
 		{
 			for(Field field : f)
@@ -409,43 +450,48 @@ public class Board {
 				if(field.allowedField)
 				{
 					moveable = false;
+					canJump = false;
 					//Check moveables for robot
 					if(field.getPieceOnField() != null){
 						if(checkAllegiance(field,false))
 						{
 							//Check simple move for peasant
-							if(((field.x - 1 >= 0 && field.x - 1 <= 7 && field.y+1 >= 0 && field.y+1 <= 7) && !this.containsPiece(field.x-1, field.y+1)) || ((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y+1 >= 0 && field.y+1 <= 7) && !this.containsPiece(field.x+1, field.y+1)))
+							if((checkBounds(field.x-1,field.y+1) && !this.containsPiece(field.x-1, field.y+1)) || (checkBounds(field.x+1,field.y+1) && !this.containsPiece(field.x+1, field.y+1)))
 							{
 								moveable = true;
 							}
 	
 							//Check whether a peasant jump is possible
-							if((field.x - 1 >= 0 && field.x -1 <= 7 && field.y+1 >= 0 && field.y+1 <= 7) && checkAllegiance(myBoard[field.x-1][field.y+1], true) && !this.containsPiece(field.x-2, field.y+2))
+							if(checkBounds(field.x-1,field.y+1) && checkAllegiance(myBoard[field.x-1][field.y+1], true) && !this.containsPiece(field.x-2, field.y+2))
 							{
 								moveable = true;
+								canJump = true;
 							}
-							else if((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y+1 >= 0 && field.y+1 <= 7) && checkAllegiance(myBoard[field.x+1][field.y+1], true) && !this.containsPiece(field.x+2, field.y+2))
+							else if(checkBounds(field.x+1,field.y+1) && checkAllegiance(myBoard[field.x+1][field.y+1], true) && !this.containsPiece(field.x+2, field.y+2))
 							{
 								moveable = true;
+								canJump = true;
 							}
 	
 							//Check for king
 							if(field.getPieceOnField().isCrowned)
 							{
 								//Check simple move for king
-								if((field.x - 1 >= 0 && field.x - 1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && !this.containsPiece(field.x - 1, field.y - 1) || ((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && !this.containsPiece(field.x + 1, field.y - 1)))
+								if(checkBounds(field.x-1,field.y-1) && !this.containsPiece(field.x - 1, field.y - 1) || (checkBounds(field.x+1,field.y-1) && !this.containsPiece(field.x + 1, field.y - 1)))
 								{
 									moveable = true;
 								}
 	
 								//Check whether a king jump is possible
-								if((field.x - 1 >= 0 && field.x -1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && checkAllegiance(myBoard[field.x-1][field.y-1], true) && !this.containsPiece(field.x-2, field.y-2))
+								if(checkBounds(field.x-1,field.y-1) && checkAllegiance(myBoard[field.x-1][field.y-1], true) && !this.containsPiece(field.x-2, field.y-2))
 								{
 									moveable = true;
+									canJump = true;
 								}
-								else if((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && checkAllegiance(myBoard[field.x+1][field.y-1], true) && !this.containsPiece(field.x+2, field.y-2))
+								else if(checkBounds(field.x+1,field.y-1) && checkAllegiance(myBoard[field.x+1][field.y-1], true) && !this.containsPiece(field.x+2, field.y-2))
 								{
 									moveable = true;
+									canJump = true;
 								}
 							}
 						}
@@ -455,19 +501,21 @@ public class Board {
 						else if(checkAllegiance(field, true))
 						{
 							//Check simple move for peasant
-							if(((field.x - 1 >= 0 && field.x - 1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && !this.containsPiece(field.x-1, field.y-1)) || ((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && !this.containsPiece(field.x+1, field.y-1)))
+							if((checkBounds(field.x-1,field.y-1) && !this.containsPiece(field.x-1, field.y-1)) || (checkBounds(field.x+1,field.y-1) && !this.containsPiece(field.x+1, field.y-1)))
 							{
 								moveable = true;
 							}
 	
 							//Check whether a peasant jump is possible
-							if((field.x - 1 >= 0 && field.x -1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && checkAllegiance(myBoard[field.x-1][field.y-1], false) && !this.containsPiece(field.x-2, field.y-2))
+							if(checkBounds(field.x-1,field.y-1) && checkAllegiance(myBoard[field.x-1][field.y-1], false) && !this.containsPiece(field.x-2, field.y-2))
 							{
 								moveable = true;
+								canJump = true;
 							}
-							else if((field.x + 1 >= 0 && field.x +1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && checkAllegiance(myBoard[field.x+1][field.y-1], false) && !this.containsPiece(field.x+2, field.y-2))
+							else if(checkBounds(field.x+1,field.y-1) && checkAllegiance(myBoard[field.x+1][field.y-1], false) && !this.containsPiece(field.x+2, field.y-2))
 							{
 								moveable = true;
+								canJump = true;
 							}
 	
 							//Check for king
@@ -480,17 +528,20 @@ public class Board {
 								}
 	
 								//Check whether a king jump is possible
-								if((field.x - 1 >= 0 && field.x -1 <= 7 && field.y+1 >= 0 && field.y+1 <= 7) && checkAllegiance(myBoard[field.x-1][field.y+1], false) && !this.containsPiece(field.x-2, field.y+2))
+								if(checkBounds(field.x-1,field.y+1) && checkAllegiance(myBoard[field.x-1][field.y+1], false) && (checkBounds(field.x-2,field.y+2) && !this.containsPiece(field.x-2, field.y+2)))
 								{
 									moveable = true;
+									canJump = true;
 								}
-								else if((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && checkAllegiance(myBoard[field.x+1][field.y+1], false) && !this.containsPiece(field.x+2, field.y+2))
+								else if(checkBounds(field.x+1,field.y+1) && checkAllegiance(myBoard[field.x+1][field.y+1], false) && (checkBounds(field.x+2,field.y+2) && !this.containsPiece(field.x+2, field.y+2)))
 								{
 									moveable = true;
+									canJump = true;
 								}
 							}
 						}
 					myBoard[field.x][field.y].getPieceOnField().isMoveable = moveable;
+					myBoard[field.x][field.y].getPieceOnField().canJump = canJump;
 					}
 					
 				}
@@ -606,5 +657,13 @@ public class Board {
 			return true;
 		}
 		return false;
+	}
+	private boolean checkBounds(int x, int y){
+		if(x >= 0 && x <= 7 && y >= 0 && y <= 7)
+		{
+			return true;
+		}
+		else
+			return false;
 	}
 }
