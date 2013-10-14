@@ -44,9 +44,6 @@ public class SW508E13 {
 					checkTopFunc.getColorOnField(4, -2);
 				}
 			}
-			else if(Button.RIGHT.isDown()){
-				checkTopFunc.checkersBoard.testRedPieces();
-			}
 			Delay.msDelay(1000);
 		}
 		

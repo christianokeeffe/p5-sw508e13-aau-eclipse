@@ -61,21 +61,6 @@ public class Board {
 				myBoard[x][y] = temp;
 			}	
 		}
-		myBoard[3][4].setPieceOnField(myBoard[7][0].getPieceOnField());
-	}
-	
-	//Only a method for testing - delete before release
-	public void testRedPieces() throws InterruptedException, IOException{
-		for(Field[] f : myBoard)
-		{
-			for(Field field : f)
-			{
-				if(field.getPieceOnField().color == 'r' || field.getPieceOnField().color == 'b')
-				{
-					this.isEmptyField(field.x, field.y);
-				}
-			}
-		}
 	}
 
 	private void resetVisited()
@@ -100,7 +85,7 @@ public class Board {
 				if(!field.isEmpty()){
 					if(field.getPieceOnField().isMoveable && checkAllegiance(field, true))
 					{
-						if(this.isEmptyField(field.x, field.y))
+						if(this.isFieldEmptyOnBoard(field.x, field.y))
 						{
 							if(this.checkMove(field))
 							{
@@ -135,118 +120,58 @@ public class Board {
 		movePiece(FromField, ToField.x, ToField.y);
 	}
 	
-	private boolean checkJumps(Field field, boolean isKing) throws InterruptedException, IOException
-	{
-		boolean foundPiece = false;
-
-		if(checkBounds(field.x-1, field.y-1))
+	private boolean checkSingleJump(Field field, int difX, int difY, Field originalField) throws InterruptedException, IOException{
+		if(checkBounds(field.x + difX, field.y + difY))
 		{
-			if(checkAllegiance(myBoard[field.x-1][field.y-1], false))
+			if(checkAllegiance(myBoard[field.x + difX][field.y + difY], false))
 			{
-				if(!this.fieldOccupied(field.x-2, field.y-2) && !myBoard[field.x-2][field.y-2].visited)
+				if(!this.fieldOccupied(field.x+2*difX, field.y+2*difY) && !myBoard[field.x+2*difX][field.y+2*difY].visited)
 				{
-					if(this.isEmptyField(field.x-2, field.y-2))
+					if(!isFieldEmptyOnBoard(field.x+2*difX, field.y+2*difY))
 					{
-						myBoard[field.x-2][field.y-2].setPieceOnField(field.getPieceOnField());
+						myBoard[field.x+2*difX][field.y+2*difY].setPieceOnField(originalField.getPieceOnField());
 
 						//Empty jumped field and old field
 						myBoard[field.x][field.y].emptyThisField();
-						myBoard[field.x-1][field.y-1].emptyThisField();
+						myBoard[field.x+difX][field.y+difY].emptyThisField();
 
 						return true;
 					}
 					else
 					{
-						myBoard[field.x-2][field.y-2].visited = true;
-						foundPiece  = this.checkJumps(myBoard[field.x-2][field.y-2], isKing);							
+						myBoard[field.x+2*difX][field.y+2*difY].visited = true;
+						boolean returnval = checkJumps(myBoard[field.x+2*difX][field.y+2*difY], originalField);
+						if(returnval){
+							myBoard[field.x][field.y].emptyThisField();
+							myBoard[field.x+difX][field.y+difY].emptyThisField();
+						}
+						return returnval;
 					}
 				}
 			}
 		}
+		return false;
+	}
+	
+	private boolean checkJumps(Field field, Field originalField) throws InterruptedException, IOException
+	{
+		boolean foundPiece = false;
 
+		foundPiece = checkSingleJump(field, -1, -1, originalField);
 
 		if(!foundPiece)
 		{
-			if(checkBounds(field.x+1, field.y-1))
-			{
-				if(checkAllegiance(myBoard[field.x+1][field.y-1], false))
-				{
-					if(!this.fieldOccupied(field.x+2, field.y-2) && !myBoard[field.x+2][field.y-2].visited)
-					{
-						if(!this.isEmptyField(field.x+2, field.y-2))
-						{
-							myBoard[field.x+2][field.y-2].setPieceOnField(field.getPieceOnField());
-
-							//Empty jumped field and old field
-							myBoard[field.x][field.y].emptyThisField();
-							myBoard[field.x+1][field.y-1].emptyThisField();
-
-							return true;
-						}
-						else
-						{
-							myBoard[field.x+2][field.y-2].visited = true;
-							foundPiece = this.checkJumps(myBoard[field.x+2][field.y-2], isKing);
-						}
-					}
-				}
-			}
+			foundPiece = checkSingleJump(field, 1, -1, originalField);
 		}
 
-		if(!foundPiece && isKing)
+		if(!foundPiece && originalField.getPieceOnField().isCrowned)
 		{
-			if(checkBounds(field.x+1, field.y+1))
-			{
-				if(checkAllegiance(myBoard[field.x+1][field.y+1], false))
-				{
-					if(!this.fieldOccupied(field.x+2, field.y+2) && !myBoard[field.x+2][field.y+2].visited)
-					{
-						if( !this.isEmptyField(field.x+2, field.y+2))
-						{
-							myBoard[field.x+2][field.y+2].setPieceOnField(field.getPieceOnField());
-
-							//Empty jumped field and old field
-							myBoard[field.x][field.y].emptyThisField();
-							myBoard[field.x+1][field.y+1].emptyThisField();
-
-							return true;
-						}
-						else
-						{
-							myBoard[field.x+2][field.y+2].visited = true;
-							foundPiece = this.checkJumps(myBoard[field.x+2][field.y+2], isKing);
-						}
-					}
-				}
-			}
+			foundPiece = checkSingleJump(field, 1, 1, originalField);
 		}
 
-		if(!foundPiece && isKing)
+		if(!foundPiece && originalField.getPieceOnField().isCrowned)
 		{
-			if(checkBounds(field.x-1, field.y+1))
-			{
-				if(checkAllegiance(myBoard[field.x-1][field.y+1], false))
-				{
-					if(!this.fieldOccupied(field.x-2, field.y+2) && !myBoard[field.x-2][field.y+2].visited)
-					{
-						if(!this.isEmptyField(field.x-2, field.y+2))
-						{
-							myBoard[field.x-2][field.y+2].setPieceOnField(field.getPieceOnField());
-
-							//Empty jumped field and old field
-							myBoard[field.x][field.y].emptyThisField();
-							myBoard[field.x-1][field.y+1].emptyThisField();
-
-							return true;
-						}
-						else
-						{
-							myBoard[field.x-2][field.y+2].visited = true;
-							foundPiece = this.checkJumps(myBoard[field.x-2][field.y+2], isKing);
-						}
-					}
-				}
-			}
+			foundPiece = checkSingleJump(field, -1, 1, originalField);
 		}
 
 		return foundPiece;
@@ -254,19 +179,19 @@ public class Board {
 
 	private boolean checkMove(Field field) throws InterruptedException, IOException
 	{
-		boolean pieceFound = checkJumps(field, field.getPieceOnField().isCrowned);
+		boolean pieceFound = checkJumps(field, field);
 		this.resetVisited();
 
 		if(!pieceFound)
 		{
 			if(checkBounds(field.x,field.y))
 			{
-				if(!fieldOccupied(field.x-1,field.y-1) && !this.isEmptyField(field.x-1, field.y-1))
+				if(!fieldOccupied(field.x-1,field.y-1) && !this.isFieldEmptyOnBoard(field.x-1, field.y-1))
 				{
 					movePiece(field, field.x-1, field.y-1);
 					return true;
 				}
-				else if(!fieldOccupied(field.x+1,field.y-1) && !this.isEmptyField(field.x+1, field.y-1))
+				else if(!fieldOccupied(field.x+1,field.y-1) && !this.isFieldEmptyOnBoard(field.x+1, field.y-1))
 				{
 					movePiece(field, field.x+1, field.y-1);
 					return true;
@@ -274,12 +199,12 @@ public class Board {
 
 				if(field.getPieceOnField().isCrowned)
 				{
-					if(!fieldOccupied(field.x+1,field.y+1) && !this.isEmptyField(field.x+1, field.y+1))
+					if(!fieldOccupied(field.x+1,field.y+1) && !this.isFieldEmptyOnBoard(field.x+1, field.y+1))
 					{
 						movePiece(field, field.x+1, field.y+1);
 						return true;
 					}
-					else if(!fieldOccupied(field.x-1,field.y+1) && !this.isEmptyField(field.x-1, field.y+1))
+					else if(!fieldOccupied(field.x-1,field.y+1) && !this.isFieldEmptyOnBoard(field.x-1, field.y+1))
 					{
 						movePiece(field, field.x-1, field.y+1);
 						return true;
@@ -288,7 +213,7 @@ public class Board {
 			}
 			else if(field.x==0 && field.y==7)
 			{
-				if(!fieldOccupied(field.x+1,field.y-1) && !this.isEmptyField(field.x+1, field.y-1))
+				if(!fieldOccupied(field.x+1,field.y-1) && !this.isFieldEmptyOnBoard(field.x+1, field.y-1))
 				{
 					movePiece(field, field.x+1, field.y-1);
 					return true;
@@ -298,12 +223,12 @@ public class Board {
 			{
 				if(field.getPieceOnField().isCrowned)
 				{
-					if(!fieldOccupied(field.x+1,field.y+1) && !this.isEmptyField(field.x+1, field.y+1))
+					if(!fieldOccupied(field.x+1,field.y+1) && !this.isFieldEmptyOnBoard(field.x+1, field.y+1))
 					{
 						movePiece(field, field.x+1, field.y+1);
 						return true;
 					}
-					if(!fieldOccupied(field.x-1,field.y+1) && !this.isEmptyField(field.x-1, field.y+1))
+					if(!fieldOccupied(field.x-1,field.y+1) && !this.isFieldEmptyOnBoard(field.x-1, field.y+1))
 					{
 						movePiece(field, field.x-1, field.y+1);
 						return true;
@@ -316,7 +241,7 @@ public class Board {
 			}
 			else if(field.x == 0 && field.y!=0 && field.y!= 7)
 			{
-				if(!fieldOccupied(field.x+1,field.y-1) && !this.isEmptyField(field.x+1, field.y-1))
+				if(!fieldOccupied(field.x+1,field.y-1) && !this.isFieldEmptyOnBoard(field.x+1, field.y-1))
 				{
 					movePiece(field, field.x+1, field.y-1);
 					return true;
@@ -324,7 +249,7 @@ public class Board {
 
 				if(field.getPieceOnField().isCrowned)
 				{
-					if(!fieldOccupied(field.x+1,field.y+1) && !this.isEmptyField(field.x+1, field.y+1))
+					if(!fieldOccupied(field.x+1,field.y+1) && !this.isFieldEmptyOnBoard(field.x+1, field.y+1))
 					{
 						movePiece(field, field.x+1, field.y+1);
 						return true;
@@ -333,7 +258,7 @@ public class Board {
 			}
 			else if(field.x == 7 && field.y!=0 && field.y!= 7)
 			{
-				if(!fieldOccupied(field.x-1,field.y-1) && !this.isEmptyField(field.x-1, field.y-1))
+				if(!fieldOccupied(field.x-1,field.y-1) && !this.isFieldEmptyOnBoard(field.x-1, field.y-1))
 				{
 					movePiece(field, field.x-1, field.y-1);
 					return true;
@@ -341,7 +266,7 @@ public class Board {
 
 				if(field.getPieceOnField().isCrowned)
 				{
-					if(!fieldOccupied(field.x-1,field.y+1) && !this.isEmptyField(field.x-1, field.y+1))
+					if(!fieldOccupied(field.x-1,field.y+1) && !this.isFieldEmptyOnBoard(field.x-1, field.y+1))
 					{
 						movePiece(field, field.x-1, field.y+1);
 						return true;
@@ -353,7 +278,7 @@ public class Board {
 			{
 				if (field.getPieceOnField().isCrowned)
 				{
-					if(!fieldOccupied(field.x-1,field.y+1) && !this.isEmptyField(field.x-1, field.y+1))
+					if(!fieldOccupied(field.x-1,field.y+1) && !this.isFieldEmptyOnBoard(field.x-1, field.y+1))
 					{
 						movePiece(field, field.x-1, field.y+1);
 						return true;
@@ -373,7 +298,7 @@ public class Board {
 		return pieceFound;
 	}
 
-	private boolean isEmptyField(int x, int y) throws InterruptedException, IOException
+	private boolean isFieldEmptyOnBoard(int x, int y) throws InterruptedException, IOException
 	{	
 		if(x > 7 || x < 0 || y > 7 || y < 0)
 		{
@@ -546,28 +471,36 @@ public class Board {
 	{
 		Color colorResult = remoteFunctions.getColorOnField(x, y);
 
+		LCD.clear();
 		int red = colorResult.getRed();
 		int green = colorResult.getGreen();
 		int blue = colorResult.getBlue();
-		
-		if(red > 180 && red < 255 && green < 120 && green > 30 && blue < 160 && blue > 30)
+		LCD.drawInt(red, 0, 1);
+		LCD.drawInt(green, 0, 2);
+		LCD.drawInt(blue, 0, 3);
+		if(red > 175  && green < 120 && green > 30 && blue < 160 && blue > 30)
 		{
+			LCD.drawChar('r', 0, 0);LCD.refresh();Button.ENTER.waitForPress();
 			return 'r';
 		}
-		else if(red > 180 && red < 255 && green > 180 && green < 255 && blue > 180 && blue < 255)
+		else if(red > 180 && green > 160 && blue > 160)
 		{
+			LCD.drawChar('w', 0, 0);LCD.refresh();Button.ENTER.waitForPress();
 			return 'w';
 		}
-		else if(red > 150 && red < 200 && green > 170 && green < 255 && blue < 200 && blue > 150)
+		else if(red > 150 && red < 180 && green > 170  && blue < 200 && blue > 150)
 		{
+			LCD.drawChar('g', 0, 0);LCD.refresh();Button.ENTER.waitForPress();
 			return 'g';
 		}
 		else if(red < 140 && red > 90 && green < 170 && green > 120 && blue < 255 && blue > 160)
 		{
+			LCD.drawChar('b', 0, 0);LCD.refresh();Button.ENTER.waitForPress();
 			return 'b';
 		}
 		else
 		{
+			LCD.drawChar('e', 0, 0);LCD.refresh();Button.ENTER.waitForPress();
 			return ' ';
 		}
 	}
