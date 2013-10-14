@@ -5,7 +5,7 @@ public class Field {
 	public int x;
 	public int y;
 	
-	private Piece pieceOnField;
+	private Piece pieceOnField = null;
 	public Field(){};
 	public Field(int inputx, int inputy){
 		x = inputx;
