@@ -1,5 +1,6 @@
 import java.io.IOException;
 
+import lejos.nxt.LCD;
 import lejos.robotics.Color;
 
 public class Board {
@@ -28,25 +29,26 @@ public class Board {
 				if((x+y)%2 == 1)
 				{
 					temp.allowedField = true;
-
+					Piece PieceOnBoard = new Piece();
 					if(y < 3)
 					{
-						temp.pieceColor = myPeasentColor;
+						PieceOnBoard.color = myPeasentColor;
 
 						if(y == 2)
 						{
-							temp.moveable = true;
+							PieceOnBoard.isMoveable = true;
 						}
 					}
 
 					if(y > 4)
 					{
-						temp.pieceColor = opponentPeasentColor;
+						PieceOnBoard.color = opponentPeasentColor;
 						if(y==5)
 						{
-							temp.moveable = true;
+							PieceOnBoard.isMoveable = true;
 						}
 					}
+					temp.setPieceOnField(PieceOnBoard);
 				}
 				else
 				{
@@ -63,7 +65,7 @@ public class Board {
 		{
 			for(Field field : f)
 			{
-				if(field.pieceColor == 'r' || field.pieceColor == 'b')
+				if(field.getPieceOnField().color == 'r' || field.getPieceOnField().color == 'b')
 				{
 					this.isEmptyField(field.x, field.y);
 				}
@@ -88,13 +90,15 @@ public class Board {
 		{
 			for (Field field : f) 
 			{
-				if(field.moveable && field.pieceColor != myPeasentColor && field.pieceColor != myKingColor)
-				{
-					if(this.isEmptyField(field.x, field.y))
+				if(!field.isEmpty()){
+					if(field.getPieceOnField().isMoveable && field.getPieceOnField().color != myPeasentColor && field.getPieceOnField().color != myKingColor)
 					{
-						if(this.checkMove(field))
+						if(this.isEmptyField(field.x, field.y))
 						{
-							break OUTERMOST;
+							if(this.checkMove(field))
+							{
+								break OUTERMOST;
+							}
 						}
 					}
 				}
@@ -106,9 +110,9 @@ public class Board {
 	private void movePiece(Field fromField, int toField_x, int toField_y) throws InterruptedException, IOException
 	{
 		if((toField_x >= 0 && toField_x <= 7) && (toField_y >= 0 && toField_y <= 7))
-		{
-			myBoard[toField_x][toField_y].adoptPropterties(fromField);
-			myBoard[fromField.x][fromField.y].emptyThisField();
+		{	
+			myBoard[toField_x][toField_y].setPieceOnField(fromField.getPieceOnField());
+			fromField.emptyThisField();
 
 			this.updateMoveables();
 		}
@@ -132,13 +136,13 @@ public class Board {
 		{
 			if(field.x-1 > 0 && field.x-1 < 7 && field.y-1 > 0 && field.y-1 < 7)
 			{
-				if(myBoard[field.x-1][field.y-1].pieceColor == myPeasentColor || myBoard[field.x-1][field.y-1].pieceColor == myKingColor)
+				if(myBoard[field.x-1][field.y-1].getPieceOnField().color == myPeasentColor || myBoard[field.x-1][field.y-1].getPieceOnField().color == myKingColor)
 				{
 					if(!this.containsPiece(field.x-2, field.y-2) && !myBoard[field.x-2][field.y-2].visited)
 					{
 						if(!this.isEmptyField(field.x-2, field.y-2))
 						{
-							myBoard[field.x-2][field.y-2].adoptPropterties(field);
+							myBoard[field.x-2][field.y-2].setPieceOnField(field.getPieceOnField());;
 
 							//Empty jumped field and old field
 							myBoard[field.x][field.y].emptyThisField();
@@ -160,13 +164,13 @@ public class Board {
 		{
 			if(field.x+1 > 0 && field.x+1 < 7 && field.y-1 > 0 && field.y-1 < 7)
 			{
-				if(myBoard[field.x+1][field.y-1].pieceColor == myPeasentColor || myBoard[field.x+1][field.y-1].pieceColor == myKingColor)
+				if(myBoard[field.x+1][field.y-1].getPieceOnField().color == myPeasentColor || myBoard[field.x+1][field.y-1].getPieceOnField().color == myKingColor)
 				{
 					if(!this.containsPiece(field.x+2, field.y-2) && !myBoard[field.x+2][field.y-2].visited)
 					{
 						if(!this.isEmptyField(field.x+2, field.y-2))
 						{
-							myBoard[field.x+2][field.y-2].adoptPropterties(field);
+							myBoard[field.x+2][field.y-2].setPieceOnField(field.getPieceOnField());
 
 							//Empty jumped field and old field
 							myBoard[field.x][field.y].emptyThisField();
@@ -188,13 +192,13 @@ public class Board {
 		{
 			if(field.x+1 > 0 && field.x+1 < 7 && field.y+1 > 0 && field.y+1 < 7)
 			{
-				if(myBoard[field.x+1][field.y+1].pieceColor == myPeasentColor || myBoard[field.x+1][field.y+1].pieceColor == myKingColor)
+				if(myBoard[field.x+1][field.y+1].getPieceOnField().color == myPeasentColor || myBoard[field.x+1][field.y+1].getPieceOnField().color == myKingColor)
 				{
 					if(!this.containsPiece(field.x+2, field.y+2) && !myBoard[field.x+2][field.y+2].visited)
 					{
 						if( !this.isEmptyField(field.x+2, field.y+2))
 						{
-							myBoard[field.x+2][field.y+2].adoptPropterties(field);
+							myBoard[field.x+2][field.y+2].setPieceOnField(field.getPieceOnField());
 
 							//Empty jumped field and old field
 							myBoard[field.x][field.y].emptyThisField();
@@ -216,13 +220,13 @@ public class Board {
 		{
 			if(field.x-1 > 0 && field.x-1 < 7 && field.y+1 > 0 && field.y+1 < 7)
 			{
-				if(myBoard[field.x-1][field.y+1].pieceColor == myPeasentColor || myBoard[field.x-1][field.y+1].pieceColor == myKingColor)
+				if(myBoard[field.x-1][field.y+1].getPieceOnField().color == myPeasentColor || myBoard[field.x-1][field.y+1].getPieceOnField().color == myKingColor)
 				{
 					if(!this.containsPiece(field.x-2, field.y+2) && !myBoard[field.x-2][field.y+2].visited)
 					{
 						if(!this.isEmptyField(field.x-2, field.y+2))
 						{
-							myBoard[field.x-2][field.y+2].adoptPropterties(field);
+							myBoard[field.x-2][field.y+2].setPieceOnField(field.getPieceOnField());
 
 							//Empty jumped field and old field
 							myBoard[field.x][field.y].emptyThisField();
@@ -245,7 +249,7 @@ public class Board {
 
 	private boolean checkMove(Field field) throws InterruptedException, IOException
 	{
-		boolean pieceFound = this.checkJumps(field, field.isKing);
+		boolean pieceFound = this.checkJumps(field, field.getPieceOnField().isCrowned);
 		this.resetVisited();
 
 		if(!pieceFound)
@@ -263,7 +267,7 @@ public class Board {
 					return true;
 				}
 
-				if(field.isKing)
+				if(field.getPieceOnField().isCrowned)
 				{
 					if(!containsPiece(field.x+1,field.y+1) && !this.isEmptyField(field.x+1, field.y+1))
 					{
@@ -287,7 +291,7 @@ public class Board {
 			}
 			else if(field.x == 0 && field.y!=0 && field.y!= 7)
 			{
-				if(field.isKing)
+				if(field.getPieceOnField().isCrowned)
 				{
 					if(!containsPiece(field.x+1,field.y+1) && !this.isEmptyField(field.x+1, field.y+1))
 					{
@@ -301,7 +305,7 @@ public class Board {
 					}
 				}
 				else {
-					myBoard[field.x][field.y].upgradeKing();
+					myBoard[field.x][field.y].getPieceOnField().isCrowned = true;
 					return true;
 				}
 			}
@@ -313,7 +317,7 @@ public class Board {
 					return true;
 				}
 
-				if(field.isKing)
+				if(field.getPieceOnField().isCrowned)
 				{
 					if(!containsPiece(field.x+1,field.y+1) && !this.isEmptyField(field.x+1, field.y+1))
 					{
@@ -330,7 +334,7 @@ public class Board {
 					return true;
 				}
 
-				if(field.isKing)
+				if(field.getPieceOnField().isCrowned)
 				{
 					if(!containsPiece(field.x-1,field.y+1) && !this.isEmptyField(field.x-1, field.y+1))
 					{
@@ -342,7 +346,7 @@ public class Board {
 
 			else if(field.x==7 && field.y==0)
 			{
-				if (field.isKing)
+				if (field.getPieceOnField().isCrowned)
 				{
 					if(!containsPiece(field.x-1,field.y+1) && !this.isEmptyField(field.x-1, field.y+1))
 					{
@@ -352,7 +356,7 @@ public class Board {
 				}
 				else
 				{
-					myBoard[field.x][field.y].upgradeKing();
+					myBoard[field.x][field.y].getPieceOnField().isCrowned = true;
 					return true;
 				}
 			}
@@ -387,14 +391,7 @@ public class Board {
 	{
 		if(x <= 7 && y <= 7 && x >= 0 && y >= 0)
 		{
-			if(myBoard[x][y].pieceColor == ' ')
-			{
-				return false;
-			}
-			else
-			{
-				return true;
-			}
+			return myBoard[x][y].isEmpty();
 		}
 		else
 		{
@@ -413,87 +410,89 @@ public class Board {
 				{
 					moveable = false;
 					//Check moveables for robot
-
-					if(field.pieceColor == myPeasentColor || field.pieceColor == myKingColor)
-					{
-						//Check simple move for peasant
-						if(((field.x - 1 >= 0 && field.x - 1 <= 7 && field.y+1 >= 0 && field.y+1 <= 7) && !this.containsPiece(field.x-1, field.y+1)) || ((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y+1 >= 0 && field.y+1 <= 7) && !this.containsPiece(field.x+1, field.y+1)))
+					if(field.getPieceOnField() != null){
+						if(checkAllegiance(field,false))
 						{
-							moveable = true;
-						}
-
-						//Check whether a peasant jump is possible
-						if((field.x - 1 >= 0 && field.x -1 <= 7 && field.y+1 >= 0 && field.y+1 <= 7) && (myBoard[field.x-1][field.y+1].pieceColor == opponentPeasentColor || myBoard[field.x-1][field.y+1].pieceColor == opponentKingColor) && !this.containsPiece(field.x-2, field.y+2))
-						{
-							moveable = true;
-						}
-						else if((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y+1 >= 0 && field.y+1 <= 7) && (myBoard[field.x+1][field.y+1].pieceColor == opponentPeasentColor || myBoard[field.x+1][field.y+1].pieceColor == opponentKingColor) && !this.containsPiece(field.x+2, field.y+2))
-						{
-							moveable = true;
-						}
-
-						//Check for king
-						if(field.isKing)
-						{
-							//Check simple move for king
-							if(!this.containsPiece(field.x - 1, field.y - 1) || !this.containsPiece(field.x + 1, field.y - 1))
+							//Check simple move for peasant
+							if(((field.x - 1 >= 0 && field.x - 1 <= 7 && field.y+1 >= 0 && field.y+1 <= 7) && !this.containsPiece(field.x-1, field.y+1)) || ((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y+1 >= 0 && field.y+1 <= 7) && !this.containsPiece(field.x+1, field.y+1)))
 							{
 								moveable = true;
 							}
-
-							//Check whether a king jump is possible
-							if((field.x - 1 >= 0 && field.x -1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && (myBoard[field.x-1][field.y-1].pieceColor == opponentPeasentColor || myBoard[field.x-1][field.y-1].pieceColor == opponentKingColor) && !this.containsPiece(field.x-2, field.y-2))
+	
+							//Check whether a peasant jump is possible
+							if((field.x - 1 >= 0 && field.x -1 <= 7 && field.y+1 >= 0 && field.y+1 <= 7) && checkAllegiance(myBoard[field.x-1][field.y+1], true) && !this.containsPiece(field.x-2, field.y+2))
 							{
 								moveable = true;
 							}
-							else if((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && (myBoard[field.x+1][field.y-1].pieceColor == opponentPeasentColor || myBoard[field.x+1][field.y-1].pieceColor == opponentKingColor) && !this.containsPiece(field.x+2, field.y-2))
+							else if((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y+1 >= 0 && field.y+1 <= 7) && checkAllegiance(myBoard[field.x+1][field.y+1], true) && !this.containsPiece(field.x+2, field.y+2))
 							{
 								moveable = true;
+							}
+	
+							//Check for king
+							if(field.getPieceOnField().isCrowned)
+							{
+								//Check simple move for king
+								if((field.x - 1 >= 0 && field.x - 1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && !this.containsPiece(field.x - 1, field.y - 1) || ((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && !this.containsPiece(field.x + 1, field.y - 1)))
+								{
+									moveable = true;
+								}
+	
+								//Check whether a king jump is possible
+								if((field.x - 1 >= 0 && field.x -1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && checkAllegiance(myBoard[field.x-1][field.y-1], true) && !this.containsPiece(field.x-2, field.y-2))
+								{
+									moveable = true;
+								}
+								else if((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && checkAllegiance(myBoard[field.x+1][field.y-1], true) && !this.containsPiece(field.x+2, field.y-2))
+								{
+									moveable = true;
+								}
 							}
 						}
+					
+						
+						//Check moveable for human
+						else if(checkAllegiance(field, true))
+						{
+							//Check simple move for peasant
+							if(((field.x - 1 >= 0 && field.x - 1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && !this.containsPiece(field.x-1, field.y-1)) || ((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && !this.containsPiece(field.x+1, field.y-1)))
+							{
+								moveable = true;
+							}
+	
+							//Check whether a peasant jump is possible
+							if((field.x - 1 >= 0 && field.x -1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && checkAllegiance(myBoard[field.x-1][field.y-1], false) && !this.containsPiece(field.x-2, field.y-2))
+							{
+								moveable = true;
+							}
+							else if((field.x + 1 >= 0 && field.x +1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && checkAllegiance(myBoard[field.x+1][field.y-1], false) && !this.containsPiece(field.x+2, field.y-2))
+							{
+								moveable = true;
+							}
+	
+							//Check for king
+							if(field.getPieceOnField().isCrowned)
+							{
+								//Check simple move for king
+								if(!this.containsPiece(field.x - 1, field.y + 1) || !this.containsPiece(field.x + 1, field.y + 1))
+								{
+									moveable = true;
+								}
+	
+								//Check whether a king jump is possible
+								if((field.x - 1 >= 0 && field.x -1 <= 7 && field.y+1 >= 0 && field.y+1 <= 7) && checkAllegiance(myBoard[field.x-1][field.y+1], false) && !this.containsPiece(field.x-2, field.y+2))
+								{
+									moveable = true;
+								}
+								else if((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && checkAllegiance(myBoard[field.x+1][field.y+1], false) && !this.containsPiece(field.x+2, field.y+2))
+								{
+									moveable = true;
+								}
+							}
+						}
+					myBoard[field.x][field.y].getPieceOnField().isMoveable = moveable;
 					}
-
-					//Check moveable for human
-					else if(field.pieceColor == opponentPeasentColor || field.pieceColor == opponentKingColor)
-					{
-						//Check simple move for peasant
-						if(((field.x - 1 >= 0 && field.x - 1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && !this.containsPiece(field.x-1, field.y-1)) || ((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && !this.containsPiece(field.x+1, field.y-1)))
-						{
-							moveable = true;
-						}
-
-						//Check whether a peasant jump is possible
-						if((field.x - 1 >= 0 && field.x -1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && (myBoard[field.x-1][field.y-1].pieceColor == myPeasentColor || myBoard[field.x-1][field.y-1].pieceColor == myKingColor) && !this.containsPiece(field.x-2, field.y-2))
-						{
-							moveable = true;
-						}
-						else if((field.x + 1 >= 0 && field.x +1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && (myBoard[field.x+1][field.y-1].pieceColor == myPeasentColor || myBoard[field.x+1][field.y-1].pieceColor == myKingColor) && !this.containsPiece(field.x+2, field.y-2))
-						{
-							moveable = true;
-						}
-
-						//Check for king
-						if(field.isKing)
-						{
-							//Check simple move for king
-							if(!this.containsPiece(field.x - 1, field.y + 1) || !this.containsPiece(field.x + 1, field.y + 1))
-							{
-								moveable = true;
-							}
-
-							//Check whether a king jump is possible
-							if((field.x - 1 >= 0 && field.x -1 <= 7 && field.y+1 >= 0 && field.y+1 <= 7) && (myBoard[field.x-1][field.y+1].pieceColor == myPeasentColor || myBoard[field.x-1][field.y+1].pieceColor == myKingColor) && !this.containsPiece(field.x-2, field.y+2))
-							{
-								moveable = true;
-							}
-							else if((field.x + 1 >= 0 && field.x + 1 <= 7 && field.y-1 >= 0 && field.y-1 <= 7) && (myBoard[field.x+1][field.y+1].pieceColor == myPeasentColor || myBoard[field.x+1][field.y+1].pieceColor == myKingColor) && !this.containsPiece(field.x+2, field.y+2))
-							{
-								moveable = true;
-							}
-						}
-					}
-
-					myBoard[field.x][field.y].moveable = moveable;
+					
 				}
 			}
 		}
@@ -501,7 +500,7 @@ public class Board {
 
 	private void findMyColors() throws InterruptedException, IOException
 	{
-		myPeasentColor = getColor(0,1);
+		myPeasentColor = 'r';//getColor(0,1);
 		if(myPeasentColor == 'r')
 		{
 			myKingColor = 'b';
@@ -533,6 +532,12 @@ public class Board {
 		int red = colorResult.getRed();
 		int green = colorResult.getGreen();
 		int blue = colorResult.getBlue();
+		
+		LCD.clear();
+		LCD.drawInt(red, 0, 0);
+		LCD.drawInt(green, 0, 1);
+		LCD.drawInt(blue, 0, 2);
+		LCD.refresh();
 		
 		if(red > 5 && green < 5 && blue < 5)
 		{
@@ -571,7 +576,7 @@ public class Board {
 				{
 					if((i+j)%2 == 1)
 					{
-						myBoard[i][j].pieceColor = getColor(i, j);
+						myBoard[i][j].getPieceOnField().color = getColor(i, j);
 					}
 				}
 				changer = false;
@@ -582,7 +587,7 @@ public class Board {
 				{
 					if((i+j)%2 == 1)
 					{
-						myBoard[i][j].pieceColor = getColor(i, j);
+						myBoard[i][j].getPieceOnField().color = getColor(i, j);
 					}
 				}
 				changer = true;
@@ -590,5 +595,16 @@ public class Board {
 		}
 		
 		this.updateMoveables();
+	}
+	private boolean checkAllegiance(Field input, boolean checkForOpponent){
+		if((input.isPieceOfColor(myPeasentColor)||input.isPieceOfColor(myKingColor)) && !checkForOpponent){
+			
+			return true;
+		}
+		if((input.isPieceOfColor(opponentPeasentColor)||input.isPieceOfColor(opponentKingColor)) && checkForOpponent){
+			
+			return true;
+		}
+		return false;
 	}
 }

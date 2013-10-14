@@ -21,12 +21,12 @@ public class RemoteNXTFunctions {
 	private static final int xFactor = -300;
 	private static final int zFactor = 230;
 	private static final double displacementFactor = 3.2;
-    private int presentY = (int)(-yFactor*2.50);
+    private int presentY = (int)(-yFactor*2.70);
     private int presentX = 0;
     private TouchSensor touchSensorX;
     private TouchSensor touchSensorZ;
     private TouchSensor touchSensorY;
-    private ColorHTSensor boardColorSensor;
+    public ColorHTSensor boardColorSensor;
     Board checkersBoard;
     NXTMotor electromagnet;
     private NXTRegulatedMotor motorZ;
@@ -63,12 +63,13 @@ public class RemoteNXTFunctions {
 	{
 		getColorOnField(0, 3);
 		Delay.msDelay(250);
-		boardColorSensor.initWhiteBalance();
-		Delay.msDelay(250);
-		getColorOnField(0, 4);
-		Delay.msDelay(250);
 		boardColorSensor.initBlackLevel();
 		Delay.msDelay(250);
+		/*getColorOnField(0, 2);
+		Delay.msDelay(250);
+		boardColorSensor.initWhiteBalance();
+		Delay.msDelay(250);*/
+		
 	}
 	
 	public Color getColorOnField (int x, int y) throws IOException{
