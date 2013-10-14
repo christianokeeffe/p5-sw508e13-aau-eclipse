@@ -40,7 +40,7 @@ public class RemoteNXTFunctions {
 		motorZ.setSpeed(100);
 	    motorX.setSpeed(1000);
 	    motorZ.setAcceleration(3000);
-	    motorX.setAcceleration(3000); 
+	    motorX.setAcceleration(3000);
 	    
 		bottomNXT.A.setSpeed(400);/* Left yAxis motor */
 		bottomNXT.B.setSpeed(400); /* Right yAxis motor */
@@ -77,7 +77,7 @@ public class RemoteNXTFunctions {
 		return boardColorSensor.getColor();
 	}
 	
-	public void movePiece(Field FromField, Field ToField, boolean inside) throws IOException, InterruptedException
+	public void movePiece(Field FromField, Field ToField) throws IOException, InterruptedException
 	{
 		moveSensorTo(FromField.x,FromField.y,true);
 		motorZ.rotate(zFactor);
@@ -88,9 +88,7 @@ public class RemoteNXTFunctions {
 		electromagnet.setPower(0);
 		Delay.msDelay(500);
 		resetMotorZ();
-		if(inside = true){
-			checkersBoard.movePiece(FromField, ToField);
-		}
+		checkersBoard.movePiece(FromField, ToField);
 	}
 	
 	public void takePiece(Field fromField, List<Field> midwayFields) throws IOException, InterruptedException
@@ -109,12 +107,12 @@ public class RemoteNXTFunctions {
 		}
 		
 		for(int i = 0; i < takenPieces.size(); i++){
-			movePiece(takenPieces.get(i), trashField, true);
+			movePiece(takenPieces.get(i), trashField);
 		}
 	}
 	
 	private Field movePieceOverField(Field fromField, Field toField) throws IOException, InterruptedException{
-		movePiece(fromField, toField, true);
+		movePiece(fromField, toField);
 		
 		if(Math.abs(fromField.x - toField.x) == 2){
 			Field returnField = new Field();
