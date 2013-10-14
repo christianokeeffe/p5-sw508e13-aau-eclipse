@@ -2,7 +2,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import lejos.nxt.addon.ColorHTSensor;
+import lejos.nxt.ColorSensor;
 import lejos.nxt.LCD;
 import lejos.nxt.MotorPort;
 import lejos.nxt.NXTMotor;
@@ -26,7 +26,7 @@ public class RemoteNXTFunctions {
     private TouchSensor touchSensorX;
     private TouchSensor touchSensorZ;
     private TouchSensor touchSensorY;
-    public ColorHTSensor boardColorSensor;
+    public ColorSensor boardColorSensor;
     Board checkersBoard;
     NXTMotor electromagnet;
     private NXTRegulatedMotor motorZ;
@@ -50,7 +50,7 @@ public class RemoteNXTFunctions {
 	    touchSensorX = new TouchSensor(bottomNXT.S1);
 	    touchSensorZ = new TouchSensor(SensorPort.S2);
 	    touchSensorY = new TouchSensor(bottomNXT.S2);
-	    boardColorSensor = new ColorHTSensor(SensorPort.S1);
+	    boardColorSensor = new ColorSensor(SensorPort.S1);
 	    electromagnet = new NXTMotor(MotorPort.C);
 	    resetMotors();
 	    initColorSensor();
@@ -63,12 +63,12 @@ public class RemoteNXTFunctions {
 	{
 		getColorOnField(0, 3);
 		Delay.msDelay(250);
-		boardColorSensor.initBlackLevel();
+		boardColorSensor.calibrateLow();;
 		Delay.msDelay(250);
-		/*getColorOnField(0, 2);
+		getColorOnField(0, 2);
 		Delay.msDelay(250);
-		boardColorSensor.initWhiteBalance();
-		Delay.msDelay(250);*/
+		boardColorSensor.calibrateHigh();;
+		Delay.msDelay(250);
 		
 	}
 	

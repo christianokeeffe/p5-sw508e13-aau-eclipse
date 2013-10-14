@@ -1,10 +1,6 @@
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import lejos.nxt.Button;
-import lejos.nxt.LCD;
-import lejos.robotics.Color;
 import lejos.util.Delay;
 
 
@@ -57,6 +53,7 @@ public class SW508E13 {
 		//code for printing a piece color
 		/*while(!Button.ESCAPE.isDown())
 		{
+			checkTopFunc.getColorOnField(3, 4);
 			Color colorResult = checkTopFunc.boardColorSensor.getColor();
 			int red = colorResult.getRed();
 			int green = colorResult.getGreen();
@@ -66,22 +63,23 @@ public class SW508E13 {
 			LCD.drawString("green: " + green, 0, 1);
 			LCD.drawString("blue: " + blue, 0, 2);
 			LCD.refresh();
-			if(red > 5 && green < 5 && blue < 5)
-			{
-				LCD.drawString("red",0,3);
-				LCD.refresh();
-			}
-			else if(red > 0 && green > 0 && blue > 0)
+			
+			if(red > 180 && red < 255 && green > 180 && green < 255 && blue > 180 && blue < 255)
 			{
 				LCD.drawString("white",0,3);
 				LCD.refresh();
 			}
-			else if(green > 0 && red < 5 && blue < 5)
+			else if(red > 180 && red < 255 && green < 120 && green > 30 && blue < 160 && blue > 30)
+			{
+				LCD.drawString("red",0,3);
+				LCD.refresh();
+			}
+			else if(red > 150 && red < 200 && green > 170 && green < 255 && blue < 200 && blue > 150)
 			{
 				LCD.drawString("green",0,3);
 				LCD.refresh();
 			}
-			else if(blue > 0 && red < 5 && green < 5)
+			else if(red < 140 && red > 90 && green < 170 && green > 120 && blue < 255 && blue > 160)
 			{
 				LCD.drawString("blue",0,3);
 				LCD.refresh();
@@ -93,7 +91,7 @@ public class SW508E13 {
 			}
 			//Button.ENTER.waitForPress();
 			Delay.msDelay(500);
-		}
+		}*/
 		/*ColorSensor.Color Test = checkTopFunc.GetColorOnField(7, 7);
 		LCD.drawString("R" + Test.getRed() + "G" + Test.getGreen() + "B" + Test.getBlue(), 0, 0);
 		LCD.refresh();
