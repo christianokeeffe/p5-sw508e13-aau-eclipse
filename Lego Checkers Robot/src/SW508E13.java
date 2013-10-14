@@ -1,6 +1,10 @@
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.robotics.Color;
 import lejos.util.Delay;
 
 
@@ -9,13 +13,22 @@ public class SW508E13 {
 
 	public static void main(String[] args) throws InterruptedException, IOException {
 		RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
-		
-		/*List<Field> FlytteListe = new ArrayList<Field>();
-		FlytteListe.add(new Field(5,4));
-		FlytteListe.add(new Field(3,6));
-		checkTopFunc.takePiece(new Field(3,2), FlytteListe);*/
-		
+		/*
+		List<Field> FlytteListe = new ArrayList<Field>();
+		FlytteListe.add(new Field(3,4));
+		FlytteListe.add(new Field(5,2));
+		FlytteListe.add(new Field(3,0));
+		checkTopFunc.takePiece(new Field(1,6), FlytteListe);
+		*/
 		//Delay.msDelay(10000);
+		/*Field outside = new Field();
+		Field inside = new Field();
+		inside.x = 5;
+		inside.y = 5;
+		outside.x = 7;
+		outside.y = -2;
+		
+		checkTopFunc.movePiece(outside,inside, false);*/
 		
 		boolean changer = true;
 		
@@ -30,7 +43,7 @@ public class SW508E13 {
 				}
 				else
 				{
-					checkTopFunc.checkersBoard.findMissingPiece();
+					//checkTopFunc.checkersBoard.findMissingPiece();
 					changer = true;
 					checkTopFunc.getColorOnField(4, -2);
 				}
@@ -40,10 +53,11 @@ public class SW508E13 {
 			}
 			Delay.msDelay(1000);
 		}
+		
 		//code for printing a piece color
 		/*while(!Button.ESCAPE.isDown())
 		{
-			Color colorResult = checkTopFunc.getColorOnField(4, 5);
+			Color colorResult = checkTopFunc.boardColorSensor.getColor();
 			int red = colorResult.getRed();
 			int green = colorResult.getGreen();
 			int blue = colorResult.getBlue();
@@ -79,7 +93,7 @@ public class SW508E13 {
 			}
 			//Button.ENTER.waitForPress();
 			Delay.msDelay(500);
-		}*/
+		}
 		/*ColorSensor.Color Test = checkTopFunc.GetColorOnField(7, 7);
 		LCD.drawString("R" + Test.getRed() + "G" + Test.getGreen() + "B" + Test.getBlue(), 0, 0);
 		LCD.refresh();

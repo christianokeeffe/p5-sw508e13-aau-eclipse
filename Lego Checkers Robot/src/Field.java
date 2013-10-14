@@ -15,12 +15,37 @@ public class Field {
 	public void setPieceOnField(Piece inputPiece)
 	{
 		pieceOnField = inputPiece;
-		if(pieceOnField != null)
+		if(!isEmpty())
 		{
 			pieceOnField.x = x;
 			pieceOnField.y = y;
 		}
 	}
+	
+	public boolean isEmpty(){
+		if(pieceOnField == null)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	public boolean isPieceOfColor(char input){
+		if(isEmpty()){
+			return false;
+		}
+		else{
+			if(pieceOnField.color == input){
+				return true;
+			}else{
+				return false;
+			}
+		}
+	}
+	
 	public Piece getPieceOnField(){
 		return pieceOnField;
 	}
