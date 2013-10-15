@@ -1,6 +1,5 @@
 
 public class Piece {
-
 	int x,y;
 	char color;
 	boolean isMoveable = false;
