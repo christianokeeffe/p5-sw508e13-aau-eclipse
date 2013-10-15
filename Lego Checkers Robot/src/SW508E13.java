@@ -7,7 +7,7 @@ import lejos.util.Delay;
 
 public class SW508E13 {
 
-	public static void main(String[] args) throws InterruptedException, IOException {
+	public static void main(String[] args) throws Exception {
 		RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
 		/*
 		List<Field> FlytteListe = new ArrayList<Field>();

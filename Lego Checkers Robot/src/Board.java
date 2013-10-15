@@ -8,6 +8,7 @@ import lejos.util.Delay;
 public class Board {
 
 	Field[][] myBoard = new Field[8][8];
+	Field[] KingPlace = new Field[8];
 
 	char myPeasentColor, myKingColor, opponentPeasentColor, opponentKingColor;
 	RemoteNXTFunctions remoteFunctions;
@@ -61,6 +62,17 @@ public class Board {
 				myBoard[x][y] = temp;
 			}	
 		}
+		
+		for (int i = 0; i < 8; i++){
+			Field temp = new Field();
+			temp.x = i;
+			temp.y = -2;
+			Piece tempPiece = new Piece();
+			tempPiece.color = opponentKingColor;
+			tempPiece.isCrowned = true;
+			temp.setPieceOnField(tempPiece);
+			KingPlace[i] = temp;
+		}
 	}
 
 	private void resetVisited()
@@ -74,7 +86,7 @@ public class Board {
 		}
 	}
 
-	public boolean analyzeBoard() throws InterruptedException, IOException
+	public boolean analyzeBoard() throws Exception
 	{	
 		updateMoveables();
 		
@@ -100,6 +112,42 @@ public class Board {
 		updateMoveables();
 		return true;
 	}
+	
+	private void UpgradeToKing(Field field) throws Exception{
+		if(checkAllegiance(field, false)){
+			field.getPieceOnField().color = myKingColor;
+			field.getPieceOnField().isCrowned = true;
+		}
+		else{
+			boolean FoundOne = false;
+			int i = 0;
+			while(!FoundOne){
+				if(i>7){
+					throw new Exception();
+				}
+				if(KingPlace[i].getPieceOnField() != null){
+					remoteFunctions.movePiece(field, remoteFunctions.trashField);
+					remoteFunctions.movePiece(KingPlace[i], field);
+					FoundOne = true;
+				}
+				i++;
+				
+			}
+		}
+	}
+	
+	private void checkForUpgradeKing(Field field) throws Exception{
+		int checkrow;
+		if(checkAllegiance(field, true)){
+			checkrow = 0;
+		}else{
+			checkrow = 7;
+		}
+
+		if(field.y == checkrow){
+			UpgradeToKing(field);
+		}
+	}
 
 	private void movePiece(Field fromField, int toField_x, int toField_y) throws InterruptedException, IOException
 	{
@@ -120,7 +168,7 @@ public class Board {
 		movePiece(FromField, ToField.x, ToField.y);
 	}
 	
-	private boolean checkSingleJump(Field field, int difX, int difY, Field originalField) throws InterruptedException, IOException{
+	private boolean checkSingleJump(Field field, int difX, int difY, Field originalField) throws Exception{
 		if(checkBounds(field.x + difX, field.y + difY))
 		{
 			if(checkAllegiance(myBoard[field.x + difX][field.y + difY], false))
@@ -134,6 +182,8 @@ public class Board {
 						//Empty jumped field and old field
 						myBoard[field.x][field.y].emptyThisField();
 						myBoard[field.x+difX][field.y+difY].emptyThisField();
+						
+						checkForUpgradeKing(myBoard[field.x + 2*difX][field.y+2*difY]);
 
 						return true;
 					}
@@ -153,7 +203,7 @@ public class Board {
 		return false;
 	}
 	
-	private boolean checkJumps(Field field, Field originalField) throws InterruptedException, IOException
+	private boolean checkJumps(Field field, Field originalField) throws Exception
 	{
 		boolean foundPiece = false;
 
@@ -177,7 +227,7 @@ public class Board {
 		return foundPiece;
 	}
 
-	private boolean checkMove(Field field) throws InterruptedException, IOException
+	private boolean checkMove(Field field) throws Exception
 	{
 		boolean pieceFound = checkJumps(field, field);
 		this.resetVisited();
@@ -478,29 +528,29 @@ public class Board {
 		LCD.drawInt(red, 0, 1);
 		LCD.drawInt(green, 0, 2);
 		LCD.drawInt(blue, 0, 3);
-		if(red > 175  && green < 120 && green > 30 && blue < 160 && blue > 30)
+		if(red > 130  && green < 120 && green > 30 && blue < 160 && blue > 30)
 		{
-			LCD.drawChar('r', 0, 0);LCD.refresh();Button.ENTER.waitForPress();
+			LCD.drawChar('r', 0, 0);LCD.refresh();
 			return 'r';
 		}
 		else if(red > 180 && green > 160 && blue > 160)
 		{
-			LCD.drawChar('w', 0, 0);LCD.refresh();Button.ENTER.waitForPress();
+			LCD.drawChar('w', 0, 0);LCD.refresh();
 			return 'w';
 		}
 		else if(red > 150 && red < 180 && green > 170  && blue < 200 && blue > 150)
 		{
-			LCD.drawChar('g', 0, 0);LCD.refresh();Button.ENTER.waitForPress();
+			LCD.drawChar('g', 0, 0);LCD.refresh();
 			return 'g';
 		}
 		else if(red < 140 && red > 90 && green < 170 && green > 120 && blue < 255 && blue > 160)
 		{
-			LCD.drawChar('b', 0, 0);LCD.refresh();Button.ENTER.waitForPress();
+			LCD.drawChar('b', 0, 0);LCD.refresh();
 			return 'b';
 		}
 		else
 		{
-			LCD.drawChar('e', 0, 0);LCD.refresh();Button.ENTER.waitForPress();
+			LCD.drawChar('e', 0, 0);LCD.refresh();
 			return ' ';
 		}
 	}
