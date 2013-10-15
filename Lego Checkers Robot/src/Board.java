@@ -164,7 +164,7 @@ public class Board {
 		OUTERMOST: for(Field field : MoveableList){
 			if(this.isFieldEmptyOnBoard(field.x, field.y))
 			{
-				if(this.checkMove(field))
+				if(this.trackMovement(field))
 				{
 					break OUTERMOST;
 				}
@@ -290,122 +290,58 @@ public class Board {
 		return foundPiece;
 	}
 
-	private boolean checkMove(Field field) throws Exception
+	private boolean checkMove(Field field, int directY) throws InterruptedException, IOException{
+		if(checkBounds(field.x,field.y))
+		{
+			if(checkMoveDirection(field,1,directY))
+			{
+				movePiece(field, field.x+1, field.y+directY);
+				return true;
+			}
+			else if(checkMoveDirection(field,-1,directY))
+			{
+				movePiece(field, field.x-1, field.y+directY);
+				return true;
+			}
+			else if(field.getPieceOnField().isCrowned)
+			{
+				if(checkMoveDirection(field,1,-directY))
+				{
+					movePiece(field, field.x+1, field.y-directY);
+					return true;
+				}
+				else if(checkMoveDirection(field,-1,directY))
+				{
+					movePiece(field, field.x-1, field.y-directY);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	private boolean checkMoveDirection(Field field, int directX, int directY) throws InterruptedException, IOException
+	{
+		if(!fieldOccupied(field.x+directX,field.y+directY) && !this.isFieldEmptyOnBoard(field.x+directX, field.y+directY))
+			return true;
+		else
+		return false;
+	}
+	
+	private boolean trackMovement(Field field) throws Exception
 	{
 		boolean pieceFound = checkJumps(field, field);
 		this.resetVisited();
 
 		if(!pieceFound)
 		{
-			if(checkBounds(field.x,field.y))
+			if(checkMove(field,-1))
+				pieceFound = true;
+			else
 			{
-				if(!fieldOccupied(field.x-1,field.y-1) && !this.isFieldEmptyOnBoard(field.x-1, field.y-1))
-				{
-					movePiece(field, field.x-1, field.y-1);
-					return true;
-				}
-				else if(!fieldOccupied(field.x+1,field.y-1) && !this.isFieldEmptyOnBoard(field.x+1, field.y-1))
-				{
-					movePiece(field, field.x+1, field.y-1);
-					return true;
-				}
-
-				if(field.getPieceOnField().isCrowned)
-				{
-					if(!fieldOccupied(field.x+1,field.y+1) && !this.isFieldEmptyOnBoard(field.x+1, field.y+1))
-					{
-						movePiece(field, field.x+1, field.y+1);
-						return true;
-					}
-					else if(!fieldOccupied(field.x-1,field.y+1) && !this.isFieldEmptyOnBoard(field.x-1, field.y+1))
-					{
-						movePiece(field, field.x-1, field.y+1);
-						return true;
-					}
-				}
+				this.findMissingPiece();
+				return true;	
 			}
-			else if(field.x==0 && field.y==7)
-			{
-				if(!fieldOccupied(field.x+1,field.y-1) && !this.isFieldEmptyOnBoard(field.x+1, field.y-1))
-				{
-					movePiece(field, field.x+1, field.y-1);
-					return true;
-				}
-			}
-			else if(field.x == 0 && field.y!=0 && field.y!= 7)
-			{
-				if(field.getPieceOnField().isCrowned)
-				{
-					if(!fieldOccupied(field.x+1,field.y+1) && !this.isFieldEmptyOnBoard(field.x+1, field.y+1))
-					{
-						movePiece(field, field.x+1, field.y+1);
-						return true;
-					}
-					if(!fieldOccupied(field.x-1,field.y+1) && !this.isFieldEmptyOnBoard(field.x-1, field.y+1))
-					{
-						movePiece(field, field.x-1, field.y+1);
-						return true;
-					}
-				}
-				else {
-					myBoard[field.x][field.y].getPieceOnField().isCrowned = true;
-					return true;
-				}
-			}
-			else if(field.x == 0 && field.y!=0 && field.y!= 7)
-			{
-				if(!fieldOccupied(field.x+1,field.y-1) && !this.isFieldEmptyOnBoard(field.x+1, field.y-1))
-				{
-					movePiece(field, field.x+1, field.y-1);
-					return true;
-				}
-
-				if(field.getPieceOnField().isCrowned)
-				{
-					if(!fieldOccupied(field.x+1,field.y+1) && !this.isFieldEmptyOnBoard(field.x+1, field.y+1))
-					{
-						movePiece(field, field.x+1, field.y+1);
-						return true;
-					}
-				}
-			}
-			else if(field.x == 7 && field.y!=0 && field.y!= 7)
-			{
-				if(!fieldOccupied(field.x-1,field.y-1) && !this.isFieldEmptyOnBoard(field.x-1, field.y-1))
-				{
-					movePiece(field, field.x-1, field.y-1);
-					return true;
-				}
-
-				if(field.getPieceOnField().isCrowned)
-				{
-					if(!fieldOccupied(field.x-1,field.y+1) && !this.isFieldEmptyOnBoard(field.x-1, field.y+1))
-					{
-						movePiece(field, field.x-1, field.y+1);
-						return true;
-					}
-				}
-			}
-
-			else if(field.x==7 && field.y==0)
-			{
-				if (field.getPieceOnField().isCrowned)
-				{
-					if(!fieldOccupied(field.x-1,field.y+1) && !this.isFieldEmptyOnBoard(field.x-1, field.y+1))
-					{
-						movePiece(field, field.x-1, field.y+1);
-						return true;
-					}
-				}
-				else
-				{
-					myBoard[field.x][field.y].getPieceOnField().isCrowned = true;
-					return true;
-				}
-			}
-
-			this.findMissingPiece();
-			return true;
 		}
 		
 		return pieceFound;
@@ -470,12 +406,12 @@ public class Board {
 	
 	private boolean checkJump(Field field, int dif, boolean checkForOpponent)
 	{		
-		if(checkDirection(field, 1,dif, checkForOpponent) ||checkDirection(field, -1,dif, checkForOpponent))
+		if(checkJumpDirection(field, 1, dif, checkForOpponent) ||checkJumpDirection(field, -1, dif, checkForOpponent))
 		{
 			return true;
 		}		
 		else if(field.getPieceOnField().isCrowned){ 
-			if(checkDirection(field,1,-dif, checkForOpponent || checkDirection(field, -1,-dif, checkForOpponent)))
+			if(checkJumpDirection(field,1, -dif, checkForOpponent || checkJumpDirection(field, -1, -dif, checkForOpponent)))
 			{
 				return true;
 			}
@@ -483,19 +419,28 @@ public class Board {
 		return false;
 	}
 	
-	private boolean checkDirection(Field field, int difx, int dify, boolean checkForOpponent)
+	private boolean checkJumpDirection(Field field, int difx, int dify, boolean checkForOpponent)
 	{
-		if(checkBounds(field.x-difx,field.y+dify) && checkAllegiance(myBoard[field.x-dify][field.y+dify], checkForOpponent) && !this.fieldOccupied(field.x-2*difx, field.y+2*dify))
-		{
-			return true;
+		if(checkBounds(field.x-difx,field.y+dify))
+		{ 
+			if(checkAllegiance(myBoard[field.x-difx][field.y+dify], checkForOpponent) && !this.fieldOccupied(field.x-2*difx, field.y+2*dify))
+			{
+				return true;
+			}
 		}
-		else if(checkBounds(field.x-difx,field.y-dify) && checkAllegiance(myBoard[field.x-difx][field.y-dify], checkForOpponent) && !this.fieldOccupied(field.x-2*difx, field.y-2*dify))
-		{
-			return true;
+		else if(field.getPieceOnField().isCrowned)
+		{ 
+			if(checkBounds(field.x-difx,field.y-dify))
+			{
+				if(checkAllegiance(myBoard[field.x-difx][field.y-dify], checkForOpponent) && !this.fieldOccupied(field.x-2*difx, field.y-2*dify))
+				{
+					return true;
+				}
+			}
 		}
 		return false;
 	}
-	
+
 	private void updateMoveables()
 	{
 		for(Field[] f : myBoard)
@@ -513,7 +458,7 @@ public class Board {
 						//Check moveable for human
 						else if(checkAllegiance(field, true))
 						{
-							checkPiece(field, -1, false);
+							//checkPiece(field, -1, false);
 						}
 					}				
 				}
@@ -588,7 +533,7 @@ public class Board {
 
 
 	//panicMode
-	public void findMissingPiece() throws InterruptedException, IOException
+	private void findMissingPiece() throws InterruptedException, IOException
 	{
 		int i,j;
 		boolean changer = true;
