@@ -1,9 +1,7 @@
 import java.io.IOException;
 
-import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.robotics.Color;
-import lejos.util.Delay;
 
 public class Board {
 
