@@ -1,4 +1,4 @@
-import java.io.IOException;
+
 
 import lejos.nxt.Button;
 import lejos.util.Delay;
