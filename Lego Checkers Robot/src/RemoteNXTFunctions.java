@@ -168,6 +168,12 @@ public class RemoteNXTFunctions {
 	
 	private void resetMotors(){
 		motorX.setSpeed(200);
+		
+		motorX.backward();
+		bottomNXT.A.backward();
+		bottomNXT.B.backward();		
+		Delay.msDelay(1000);
+		
 		motorZ.backward();
 		motorX.forward();
 		bottomNXT.A.forward();
