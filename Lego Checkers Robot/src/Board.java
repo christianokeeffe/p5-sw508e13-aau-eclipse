@@ -1,4 +1,8 @@
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import java.util.*;
 
 import lejos.nxt.LCD;
 import lejos.robotics.Color;
@@ -72,6 +76,59 @@ public class Board {
 			KingPlace[i] = temp;
 		}
 	}
+	
+	private boolean IsGreater(Field InputField, Field FieldToCompare){
+		if(InputField.getPieceOnField().canJump && !FieldToCompare.getPieceOnField().canJump)
+		{
+			return true;
+		}else if(FieldToCompare.getPieceOnField().canJump && !InputField.getPieceOnField().canJump){
+			return false;
+		}
+		else{
+			if(InputField.x + InputField.y > FieldToCompare.x + FieldToCompare.y){
+				return false;
+			}
+			else if(InputField.x + InputField.y < FieldToCompare.x + FieldToCompare.y){
+				return true;
+			}else
+			{
+				if((InputField.x + InputField.y)%4 == 1){
+					if(InputField.y > FieldToCompare.y){
+						return true;
+					}else{
+						return false;
+					}
+				}else{
+					if(InputField.y > FieldToCompare.y){
+						return false;
+					}else{
+						return true;
+					}
+				}
+			}
+		}
+	}
+	
+	private void SortListOfFields(List<Field> ListOfFields){
+		int n = ListOfFields.size();
+		while (n != 0)
+		{
+			int newn = 0;
+			for (int i = 1; i <= n-1; i++)
+			{
+				if(IsGreater(ListOfFields.get(i-1), ListOfFields.get(i))){
+					Field temp1 = ListOfFields.get(i-1);
+					Field temp2 = ListOfFields.get(i);
+					ListOfFields.remove(i-1);
+					ListOfFields.remove(i-1);
+					ListOfFields.add(i-1, temp2);
+					ListOfFields.add(i,temp1);
+					newn = i;
+				}
+			}
+			n = newn;
+		}
+	}
 
 	private void resetVisited()
 	{
@@ -83,28 +140,36 @@ public class Board {
 			}
 		}
 	}
-
 	public boolean analyzeBoard() throws Exception
 	{	
 		updateMoveables();
 		
-		OUTERMOST: for (Field[] f : myBoard) 
+		List<Field> MoveableList = new ArrayList<Field>();
+		
+		for (Field[] f : myBoard) 
 		{
 			for (Field field : f) 
 			{
 				if(!field.isEmpty()){
 					if(field.getPieceOnField().isMoveable && checkAllegiance(field, true))
 					{
-						if(this.isFieldEmptyOnBoard(field.x, field.y))
-						{
-							if(this.checkMove(field))
-							{
-								break OUTERMOST;
-							}
-						}
+						MoveableList.add(field);
 					}
 				}
 			}
+		}
+		
+		SortListOfFields(MoveableList);
+
+		OUTERMOST: for(Field field : MoveableList){
+			if(this.isFieldEmptyOnBoard(field.x, field.y))
+			{
+				if(this.checkMove(field))
+				{
+					break OUTERMOST;
+				}
+			}
+
 		}
 		
 		updateMoveables();
