@@ -350,22 +350,20 @@ public class Board {
 
 	private boolean isFieldEmptyOnBoard(int x, int y) throws InterruptedException, IOException
 	{	
-		if(x > 7 || x < 0 || y > 7 || y < 0)
-		{
-			return false;
-		}
+		if(checkBounds(x,y)){
+			char color = getColor(x, y);
 
-		char color = getColor(x, y);
-		
-		if(color == ' ')
-		{
-			return true;
+			if(color == ' ')
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 		else
-		{
 			return false;
-		}
-		
 	}
 
 	private boolean fieldOccupied(int x, int y)
@@ -380,111 +378,81 @@ public class Board {
 		}
 	}
 
+	private void checkPiece(Field field, int dify, boolean checkForOpponent)
+	{
+		field.getPieceOnField().isMoveable = checkMoveable(field, dify);
+		field.getPieceOnField().canJump = checkJump(field,dify, checkForOpponent);
+	}
+	
+	private boolean checkMoveable(Field field, int dif)
+	{
+		if((!this.fieldOccupied(field.x-1, field.y+dif)) || !this.fieldOccupied(field.x+1, field.y+dif))
+		{
+			return true;
+		}
+		else if(field.getPieceOnField().isCrowned)
+		{
+			if(!this.fieldOccupied(field.x - 1, field.y - dif) ||  !this.fieldOccupied(field.x + 1, field.y - dif))
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+			return false;
+	}
+	
+	private boolean checkJump(Field field, int dif, boolean checkForOpponent)
+	{		
+		if(checkDirection(field, 1,dif, checkForOpponent) ||checkDirection(field, -1,dif, checkForOpponent))
+		{
+			return true;
+		}		
+		else if(field.getPieceOnField().isCrowned){ 
+			if(checkDirection(field,1,-dif, checkForOpponent || checkDirection(field, -1,-dif, checkForOpponent)))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean checkDirection(Field field, int difx, int dify, boolean checkForOpponent)
+	{
+		if(checkBounds(field.x-difx,field.y+dify) && checkAllegiance(myBoard[field.x-dify][field.y+dify], checkForOpponent) && !this.fieldOccupied(field.x-2*difx, field.y+2*dify))
+		{
+			return true;
+		}
+		else if(checkBounds(field.x-difx,field.y-dify) && checkAllegiance(myBoard[field.x-difx][field.y-dify], checkForOpponent) && !this.fieldOccupied(field.x-2*difx, field.y-2*dify))
+		{
+			return true;
+		}
+		return false;
+	}
+	
 	private void updateMoveables()
 	{
-		boolean moveable, canJump;
 		for(Field[] f : myBoard)
 		{
 			for(Field field : f)
 			{
 				if(field.allowedField)
 				{
-					moveable = false;
-					canJump = false;
 					//Check moveables for robot
 					if(field.getPieceOnField() != null){
 						if(checkAllegiance(field,false))
 						{
-							//Check simple move for peasant
-							if((!this.fieldOccupied(field.x-1, field.y+1)) || !this.fieldOccupied(field.x+1, field.y+1))
-							{
-								moveable = true;
-							}
-	
-							//Check whether a peasant jump is possible
-							if(checkBounds(field.x-1,field.y+1) && checkAllegiance(myBoard[field.x-1][field.y+1], true) && !this.fieldOccupied(field.x-2, field.y+2))
-							{
-								moveable = true;
-								canJump = true;
-							}
-							else if(checkBounds(field.x+1,field.y+1) && checkAllegiance(myBoard[field.x+1][field.y+1], true) && !this.fieldOccupied(field.x+2, field.y+2))
-							{
-								moveable = true;
-								canJump = true;
-							}
-	
-							//Check for king
-							if(field.getPieceOnField().isCrowned)
-							{
-								//Check simple move for king
-								if(!this.fieldOccupied(field.x - 1, field.y - 1) ||  !this.fieldOccupied(field.x + 1, field.y - 1))
-								{
-									moveable = true;
-								}
-	
-								//Check whether a king jump is possible
-								if(checkBounds(field.x-1,field.y-1) && checkAllegiance(myBoard[field.x-1][field.y-1], true) && !this.fieldOccupied(field.x-2, field.y-2))
-								{
-									moveable = true;
-									canJump = true;
-								}
-								else if(checkAllegiance(myBoard[field.x+1][field.y-1], true) && !this.fieldOccupied(field.x+2, field.y-2))
-								{
-									moveable = true;
-									canJump = true;
-								}
-							}
-						}
-					
-						
+							checkPiece(field, 1, true);
+						}			
 						//Check moveable for human
 						else if(checkAllegiance(field, true))
 						{
-							//Check simple move for peasant
-							
-							if(!this.fieldOccupied(field.x-1, field.y-1) || !this.fieldOccupied(field.x+1, field.y-1))
-							{
-								moveable = true;
-							}
-	
-							//Check whether a peasant jump is possible
-							if(checkBounds(field.x-1,field.y-1) && checkAllegiance(myBoard[field.x-1][field.y-1], false) && !this.fieldOccupied(field.x-2, field.y-2))
-							{
-								moveable = true;
-								canJump = true;
-							}
-							else if(checkBounds(field.x+1,field.y-1) && checkAllegiance(myBoard[field.x+1][field.y-1], false) && !this.fieldOccupied(field.x+2, field.y-2))
-							{
-								moveable = true;
-								canJump = true;
-							}
-	
-							//Check for king
-							if(field.getPieceOnField().isCrowned)
-							{
-								//Check simple move for king
-								if(!this.fieldOccupied(field.x - 1, field.y + 1) || !this.fieldOccupied(field.x + 1, field.y + 1))
-								{
-									moveable = true;
-								}
-	
-								//Check whether a king jump is possible
-								if(checkBounds(field.x-1,field.y+1) && checkAllegiance(myBoard[field.x-1][field.y+1], false) && (checkBounds(field.x-2,field.y+2) && !this.fieldOccupied(field.x-2, field.y+2)))
-								{
-									moveable = true;
-									canJump = true;
-								}
-								else if(checkBounds(field.x+1,field.y+1) && checkAllegiance(myBoard[field.x+1][field.y+1], false) && (checkBounds(field.x+2,field.y+2) && !this.fieldOccupied(field.x+2, field.y+2)))
-								{
-									moveable = true;
-									canJump = true;
-								}
-							}
+							checkPiece(field, -1, false);
 						}
-					myBoard[field.x][field.y].getPieceOnField().isMoveable = moveable;
-					myBoard[field.x][field.y].getPieceOnField().canJump = canJump;
-					}
-					
+					}				
 				}
 			}
 		}
