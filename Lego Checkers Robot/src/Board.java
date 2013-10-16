@@ -12,7 +12,7 @@ public class Board {
 
 	char myPeasentColor, myKingColor, opponentPeasentColor, opponentKingColor;
 	RemoteNXTFunctions remoteFunctions;
-	
+
 	public Board(RemoteNXTFunctions remoteFunc) throws InterruptedException, IOException
 	{
 		remoteFunctions = remoteFunc;
@@ -62,7 +62,7 @@ public class Board {
 				myBoard[x][y] = temp;
 			}	
 		}
-		
+
 		for (int i = 0; i < 8; i++){
 			Field temp = new Field();
 			temp.x = i;
@@ -74,7 +74,7 @@ public class Board {
 			KingPlace[i] = temp;
 		}
 	}
-	
+
 	private boolean IsGreater(Field InputField, Field FieldToCompare, int compX, int compY){
 		if(InputField.getPieceOnField().canJump && !FieldToCompare.getPieceOnField().canJump)
 		{
@@ -83,33 +83,25 @@ public class Board {
 			return false;
 		}
 		else{
-			if(InputField.x + InputField.y > FieldToCompare.x + FieldToCompare.y){
+			if(Math.abs(InputField.x -compX)+Math.abs(InputField.y - compY) >Math.abs(FieldToCompare.x -compX)+Math.abs(FieldToCompare.y - compY)){
 				return false;
-			}
-			else if(InputField.x + InputField.y < FieldToCompare.x + FieldToCompare.y){
+			}else if(Math.abs(InputField.x -compX)+Math.abs(InputField.y - compY) <Math.abs(FieldToCompare.x -compX)+Math.abs(FieldToCompare.y - compY)){
 				return true;
-			}else
-			{
-				if(Math.abs(InputField.x -compX)+Math.abs(InputField.y - compY) >Math.abs(FieldToCompare.x -compX)+Math.abs(FieldToCompare.y - compY)){
-					return false;
-				}else if(Math.abs(InputField.x -compX)+Math.abs(InputField.y - compY) <Math.abs(FieldToCompare.x -compX)+Math.abs(FieldToCompare.y - compY)){
+			}else{
+				if(InputField.y < FieldToCompare.y){
 					return true;
 				}else{
-					if(InputField.y < FieldToCompare.y){
-						return true;
-					}else{
-						return false;
-					}
+					return false;
 				}
 			}
 		}
 	}
-	
+
 	private void SortListOfFields(List<Field> ListOfFields){
 		int x = 0;
 		int y = 0;
 		for(int i = 0; i < ListOfFields.size(); i++){
-			for(int n = i; n < ListOfFields.size(); n++){
+			for(int n = i+1; n < ListOfFields.size(); n++){
 				if(!IsGreater(ListOfFields.get(i), ListOfFields.get(n),x,y)){
 					Field temp1 = ListOfFields.get(i);
 					Field temp2 = ListOfFields.get(n);
@@ -137,9 +129,9 @@ public class Board {
 	public boolean analyzeBoard() throws Exception
 	{	
 		updateMoveables();
-		
+
 		List<Field> MoveableList = new ArrayList<Field>();
-		
+
 		for (Field[] f : myBoard) 
 		{
 			for (Field field : f) 
@@ -152,7 +144,7 @@ public class Board {
 				}
 			}
 		}
-		
+
 		SortListOfFields(MoveableList);
 
 		OUTERMOST: for(Field field : MoveableList){
@@ -168,7 +160,7 @@ public class Board {
 		updateMoveables();
 		return true;
 	}
-	
+
 	private void UpgradeToKing(Field field) throws Exception{
 		if(checkAllegiance(field, false)){
 			field.getPieceOnField().color = myKingColor;
@@ -187,11 +179,11 @@ public class Board {
 					FoundOne = true;
 				}
 				i++;
-				
+
 			}
 		}
 	}
-	
+
 	private void checkForUpgradeKing(Field field) throws Exception{
 		int checkrow;
 		if(checkAllegiance(field, true)){
@@ -223,7 +215,7 @@ public class Board {
 	{
 		movePiece(FromField, ToField.x, ToField.y);
 	}
-	
+
 	private boolean checkSingleJump(Field field, int difX, int difY, Field originalField) throws Exception{
 		if(checkBounds(field.x + difX, field.y + difY))
 		{
@@ -238,7 +230,7 @@ public class Board {
 						//Empty jumped field and old field
 						myBoard[field.x][field.y].emptyThisField();
 						myBoard[field.x+difX][field.y+difY].emptyThisField();
-						
+
 						checkForUpgradeKing(myBoard[field.x + 2*difX][field.y+2*difY]);
 
 						return true;
@@ -258,7 +250,7 @@ public class Board {
 		}
 		return false;
 	}
-	
+
 	private boolean checkJumps(Field field, Field originalField) throws Exception
 	{
 		boolean foundPiece = false;
@@ -312,15 +304,15 @@ public class Board {
 		}
 		return false;
 	}
-	
+
 	private boolean checkMoveDirection(Field field, int directX, int directY) throws InterruptedException, IOException
 	{
 		if(!fieldOccupied(field.x+directX,field.y+directY) && !this.isFieldEmptyOnBoard(field.x+directX, field.y+directY))
 			return true;
 		else
-		return false;
+			return false;
 	}
-	
+
 	private boolean trackMovement(Field field) throws Exception
 	{
 		boolean pieceFound = checkJumps(field, field);
@@ -336,7 +328,7 @@ public class Board {
 				return true;	
 			}
 		}
-		
+
 		return pieceFound;
 	}
 	private String boolToString(boolean input){
@@ -345,30 +337,12 @@ public class Board {
 			returnString = "true";
 		else
 			returnString = "false";
-		
+
 		return returnString;
 	}
 	private boolean isFieldEmptyOnBoard(int x, int y) throws InterruptedException, IOException
 	{	
 		if(checkBounds(x,y)){
-			if(myBoard[x][y].getPieceOnField() != null)
-			{
-				String move = boolToString(myBoard[x][y].getPieceOnField().isMoveable);
-				String jump = boolToString(myBoard[x][y].getPieceOnField().canJump);
-
-				LCD.drawInt(x, 0, 4);
-				LCD.drawInt(y, 2, 4);
-				LCD.drawString("Move = "+ move, 0 , 5);
-				LCD.drawString("Jump =" + jump, 0, 6);
-				LCD.refresh();
-				Button.ENTER.waitForPress();
-			}
-			else
-			{
-				LCD.drawString("Empty", 0, 6);
-				LCD.refresh();
-				Button.ENTER.waitForPress();
-			}
 			char color = getColor(x, y);
 
 			if(color == ' ')
@@ -402,7 +376,7 @@ public class Board {
 		field.getPieceOnField().canJump = checkJump(field,dify, checkForOpponent);
 		field.getPieceOnField().isMoveable = checkMoveable(field, dify);	
 	}
-	
+
 	private boolean checkMoveable(Field field, int dif)
 	{
 		if((!this.fieldOccupied(field.x-1, field.y+dif)) || !this.fieldOccupied(field.x+1, field.y+dif))
@@ -423,7 +397,7 @@ public class Board {
 		else
 			return false;
 	}
-	
+
 	private boolean checkJump(Field field, int dif, boolean checkForOpponent)
 	{		
 		if(checkJumpDirection(field, 1, dif, checkForOpponent) ||checkJumpDirection(field, -1, dif, checkForOpponent))
@@ -438,7 +412,7 @@ public class Board {
 		}
 		return false;
 	}
-	
+
 	private boolean checkJumpDirection(Field field, int difx, int dify, boolean checkForOpponent)
 	{
 		if(checkBounds(field.x-difx,field.y+dify))
@@ -512,7 +486,7 @@ public class Board {
 			opponentKingColor = 'b';
 		}
 	}
-	
+
 	private char getColor(int x, int y) throws IOException
 	{
 		Color colorResult = remoteFunctions.getColorOnField(x, y);
@@ -583,10 +557,10 @@ public class Board {
 				changer = true;
 			}
 		}
-		
+
 		this.updateMoveables();
 	}
-	
+
 	private Piece GetPiece(int x, int y) throws IOException{
 		char color = getColor(x, y);
 		if(color == ' ')
@@ -599,14 +573,14 @@ public class Board {
 			return temp;
 		}
 	}
-	
+
 	private boolean checkAllegiance(Field input, boolean checkForOpponent){
 		if((input.isPieceOfColor(myPeasentColor)||input.isPieceOfColor(myKingColor)) && !checkForOpponent){
-			
+
 			return true;
 		}
 		if((input.isPieceOfColor(opponentPeasentColor)||input.isPieceOfColor(opponentKingColor)) && checkForOpponent){
-			
+
 			return true;
 		}
 		return false;
