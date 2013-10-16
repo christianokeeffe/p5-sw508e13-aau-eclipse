@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.util.*;
 
-import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.robotics.Color;
 
@@ -329,15 +328,7 @@ public class Board {
 
 		return pieceFound;
 	}
-	private String boolToString(boolean input){
-		String returnString;
-		if(input == true)
-			returnString = "true";
-		else
-			returnString = "false";
 
-		return returnString;
-	}
 	private boolean isFieldEmptyOnBoard(int x, int y) throws InterruptedException, IOException
 	{	
 		if(checkBounds(x,y)){
