@@ -38,14 +38,12 @@ public class RemoteNXTFunctions {
 		motorZ = new NXTRegulatedMotor(MotorPort.A);
 		motorX = new NXTRegulatedMotor(MotorPort.B);
 		motorZ.setSpeed(100);
-	    motorX.setSpeed(1000);
+	    motorX.setSpeed(900);
 	    motorZ.setAcceleration(3000);
 	    motorX.setAcceleration(3000);
 	    
-		bottomNXT.A.setSpeed(400);/* Left yAxis motor */
-		bottomNXT.B.setSpeed(400); /* Right yAxis motor */
-		bottomNXT.A.setAcceleration(1000);
-	    bottomNXT.B.setAcceleration(1000);
+		bottomNXT.A.smoothAcceleration(true);
+	    bottomNXT.B.smoothAcceleration(true);
 	       
 	    touchSensorX = new TouchSensor(bottomNXT.S1);
 	    touchSensorZ = new TouchSensor(SensorPort.S2);
@@ -168,6 +166,8 @@ public class RemoteNXTFunctions {
 	
 	private void resetMotors(){
 		motorX.setSpeed(200);
+		bottomNXT.A.setSpeed(200);
+		bottomNXT.B.setSpeed(200);
 		
 		motorX.backward();
 		bottomNXT.A.backward();
@@ -196,7 +196,10 @@ public class RemoteNXTFunctions {
 		motorZ.stop();
 		bottomNXT.A.stop();
 		bottomNXT.B.stop();
-		motorX.setSpeed(1000);
+		motorX.setSpeed(900);
+
+		bottomNXT.A.setSpeed(900);
+		bottomNXT.B.setSpeed(900);
 	}
 	
 	private void connect() throws InterruptedException{
