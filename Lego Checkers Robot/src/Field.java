@@ -1,17 +1,21 @@
 
 public class Field {
+	//allowedField determines if is an allowed field to play on (a black field)
 	public boolean allowedField;
+	
 	public boolean visited = false;
 	public int x;
 	public int y;
 	
 	private Piece pieceOnField = null;
+	
 	public Field(){};
 	public Field(int inputx, int inputy){
 		x = inputx;
 		y = inputy;
 	}
 	
+	//Get and Set to access to private variable pieceOnField. Updates the coordinates of an piece when assigned to a field. 
 	public void setPieceOnField(Piece inputPiece)
 	{
 		pieceOnField = inputPiece;
@@ -20,6 +24,10 @@ public class Field {
 			pieceOnField.x = x;
 			pieceOnField.y = y;
 		}
+	}
+
+	public Piece getPieceOnField(){
+		return pieceOnField;
 	}
 	
 	public boolean isEmpty(){
@@ -44,10 +52,6 @@ public class Field {
 				return false;
 			}
 		}
-	}
-	
-	public Piece getPieceOnField(){
-		return pieceOnField;
 	}
 	
 	public void emptyThisField()
