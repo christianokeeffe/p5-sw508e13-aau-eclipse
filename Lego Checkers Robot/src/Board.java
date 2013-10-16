@@ -197,12 +197,13 @@ public class Board {
 		}
 	}
 
-	private void movePiece(Field fromField, int toField_x, int toField_y) throws InterruptedException, IOException
+	private void movePiece(Field fromField, int toField_x, int toField_y) throws Exception
 	{
 		if(checkBounds(toField_x,toField_y))
 		{	
 			myBoard[toField_x][toField_y].setPieceOnField(fromField.getPieceOnField());
 			fromField.emptyThisField();
+			checkForUpgradeKing(myBoard[toField_x][toField_y]);
 		}
 		else
 		{
@@ -211,7 +212,7 @@ public class Board {
 
 	}
 
-	public void movePiece(Field FromField, Field ToField) throws InterruptedException, IOException
+	public void movePiece(Field FromField, Field ToField) throws Exception
 	{
 		movePiece(FromField, ToField.x, ToField.y);
 	}
@@ -225,13 +226,10 @@ public class Board {
 				{
 					if(!isFieldEmptyOnBoard(field.x+2*difX, field.y+2*difY))
 					{
-						myBoard[field.x+2*difX][field.y+2*difY].setPieceOnField(originalField.getPieceOnField());
-
+						movePiece(originalField, field.x+2*difX, field.y+2*difY);
 						//Empty jumped field and old field
 						myBoard[field.x][field.y].emptyThisField();
 						myBoard[field.x+difX][field.y+difY].emptyThisField();
-
-						checkForUpgradeKing(myBoard[field.x + 2*difX][field.y+2*difY]);
 
 						return true;
 					}
@@ -275,7 +273,7 @@ public class Board {
 		return foundPiece;
 	}
 
-	private boolean checkMove(Field field, int directY) throws InterruptedException, IOException{
+	private boolean checkMove(Field field, int directY) throws Exception{
 		if(checkBounds(field.x,field.y))
 		{
 			if(checkMoveDirection(field,1,directY))

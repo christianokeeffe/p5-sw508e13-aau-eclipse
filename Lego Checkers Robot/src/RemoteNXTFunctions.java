@@ -77,7 +77,7 @@ public class RemoteNXTFunctions {
 		return boardColorSensor.getColor();
 	}
 	
-	public void movePiece(Field FromField, Field ToField) throws IOException, InterruptedException
+	public void movePiece(Field FromField, Field ToField) throws Exception
 	{
 		moveSensorTo(FromField.x,FromField.y,true);
 		motorZ.rotate(zFactor);
@@ -91,7 +91,7 @@ public class RemoteNXTFunctions {
 		checkersBoard.movePiece(FromField, ToField);
 	}
 	
-	public void takePiece(Field fromField, List<Field> midwayFields) throws IOException, InterruptedException
+	public void takePiece(Field fromField, List<Field> midwayFields) throws Exception
 	{
 		Field presentField = fromField;
 		
@@ -111,7 +111,7 @@ public class RemoteNXTFunctions {
 		}
 	}
 	
-	private Field movePieceOverField(Field fromField, Field toField) throws IOException, InterruptedException{
+	private Field movePieceOverField(Field fromField, Field toField) throws Exception{
 		movePiece(fromField, toField);
 		
 		if(Math.abs(fromField.x - toField.x) == 2){
