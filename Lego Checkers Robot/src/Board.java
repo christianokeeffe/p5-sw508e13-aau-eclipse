@@ -7,7 +7,7 @@ import lejos.robotics.Color;
 public class Board {
 
 	Field[][] myBoard = new Field[8][8];
-	Field[] KingPlace = new Field[8];
+	Field[] kingPlace = new Field[8];
 
 	char myPeasentColor, myKingColor, opponentPeasentColor, opponentKingColor;
 	RemoteNXTFunctions remoteFunctions;
@@ -19,7 +19,8 @@ public class Board {
 		findOpponentColors();
 
 		int x,y;
-
+		
+		//Create the 8 times 8 board
 		for(x = 0; x<8; x++)
 		{
 			for(y=0; y<8; y++)
@@ -28,31 +29,33 @@ public class Board {
 				temp.x = x;
 				temp.y = y;
 
+				//Every second field is an allowed field
 				if((x+y)%2 == 1)
 				{
 					temp.allowedField = true;
-					Piece PieceOnBoard = null;
+					Piece pieceOnBoard = null;
 					if(y < 3)
 					{
-						PieceOnBoard = new Piece();
-						PieceOnBoard.color = myPeasentColor;
+						pieceOnBoard = new Piece();
+						pieceOnBoard.color = myPeasentColor;
 
+						//Every piece on the front line of each player is moveable from the start
 						if(y == 2)
 						{
-							PieceOnBoard.isMoveable = true;
+							pieceOnBoard.isMoveable = true;
 						}
 					}
 
 					if(y > 4)
 					{
-						PieceOnBoard = new Piece();
-						PieceOnBoard.color = opponentPeasentColor;
+						pieceOnBoard = new Piece();
+						pieceOnBoard.color = opponentPeasentColor;
 						if(y==5)
 						{
-							PieceOnBoard.isMoveable = true;
+							pieceOnBoard.isMoveable = true;
 						}
 					}
-					temp.setPieceOnField(PieceOnBoard);
+					temp.setPieceOnField(pieceOnBoard);
 				}
 				else
 				{
@@ -62,7 +65,9 @@ public class Board {
 			}	
 		}
 
-		for (int i = 0; i < 8; i++){
+		//Set the location of the human players king pieces
+		for (int i = 0; i < 8; i++)
+		{
 			Field temp = new Field();
 			temp.x = i;
 			temp.y = -2;
@@ -70,26 +75,39 @@ public class Board {
 			tempPiece.color = opponentKingColor;
 			tempPiece.isCrowned = true;
 			temp.setPieceOnField(tempPiece);
-			KingPlace[i] = temp;
+			kingPlace[i] = temp;
 		}
 	}
 
-	private boolean IsGreater(Field InputField, Field FieldToCompare, int compX, int compY){
-		if(InputField.getPieceOnField().canJump && !FieldToCompare.getPieceOnField().canJump)
+	//Method to used in sorting the list of places to move the robot
+	private boolean isGreater(Field inputField, Field fieldToCompare, int compX, int compY)
+	{
+		if(inputField.getPieceOnField().canJump && !fieldToCompare.getPieceOnField().canJump)
 		{
 			return true;
-		}else if(FieldToCompare.getPieceOnField().canJump && !InputField.getPieceOnField().canJump){
+		}
+		else if(fieldToCompare.getPieceOnField().canJump && !inputField.getPieceOnField().canJump)
+		{
 			return false;
 		}
-		else{
-			if(weight(InputField,compX,compY) > weight(FieldToCompare,compX,compY)){
+		else
+		{
+			if(weight(inputField,compX,compY) > weight(fieldToCompare,compX,compY))
+			{
 				return false;
-			}else if(weight(InputField, compX, compY) < weight(FieldToCompare, compX, compY)){
+			}
+			else if(weight(inputField, compX, compY) < weight(fieldToCompare, compX, compY))
+			{
 				return true;
-			}else{
-				if(InputField.y < FieldToCompare.y){
+			}
+			else
+			{
+				if(inputField.y < fieldToCompare.y)
+				{
 					return true;
-				}else{
+				}
+				else
+				{
 					return false;
 				}
 			}
@@ -99,24 +117,28 @@ public class Board {
 	private int weight(Field inputField, int x, int y)
 	{
 		return Math.abs(inputField.x - x) + Math.abs(inputField.y - y);
-	
 	}
-	private void SortListOfFields(List<Field> ListOfFields){
+	
+	private void sortListOfFields(List<Field> listOfFields)
+	{
 		int x = 0;
 		int y = 0;
-		for(int i = 0; i < ListOfFields.size(); i++){
-			for(int n = i+1; n < ListOfFields.size(); n++){
-				if(!IsGreater(ListOfFields.get(i), ListOfFields.get(n),x,y)){
-					Field temp1 = ListOfFields.get(i);
-					Field temp2 = ListOfFields.get(n);
-					ListOfFields.remove(n);
-					ListOfFields.remove(i);
-					ListOfFields.add(i, temp2);
-					ListOfFields.add(n,temp1);
+		for(int i = 0; i < listOfFields.size(); i++)
+		{
+			for(int n = i+1; n < listOfFields.size(); n++)
+			{
+				if(!isGreater(listOfFields.get(i), listOfFields.get(n),x,y))
+				{
+					Field temp1 = listOfFields.get(i);
+					Field temp2 = listOfFields.get(n);
+					listOfFields.remove(n);
+					listOfFields.remove(i);
+					listOfFields.add(i, temp2);
+					listOfFields.add(n,temp1);
 				}
 			}
-			x = ListOfFields.get(i).x;
-			y = ListOfFields.get(i).y;
+			x = listOfFields.get(i).x;
+			y = listOfFields.get(i).y;
 		}
 	}
 
@@ -130,11 +152,13 @@ public class Board {
 			}
 		}
 	}
+	
+	//Analyzes the current board setup
 	public boolean analyzeBoard() throws Exception
 	{	
 		updateMoveables();
 
-		List<Field> MoveableList = new ArrayList<Field>();
+		List<Field> moveableList = new ArrayList<Field>();
 
 		for (Field[] f : myBoard) 
 		{
@@ -143,61 +167,73 @@ public class Board {
 				if(!field.isEmpty()){
 					if(field.getPieceOnField().isMoveable && checkAllegiance(field, true))
 					{
-						MoveableList.add(field);
+						moveableList.add(field);
 					}
 				}
 			}
 		}
 
-		SortListOfFields(MoveableList);
+		sortListOfFields(moveableList);
 
-		OUTERMOST: for(Field field : MoveableList){
+		OUTERMOST: for(Field field : moveableList){
 			if(this.isFieldEmptyOnBoard(field.x, field.y))
 			{
 				if(this.trackMovement(field))
 				{
+					//Break the loop
 					break OUTERMOST;
 				}
 			}
 
 		}
+		
 		updateMoveables();
 		return true;
 	}
 
-	private void UpgradeToKing(Field field) throws Exception{
-		if(checkAllegiance(field, false)){
+	private void upgradeToKing(Field field) throws Exception
+	{
+		if(checkAllegiance(field, false))
+		{
 			field.getPieceOnField().color = myKingColor;
 			field.getPieceOnField().isCrowned = true;
 		}
-		else{
-			boolean FoundOne = false;
+		else
+		{
+			boolean foundOne = false;
 			int i = 0;
-			while(!FoundOne){
-				if(i>7){
+			while(!foundOne)
+			{
+				if(i>7)
+				{
 					throw new Exception();
 				}
-				if(KingPlace[i].getPieceOnField() != null){
+				if(kingPlace[i].getPieceOnField() != null)
+				{
 					remoteFunctions.movePiece(field, remoteFunctions.trashField);
-					remoteFunctions.movePiece(KingPlace[i], field);
-					FoundOne = true;
+					remoteFunctions.movePiece(kingPlace[i], field);
+					foundOne = true;
 				}
 				i++;
-
 			}
 		}
 	}
 
-	private void checkForUpgradeKing(Field field) throws Exception{
-		int checkrow;
-		if(checkAllegiance(field, true)){
-			checkrow = 0;
-		}else{
-			checkrow = 7;
+	private void checkForUpgradeKing(Field field) throws Exception
+	{
+		int checkRow;
+		if(checkAllegiance(field, true))
+		{
+			checkRow = 0;
+		}
+		else
+		{
+			checkRow = 7;
 		}
 
-		if(field.y == checkrow){
-			UpgradeToKing(field);
+		if(field.y == checkRow)
+		{
+			upgradeToKing(field);
 		}
 	}
 
@@ -221,7 +257,8 @@ public class Board {
 		movePiece(FromField, ToField.x, ToField.y);
 	}
 
-	private boolean checkSingleJump(Field field, int difX, int difY, Field originalField) throws Exception{
+	private boolean checkSingleJump(Field field, int difX, int difY, Field originalField) throws Exception
+	{
 		if(checkBounds(field.x + difX, field.y + difY))
 		{
 			if(checkAllegiance(myBoard[field.x + difX][field.y + difY], false))
@@ -240,12 +277,13 @@ public class Board {
 					else
 					{
 						myBoard[field.x+2*difX][field.y+2*difY].visited = true;
-						boolean returnval = checkJumps(myBoard[field.x+2*difX][field.y+2*difY], originalField);
-						if(returnval){
+						boolean returnVal = checkJumps(myBoard[field.x+2*difX][field.y+2*difY], originalField);
+						if(returnVal)
+						{
 							myBoard[field.x][field.y].emptyThisField();
 							myBoard[field.x+difX][field.y+difY].emptyThisField();
 						}
-						return returnval;
+						return returnVal;
 					}
 				}
 			}
