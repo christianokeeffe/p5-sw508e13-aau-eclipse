@@ -569,13 +569,15 @@ public class Board {
 	}
 
 	private boolean checkAllegiance(Field input, boolean checkForOpponent){
-		if((input.isPieceOfColor(myPeasentColor)||input.isPieceOfColor(myKingColor)) && !checkForOpponent){
+		if(checkBounds(input.x, input.y)){
+			if((input.isPieceOfColor(myPeasentColor)||input.isPieceOfColor(myKingColor)) && !checkForOpponent){
 
-			return true;
-		}
-		if((input.isPieceOfColor(opponentPeasentColor)||input.isPieceOfColor(opponentKingColor)) && checkForOpponent){
+				return true;
+			}
+			if((input.isPieceOfColor(opponentPeasentColor)||input.isPieceOfColor(opponentKingColor)) && checkForOpponent){
 
-			return true;
+				return true;
+			}
 		}
 		return false;
 	}
