@@ -406,7 +406,11 @@ public class Board {
 	private void checkPiece(Field field, int dify, boolean checkForOpponent)
 	{
 		field.getPieceOnField().canJump = checkJump(field,dify, checkForOpponent);
-		field.getPieceOnField().isMoveable = checkMoveable(field, dify);	
+		if(field.getPieceOnField().canJump){
+			field.getPieceOnField().isMoveable = true;
+		}
+		else{
+		field.getPieceOnField().isMoveable = checkMoveable(field, dify);	}
 	}
 
 	private boolean checkMoveable(Field field, int dif)
