@@ -1,9 +1,7 @@
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import java.util.*;
 
+import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.robotics.Color;
 
@@ -171,7 +169,6 @@ public class Board {
 			}
 
 		}
-		
 		updateMoveables();
 		return true;
 	}
@@ -346,10 +343,36 @@ public class Board {
 		
 		return pieceFound;
 	}
-
+	private String boolToString(boolean input){
+		String returnString;
+		if(input == true)
+			returnString = "true";
+		else
+			returnString = "false";
+		
+		return returnString;
+	}
 	private boolean isFieldEmptyOnBoard(int x, int y) throws InterruptedException, IOException
 	{	
 		if(checkBounds(x,y)){
+			if(myBoard[x][y].getPieceOnField() != null)
+			{
+				String move = boolToString(myBoard[x][y].getPieceOnField().isMoveable);
+				String jump = boolToString(myBoard[x][y].getPieceOnField().canJump);
+
+				LCD.drawInt(x, 0, 4);
+				LCD.drawInt(y, 2, 4);
+				LCD.drawString("Move = "+ move, 0 , 5);
+				LCD.drawString("Jump =" + jump, 0, 6);
+				LCD.refresh();
+				Button.ENTER.waitForPress();
+			}
+			else
+			{
+				LCD.drawString("Empty", 0, 6);
+				LCD.refresh();
+				Button.ENTER.waitForPress();
+			}
 			char color = getColor(x, y);
 
 			if(color == ' ')
@@ -360,6 +383,7 @@ public class Board {
 			{
 				return false;
 			}
+
 		}
 		else
 			return false;
@@ -458,7 +482,7 @@ public class Board {
 						//Check moveable for human
 						else if(checkAllegiance(field, true))
 						{
-							//checkPiece(field, -1, false);
+							checkPiece(field, -1, false);
 						}
 					}				
 				}
@@ -504,7 +528,7 @@ public class Board {
 		LCD.drawInt(red, 0, 1);
 		LCD.drawInt(green, 0, 2);
 		LCD.drawInt(blue, 0, 3);
-		if(red > 130  && green < 120 && green > 30 && blue < 160 && blue > 30)
+		if(red > 130  && green < 120 && green > 0 && blue < 160 && blue > 0)
 		{
 			LCD.drawChar('r', 0, 0);LCD.refresh();
 			return 'r';
