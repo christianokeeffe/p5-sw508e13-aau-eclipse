@@ -82,9 +82,9 @@ public class Board {
 			return false;
 		}
 		else{
-			if(Math.abs(InputField.x -compX)+Math.abs(InputField.y - compY) >Math.abs(FieldToCompare.x -compX)+Math.abs(FieldToCompare.y - compY)){
+			if(weight(InputField,compX,compY) > weight(FieldToCompare,compX,compY)){
 				return false;
-			}else if(Math.abs(InputField.x -compX)+Math.abs(InputField.y - compY) <Math.abs(FieldToCompare.x -compX)+Math.abs(FieldToCompare.y - compY)){
+			}else if(weight(InputField, compX, compY) < weight(FieldToCompare, compX, compY)){
 				return true;
 			}else{
 				if(InputField.y < FieldToCompare.y){
@@ -95,7 +95,12 @@ public class Board {
 			}
 		}
 	}
-
+	
+	private int weight(Field inputField, int x, int y)
+	{
+		return Math.abs(inputField.x - x) + Math.abs(inputField.y - y);
+	
+	}
 	private void SortListOfFields(List<Field> ListOfFields){
 		int x = 0;
 		int y = 0;
