@@ -41,9 +41,6 @@ public class RemoteNXTFunctions {
 	    motorX.setSpeed(900);
 	    motorZ.setAcceleration(3000);
 	    motorX.setAcceleration(3000);
-	    
-		bottomNXT.A.setAcceleration(100);;
-	    bottomNXT.B.setAcceleration(100);;
 	       
 	    touchSensorX = new TouchSensor(bottomNXT.S1);
 	    touchSensorZ = new TouchSensor(SensorPort.S2);
@@ -200,6 +197,8 @@ public class RemoteNXTFunctions {
 
 		bottomNXT.A.setSpeed(900);
 		bottomNXT.B.setSpeed(900);
+		bottomNXT.A.setAcceleration(1);
+		bottomNXT.B.setAcceleration(1);
 	}
 	
 	private void connect() throws InterruptedException{
