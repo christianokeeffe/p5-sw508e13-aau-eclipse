@@ -75,7 +75,7 @@ public class Board {
 		}
 	}
 	
-	private boolean IsGreater(Field InputField, Field FieldToCompare){
+	private boolean IsGreater(Field InputField, Field FieldToCompare, int compX, int compY){
 		if(InputField.getPieceOnField().canJump && !FieldToCompare.getPieceOnField().canJump)
 		{
 			return true;
@@ -90,41 +90,31 @@ public class Board {
 				return true;
 			}else
 			{
-				if((InputField.x + InputField.y)%4 == 1){
-					if(InputField.y > FieldToCompare.y){
-						return true;
-					}else{
-						return false;
-					}
+				if(Math.abs(InputField.x -compX)+Math.abs(InputField.y - compY) >Math.abs(FieldToCompare.x -compX)+Math.abs(FieldToCompare.y - compY)){
+					return false;
 				}else{
-					if(InputField.y > FieldToCompare.y){
-						return false;
-					}else{
-						return true;
-					}
+					return true;
 				}
 			}
 		}
 	}
 	
 	private void SortListOfFields(List<Field> ListOfFields){
-		int n = ListOfFields.size();
-		while (n != 0)
-		{
-			int newn = 0;
-			for (int i = 1; i <= n-1; i++)
-			{
-				if(IsGreater(ListOfFields.get(i-1), ListOfFields.get(i))){
-					Field temp1 = ListOfFields.get(i-1);
-					Field temp2 = ListOfFields.get(i);
-					ListOfFields.remove(i-1);
-					ListOfFields.remove(i-1);
-					ListOfFields.add(i-1, temp2);
-					ListOfFields.add(i,temp1);
-					newn = i;
+		int x = 0;
+		int y = 0;
+		for(int i = 0; i < ListOfFields.size(); i++){
+			for(int n = i; n < ListOfFields.size(); n++){
+				if(!IsGreater(ListOfFields.get(i), ListOfFields.get(n),x,y)){
+					Field temp1 = ListOfFields.get(i);
+					Field temp2 = ListOfFields.get(n);
+					ListOfFields.remove(n);
+					ListOfFields.remove(i);
+					ListOfFields.add(i, temp2);
+					ListOfFields.add(n,temp1);
 				}
 			}
-			n = newn;
+			x = ListOfFields.get(i).x;
+			y = ListOfFields.get(i).y;
 		}
 	}
 
