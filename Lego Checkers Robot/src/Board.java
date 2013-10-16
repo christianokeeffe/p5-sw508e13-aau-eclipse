@@ -92,8 +92,14 @@ public class Board {
 			{
 				if(Math.abs(InputField.x -compX)+Math.abs(InputField.y - compY) >Math.abs(FieldToCompare.x -compX)+Math.abs(FieldToCompare.y - compY)){
 					return false;
-				}else{
+				}else if(Math.abs(InputField.x -compX)+Math.abs(InputField.y - compY) <Math.abs(FieldToCompare.x -compX)+Math.abs(FieldToCompare.y - compY)){
 					return true;
+				}else{
+					if(InputField.y < FieldToCompare.y){
+						return true;
+					}else{
+						return false;
+					}
 				}
 			}
 		}
