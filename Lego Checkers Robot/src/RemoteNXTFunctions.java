@@ -17,9 +17,11 @@ import lejos.util.Delay;
 
 public class RemoteNXTFunctions {
 	RemoteNXT bottomNXT = null;
+	//Each of the factor variables determines how far the motor associated with that axis will move. 
 	private static final int yFactor = -345;
 	private static final int xFactor = -300;
 	private static final int zFactor = 230;
+	//The displacement is multiplied with the yFactor to place the magnet on the right field.
 	private static final double displacementFactor = 3.2;
     private int presentY = (int)(-yFactor*2.60);
     private int presentX = 0;
@@ -54,6 +56,7 @@ public class RemoteNXTFunctions {
 		trashField.x = 3;
 	}
 	
+	//The Color sensor is calibrated
 	private void initColorSensor() throws IOException
 	{
 		getColorOnField(0, 3);
@@ -86,6 +89,7 @@ public class RemoteNXTFunctions {
 		checkersBoard.movePiece(FromField, ToField);
 	}
 	
+	//Makes a piece jump one or move pieces and then remove those pieces from the board
 	public void takePiece(Field fromField, List<Field> midwayFields) throws Exception
 	{
 		Field presentField = fromField;
@@ -161,6 +165,7 @@ public class RemoteNXTFunctions {
 		}
 	}
 	
+	//Resets the motors to their starting positions
 	private void resetMotors(){
 		motorX.setSpeed(200);
 		bottomNXT.A.setSpeed(200);
