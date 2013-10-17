@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.util.*;
 
+import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.robotics.Color;
 
@@ -529,12 +530,37 @@ public class Board {
 						{
 							checkPiece(field, -1, false);
 						}
+						printValues(field);
 					}				
 				}
 			}
 		}
 	}
 
+	private void printValues(Field field){
+		boolean moveable = field.getPieceOnField().isMoveable;
+		boolean canJump = field.getPieceOnField().canJump;
+		int x = field.getPieceOnField().x;
+		int y = field.getPieceOnField().y;
+		
+		LCD.drawInt(x, 0, 0);
+		LCD.drawInt(y, 2, 0);
+		if(moveable){
+			LCD.drawString("moveable = true", 0, 1);
+		}
+		else{
+			LCD.drawString("moveable = false", 0, 1);
+		}
+		if(canJump){
+			LCD.drawString("canJump = true", 0, 2);
+		}
+		else{
+			LCD.drawString("canJump = true", 0, 2);
+		}
+		LCD.refresh();
+		Button.ENTER.waitForPress();
+	}
+	
 	//Sets the colors of the pieces of the robot
 	private void findMyColors() throws InterruptedException, IOException
 	{
