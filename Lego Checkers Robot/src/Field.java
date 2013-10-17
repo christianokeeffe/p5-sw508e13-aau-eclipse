@@ -30,6 +30,7 @@ public class Field {
 		return pieceOnField;
 	}
 	
+	//A field is empty, if no piece is assigned to it.
 	public boolean isEmpty(){
 		if(pieceOnField == null)
 		{
