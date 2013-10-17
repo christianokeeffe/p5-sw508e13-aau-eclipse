@@ -489,9 +489,9 @@ public class Board {
 	private boolean checkJumpDirection(Field field, int difx, int dify, boolean checkForOpponent)
 	{
 		//Forward
-		if(checkBounds(field.x-difx,field.y+dify))
+		if(checkBounds(field.x+difx,field.y+dify))
 		{ 
-			if(checkAllegiance(myBoard[field.x-difx][field.y+dify], checkForOpponent) && !this.fieldOccupied(field.x-2*difx, field.y+2*dify))
+			if(checkAllegiance(myBoard[field.x+difx][field.y+dify], checkForOpponent) && !this.fieldOccupied(field.x+2*difx, field.y+2*dify))
 			{
 				return true;
 			}
@@ -499,9 +499,9 @@ public class Board {
 		//if king, also check backwards
 		else if(field.getPieceOnField().isCrowned)
 		{ 
-			if(checkBounds(field.x-difx,field.y-dify))
+			if(checkBounds(field.x+difx,field.y-dify))
 			{
-				if(checkAllegiance(myBoard[field.x-difx][field.y-dify], checkForOpponent) && !this.fieldOccupied(field.x-2*difx, field.y-2*dify))
+				if(checkAllegiance(myBoard[field.x+difx][field.y-dify], checkForOpponent) && !this.fieldOccupied(field.x+2*difx, field.y-2*dify))
 				{
 					return true;
 				}
