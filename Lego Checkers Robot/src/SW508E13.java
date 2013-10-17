@@ -1,6 +1,8 @@
 
 
 import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.TouchSensor;
 import lejos.util.Delay;
 
 
@@ -8,7 +10,10 @@ import lejos.util.Delay;
 public class SW508E13 {
 
 	public static void main(String[] args) throws Exception {
-		RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
+		//RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
+		FakeMI test = new FakeMI();
+		TouchSensor bigRedButton = new TouchSensor(test.NXT.bottomNXT.S3);
+		
 		/*
 		List<Field> FlytteListe = new ArrayList<Field>();
 		FlytteListe.add(new Field(3,4));
@@ -25,26 +30,50 @@ public class SW508E13 {
 		outside.y = -2;
 		
 		checkTopFunc.movePiece(outside,inside, false);*/
-		
-		boolean changer = true;
-		
+		if(test.NXT.checkersBoard.myPeasentColor == 'r')
+		{
+			test.decideMovement();
+			test.NXT.getColorOnField(4, -2);
+		}
 		while(!Button.ESCAPE.isDown())
 		{
-			if (Button.ENTER.isDown()){
-				if(changer)
+			if(bigRedButton.isPressed()){
+				Delay.msDelay(250);
+				test.NXT.checkersBoard.analyzeBoard();
+				Delay.msDelay(250);
+				for(Field[] arrayOfField : test.NXT.checkersBoard.myBoard)
 				{
-					checkTopFunc.checkersBoard.analyzeBoard();
-					changer = false;
-					checkTopFunc.getColorOnField(4, -2);
+					for(Field field : arrayOfField)
+					{
+						if(field.isPieceOfColor('w'))
+						{
+							LCD.clear();
+							LCD.drawString(field.x+","+field.y, 0, 0);
+							if(field.getPieceOnField().isMoveable)
+							{
+								LCD.drawString("move = true",0,1);
+							}
+							else
+							{
+								LCD.drawString("move = false",0,1);
+							}
+							if(field.getPieceOnField().canJump)
+							{
+								LCD.drawString("jump = true",0,2);
+							}
+							else
+							{
+								LCD.drawString("jump = false",0,2);
+							}
+							LCD.refresh();
+							Button.ENTER.waitForPress();
+						}
+					}
 				}
-				else
-				{
-					//checkTopFunc.checkersBoard.findMissingPiece();
-					changer = true;
-					checkTopFunc.getColorOnField(4, -2);
-				}
+				test.decideMovement();
+				test.NXT.getColorOnField(4, -2);
 			}
-			Delay.msDelay(1000);
+			Delay.msDelay(500);
 		}
 		
 		//code for printing a piece color

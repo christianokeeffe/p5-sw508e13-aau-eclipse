@@ -414,7 +414,7 @@ public class Board {
 			return false;
 	}
 
-	private boolean fieldOccupied(int x, int y)
+	public boolean fieldOccupied(int x, int y)
 	{
 		if(checkBounds(x,y))
 		{
@@ -657,7 +657,7 @@ public class Board {
 	}
 
 	//Check if a given piece is the robots or the opponents
-	private boolean checkAllegiance(Field input, boolean checkForOpponent)
+	public boolean checkAllegiance(Field input, boolean checkForOpponent)
 	{
 		if(checkBounds(input.x, input.y))
 		{
