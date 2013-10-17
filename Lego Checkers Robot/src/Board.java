@@ -208,7 +208,7 @@ public class Board {
 				{
 					throw new Exception();
 				}
-				if(kingPlace[i].getPieceOnField() != null)
+				if(!kingPlace[i].isEmpty())
 				{
 					remoteFunctions.movePiece(field, remoteFunctions.trashField);
 					remoteFunctions.movePiece(kingPlace[i], field);
