@@ -361,7 +361,9 @@ public class Board {
 		if(!pieceFound)
 		{
 			if(checkMove(field,-1))
+			{
 				pieceFound = true;
+			}
 			else
 			{
 				this.findMissingPiece();
@@ -406,11 +408,15 @@ public class Board {
 	private void checkPiece(Field field, int dify, boolean checkForOpponent)
 	{
 		field.getPieceOnField().canJump = checkJump(field,dify, checkForOpponent);
-		if(field.getPieceOnField().canJump){
+		
+		if(field.getPieceOnField().canJump)
+		{
 			field.getPieceOnField().isMoveable = true;
 		}
-		else{
-		field.getPieceOnField().isMoveable = checkMoveable(field, dify);	}
+		else
+		{
+			field.getPieceOnField().isMoveable = checkMoveable(field, dify);	
+		}
 	}
 
 	private boolean checkMoveable(Field field, int dif)
@@ -440,7 +446,8 @@ public class Board {
 		{
 			return true;
 		}		
-		else if(field.getPieceOnField().isCrowned){ 
+		else if(field.getPieceOnField().isCrowned)
+		{ 
 			if(checkJumpDirection(field,1, -dif, checkForOpponent || checkJumpDirection(field, -1, -dif, checkForOpponent)))
 			{
 				return true;
@@ -576,7 +583,7 @@ public class Board {
 				{
 					if((i+j)%2 == 1)
 					{
-						myBoard[i][j].setPieceOnField(GetPiece(i, j));
+						myBoard[i][j].setPieceOnField(getPiece(i, j));
 					}
 				}
 				changer = false;
@@ -587,7 +594,7 @@ public class Board {
 				{
 					if((i+j)%2 == 1)
 					{
-						myBoard[i][j].setPieceOnField(GetPiece(i, j));
+						myBoard[i][j].setPieceOnField(getPiece(i, j));
 					}
 				}
 				changer = true;
@@ -597,7 +604,7 @@ public class Board {
 		this.updateMoveables();
 	}
 
-	private Piece GetPiece(int x, int y) throws IOException{
+	private Piece getPiece(int x, int y) throws IOException{
 		char color = getColor(x, y);
 		if(color == ' ')
 		{
