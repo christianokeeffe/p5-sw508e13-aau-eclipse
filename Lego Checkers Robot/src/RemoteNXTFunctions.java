@@ -179,7 +179,8 @@ public class RemoteNXTFunctions {
 		
 		motorX.backward();
 		bottomNXT.A.backward();
-		bottomNXT.B.backward();		
+		bottomNXT.B.backward();	
+		motorZ.forward();
 		Delay.msDelay(1000);
 		
 		motorZ.backward();
