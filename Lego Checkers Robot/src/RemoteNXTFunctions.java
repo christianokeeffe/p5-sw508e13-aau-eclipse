@@ -20,7 +20,7 @@ public class RemoteNXTFunctions {
 	//Each of the factor variables determines how far the motor associated with that axis will move. 
 	private static final int yFactor = -345;
 	private static final int xFactor = -300;
-	private static final int zFactor = 230;
+	private static final int zFactor = 230*4 + 200;
 	//The displacement is multiplied with the yFactor to place the magnet on the right field.
 	private static final double displacementFactor = 3.2;
     private int presentY = (int)(-yFactor*2.60);
@@ -39,7 +39,7 @@ public class RemoteNXTFunctions {
 		connect();
 		motorZ = new NXTRegulatedMotor(MotorPort.A);
 		motorX = new NXTRegulatedMotor(MotorPort.B);
-		motorZ.setSpeed(100);
+		motorZ.setSpeed(550);
 	    motorX.setSpeed(900);
 	    motorZ.setAcceleration(3000);
 	    motorX.setAcceleration(3000);
@@ -127,7 +127,7 @@ public class RemoteNXTFunctions {
 	
 	private void moveSensorTo(int x, int y, boolean goToMagnet) throws IOException
 	{
-		adjustAngleAxisX(x);
+		adjustAngleAxisX(x, goToMagnet);
 		moveMotorsAxisY(y,goToMagnet);
 
 		bottomNXT.A.waitComplete();
@@ -146,9 +146,16 @@ public class RemoteNXTFunctions {
 		presentY = y*yFactor+displacement;
 	}
 	
-	private void adjustAngleAxisX(int angle) throws IOException{
-		motorX.rotate(angle*xFactor-presentX, true);
-		presentX = angle*xFactor;
+	private void adjustAngleAxisX(int angle, boolean goToMagnet) throws IOException{
+		if(goToMagnet){
+			motorX.rotate((angle-1)*xFactor-presentX, true);
+			presentX = (angle-1)*xFactor;
+		}else{
+			motorX.rotate(angle*xFactor-presentX, true);
+			presentX = angle*xFactor;
+		}
+		
+		
 	}
 	
 	private void adjustAngleAxisY(int angle){
@@ -159,10 +166,9 @@ public class RemoteNXTFunctions {
 	private void resetMotorZ(){
 		motorZ.backward();
 		while(!touchSensorZ.isPressed()){
-			if(touchSensorZ.isPressed()){
-				motorZ.stop();
-			}
-		}
+				
+			
+		}motorZ.stop();
 	}
 	
 	//Resets the motors to their starting positions
