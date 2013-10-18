@@ -5,7 +5,6 @@ import java.util.Random;
 
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
-import lejos.util.Delay;
 
 
 //This is a test class to emulate a MI, not suppose to be part of the release
@@ -50,12 +49,6 @@ public class FakeMI{
 						}
 						if(temp.canJump)
 						{
-							Delay.msDelay(500);
-							LCD.clear();
-							LCD.drawInt(temp.x, 0, 0);
-							LCD.drawInt(temp.y, 0, 1);
-							LCD.refresh();
-							Delay.msDelay(1500);
 							jumpList.add(field);
 						}
 					}
@@ -158,12 +151,6 @@ public class FakeMI{
 
 	private boolean CalculateJump(Field f) throws Exception
 	{
-		Delay.msDelay(500);
-		LCD.clear();
-		LCD.drawString("jumper", 0, 0);
-		LCD.refresh();
-		Delay.msDelay(1000);
-
 		List<Field> jumpPath = new ArrayList<Field>();
 		jumpPath = Jump(f, jumpPath,f.getPieceOnField());
 		if(!jumpPath.isEmpty())
@@ -174,11 +161,6 @@ public class FakeMI{
 		}
 		else
 		{
-			Delay.msDelay(500);
-			LCD.clear();
-			LCD.drawString("not jumping", 0, 0);
-			LCD.refresh();
-			Delay.msDelay(1000);
 			return false;
 		}
 	}
@@ -210,28 +192,13 @@ public class FakeMI{
 
 	private List<Field> Jump(Field f, List<Field> lf, Piece orginalPiece)
 	{
-		Delay.msDelay(500);
-		LCD.clear();
-		LCD.drawString("tester", 0, 0);
-		LCD.refresh();
-		Delay.msDelay(1000);
 		if(checkColor(f.x-1,f.y+1, true) && !NXT.checkersBoard.fieldOccupied(f.x-2, f.y+2) && !checkList(lf,f.x-2,f.y+2))
 		{
-			Delay.msDelay(500);
-			LCD.clear();
-			LCD.drawString("1", 0, 0);
-			LCD.refresh();
-			Delay.msDelay(1000);
 			lf.add(NXT.checkersBoard.myBoard[f.x-2][f.y+2]);
 			return Jump(NXT.checkersBoard.myBoard[f.x-2][f.y+2],lf,orginalPiece);
 		}
 		else if(checkColor(f.x+1,f.y+1, true) && !NXT.checkersBoard.fieldOccupied(f.x+2, f.y+2) && !checkList(lf,f.x+2,f.y+2))
 		{
-			Delay.msDelay(500);
-			LCD.clear();
-			LCD.drawString("2", 0, 0);
-			LCD.refresh();
-			Delay.msDelay(1000);
 			lf.add(NXT.checkersBoard.myBoard[f.x+2][f.y+2]);
 			return Jump(NXT.checkersBoard.myBoard[f.x+2][f.y+2],lf,orginalPiece);
 		}
@@ -239,31 +206,15 @@ public class FakeMI{
 		{
 			if(checkColor(f.x-1,f.y-1, true) && !NXT.checkersBoard.fieldOccupied(f.x-2, f.y-2) && !checkList(lf,f.x-2,f.y-2))
 			{
-				Delay.msDelay(500);
-				LCD.clear();
-				LCD.drawString("3", 0, 0);
-				LCD.refresh();
-				Delay.msDelay(1000);
 				lf.add(NXT.checkersBoard.myBoard[f.x-2][f.y-2]);
 				return Jump(NXT.checkersBoard.myBoard[f.x-2][f.y-2],lf,orginalPiece);
 			}
 			else if(checkColor(f.x+1,f.y-1, true) && !NXT.checkersBoard.fieldOccupied(f.x+2, f.y-2) && !checkList(lf,f.x+2,f.y-2))
 			{
-				Delay.msDelay(500);
-				LCD.clear();
-				LCD.drawString("4", 0, 0);
-				LCD.refresh();
-				Delay.msDelay(1000);
 				lf.add(NXT.checkersBoard.myBoard[f.x+2][f.y-2]);
 				return Jump(NXT.checkersBoard.myBoard[f.x+2][f.y-2],lf,orginalPiece);
 			}
 		}
-
-		Delay.msDelay(500);
-		LCD.clear();
-		LCD.drawString("tester tester", 0, 0);
-		LCD.refresh();
-		Delay.msDelay(1000);
 		return lf;
 	}
 }

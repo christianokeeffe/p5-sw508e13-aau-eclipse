@@ -171,7 +171,6 @@ public class Board {
 					if(field.getPieceOnField().isMoveable && checkAllegiance(field, true))
 					{
 						moveableList.add(field);
-						printValues(field);
 					}
 					
 				}
