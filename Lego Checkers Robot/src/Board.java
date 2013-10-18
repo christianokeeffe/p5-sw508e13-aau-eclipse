@@ -4,7 +4,6 @@ import java.util.*;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.robotics.Color;
-import lejos.util.Delay;
 
 public class Board {
 
@@ -196,7 +195,7 @@ public class Board {
 		sortListOfFields(moveableList);
 		boolean foundOne = false;
 		boolean mustJump = moveableList.get(0).getPieceOnField().canJump;
-		
+
 		OUTERMOST: for(Field field : moveableList){
 			if(this.isFieldEmptyOnBoard(field.x, field.y))
 			{
@@ -206,7 +205,7 @@ public class Board {
 				}
 				if(this.trackMovement(field))
 				{
-					
+
 					foundOne = true;
 					//Break the loop
 					break OUTERMOST;
@@ -238,21 +237,20 @@ public class Board {
 		updateMoveables();
 		return true;
 	}
-	
+
 	private boolean verifyOpPieceIsOnField(Field field) throws InterruptedException, IOException
 	{
 		if(checkAllegiance(field, true))
 		{
-			Delay.msDelay(3000);
 			if(field.getPieceOnField().isMoveable)
 			{
-			if(isFieldEmptyOnBoard(field.x, field.y))
-			{
-				return false;
-			}else
-			{
-				return true;
-			}
+				if(isFieldEmptyOnBoard(field.x, field.y))
+				{
+					return false;
+				}else
+				{
+					return true;
+				}
 			}
 		}
 		return true;
@@ -381,7 +379,7 @@ public class Board {
 
 		foundPiece = checkSingleJump(field, -1, -1, originalField);
 		//latex end
-		
+
 		if(!foundPiece)
 		{
 			foundPiece = checkSingleJump(field, 1, -1, originalField);
@@ -400,30 +398,33 @@ public class Board {
 
 		return foundPiece;
 	}
-	
+
 	private boolean checkIfOthersHasMove(Field field, Field FromField) throws InterruptedException, IOException
 	{
-		
+
 		List<Field> checkArray = new ArrayList<Field>();
 		if(checkBounds(field.x+1,field.y+1))
 			checkArray.add(myBoard[field.x+1][field.y+1]);
-		
+
 		if(checkBounds(field.x+1,field.y-1))
 			checkArray.add(myBoard[field.x+1][field.y-1]);
-		
+
 		if(checkBounds(field.x-1,field.y-1))
-			checkArray.add(myBoard[field.x+1][field.y-1]);
-		
+			checkArray.add(myBoard[field.x-1][field.y-1]);
+
 		if(checkBounds(field.x-1,field.y+1))
-			checkArray.add(myBoard[field.x+1][field.y+1]);
-		
+			checkArray.add(myBoard[field.x-1][field.y+1]);
+
 		boolean returnValue = true;
 		for(int i = 0; i < checkArray.size(); i++)
 		{
-			
-			if(checkArray.get(i).x != FromField.x && checkArray.get(i).y != FromField.y)
+			if(!(checkArray.get(i).x == FromField.x && checkArray.get(i).y == FromField.y))
 			{
-			returnValue = verifyOpPieceIsOnField(checkArray.get(i));
+				returnValue = verifyOpPieceIsOnField(checkArray.get(i));
+			}
+			if(!returnValue)
+			{
+				return returnValue;
 			}
 		}
 		return returnValue;
@@ -453,8 +454,8 @@ public class Board {
 			{
 				if(checkIfOthersHasMove(myBoard[field.x-1][field.y+directY], field))
 				{
-				movePiece(field, field.x-1, field.y+directY);
-				return true;
+					movePiece(field, field.x-1, field.y+directY);
+					return true;
 				}
 				else
 				{
@@ -468,8 +469,8 @@ public class Board {
 				{
 					if(checkIfOthersHasMove(myBoard[field.x+1][field.y-directY], field))
 					{
-					movePiece(field, field.x+1, field.y-directY);
-					return true;
+						movePiece(field, field.x+1, field.y-directY);
+						return true;
 					}
 					else
 					{
@@ -480,8 +481,8 @@ public class Board {
 				{
 					if(checkIfOthersHasMove(myBoard[field.x-1][field.y-directY], field))
 					{
-					movePiece(field, field.x-1, field.y-directY);
-					return true;
+						movePiece(field, field.x-1, field.y-directY);
+						return true;
 					}
 					else
 					{
