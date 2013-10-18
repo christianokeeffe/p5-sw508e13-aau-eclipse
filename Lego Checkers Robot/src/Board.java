@@ -342,10 +342,12 @@ public class Board {
 	//Checks if piece has jumped
 	private boolean checkJumps(Field field, Field originalField) throws Exception
 	{
+		//latex start checkJumps
 		boolean foundPiece = false;
 
 		foundPiece = checkSingleJump(field, -1, -1, originalField);
-
+		//latex end
+		
 		if(!foundPiece)
 		{
 			foundPiece = checkSingleJump(field, 1, -1, originalField);
