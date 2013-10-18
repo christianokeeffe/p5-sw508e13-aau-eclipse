@@ -386,7 +386,7 @@ public class Board {
 					movePiece(field, field.x+1, field.y-directY);
 					return true;
 				}
-				else if(checkMoveDirection(field,-1,directY))
+				else if(checkMoveDirection(field,-1,-directY))
 				{
 					movePiece(field, field.x-1, field.y-directY);
 					return true;
