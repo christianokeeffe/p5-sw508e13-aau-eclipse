@@ -77,6 +77,7 @@ public class RemoteNXTFunctions {
 		return boardColorSensor.getColor();
 	}
 	
+	//latex start movePiece
 	public void movePiece(Field FromField, Field ToField) throws Exception
 	{
 		moveSensorTo(FromField.x,FromField.y,true);
@@ -90,6 +91,7 @@ public class RemoteNXTFunctions {
 		motorZ.rotate(-zFactor);
 		checkersBoard.movePiece(FromField, ToField);
 	}
+	//latex end
 	
 	//Makes a piece jump one or more pieces and then remove those pieces from the board
 	public void takePiece(Field fromField, List<Field> midwayFields) throws Exception
@@ -176,7 +178,6 @@ public class RemoteNXTFunctions {
 		motorX.forward();
 		bottomNXT.A.forward();
 		bottomNXT.B.forward();
-
 	}
 	
 	private void stopMotorsReset(){
