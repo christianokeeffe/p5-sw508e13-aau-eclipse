@@ -41,11 +41,11 @@ public class SW508E13 {
 				Delay.msDelay(250);
 				test.NXT.checkersBoard.analyzeBoard();
 				Delay.msDelay(250);
-				for(Field[] arrayOfField : test.NXT.checkersBoard.myBoard)
+				/*for(Field[] arrayOfField : test.NXT.checkersBoard.myBoard)
 				{
 					for(Field field : arrayOfField)
 					{
-						if(field.isPieceOfColor('w'))
+						if(field.isPieceOfColor(test.NXT.checkersBoard.opponentPeasentColor))
 						{
 							LCD.clear();
 							LCD.drawString(field.x+","+field.y, 0, 0);
@@ -69,7 +69,7 @@ public class SW508E13 {
 							Button.ENTER.waitForPress();
 						}
 					}
-				}
+				}*/
 				test.decideMovement();
 				test.NXT.getColorOnField(4, -2);
 			}

@@ -34,6 +34,8 @@ public class FakeMI{
 
 	public void updateList()
 	{
+		moveList.clear();
+		jumpList.clear();
 		for(Field[] arrayField : NXT.checkersBoard.myBoard)
 		{
 			for(Field field : arrayField)
@@ -193,6 +195,18 @@ public class FakeMI{
 		}
 		return contain;
 	}
+	
+	private boolean checkColor(int x, int y, boolean oppenentColor)
+	{
+		if(x <= 7 && x >= 0 && y <= 7 && y >= 0)
+		{
+			return NXT.checkersBoard.checkAllegiance(NXT.checkersBoard.myBoard[x][y],oppenentColor);
+		}
+		else
+		{
+			return false;
+		}
+	}
 
 	private List<Field> Jump(Field f, List<Field> lf, Piece orginalPiece)
 	{
@@ -201,7 +215,7 @@ public class FakeMI{
 		LCD.drawString("tester", 0, 0);
 		LCD.refresh();
 		Delay.msDelay(1000);
-		if(NXT.checkersBoard.checkAllegiance(NXT.checkersBoard.myBoard[f.x-1][f.y+1], true) && !NXT.checkersBoard.fieldOccupied(f.x-2, f.y+2) && !checkList(lf,f.x-2,f.y+2))
+		if(checkColor(f.x-1,f.y+1, true) && !NXT.checkersBoard.fieldOccupied(f.x-2, f.y+2) && !checkList(lf,f.x-2,f.y+2))
 		{
 			Delay.msDelay(500);
 			LCD.clear();
@@ -211,7 +225,7 @@ public class FakeMI{
 			lf.add(NXT.checkersBoard.myBoard[f.x-2][f.y+2]);
 			return Jump(NXT.checkersBoard.myBoard[f.x-2][f.y+2],lf,orginalPiece);
 		}
-		else if(NXT.checkersBoard.checkAllegiance(NXT.checkersBoard.myBoard[f.x+1][f.y+1], true) && !NXT.checkersBoard.fieldOccupied(f.x+2, f.y+2) && !checkList(lf,f.x+2,f.y+2))
+		else if(checkColor(f.x+1,f.y+1, true) && !NXT.checkersBoard.fieldOccupied(f.x+2, f.y+2) && !checkList(lf,f.x+2,f.y+2))
 		{
 			Delay.msDelay(500);
 			LCD.clear();
@@ -223,7 +237,7 @@ public class FakeMI{
 		}
 		if(orginalPiece.isCrowned)
 		{
-			if(NXT.checkersBoard.checkAllegiance(NXT.checkersBoard.myBoard[f.x-1][f.y-1], true) && !NXT.checkersBoard.fieldOccupied(f.x-2, f.y-2) && !checkList(lf,f.x-2,f.y-2))
+			if(checkColor(f.x-1,f.y-1, true) && !NXT.checkersBoard.fieldOccupied(f.x-2, f.y-2) && !checkList(lf,f.x-2,f.y-2))
 			{
 				Delay.msDelay(500);
 				LCD.clear();
@@ -233,7 +247,7 @@ public class FakeMI{
 				lf.add(NXT.checkersBoard.myBoard[f.x-2][f.y-2]);
 				return Jump(NXT.checkersBoard.myBoard[f.x-2][f.y-2],lf,orginalPiece);
 			}
-			else if(NXT.checkersBoard.checkAllegiance(NXT.checkersBoard.myBoard[f.x+1][f.y-1], true) && !NXT.checkersBoard.fieldOccupied(f.x+2, f.y-2) && !checkList(lf,f.x+2,f.y-2))
+			else if(checkColor(f.x+1,f.y-1, true) && !NXT.checkersBoard.fieldOccupied(f.x+2, f.y-2) && !checkList(lf,f.x+2,f.y-2))
 			{
 				Delay.msDelay(500);
 				LCD.clear();

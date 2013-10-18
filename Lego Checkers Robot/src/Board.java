@@ -171,7 +171,9 @@ public class Board {
 					if(field.getPieceOnField().isMoveable && checkAllegiance(field, true))
 					{
 						moveableList.add(field);
+						printValues(field);
 					}
+					
 				}
 			}
 		}
@@ -530,7 +532,6 @@ public class Board {
 						{
 							checkPiece(field, -1, false);
 						}
-						printValues(field);
 					}				
 				}
 			}
@@ -555,7 +556,7 @@ public class Board {
 			LCD.drawString("canJump = true", 0, 2);
 		}
 		else{
-			LCD.drawString("canJump = true", 0, 2);
+			LCD.drawString("canJump = false", 0, 2);
 		}
 		LCD.refresh();
 		Button.ENTER.waitForPress();
