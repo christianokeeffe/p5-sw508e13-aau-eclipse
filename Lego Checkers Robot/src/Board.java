@@ -228,19 +228,21 @@ public class Board {
 
 	private void checkForUpgradeKing(Field field) throws Exception
 	{
-		int checkRow;
-		if(checkAllegiance(field, true))
-		{
-			checkRow = 0;
-		}
-		else
-		{
-			checkRow = 7;
-		}
+		if(!field.isEmpty()){
+			int checkRow;
+			if(checkAllegiance(field, true))
+			{
+				checkRow = 0;
+			}
+			else
+			{
+				checkRow = 7;
+			}
 
-		if(field.y == checkRow)
-		{
-			upgradeToKing(field);
+			if(field.y == checkRow && !field.getPieceOnField().isCrowned)
+			{
+				upgradeToKing(field);
+			}
 		}
 	}
 
