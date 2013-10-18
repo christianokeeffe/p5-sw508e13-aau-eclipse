@@ -39,7 +39,7 @@ public class RemoteNXTFunctions {
 		connect();
 		motorZ = new NXTRegulatedMotor(MotorPort.A);
 		motorX = new NXTRegulatedMotor(MotorPort.B);
-		motorZ.setSpeed(300);
+		motorZ.setSpeed(150);
 	    motorX.setSpeed(900);
 	    motorZ.setAcceleration(3000);
 	    motorX.setAcceleration(3000);
@@ -124,7 +124,7 @@ public class RemoteNXTFunctions {
 			return null;
 		}
 	}
-	
+	//latex start MoveSensor
 	private void moveSensorTo(int x, int y, boolean goToMagnet) throws IOException
 	{
 		adjustAngleAxisX(x, goToMagnet);
@@ -134,6 +134,7 @@ public class RemoteNXTFunctions {
 		bottomNXT.B.waitComplete();
 		motorX.waitComplete();
 	}
+	//latex end
 	
 	private void moveMotorsAxisY(int y, boolean GoToMagnet)
 	{
@@ -175,6 +176,7 @@ public class RemoteNXTFunctions {
 		bottomNXT.B.forward();
 
 	}
+	
 	private void stopMotorsReset(){
 		motorX.stop();
 		motorZ.stop();
