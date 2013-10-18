@@ -204,7 +204,7 @@ public class Board {
 
 		}
 
-		if(foundOne = false){
+		if(foundOne == false){
 			if(analyzeBoardRepeatNumber < 3)
 			{
 				analyzeBoardRepeatNumber ++;
@@ -594,9 +594,12 @@ public class Board {
 		{
 			myKingColor = 'b';
 		}
-		else
+		else if(myPeasentColor == 'w')
 		{
 			myKingColor = 'g';
+		}else{
+			remoteFunctions.initColorSensor();
+			findMyColors();
 		}
 	}
 
