@@ -85,7 +85,7 @@ public class RemoteNXTFunctions {
 		motorZ.rotate(zFactor/2);
 		electromagnet.setPower(0);
 		Delay.msDelay(500);
-		motorZ.rotate(zFactor);
+		motorZ.rotate(-zFactor);
 		checkersBoard.movePiece(FromField, ToField);
 	}
 	
