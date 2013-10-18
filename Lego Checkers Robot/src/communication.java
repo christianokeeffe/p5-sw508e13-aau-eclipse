@@ -15,4 +15,12 @@ public class communication {
 		LCD.drawString("Illegal move, try again",0, 0);
 		LCD.refresh();
 	}
+	
+	public void myKingNotPlaced()
+	{
+		Sound.buzz();
+		LCD.clear();
+		LCD.drawString("Place my king", 0, 0);
+		LCD.refresh();
+	}
 }

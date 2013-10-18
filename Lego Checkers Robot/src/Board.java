@@ -4,6 +4,7 @@ import java.util.*;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.robotics.Color;
+import lejos.util.Delay;
 
 public class Board {
 
@@ -187,7 +188,6 @@ public class Board {
 					{
 						moveableList.add(field);
 					}
-
 				}
 			}
 		}
@@ -285,6 +285,13 @@ public class Board {
 			{
 				field.getPieceOnField().color = myKingColor;
 				field.getPieceOnField().isCrowned = true;
+				
+				communication informer = new communication();
+				while(getColor(field.x, field.y) != myKingColor)
+				{
+					informer.myKingNotPlaced();
+					Delay.msDelay(1000);
+				}
 			}
 			else
 			{
