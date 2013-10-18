@@ -27,7 +27,8 @@ public class RemoteNXTFunctions {
     private int presentX = 0;
     private TouchSensor touchSensorX;
     private TouchSensor touchSensorZ;
-    private TouchSensor touchSensorY;
+    private TouchSensor touchSensorY1;
+    private TouchSensor touchSensorY2;
     public ColorSensor boardColorSensor;
     Board checkersBoard;
     NXTMotor electromagnet;
@@ -46,7 +47,8 @@ public class RemoteNXTFunctions {
 	       
 	    touchSensorX = new TouchSensor(bottomNXT.S1);
 	    touchSensorZ = new TouchSensor(SensorPort.S2);
-	    touchSensorY = new TouchSensor(bottomNXT.S2);
+	    touchSensorY1 = new TouchSensor(bottomNXT.S2);
+	    touchSensorY2 = new TouchSensor(bottomNXT.S4);
 	    boardColorSensor = new ColorSensor(SensorPort.S1);
 	    electromagnet = new NXTMotor(MotorPort.C);
 	    resetMotors();
@@ -192,7 +194,7 @@ public class RemoteNXTFunctions {
 	//Resets the motors to their starting positions
 	private void resetMotors(){
 		startMotorsReset();
-		while(!touchSensorX.isPressed() || !touchSensorZ.isPressed()|| !touchSensorY.isPressed())
+		while(!touchSensorX.isPressed() || !touchSensorZ.isPressed()|| !touchSensorY1.isPressed()|| !touchSensorY2.isPressed())
 		{
 			if(touchSensorX.isPressed()){
 				motorX.stop();
@@ -200,8 +202,10 @@ public class RemoteNXTFunctions {
 			if(touchSensorZ.isPressed()){
 				motorZ.stop();
 			}
-			if(touchSensorY.isPressed()){
+			if(touchSensorY1.isPressed()){
 				bottomNXT.A.stop();
+			}
+			if(touchSensorY2.isPressed()){
 				bottomNXT.B.stop();
 			}
 		}
