@@ -85,11 +85,11 @@ public class RemoteNXTFunctions {
 		motorZ.rotate(zFactor/2);
 		electromagnet.setPower(0);
 		Delay.msDelay(500);
-		resetMotorZ();
+		motorZ.rotate(zFactor);
 		checkersBoard.movePiece(FromField, ToField);
 	}
 	
-	//Makes a piece jump one or move pieces and then remove those pieces from the board
+	//Makes a piece jump one or more pieces and then remove those pieces from the board
 	public void takePiece(Field fromField, List<Field> midwayFields) throws Exception
 	{
 		Field presentField = fromField;
@@ -151,22 +151,14 @@ public class RemoteNXTFunctions {
 		presentX = angle*xFactor;
 	}
 	
+	//latex start slaveNXT
 	private void adjustAngleAxisY(int angle){
 		bottomNXT.A.rotate(angle, true);
 		bottomNXT.B.rotate(angle,true);
 	}
-	//latex start slaveNXT
-	private void resetMotorZ(){
-		motorZ.backward();
-		while(!touchSensorZ.isPressed()){
-				
-			
-		}motorZ.stop();
-	}
 	//latex end
 	
-	//Resets the motors to their starting positions
-	private void resetMotors(){
+	private void startMotorsReset(){
 		motorX.setSpeed(200);
 		bottomNXT.A.setSpeed(200);
 		bottomNXT.B.setSpeed(200);
@@ -182,6 +174,22 @@ public class RemoteNXTFunctions {
 		bottomNXT.A.forward();
 		bottomNXT.B.forward();
 
+	}
+	private void stopMotorsReset(){
+		motorX.stop();
+		motorZ.stop();
+		bottomNXT.A.stop();
+		bottomNXT.B.stop();
+		motorX.setSpeed(900);
+		motorZ.setSpeed(700);
+		bottomNXT.A.setSpeed(900);
+		bottomNXT.B.setSpeed(900);
+		bottomNXT.A.setAcceleration(1);
+		bottomNXT.B.setAcceleration(1);
+	}
+	//Resets the motors to their starting positions
+	private void resetMotors(){
+		startMotorsReset();
 		while(!touchSensorX.isPressed() || !touchSensorZ.isPressed()|| !touchSensorY.isPressed())
 		{
 			if(touchSensorX.isPressed()){
@@ -195,16 +203,7 @@ public class RemoteNXTFunctions {
 				bottomNXT.B.stop();
 			}
 		}
-		motorX.stop();
-		motorZ.stop();
-		bottomNXT.A.stop();
-		bottomNXT.B.stop();
-		motorX.setSpeed(900);
-
-		bottomNXT.A.setSpeed(900);
-		bottomNXT.B.setSpeed(900);
-		bottomNXT.A.setAcceleration(1);
-		bottomNXT.B.setAcceleration(1);
+		stopMotorsReset();
 	}
 	//latex start connect
 	private void connect() throws InterruptedException{
