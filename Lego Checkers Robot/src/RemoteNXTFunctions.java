@@ -155,7 +155,7 @@ public class RemoteNXTFunctions {
 		bottomNXT.A.rotate(angle, true);
 		bottomNXT.B.rotate(angle,true);
 	}
-	
+	//latex start slaveNXT
 	private void resetMotorZ(){
 		motorZ.backward();
 		while(!touchSensorZ.isPressed()){
@@ -163,6 +163,7 @@ public class RemoteNXTFunctions {
 			
 		}motorZ.stop();
 	}
+	//latex end
 	
 	//Resets the motors to their starting positions
 	private void resetMotors(){
@@ -205,7 +206,7 @@ public class RemoteNXTFunctions {
 		bottomNXT.A.setAcceleration(1);
 		bottomNXT.B.setAcceleration(1);
 	}
-	
+	//latex start connect
 	private void connect() throws InterruptedException{
 		// Now connect
 	    try {
@@ -222,4 +223,5 @@ public class RemoteNXTFunctions {
 	        System.exit(1);
 	    }
 	}
+	//latex end
 }
