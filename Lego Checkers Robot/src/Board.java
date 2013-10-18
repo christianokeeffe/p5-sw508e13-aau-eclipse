@@ -417,11 +417,6 @@ public class Board {
 			{
 				pieceFound = true;
 			}
-			else
-			{
-				this.findMissingPiece();
-				return true;	
-			}
 		}
 
 		return pieceFound;
