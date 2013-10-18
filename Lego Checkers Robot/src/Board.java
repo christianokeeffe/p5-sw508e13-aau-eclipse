@@ -730,7 +730,7 @@ public class Board {
 		LCD.drawInt(red, 0, 1);
 		LCD.drawInt(green, 0, 2);
 		LCD.drawInt(blue, 0, 3);
-		if(red > 130  && green < 120 && green > 0 && blue < 160 && blue > 0)
+		if(red > 110  && green < 120 && green > 0 && blue < 160 && blue > 0)
 		{
 			LCD.drawChar('r', 0, 0);LCD.refresh();
 			return 'r';
