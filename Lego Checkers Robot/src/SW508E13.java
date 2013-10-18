@@ -13,7 +13,7 @@ public class SW508E13 {
 		//RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
 		FakeMI test = new FakeMI();
 		TouchSensor bigRedButton = new TouchSensor(test.NXT.bottomNXT.S3);
-		
+		communication Com = new communication();
 		/*
 		List<Field> FlytteListe = new ArrayList<Field>();
 		FlytteListe.add(new Field(3,4));
@@ -38,42 +38,17 @@ public class SW508E13 {
 		while(!Button.ESCAPE.isDown())
 		{
 			if(bigRedButton.isPressed()){
-				Delay.msDelay(250);
-				test.NXT.checkersBoard.analyzeBoard();
-				Delay.msDelay(250);
-				/*for(Field[] arrayOfField : test.NXT.checkersBoard.myBoard)
+				if(test.NXT.checkersBoard.analyzeBoard())
 				{
-					for(Field field : arrayOfField)
-					{
-						if(field.isPieceOfColor(test.NXT.checkersBoard.opponentPeasentColor))
-						{
-							LCD.clear();
-							LCD.drawString(field.x+","+field.y, 0, 0);
-							if(field.getPieceOnField().isMoveable)
-							{
-								LCD.drawString("move = true",0,1);
-							}
-							else
-							{
-								LCD.drawString("move = false",0,1);
-							}
-							if(field.getPieceOnField().canJump)
-							{
-								LCD.drawString("jump = true",0,2);
-							}
-							else
-							{
-								LCD.drawString("jump = false",0,2);
-							}
-							LCD.refresh();
-							Button.ENTER.waitForPress();
-						}
-					}
-				}*/
 				test.decideMovement();
 				test.NXT.getColorOnField(4, -2);
+				Com.playYourTurn();
+				}
+				else
+				{
+					Com.illeagalMove();
+				}
 			}
-			Delay.msDelay(500);
 		}
 		
 		//code for printing a piece color

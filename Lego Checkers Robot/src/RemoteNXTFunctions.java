@@ -23,7 +23,7 @@ public class RemoteNXTFunctions {
 	private static final int zFactor = 1350;
 	//The displacement is multiplied with the yFactor to place the magnet on the right field.
 	private static final double displacementFactor = 3.2;
-    private int presentY = (int)(-yFactor*2.60);
+    private int presentY = 0;
     private int presentX = 0;
     private TouchSensor touchSensorX;
     private TouchSensor touchSensorZ;
@@ -42,8 +42,6 @@ public class RemoteNXTFunctions {
 		motorX = new NXTRegulatedMotor(MotorPort.B);
 		motorZ.setSpeed(150);
 	    motorX.setSpeed(900);
-	    motorZ.setAcceleration(3000);
-	    motorX.setAcceleration(3000);
 	       
 	    touchSensorX = new TouchSensor(bottomNXT.S1);
 	    touchSensorZ = new TouchSensor(SensorPort.S2);
@@ -164,6 +162,9 @@ public class RemoteNXTFunctions {
 	//latex end
 	
 	private void startMotorsReset(){
+		    bottomNXT.A.setAcceleration(6000);
+		    bottomNXT.B.setAcceleration(6000);
+		motorZ.setSpeed(150);
 		motorX.setSpeed(200);
 		bottomNXT.A.setSpeed(200);
 		bottomNXT.B.setSpeed(200);
@@ -189,11 +190,15 @@ public class RemoteNXTFunctions {
 		motorZ.setSpeed(700);
 		bottomNXT.A.setSpeed(900);
 		bottomNXT.B.setSpeed(900);
-		bottomNXT.A.setAcceleration(1);
-		bottomNXT.B.setAcceleration(1);
+
+
+		bottomNXT.B.smoothAcceleration(true);
+		bottomNXT.A.smoothAcceleration(true);
+	    bottomNXT.A.setAcceleration(300);
+	    bottomNXT.B.setAcceleration(300);
 	}
 	//Resets the motors to their starting positions
-	private void resetMotors(){
+	public void resetMotors(){
 		startMotorsReset();
 		while(!touchSensorX.isPressed() || !touchSensorZ.isPressed()|| !touchSensorY1.isPressed()|| !touchSensorY2.isPressed())
 		{
@@ -210,6 +215,8 @@ public class RemoteNXTFunctions {
 				bottomNXT.B.stop();
 			}
 		}
+		presentY = (int)(-yFactor*2.60);
+		presentX = 0;
 		stopMotorsReset();
 	}
 	//latex start connect

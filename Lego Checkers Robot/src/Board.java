@@ -4,6 +4,7 @@ import java.util.*;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.robotics.Color;
+import lejos.util.Delay;
 
 public class Board {
 
@@ -194,18 +195,23 @@ public class Board {
 
 		sortListOfFields(moveableList);
 		boolean foundOne = false;
-
+		boolean mustJump = moveableList.get(0).getPieceOnField().canJump;
+		
 		OUTERMOST: for(Field field : moveableList){
 			if(this.isFieldEmptyOnBoard(field.x, field.y))
 			{
+				if(mustJump&&!field.getPieceOnField().canJump)
+				{
+					return false;
+				}
 				if(this.trackMovement(field))
 				{
+					
 					foundOne = true;
 					//Break the loop
 					break OUTERMOST;
 				}
 			}
-
 		}
 
 		if(foundOne == false){
@@ -214,13 +220,41 @@ public class Board {
 				analyzeBoardRepeatNumber ++;
 				analyzeBoard();
 				analyzeBoardRepeatNumber = 0;
-			}else{
+			}
+			else if(analyzeBoardRepeatNumber < 6)
+			{
+				remoteFunctions.resetMotors();
+				analyzeBoardRepeatNumber ++;
+				analyzeBoard();
+				analyzeBoardRepeatNumber = 0;
+			}
+			else
+			{
 				findMissingPiece();
 			}
 		}
 
 		//Find the pieces that are currently moveable
 		updateMoveables();
+		return true;
+	}
+	
+	private boolean verifyOpPieceIsOnField(Field field) throws InterruptedException, IOException
+	{
+		if(checkAllegiance(field, true))
+		{
+			Delay.msDelay(3000);
+			if(field.getPieceOnField().isMoveable)
+			{
+			if(isFieldEmptyOnBoard(field.x, field.y))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+			}
+		}
 		return true;
 	}
 
@@ -366,6 +400,34 @@ public class Board {
 
 		return foundPiece;
 	}
+	
+	private boolean checkIfOthersHasMove(Field field, Field FromField) throws InterruptedException, IOException
+	{
+		
+		List<Field> checkArray = new ArrayList<Field>();
+		if(checkBounds(field.x+1,field.y+1))
+			checkArray.add(myBoard[field.x+1][field.y+1]);
+		
+		if(checkBounds(field.x+1,field.y-1))
+			checkArray.add(myBoard[field.x+1][field.y-1]);
+		
+		if(checkBounds(field.x-1,field.y-1))
+			checkArray.add(myBoard[field.x+1][field.y-1]);
+		
+		if(checkBounds(field.x-1,field.y+1))
+			checkArray.add(myBoard[field.x+1][field.y+1]);
+		
+		boolean returnValue = true;
+		for(int i = 0; i < checkArray.size(); i++)
+		{
+			
+			if(checkArray.get(i).x != FromField.x && checkArray.get(i).y != FromField.y)
+			{
+			returnValue = verifyOpPieceIsOnField(checkArray.get(i));
+			}
+		}
+		return returnValue;
+	}
 
 	//Determine simple move
 	private boolean checkMove(Field field, int directY) throws Exception
@@ -376,27 +438,55 @@ public class Board {
 			//Check the first direction
 			if(checkMoveDirection(field,1,directY))
 			{
-				movePiece(field, field.x+1, field.y+directY);
-				return true;
+				if(checkIfOthersHasMove(myBoard[field.x+1][field.y+directY],field))
+				{
+					movePiece(field, field.x+1, field.y+directY);
+					return true;
+				}
+				else
+				{
+					return false;
+				}
 			}
 			//Second direction
 			else if(checkMoveDirection(field,-1,directY))
 			{
+				if(checkIfOthersHasMove(myBoard[field.x-1][field.y+directY], field))
+				{
 				movePiece(field, field.x-1, field.y+directY);
 				return true;
+				}
+				else
+				{
+					return false;
+				}
 			}
 			//If king, also check backwards
 			else if(field.getPieceOnField().isCrowned)
 			{
 				if(checkMoveDirection(field,1,-directY))
 				{
+					if(checkIfOthersHasMove(myBoard[field.x+1][field.y-directY], field))
+					{
 					movePiece(field, field.x+1, field.y-directY);
 					return true;
+					}
+					else
+					{
+						return false;
+					}
 				}
 				else if(checkMoveDirection(field,-1,-directY))
 				{
+					if(checkIfOthersHasMove(myBoard[field.x-1][field.y-directY], field))
+					{
 					movePiece(field, field.x-1, field.y-directY);
 					return true;
+					}
+					else
+					{
+						return false;
+					}
 				}
 			}
 		}
@@ -607,6 +697,7 @@ public class Board {
 		{
 			myKingColor = 'g';
 		}else{
+			remoteFunctions.resetMotors();
 			remoteFunctions.initColorSensor();
 			findMyColors();
 		}
