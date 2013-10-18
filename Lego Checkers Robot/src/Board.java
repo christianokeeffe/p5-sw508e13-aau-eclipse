@@ -32,6 +32,7 @@ public class Board {
 				temp.y = y;
 
 				//Every second field is an allowed field
+				//latex start ConstructorLoop
 				if((x+y)%2 == 1)
 				{
 					temp.allowedField = true;
@@ -47,6 +48,7 @@ public class Board {
 							pieceOnBoard.isMoveable = true;
 						}
 					}
+					//latex end
 
 					if(y > 4)
 					{
@@ -68,6 +70,7 @@ public class Board {
 		}
 
 		//Set the location of the human players king pieces
+		//latex start ConstructorKing
 		for (int i = 0; i < 8; i++)
 		{
 			Field temp = new Field();
@@ -79,6 +82,7 @@ public class Board {
 			temp.setPieceOnField(tempPiece);
 			kingPlace[i] = temp;
 		}
+		//latex end
 	}
 
 	//Method to used in sorting the list of places to move the robot
@@ -277,6 +281,7 @@ public class Board {
 	//Moves a piece in the board representation
 	private void movePiece(Field fromField, int toField_x, int toField_y) throws Exception
 	{
+		//latex start movePiece
 		if(checkBounds(toField_x,toField_y))
 		{	
 			myBoard[toField_x][toField_y].setPieceOnField(fromField.getPieceOnField());
@@ -287,7 +292,7 @@ public class Board {
 		{
 			myBoard[fromField.x][fromField.y].emptyThisField();
 		}
-
+		//latex end
 	}
 
 	public void movePiece(Field FromField, Field ToField) throws Exception
@@ -454,9 +459,10 @@ public class Board {
 	}
 
 	//Check if a piece can move and is jumpable
+	//latex start checkPiece
 	private void checkPiece(Field field, int dify, boolean checkForOpponent)
 	{
-		field.getPieceOnField().canJump = checkJump(field,dify, checkForOpponent);
+		field.getPieceOnField().canJump = checkJump(field, dify, checkForOpponent);
 
 		if(field.getPieceOnField().canJump)
 		{
@@ -467,6 +473,7 @@ public class Board {
 			field.getPieceOnField().isMoveable = checkMoveable(field, dify);	
 		}
 	}
+	//latex start navn
 
 	//Checks if a given field is moveable
 	private boolean checkMoveable(Field field, int dif)
