@@ -4,13 +4,14 @@ import java.util.*;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.robotics.Color;
-import lejos.util.Delay;
 
 public class Board {
 
 	Field[][] myBoard = new Field[8][8];
 	Field[] kingPlace = new Field[8];
 	int analyzeBoardRepeatNumber = 0;
+	Field fieldToCheck;
+	communication informer = new communication();
 
 	char myPeasentColor, myKingColor, opponentPeasentColor, opponentKingColor;
 	RemoteNXTFunctions remoteFunctions;
@@ -235,7 +236,31 @@ public class Board {
 
 		//Find the pieces that are currently moveable
 		updateMoveables();
+		checkRobotPieceReplaced();
+		
 		return true;
+	}
+	
+	//Function to check if user have replaced the robots peasent piece with a king piece
+	private void checkRobotPieceReplaced() throws IOException
+	{
+		if(fieldToCheck != null)
+		{
+			boolean checkCondition = true;
+			while(checkCondition)
+			{
+				if(getColor(fieldToCheck.x, fieldToCheck.y) != myKingColor)
+				{
+					checkCondition = false;
+					fieldToCheck = null;
+				}
+				else
+				{
+					informer.myKingNotPlaced();
+					Button.ENTER.waitForPress();
+				}
+			}
+		}
 	}
 
 	private boolean verifyOpPieceIsOnField(Field field) throws InterruptedException, IOException
@@ -285,13 +310,7 @@ public class Board {
 			{
 				field.getPieceOnField().color = myKingColor;
 				field.getPieceOnField().isCrowned = true;
-				
-				communication informer = new communication();
-				while(getColor(field.x, field.y) != myKingColor)
-				{
-					informer.myKingNotPlaced();
-					Delay.msDelay(1000);
-				}
+				fieldToCheck = field;
 			}
 			else
 			{
