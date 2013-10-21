@@ -18,11 +18,11 @@ import lejos.util.Delay;
 public class RemoteNXTFunctions {
 	RemoteNXT bottomNXT = null;
 	//Each of the factor variables determines how far the motor associated with that axis will move. 
-	private static final int yFactor = -345;
-	private static final int xFactor = -300;
-	private static final int zFactor = 1350;
+	private static final int yFactor = -268;
+	private static final int xFactor = -228;
+	private static final int zFactor = 674;
 	//The displacement is multiplied with the yFactor to place the magnet on the right field.
-	private static final double displacementFactor = 3.2;
+	private static final double displacementFactorY = 4.7;
     private int presentY = 0;
     private int presentX = 0;
     private TouchSensor touchSensorX;
@@ -52,7 +52,7 @@ public class RemoteNXTFunctions {
 	    resetMotors();
 	    initColorSensor();
 	    checkersBoard = new Board(this);
-	    trashField.y = -4;
+	    trashField.y = -6;
 		trashField.x = 3;
 	}
 	
@@ -79,10 +79,12 @@ public class RemoteNXTFunctions {
 	public void movePiece(Field FromField, Field ToField) throws Exception
 	{
 		moveSensorTo(FromField.x,FromField.y,true);
+		Delay.msDelay(1000);
 		motorZ.rotate(zFactor);
 		electromagnet.setPower(100);
 		motorZ.rotate(-(zFactor/2));
-		moveSensorTo(ToField.x,ToField.y,true); 
+		moveSensorTo(ToField.x,ToField.y,true);
+		Delay.msDelay(1000);
 		motorZ.rotate(zFactor/2);
 		electromagnet.setPower(0);
 		Delay.msDelay(500);
@@ -142,7 +144,7 @@ public class RemoteNXTFunctions {
 	{
 		int displacement = 0;
 		if(GoToMagnet == true){
-			displacement =  (int) (yFactor*displacementFactor);
+			displacement =  (int) (yFactor*displacementFactorY);
 		}
 		adjustAngleAxisY(y*yFactor-presentY+displacement);
 		
@@ -215,8 +217,8 @@ public class RemoteNXTFunctions {
 				bottomNXT.B.stop();
 			}
 		}
-		presentY = (int)(-yFactor*2.60);
-		presentX = 0;
+		presentY = 1070;
+		presentX = 120;
 		stopMotorsReset();
 	}
 	//latex start connect
