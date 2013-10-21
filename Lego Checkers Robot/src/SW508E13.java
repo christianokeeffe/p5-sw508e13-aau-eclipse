@@ -20,7 +20,7 @@ public class SW508E13 {
 		FlytteListe.add(new Field(5,2));
 		FlytteListe.add(new Field(3,0));
 		checkTopFunc.takePiece(new Field(1,6), FlytteListe);
-		*/
+		 */
 		//Delay.msDelay(10000);
 		/*Field outside = new Field();
 		Field inside = new Field();
@@ -28,7 +28,7 @@ public class SW508E13 {
 		inside.y = 5;
 		outside.x = 7;
 		outside.y = -2;
-		
+
 		checkTopFunc.movePiece(outside,inside, false);*/
 		if(test.NXT.checkersBoard.myPeasentColor == 'r')
 		{
@@ -40,9 +40,12 @@ public class SW508E13 {
 			if(bigRedButton.isPressed()){
 				if(test.NXT.checkersBoard.analyzeBoard())
 				{
-				test.decideMovement();
-				test.NXT.getColorOnField(4, -2);
-				Com.playYourTurn();
+					if(!test.NXT.checkersBoard.checkForGameHasEnded())
+					{
+						test.decideMovement();
+						test.NXT.getColorOnField(4, -2);
+						Com.playYourTurn();
+					}
 				}
 				else
 				{
@@ -50,7 +53,7 @@ public class SW508E13 {
 				}
 			}
 		}
-		
+
 		//code for printing a piece color
 		/*while(!Button.ESCAPE.isDown())
 		{
@@ -64,7 +67,7 @@ public class SW508E13 {
 			LCD.drawString("green: " + green, 0, 1);
 			LCD.drawString("blue: " + blue, 0, 2);
 			LCD.refresh();
-			
+
 			if(red > 180 && red < 255 && green > 180 && green < 255 && blue > 180 && blue < 255)
 			{
 				LCD.drawString("white",0,3);
