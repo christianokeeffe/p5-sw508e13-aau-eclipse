@@ -10,6 +10,7 @@ public class Board {
 	Field[][] myBoard = new Field[8][8];
 	Field[] kingPlace = new Field[8];
 	int analyzeBoardRepeatNumber = 0;
+
 	Field fieldToCheck;
 	communication informer = new communication();
 
@@ -19,6 +20,7 @@ public class Board {
 	public Board(RemoteNXTFunctions remoteFunc) throws InterruptedException, IOException
 	{
 		remoteFunctions = remoteFunc;
+		
 		findMyColors();
 		findOpponentColors();
 
@@ -85,6 +87,54 @@ public class Board {
 			kingPlace[i] = temp;
 		}
 		//latex end
+	}
+	
+	/*returns 0 if game is not ended, 1 if human won, 2 if robot win and 3 if there is a draw*/
+	public int gameIsEnded()
+	{
+		updateMoveables();
+
+		List<Field> humanMoveableList = new ArrayList<Field>();
+		List<Field> robotMoveableList = new ArrayList<Field>();
+		boolean robotHasPieces = false;
+		boolean humanHasPieces = false;
+
+		for (Field[] f : myBoard) 
+		{
+			for (Field field : f) 
+			{
+				if(!field.isEmpty()){
+					if(checkAllegiance(field, true))
+					{
+						humanHasPieces = true;
+						if(field.getPieceOnField().isMoveable){
+							humanMoveableList.add(field);
+						}
+					}
+					if(checkAllegiance(field, false))
+					{
+						robotHasPieces = true;
+						if(field.getPieceOnField().isMoveable){
+							robotMoveableList.add(field);
+						}
+					}
+				}
+			}
+		}
+		
+		if(!robotHasPieces)
+		{
+			return 1;
+		}
+		if(!humanHasPieces)
+		{
+			return 2;
+		}
+		if(robotMoveableList.size() == 0 || robotMoveableList.size() == 0)
+		{
+			return 3;
+		}
+		return 0;
 	}
 
 	//Method to used in sorting the list of places to move the robot
@@ -174,6 +224,25 @@ public class Board {
 			{
 				field.visited = false;
 			}
+		}
+	}
+	
+	public boolean checkForGameHasEnded()
+	{
+		switch (gameIsEnded()) {
+		case 0:
+			return false;
+		case 1:
+			informer.humanWon();
+			return true;
+		case 2:
+			informer.robotWon();
+			return true;
+		case 3:
+			informer.draw();
+			return true;
+		default:
+			return false;
 		}
 	}
 
