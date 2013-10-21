@@ -90,7 +90,12 @@ public class Board {
 	//Method to used in sorting the list of places to move the robot
 	private boolean isGreater(Field inputField, Field fieldToCompare, int compX, int compY)
 	{
-		if(inputField.getPieceOnField().canJump && !fieldToCompare.getPieceOnField().canJump)
+		//Check jumps to be crowned first
+		if(inputField.getPieceOnField().canJump && !inputField.getPieceOnField().isCrowned && inputField.getPieceOnField().color == opponentPeasentColor && inputField.getPieceOnField().y == 2)
+		{
+			return true;
+		}
+		else if(inputField.getPieceOnField().canJump && !fieldToCompare.getPieceOnField().canJump)
 		{
 			return true;
 		}
