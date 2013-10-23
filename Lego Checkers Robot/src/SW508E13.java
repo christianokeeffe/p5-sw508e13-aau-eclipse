@@ -54,47 +54,13 @@ public class SW508E13 {
 			}
 		}
 
-		//code for printing a piece color
-		/*while(!Button.ESCAPE.isDown())
+		/*//code for printing a piece color
+		while(!Button.ESCAPE.isDown())
 		{
-			checkTopFunc.getColorOnField(3, 4);
-			Color colorResult = checkTopFunc.boardColorSensor.getColor();
-			int red = colorResult.getRed();
-			int green = colorResult.getGreen();
-			int blue = colorResult.getBlue();
-			LCD.clear();
-			LCD.drawString("red: " + red, 0, 0);
-			LCD.drawString("green: " + green, 0, 1);
-			LCD.drawString("blue: " + blue, 0, 2);
-			LCD.refresh();
-
-			if(red > 180 && red < 255 && green > 180 && green < 255 && blue > 180 && blue < 255)
-			{
-				LCD.drawString("white",0,3);
-				LCD.refresh();
-			}
-			else if(red > 180 && red < 255 && green < 120 && green > 30 && blue < 160 && blue > 30)
-			{
-				LCD.drawString("red",0,3);
-				LCD.refresh();
-			}
-			else if(red > 150 && red < 200 && green > 170 && green < 255 && blue < 200 && blue > 150)
-			{
-				LCD.drawString("green",0,3);
-				LCD.refresh();
-			}
-			else if(red < 140 && red > 90 && green < 170 && green > 120 && blue < 255 && blue > 160)
-			{
-				LCD.drawString("blue",0,3);
-				LCD.refresh();
-			}
-			else
-			{
-				LCD.drawString("empty", 0, 3);
-				LCD.refresh();
-			}
-			//Button.ENTER.waitForPress();
-			Delay.msDelay(500);
+			test.NXT.checkersBoard.getColor(3, 4);
+			
+			Button.ENTER.waitForPress();
+			
 		}*/
 		/*ColorSensor.Color Test = checkTopFunc.GetColorOnField(7, 7);
 		LCD.drawString("R" + Test.getRed() + "G" + Test.getGreen() + "B" + Test.getBlue(), 0, 0);
