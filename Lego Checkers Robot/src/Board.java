@@ -10,6 +10,7 @@ public class Board {
 	Field[][] myBoard = new Field[8][8];
 	Field[] kingPlace = new Field[8];
 	int analyzeBoardRepeatNumber = 0;
+	int totalAnalyzeRuns = 0;
 
 	Field fieldToCheck;
 	communication informer = new communication();
@@ -249,6 +250,14 @@ public class Board {
 	//Analyzes the current board setup
 	public boolean analyzeBoard() throws Exception
 	{	
+		totalAnalyzeRuns += 1;
+		
+		if(totalAnalyzeRuns > 30)
+		{
+			totalAnalyzeRuns = 0;
+			remoteFunctions.resetMotors();
+		}
+		
 		//Find the pieces that are currently moveable
 		updateMoveables();
 
@@ -831,7 +840,7 @@ public class Board {
 		LCD.drawInt(red, 0, 1);
 		LCD.drawInt(green, 0, 2);
 		LCD.drawInt(blue, 0, 3);
-		if(red > 180  && green < 120 && green > 60 && blue < 130 && blue > 50)
+		if(red > 160  && green < 140 && green > 30 && blue < 140 && blue > 50)
 		{
 			LCD.drawChar('r', 0, 0);LCD.refresh();
 			return 'r';
