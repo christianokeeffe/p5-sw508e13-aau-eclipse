@@ -820,7 +820,7 @@ public class Board {
 	}
 
 	//Returns the color on the given position
-	private char getColor(int x, int y) throws IOException
+	public char getColor(int x, int y) throws IOException
 	{
 		Color colorResult = remoteFunctions.getColorOnField(x, y);
 
@@ -831,22 +831,22 @@ public class Board {
 		LCD.drawInt(red, 0, 1);
 		LCD.drawInt(green, 0, 2);
 		LCD.drawInt(blue, 0, 3);
-		if(red > 110  && green < 120 && green > 0 && blue < 160 && blue > 0)
+		if(red > 180  && green < 120 && green > 60 && blue < 130 && blue > 50)
 		{
 			LCD.drawChar('r', 0, 0);LCD.refresh();
 			return 'r';
 		}
-		else if(red > 180 && green > 160 && blue > 160)
+		else if(red > 205 && green > 190 && blue > 180)
 		{
 			LCD.drawChar('w', 0, 0);LCD.refresh();
 			return 'w';
 		}
-		else if(red > 150 && red < 180 && green > 170  && blue < 200 && blue > 150)
+		else if(red > 140 && red < 205 && green > 170  && blue < 200 && blue > 150)
 		{
 			LCD.drawChar('g', 0, 0);LCD.refresh();
 			return 'g';
 		}
-		else if(red < 140 && red > 90 && green < 170 && green > 120 && blue < 255 && blue > 160)
+		else if(red < 160 && red > 100 && green < 220 && green > 150 && blue > 170)
 		{
 			LCD.drawChar('b', 0, 0);LCD.refresh();
 			return 'b';
