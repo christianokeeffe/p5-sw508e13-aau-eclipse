@@ -323,7 +323,7 @@ public class Board {
 			boolean checkCondition = true;
 			while(checkCondition)
 			{
-				if(getColor(fieldToCheck.x, fieldToCheck.y) != myKingColor)
+				if(getColor(fieldToCheck.x, fieldToCheck.y) == myKingColor)
 				{
 					checkCondition = false;
 					fieldToCheck = null;
@@ -331,7 +331,7 @@ public class Board {
 				else
 				{
 					informer.myKingNotPlaced();
-					Button.ENTER.waitForPress();
+					remoteFunctions.waitForRedButton();
 				}
 			}
 		}

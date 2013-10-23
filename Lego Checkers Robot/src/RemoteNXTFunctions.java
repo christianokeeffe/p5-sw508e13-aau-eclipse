@@ -69,6 +69,19 @@ public class RemoteNXTFunctions {
 		Delay.msDelay(250);
 
 	}
+	
+	public void waitForRedButton()
+	{
+		TouchSensor bigRedButton = new TouchSensor(bottomNXT.S3);
+		boolean checkButton = true;
+		while(checkButton)
+		{
+			if(bigRedButton.isPressed())
+			{
+				checkButton = false;
+			}
+		}
+	}
 
 	public Color getColorOnField (int x, int y) throws IOException{
 		moveSensorTo(x, y, false);
