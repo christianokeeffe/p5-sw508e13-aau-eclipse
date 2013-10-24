@@ -675,7 +675,7 @@ public class Board {
 			field.getPieceOnField().isMoveable = checkMoveableBoolean(field, dify);	
 		}
 	}
-	//latex start navn
+	//latex end
 	
 	private boolean checkMoveableBoolean(Field field, int dif)
 	{
