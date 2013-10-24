@@ -672,47 +672,85 @@ public class Board {
 		}
 		else
 		{
-			field.getPieceOnField().isMoveable = checkMoveable(field, dify);	
+			field.getPieceOnField().isMoveable = checkMoveableBoolean(field, dify);	
 		}
 	}
 	//latex start navn
-
-	//Checks if a given field is moveable
-	private boolean checkMoveable(Field field, int dif)
+	
+	private boolean checkMoveableBoolean(Field field, int dif)
 	{
-		//Check forward
-		if((!this.fieldOccupied(field.x-1, field.y+dif)) || !this.fieldOccupied(field.x+1, field.y+dif))
+		if(checkMoveable(field, dif).isEmpty())
+		{
+			return false;
+		}
+		else
 		{
 			return true;
+		}
+	}
+
+	//Checks if a given field is moveable
+	public List<Field> checkMoveable(Field field, int dif)
+	{
+		List<Field> possibleMoves = new ArrayList<Field>();
+		
+		//Check forward
+		if((!this.fieldOccupied(field.x-1, field.y+dif)) && !this.fieldOccupied(field.x+1, field.y+dif))
+		{
+			possibleMoves.add(myBoard[field.x-1][field.y+dif]);
+			possibleMoves.add(myBoard[field.x+1][field.y+dif]);
+			return possibleMoves;
+		}
+		else if(!this.fieldOccupied(field.x-1, field.y+dif))
+		{
+			possibleMoves.add(myBoard[field.x-1][field.y+dif]);
+			return possibleMoves;
+		}
+		else if(!this.fieldOccupied(field.x+1, field.y+dif))
+		{
+			possibleMoves.add(myBoard[field.x+1][field.y+dif]);
+			return possibleMoves;
 		}
 		//if king, check backwards also
 		else if(field.getPieceOnField().isCrowned)
 		{
-			if(!this.fieldOccupied(field.x - 1, field.y - dif) ||  !this.fieldOccupied(field.x + 1, field.y - dif))
+			if(!this.fieldOccupied(field.x - 1, field.y - dif) &&  !this.fieldOccupied(field.x + 1, field.y - dif))
 			{
-				return true;
+				possibleMoves.add(myBoard[field.x-1][field.y-dif]);
+				possibleMoves.add(myBoard[field.x+1][field.y-dif]);
+				return possibleMoves;
+			}
+			else if(!this.fieldOccupied(field.x - 1, field.y - dif))
+			{
+				possibleMoves.add(myBoard[field.x-1][field.y-dif]);
+				return possibleMoves;
+			}
+			else if(!this.fieldOccupied(field.x + 1, field.y - dif))
+			{
+				possibleMoves.add(myBoard[field.x+1][field.y-dif]);
+				return possibleMoves;
 			}
 			else
 			{
-				return false;
+				return possibleMoves;
 			}
 		}
 		else
-			return false;
+			return possibleMoves;
 	}
 
 	//Check if a given field is can jump
 	private boolean checkJump(Field field, int dif, boolean checkForOpponent)
 	{		
 		//Check forwards
-		if(checkJumpDirection(field, 1, dif, checkForOpponent) ||checkJumpDirection(field, -1, dif, checkForOpponent))
+		if(checkJumpDirectionBoolean(field, 1, dif, checkForOpponent) ||checkJumpDirectionBoolean(field, -1, dif, checkForOpponent))
 		{
 			return true;
 		}		
 		//if king, check backwards
 		else if(field.getPieceOnField().isCrowned)
 		{ 
-			if(checkJumpDirection(field,1, -dif, checkForOpponent || checkJumpDirection(field, -1, -dif, checkForOpponent)))
+			if(checkJumpDirectionBoolean(field,1, -dif, checkForOpponent || checkJumpDirectionBoolean(field, -1, -dif, checkForOpponent)))
 			{
 				return true;
 			}
@@ -721,14 +759,14 @@ public class Board {
 	}
 
 	//Checks jumps
-	private boolean checkJumpDirection(Field field, int difx, int dify, boolean checkForOpponent)
+	public Field checkJumpDirection(Field field, int difx, int dify, boolean checkForOpponent)
 	{
 		//Forward
 		if(checkBounds(field.x+difx,field.y+dify))
 		{ 
 			if(checkAllegiance(myBoard[field.x+difx][field.y+dify], checkForOpponent) && !this.fieldOccupied(field.x+2*difx, field.y+2*dify))
 			{
-				return true;
+				return myBoard[field.x+2*difx][field.y+2*dify];
 			}
 		}
 		//if king, also check backwards
@@ -738,11 +776,23 @@ public class Board {
 			{
 				if(checkAllegiance(myBoard[field.x+difx][field.y-dify], checkForOpponent) && !this.fieldOccupied(field.x+2*difx, field.y-2*dify))
 				{
-					return true;
+					return myBoard[field.x+2*difx][field.y-2*dify];
 				}
 			}
 		}
-		return false;
+		return null;
+	}
+	
+	private boolean checkJumpDirectionBoolean(Field field, int difx, int dify, boolean checkForOpponent)
+	{
+		if(checkJumpDirection(field, difx, dify, checkForOpponent) == null)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
 	}
 
 	//Updates the moveable property on each piece
