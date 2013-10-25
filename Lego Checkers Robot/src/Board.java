@@ -9,10 +9,11 @@ public class Board {
 
 	Field[][] myBoard = new Field[8][8];
 	Field[] kingPlace = new Field[8];
-	int analyzeBoardRepeatNumber = 0;
-	int totalAnalyzeRuns = 0;
+	private int analyzeBoardRepeatNumber = 0;
+	private int totalAnalyzeRuns = 0;
+	private static final int analyzeRunsBeforeReset = 10;
 
-	Field fieldToCheck;
+	private Field fieldToCheck;
 	communication informer = new communication();
 
 	char myPeasentColor, myKingColor, opponentPeasentColor, opponentKingColor;
@@ -91,14 +92,14 @@ public class Board {
 	}
 	
 	/*returns 0 if game is not ended, 1 if human won, 2 if robot win and 3 if there is a draw*/
-	public int gameIsEnded()
+	public int gameIsEnded(boolean IsHumanTurn)
 	{
 		updateMoveables();
 
-		List<Field> humanMoveableList = new ArrayList<Field>();
-		List<Field> robotMoveableList = new ArrayList<Field>();
-		boolean robotHasPieces = false;
-		boolean humanHasPieces = false;
+		List<Piece> humanPieceList = new ArrayList<Piece>();
+		List<Piece> robotPieceList = new ArrayList<Piece>();
+		boolean robotHasMovable = false;
+		boolean humanHasMovable = false;
 
 		for (Field[] f : myBoard) 
 		{
@@ -107,35 +108,83 @@ public class Board {
 				if(!field.isEmpty()){
 					if(checkAllegiance(field, true))
 					{
-						humanHasPieces = true;
+						humanPieceList.add(field.getPieceOnField());
 						if(field.getPieceOnField().isMoveable){
-							humanMoveableList.add(field);
+							humanHasMovable = true;
 						}
 					}
 					if(checkAllegiance(field, false))
 					{
-						robotHasPieces = true;
+						robotPieceList.add(field.getPieceOnField());
 						if(field.getPieceOnField().isMoveable){
-							robotMoveableList.add(field);
+							robotHasMovable = true;
 						}
 					}
 				}
 			}
 		}
 		
-		if(!robotHasPieces)
+		if(robotPieceList.size() == 0 || (!IsHumanTurn && !humanHasMovable))
 		{
 			return 1;
 		}
-		if(!humanHasPieces)
+		if(humanPieceList.size() == 0 || (IsHumanTurn && !robotHasMovable))
 		{
 			return 2;
 		}
-		if(robotMoveableList.size() == 0 || robotMoveableList.size() == 0)
+		if(robotPieceList.size() == 1 && humanPieceList.size() == 1)
 		{
-			return 3;
+			if(IsHumanTurn)
+			{
+				if(isOnDoubleCorners(humanPieceList.get(0)) && isNearDoubleCorners(robotPieceList.get(0)) && !hasTheMove(true))
+					return 3;
+			}
+			else
+			{
+				if(isOnDoubleCorners(robotPieceList.get(0)) && isNearDoubleCorners(humanPieceList.get(0)) && !hasTheMove(false))
+					return 3;
+			}
 		}
 		return 0;
+	}
+	
+	private boolean hasTheMove(boolean humansTurn)
+	{
+		int rowToCheck = 0;
+		
+		if(!humansTurn)
+		{
+			rowToCheck = 1;
+		}
+		
+		int pieceCount = 0;
+		
+		for(int i = rowToCheck; i < 8 ; i += 2)
+		{
+			for(int j = 0; j < 8; j++)
+			{
+				if(!myBoard[i][j].isEmpty())
+					pieceCount++;
+			}
+		}
+		
+		if(pieceCount % 2 == 1)
+			return true;
+		return false;
+	}
+	
+	private boolean isOnDoubleCorners(Piece piece)
+	{
+		if((piece.x == 0 && piece.y == 1)||(piece.x == 1 && piece.y == 0)||(piece.x == 7 && piece.y == 6)||(piece.x == 6 && piece.y == 7))
+			return true;
+		return false;
+	}
+	
+	private boolean isNearDoubleCorners(Piece piece)
+	{
+		if((piece.x == 1 && piece.y == 2)||(piece.x == 2 && piece.y == 1)||(piece.x == 6 && piece.y == 5)||(piece.x == 5 && piece.y == 6)||(piece.x == 2 && piece.y == 3)||(piece.x == 3 && piece.y == 2)||(piece.x == 4 && piece.y == 5)||(piece.x == 5 && piece.y == 4))
+			return true;
+		return false;
 	}
 
 	//Method to used in sorting the list of places to move the robot
@@ -228,9 +277,9 @@ public class Board {
 		}
 	}
 	
-	public boolean checkForGameHasEnded()
+	public boolean checkForGameHasEnded(boolean isHumansTurn)
 	{
-		switch (gameIsEnded()) {
+		switch (gameIsEnded(isHumansTurn)) {
 		case 0:
 			return false;
 		case 1:
@@ -252,7 +301,7 @@ public class Board {
 	{	
 		totalAnalyzeRuns += 1;
 		
-		if(totalAnalyzeRuns > 30)
+		if(totalAnalyzeRuns > analyzeRunsBeforeReset)
 		{
 			totalAnalyzeRuns = 0;
 			remoteFunctions.resetMotors();
