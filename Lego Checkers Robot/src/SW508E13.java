@@ -40,11 +40,12 @@ public class SW508E13 {
 			if(bigRedButton.isPressed()){
 				if(test.NXT.checkersBoard.analyzeBoard())
 				{
-					if(!test.NXT.checkersBoard.checkForGameHasEnded())
+					if(!test.NXT.checkersBoard.checkForGameHasEnded(false))
 					{
 						test.decideMovement();
 						test.NXT.getColorOnField(4, -2);
-						Com.playYourTurn();
+						if(!test.NXT.checkersBoard.checkForGameHasEnded(true))
+							Com.playYourTurn();
 					}
 				}
 				else
