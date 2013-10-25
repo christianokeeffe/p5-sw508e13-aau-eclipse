@@ -1,15 +1,19 @@
-import java.io.IOException;
+import java.util.Queue;
 
 
 public class Move {
 	public Field moveFrom;
-	public Field moveTo;
+	public Queue<Field> moveTo;
 	public boolean isJump;
 	
 	Move(Field movefrom, Field moveto, boolean isjump)
 	{
+		Queue<Field> moveToList = new Queue<Field>();
+		
+		moveToList.push(moveto);
+		
 		this.moveFrom = movefrom;
-		this.moveTo = moveto;
+		this.moveTo = moveToList;
 		this.isJump = isjump;
 	}
 }
