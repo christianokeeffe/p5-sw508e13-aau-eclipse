@@ -53,4 +53,43 @@ public class MI
 		
 		return movements;
 	}
+	
+	public Hashtable<Field, Field> possibleMovesForRobot()
+	{
+		Hashtable<Field, Field> movements = new Hashtable<Field,Field>();
+		
+		for(Field[] f : NXT.checkersBoard.myBoard)
+		{
+			for(Field field : f)
+			{
+				if(field.getPieceOnField().isMoveable)
+				{
+					List<Field> possibleMoves = NXT.checkersBoard.checkMoveable(field, 1);
+					//Simple moves
+					if(!possibleMoves.isEmpty())
+					{
+						for(Field posField : possibleMoves)
+						{
+							movements.put(field, posField);
+						}
+					}
+					
+					//Jumps
+					Field jumpDirectionForward = NXT.checkersBoard.checkJumpDirection(field, 1, 1, false);
+					if(jumpDirectionForward != null)
+					{
+						movements.put(field, jumpDirectionForward);
+					}
+					
+					Field jumpDirectionBackwards = NXT.checkersBoard.checkJumpDirection(field, -1, 1, false);
+					if(jumpDirectionBackwards != null)
+					{
+						movements.put(field, jumpDirectionBackwards);
+					}
+				}
+			}
+		}
+		
+		return movements;
+	}
 }
