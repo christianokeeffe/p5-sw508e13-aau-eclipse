@@ -327,7 +327,9 @@ public class Board {
 
 		sortListOfFields(moveableList);
 		boolean foundOne = false;
-		boolean mustJump = moveableList.get(0).getPieceOnField().canJump;
+		boolean mustJump = false;
+		if(moveableList.size() != 0)
+			mustJump = moveableList.get(0).getPieceOnField().canJump;
 
 		OUTERMOST: for(Field field : moveableList){
 			if(this.isFieldEmptyOnBoard(field.x, field.y))
