@@ -20,41 +20,17 @@ public class MI
 	  
 	public Hashtable<Field, Field> possibleMovesForHuman()
 	{
-		Hashtable<Field, Field> movements = new Hashtable<Field,Field>();
-		
-		for(Field[] f : NXT.checkersBoard.myBoard)
-		{
-			for(Field field : f)
-			{
-				if(field.getPieceOnField().isMoveable)
-				{
-					List<Field> possibleMoves = NXT.checkersBoard.checkMoveable(field, -1);
-					//Simple moves
-					if(!possibleMoves.isEmpty())
-					{
-						for(Field posField : possibleMoves)
-						{
-							movements.put(field, posField);
-						}
-					}
-					
-					//Jumps
-					if(NXT.checkersBoard.checkJumpDirection(field, 1, -1, false) != null)
-					{
-						movements.put(field, NXT.checkersBoard.checkJumpDirection(field, 1, -1, false));
-					}
-					if(NXT.checkersBoard.checkJumpDirection(field, -1, -1, false) != null)
-					{
-						movements.put(field, NXT.checkersBoard.checkJumpDirection(field, -1, -1, false));
-					}
-				}
-			}
-		}
-		
+		Hashtable<Field, Field> movements = possibleMoves(-1);
 		return movements;
 	}
 	
 	public Hashtable<Field, Field> possibleMovesForRobot()
+	{
+		Hashtable<Field, Field> movements = possibleMoves(1);
+		return movements;
+	}
+	
+	public Hashtable<Field, Field> possibleMoves(int moveForSide) //-1 = human, 1 = robot
 	{
 		Hashtable<Field, Field> movements = new Hashtable<Field,Field>();
 		
@@ -64,7 +40,7 @@ public class MI
 			{
 				if(field.getPieceOnField().isMoveable)
 				{
-					List<Field> possibleMoves = NXT.checkersBoard.checkMoveable(field, 1);
+					List<Field> possibleMoves = NXT.checkersBoard.checkMoveable(field, moveForSide);
 					//Simple moves
 					if(!possibleMoves.isEmpty())
 					{
@@ -75,13 +51,13 @@ public class MI
 					}
 					
 					//Jumps
-					Field jumpDirectionForward = NXT.checkersBoard.checkJumpDirection(field, 1, 1, false);
+					Field jumpDirectionForward = NXT.checkersBoard.checkJumpDirection(field, 1, moveForSide, false);
 					if(jumpDirectionForward != null)
 					{
 						movements.put(field, jumpDirectionForward);
 					}
 					
-					Field jumpDirectionBackwards = NXT.checkersBoard.checkJumpDirection(field, -1, 1, false);
+					Field jumpDirectionBackwards = NXT.checkersBoard.checkJumpDirection(field, -1, moveForSide, false);
 					if(jumpDirectionBackwards != null)
 					{
 						movements.put(field, jumpDirectionBackwards);
