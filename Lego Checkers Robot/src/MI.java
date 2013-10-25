@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -18,21 +19,19 @@ public class MI
 		}
 	}
 	  
-	public Hashtable<Field, Field> possibleMovesForHuman()
+	private List<Move> possibleMovesForHuman()
 	{
-		Hashtable<Field, Field> movements = possibleMoves(-1);
-		return movements;
+		return possibleMoves(-1);
 	}
 	
-	public Hashtable<Field, Field> possibleMovesForRobot()
+	private List<Move> possibleMovesForRobot()
 	{
-		Hashtable<Field, Field> movements = possibleMoves(1);
-		return movements;
+		return possibleMoves(1);
 	}
 	
-	public Hashtable<Field, Field> possibleMoves(int moveForSide) //-1 = human, 1 = robot
+	private List<Move> possibleMoves(int moveForSide) //-1 = human, 1 = robot
 	{
-		Hashtable<Field, Field> movements = new Hashtable<Field,Field>();
+		List<Move> movements = new ArrayList<Move>();
 		
 		for(Field[] f : NXT.checkersBoard.myBoard)
 		{
@@ -46,7 +45,8 @@ public class MI
 					{
 						for(Field posField : possibleMoves)
 						{
-							movements.put(field, posField);
+							Move movement = new Move(field, posField, false);
+							movements.add(movement);
 						}
 					}
 					
@@ -54,13 +54,15 @@ public class MI
 					Field jumpDirectionForward = NXT.checkersBoard.checkJumpDirection(field, 1, moveForSide, false);
 					if(jumpDirectionForward != null)
 					{
-						movements.put(field, jumpDirectionForward);
+						Move movement = new Move(field, jumpDirectionForward, true);
+						movements.add(movement);
 					}
 					
 					Field jumpDirectionBackwards = NXT.checkersBoard.checkJumpDirection(field, -1, moveForSide, false);
 					if(jumpDirectionBackwards != null)
 					{
-						movements.put(field, jumpDirectionBackwards);
+						Move movement = new Move(field, jumpDirectionBackwards, true);
+						movements.add(movement);
 					}
 				}
 			}
