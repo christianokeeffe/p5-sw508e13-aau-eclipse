@@ -1,13 +1,13 @@
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Stack;
 
 
 public class MI 
 {
 	RemoteNXTFunctions NXT;
-	
+	private Stack<Move> simulatedMoves = new Stack<Move>();
 	MI()
 	{
 		try {
@@ -27,6 +27,25 @@ public class MI
 	private List<Move> possibleMovesForRobot()
 	{
 		return possibleMoves(1);
+	}
+	
+	private void simulateMove(Field fromField, Field toField) throws Exception
+	{
+		Move temp = new Move(fromField, toField, false);
+		if(!fromField.isEmpty())
+		{
+			NXT.checkersBoard.movePiece(fromField, toField);
+			simulatedMoves.push(temp);
+		}
+	}
+	
+	private void revertMove() throws Exception
+	{
+		if(simulatedMoves.size() != 0)
+		{
+			Move temp = simulatedMoves.pop();
+			NXT.checkersBoard.movePiece(temp.moveTo, temp.moveFrom);
+		}
 	}
 	
 	private List<Move> possibleMoves(int moveForSide) //-1 = human, 1 = robot
