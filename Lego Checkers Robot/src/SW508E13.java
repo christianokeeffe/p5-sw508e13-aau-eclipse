@@ -30,6 +30,7 @@ public class SW508E13 {
 		outside.y = -2;
 
 		checkTopFunc.movePiece(outside,inside, false);*/
+		
 		if(test.NXT.checkersBoard.myPeasentColor == 'r')
 		{
 			test.decideMovement();
