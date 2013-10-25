@@ -124,11 +124,11 @@ public class Board {
 			}
 		}
 		
-		if(robotPieceList.size() == 0 || (!IsHumanTurn && !humanHasMovable))
+		if(robotPieceList.size() == 0 || (!IsHumanTurn && !robotHasMovable))
 		{
 			return 1;
 		}
-		if(humanPieceList.size() == 0 || (IsHumanTurn && !robotHasMovable))
+		if(humanPieceList.size() == 0 || (IsHumanTurn && !humanHasMovable))
 		{
 			return 2;
 		}
