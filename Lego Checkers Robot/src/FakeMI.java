@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import customExceptions.NoKingLeft;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 
@@ -57,7 +58,7 @@ public class FakeMI{
 		}
 	}
 
-	public void decideMovement() throws Exception
+	public void decideMovement() throws IOException, NoKingLeft
 	{
 		updateList();
 		if(!jumpList.isEmpty())
@@ -83,7 +84,7 @@ public class FakeMI{
 
 	}
 
-	private void Move(Field f) throws Exception
+	private void Move(Field f) throws IOException, NoKingLeft
 	{
 		if(!f.getPieceOnField().isCrowned)
 		{
@@ -149,7 +150,7 @@ public class FakeMI{
 		}
 	}
 
-	private boolean CalculateJump(Field f) throws Exception
+	private boolean CalculateJump(Field f) throws IOException, NoKingLeft
 	{
 		List<Field> jumpPath = new ArrayList<Field>();
 		jumpPath = Jump(f, jumpPath,f.getPieceOnField());

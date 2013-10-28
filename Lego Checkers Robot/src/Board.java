@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.util.*;
 
+import customExceptions.IllegalMove;
+import customExceptions.NoKingLeft;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.robotics.Color;
@@ -300,7 +302,7 @@ public class Board {
 	}
 
 	//Analyzes the current board setup
-	public boolean analyzeBoard() throws Exception
+	public boolean analyzeBoard() throws InterruptedException, IOException, NoKingLeft, IllegalMove
 	{	
 		totalAnalyzeRuns += 1;
 		
@@ -339,8 +341,9 @@ public class Board {
 			{
 				if(mustJump&&!field.getPieceOnField().canJump)
 				{
-					return false;
+					throw new customExceptions.IllegalMove();
 				}
+
 				if(this.trackMovement(field))
 				{
 
@@ -348,6 +351,7 @@ public class Board {
 					//Break the loop
 					break OUTERMOST;
 				}
+
 			}
 		}
 
@@ -439,7 +443,7 @@ public class Board {
 		return false;
 	}
 
-	private void checkForUpgradeKing(Field field) throws Exception
+	private void checkForUpgradeKing(Field field) throws NoKingLeft, IOException
 	{
 		if(peasentIsOnEndRow(field))
 		{
@@ -457,7 +461,7 @@ public class Board {
 				{
 					if(i>7)
 					{
-						throw new Exception();
+						throw new customExceptions.NoKingLeft();
 					}
 					if(!kingPlace[i].isEmpty())
 					{
@@ -474,7 +478,7 @@ public class Board {
 	}
 
 	//Moves a piece in the board representation
-	private void movePiece(Field fromField, int toField_x, int toField_y) throws Exception
+	private void movePiece(Field fromField, int toField_x, int toField_y) throws NoKingLeft, IOException
 	{
 		//latex start movePiece
 		if(checkBounds(toField_x,toField_y))
@@ -490,13 +494,13 @@ public class Board {
 		//latex end
 	}
 
-	public void movePiece(Field FromField, Field ToField) throws Exception
+	public void movePiece(Field FromField, Field ToField) throws NoKingLeft, IOException
 	{
 		movePiece(FromField, ToField.x, ToField.y);
 	}
 
 	//Checks weather a given jump is possible
-	private boolean checkSingleJump(Field field, int difX, int difY, Field originalField) throws Exception
+	private boolean checkSingleJump(Field field, int difX, int difY, Field originalField) throws InterruptedException, IOException, NoKingLeft 
 	{
 		//First check that the position is inbound
 		if(checkBounds(field.x + difX, field.y + difY))
@@ -535,7 +539,7 @@ public class Board {
 	}
 
 	//Checks if piece has jumped
-	private boolean checkJumps(Field field, Field originalField) throws Exception
+	private boolean checkJumps(Field field, Field originalField) throws InterruptedException, IOException, NoKingLeft
 	{
 		//latex start checkJumps
 		boolean foundPiece = false;
@@ -594,7 +598,7 @@ public class Board {
 	}
 
 	//Determine simple move
-	private boolean checkMove(Field field, int directY) throws Exception
+	private boolean checkMove(Field field, int directY) throws InterruptedException, IOException, NoKingLeft
 	{
 		//Verify that the given field is inbound
 		if(checkBounds(field.x,field.y))
@@ -667,20 +671,27 @@ public class Board {
 	}
 
 	//Try to find the piece which has been moved
-	private boolean trackMovement(Field field) throws Exception
+	private boolean trackMovement(Field field) throws IllegalMove, InterruptedException, IOException, NoKingLeft
 	{
-		boolean pieceFound = checkJumps(field, field);
+		boolean jumpable = field.getPieceOnField().canJump;
+		boolean jumpFound = checkJumps(field, field);
 		this.resetVisited();
+		boolean moveFound = false;
 
-		if(!pieceFound)
+		if(!jumpFound && jumpable)
+		{
+			throw new customExceptions.IllegalMove();
+		}
+		
+		if(!jumpFound)
 		{
 			if(checkMove(field,-1))
 			{
-				pieceFound = true;
+				moveFound = true;
 			}
 		}
-
-		return pieceFound;
+		
+		return moveFound;
 	}
 
 	private boolean isFieldEmptyOnBoard(int x, int y) throws InterruptedException, IOException
