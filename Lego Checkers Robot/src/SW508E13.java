@@ -1,5 +1,9 @@
 
 
+import java.io.IOException;
+
+import customExceptions.IllegalMove;
+import customExceptions.NoKingLeft;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.TouchSensor;
@@ -9,7 +13,7 @@ import lejos.util.Delay;
 
 public class SW508E13 {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws IOException, NoKingLeft, InterruptedException {
 		//RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
 		FakeMI test = new FakeMI();
 		TouchSensor bigRedButton = new TouchSensor(test.NXT.bottomNXT.S3);
@@ -30,7 +34,7 @@ public class SW508E13 {
 		outside.y = -2;
 
 		checkTopFunc.movePiece(outside,inside, false);*/
-		
+
 		if(test.NXT.checkersBoard.myPeasentColor == 'r')
 		{
 			test.decideMovement();
@@ -39,8 +43,8 @@ public class SW508E13 {
 		while(!Button.ESCAPE.isDown())
 		{
 			if(bigRedButton.isPressed()){
-				if(test.NXT.checkersBoard.analyzeBoard())
-				{
+				try {
+					test.NXT.checkersBoard.analyzeBoard();
 					if(!test.NXT.checkersBoard.checkForGameHasEnded(false))
 					{
 						test.decideMovement();
@@ -48,9 +52,8 @@ public class SW508E13 {
 						if(!test.NXT.checkersBoard.checkForGameHasEnded(true))
 							Com.playYourTurn();
 					}
-				}
-				else
-				{
+
+				} catch (IllegalMove e) {
 					Com.illeagalMove();
 				}
 			}
@@ -60,9 +63,9 @@ public class SW508E13 {
 		while(!Button.ESCAPE.isDown())
 		{
 			test.NXT.checkersBoard.getColor(3, 4);
-			
+
 			Button.ENTER.waitForPress();
-			
+
 		}*/
 		/*ColorSensor.Color Test = checkTopFunc.GetColorOnField(7, 7);
 		LCD.drawString("R" + Test.getRed() + "G" + Test.getGreen() + "B" + Test.getBlue(), 0, 0);

@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import customExceptions.NoKingLeft;
 import lejos.nxt.Button;
 import lejos.nxt.ColorSensor;
 import lejos.nxt.LCD;
@@ -95,7 +96,7 @@ public class RemoteNXTFunctions {
 	}
 
 	//latex start movePiece
-	public void movePiece(Field FromField, Field ToField) throws Exception
+	public void movePiece(Field FromField, Field ToField) throws IOException, NoKingLeft
 	{
 		moveSensorTo(FromField.x,FromField.y,true);
 		Delay.msDelay(300);
@@ -124,7 +125,7 @@ public class RemoteNXTFunctions {
 	//latex end
 
 	//Makes a piece jump one or more pieces and then remove those pieces from the board
-	public void takePiece(Field fromField, List<Field> midwayFields) throws Exception
+	public void takePiece(Field fromField, List<Field> midwayFields) throws IOException, NoKingLeft
 	{
 		Field presentField = fromField;
 
@@ -144,7 +145,7 @@ public class RemoteNXTFunctions {
 		}
 	}
 
-	private Field movePieceOverField(Field fromField, Field toField) throws Exception{
+	private Field movePieceOverField(Field fromField, Field toField) throws IOException, NoKingLeft{
 		movePiece(fromField, toField);
 
 		if(Math.abs(fromField.x - toField.x) == 2){
