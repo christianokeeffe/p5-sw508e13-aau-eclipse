@@ -22,27 +22,39 @@ public class MI
 	
 	
 	/* */
-	private int numberofmovelook = 3;
-	public void LookForMove()
+	private int numberofmovelook			= 3;
+	/*points*/
+	private int ownMovepoint				= 1;
+	private int ownJumpPoint				= 1;
+	private int opponentMovepoint			= 1;
+	private int opponentJumpPoint			= 1;
+	private int ownMiddleMoveBonus 			= 1;
+	private int opponentMiddleMoveBonus 	= 1;
+	private int ownMoveLastRowPenalty 		= 1;
+	private int opponentMoveLastRowPenalty 	= 1;
+	private int ownMoveTowardMiddle			= 1;
+	
+	
+	public void lookForMove()
 	{
 	    List<Move> Moves = possibleMovesForRobot();
-		Move BestMove;
+		Move bestMove;
 		
-		double Price, tempPrice;
+		double price, tempPrice;
 		
 		for(Move move : Moves)
 		{
-			tempPrice =  OpponentTurn(move, 1);
+			tempPrice =  opponentTurn(move, 1);
 			
-			if(Price < tempPrice)
+			if(price < tempPrice)
 			{
-				Price = tempPrice;
-				BestMove = move;
+				price = tempPrice;
+				bestMove = move;
 			}
 		}
 		/* do move  */
 	}
-	private double OwnTurn(Move move, int moveLook)
+	private double ownTurn(Move move, int moveLook)
 	{
 		int numberOfMoves = 0;
 		double sum = 0;
@@ -50,12 +62,35 @@ public class MI
 		
 		if(numberofmovelook >= moveLook)
 		{
-			price = FindOwnPrice(move);
+			price = findOwnPrice(move);
 			/* do move on representation board */
 			List<Move> Moves = possibleMovesForRobot();
 			for(Move tempMove : Moves)
 			{
-				sum += OwnTurn(tempMove, moveLook);
+				sum += opponentTurn(tempMove, moveLook);
+				numberOfMoves++;
+			}
+			/* undo move on representation board */
+			sum = sum/numberOfMoves;
+			moveLook ++;
+		}
+		return price + sum;
+	}
+	
+	private opponentTurn(Move move, int moveLook)
+	{
+		int numberOfMoves = 0;
+		double sum = 0;
+		double price = 0;
+		
+		if(numberofmovelook >= moveLook)
+		{
+			price = findOpponentPrice(move);
+			/* do move on representation board */
+			List<Move> Moves = possibleMovesForHuman();
+			for(Move tempMove : Moves)
+			{
+				sum += ownTurn(tempMove, moveLook);
 				numberOfMoves++;
 			}
 			/* undo move on representation board */
@@ -66,11 +101,36 @@ public class MI
 	}
 	
 	
+	private int findOpponentPrice(Move move)
+	{
+		double price = 0;
+		
+		if(move.)
+		{
+			
+		}
+		else
+		{
+			
+		}
+		price
+	}
+	private int findOwnPrice(Move move)
+	{
+		double price = 0;
+		
+		if()
+		{
+			
+		}
+		else
+		{
+			
+		}
+		price
+	}
 	
-	
-	
-	
-	
+	/*   */
 	private List<Move> possibleMovesForHuman()
 	{
 		return possibleMoves(-1);
