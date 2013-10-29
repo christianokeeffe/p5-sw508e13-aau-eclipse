@@ -25,44 +25,44 @@ public class MI
 	private int numberofmovelook = 3;
 	public void LookForMove()
 	{
-		private List<Move> Moves = possibleMovesForRobot();
-		private Move BestMove;
+	    List<Move> Moves = possibleMovesForRobot();
+		Move BestMove;
 		
-		private double Price, TempPrice;
+		double Price, tempPrice;
 		
 		for(Move move : Moves)
 		{
-			TempPrice =  OpponentTurn(move, 1);
+			tempPrice =  OpponentTurn(move, 1);
 			
-			if(Price < temp_Price)
+			if(Price < tempPrice)
 			{
-				Price = temp_Price;
+				Price = tempPrice;
 				BestMove = move;
 			}
 		}
 		/* do move  */
 	}
-	private double OwnTurn(Move move, int Movelook)
+	private double OwnTurn(Move move, int moveLook)
 	{
-		int NumberOfMoves = 0;
-		double Sum = 0;
-		double Price = 0;
+		int numberOfMoves = 0;
+		double sum = 0;
+		double price = 0;
 		
-		if(numberofmovelook >= Movelook)
+		if(numberofmovelook >= moveLook)
 		{
 			price = FindOwnPrice(move);
 			/* do move on representation board */
-			private List<Move> Moves = possibleMovesForRobot();
-			for(Move move : Moves)
+			List<Move> Moves = possibleMovesForRobot();
+			for(Move tempMove : Moves)
 			{
-				sum += OwnTurn(move, movelook);
-				numberofmoves++;
+				sum += OwnTurn(tempMove, moveLook);
+				numberOfMoves++;
 			}
 			/* undo move on representation board */
-			Sum = Sum/numberofmoves;
-			movelook ++;
+			sum = sum/numberOfMoves;
+			moveLook ++;
 		}
-		return Price + Sum;
+		return price + sum;
 	}
 	
 	
