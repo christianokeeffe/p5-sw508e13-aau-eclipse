@@ -18,7 +18,59 @@ public class MI
 			e.printStackTrace();
 		}
 	}
-	  
+	
+	
+	
+	/* */
+	private int numberofmovelook = 3;
+	public void LookForMove()
+	{
+		private List<Move> Moves = possibleMovesForRobot();
+		private Move BestMove;
+		
+		private double Price, TempPrice;
+		
+		for(Move move : Moves)
+		{
+			TempPrice =  OpponentTurn(move, 1);
+			
+			if(Price < temp_Price)
+			{
+				Price = temp_Price;
+				BestMove = move;
+			}
+		}
+		/* do move  */
+	}
+	private double OwnTurn(Move move, int Movelook)
+	{
+		int NumberOfMoves = 0;
+		double Sum = 0;
+		double Price = 0;
+		
+		if(numberofmovelook >= Movelook)
+		{
+			price = FindOwnPrice(move);
+			/* do move on representation board */
+			private List<Move> Moves = possibleMovesForRobot();
+			for(Move move : Moves)
+			{
+				sum += OwnTurn(move, movelook);
+				numberofmoves++;
+			}
+			/* undo move on representation board */
+			Sum = Sum/numberofmoves;
+			movelook ++;
+		}
+		return Price + Sum;
+	}
+	
+	
+	
+	
+	
+	
+	
 	private List<Move> possibleMovesForHuman()
 	{
 		return possibleMoves(-1);
