@@ -21,13 +21,15 @@ public class MI
 	
 	
 	
-	/* */
+	/* how much the AI/MI looks forward */
 	private int numberofmovelook			= 3;
 	/*points*/
-	private int ownMovepoint				= 1;
-	private int ownJumpPoint				= 1;
-	private int opponentMovepoint			= 1;
-	private int opponentJumpPoint			= 1;
+	private int ownMovePoint				= 1;
+	private int ownJumpPoint				= 2;
+	
+	private int opponentMovePoint			= 1;
+	private int opponentJumpPoint			= -1;
+	
 	private int ownMiddleMoveBonus 			= 1;
 	private int opponentMiddleMoveBonus 	= 1;
 	private int ownMoveLastRowPenalty 		= 1;
@@ -35,12 +37,12 @@ public class MI
 	private int ownMoveTowardMiddle			= 1;
 	
 	
-	public void lookForMove()
+	public void lookForBestMove()
 	{
 	    List<Move> Moves = possibleMovesForRobot();
 		Move bestMove;
 		
-		double price, tempPrice;
+		double price = -100, tempPrice;
 		
 		for(Move move : Moves)
 		{
@@ -77,7 +79,7 @@ public class MI
 		return price + sum;
 	}
 	
-	private opponentTurn(Move move, int moveLook)
+	private double opponentTurn(Move move, int moveLook)
 	{
 		int numberOfMoves = 0;
 		double sum = 0;
@@ -101,33 +103,33 @@ public class MI
 	}
 	
 	
-	private int findOpponentPrice(Move move)
+	private double findOpponentPrice(Move move)
 	{
 		double price = 0;
 		
-		if(move.)
+		if(move.isJump == true)
 		{
-			
+			price = price + opponentJumpPoint * move.moveTo.size();
 		}
 		else
 		{
-			
+			price = price + opponentMovePoint;
 		}
-		price
+		return price;
 	}
-	private int findOwnPrice(Move move)
+	private double findOwnPrice(Move move)
 	{
 		double price = 0;
 		
-		if()
+		if(move.isJump == true)
 		{
-			
+			price = price + ownJumpPoint * move.moveTo.size();
 		}
 		else
 		{
-			
+			price = price + ownMovePoint;
 		}
-		price
+		return price;
 	}
 	
 	/*   */
