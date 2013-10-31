@@ -281,16 +281,6 @@ public class Board {
 			}
 		}
 	}
-	private void resetEndFields()
-	{
-		for (Field[] f : myBoard)
-		{
-			for (Field field : f)
-			{
-				field.endField = false;
-			}
-		}
-	}
 	
 	public boolean checkForGameHasEnded(boolean isHumansTurn)
 	{
@@ -675,9 +665,8 @@ public class Board {
 	
 	private boolean findJumpPiece(Field field) throws InterruptedException, IOException, NoKingLeft
 	{
-		List<Stack<Field>> jumpList= new ArrayList<Stack<Field>>();
-		jumpList = jumpSequence(field, true, field.getPieceOnField().isCrowned);
-		
+		List<Stack<Field>> jumpList = new ArrayList<Stack<Field>>();
+		jumpList = jumpSequence(field, false, field.getPieceOnField().isCrowned);
 		for(int i=0; i<jumpList.size();i++)
 		{
 			Stack<Field> tempList = new Stack<Field>();
@@ -690,7 +679,7 @@ public class Board {
 			if(!isFieldEmptyOnBoard(desField.x, desField.y))
 			{
 				movePiece(field, desField);
-				int stopj = tempList.size();
+				int stopj = tempList.size()-1;
 				for(int j=0;j<stopj;j++)
 				{
 					Field tempfield = tempList.pop();
@@ -833,7 +822,7 @@ public class Board {
 		//Forward
 		if(checkBounds(field.x+2*difx,field.y+2*dify))
 		{
-			if(!myBoard[field.x+2*difx][field.y+2*dify].visited && !myBoard[field.x+2*difx][field.y+2*dify].endField)
+			if(!myBoard[field.x+2*difx][field.y+2*dify].visited)
 			{
 				if(checkAllegiance(myBoard[field.x+difx][field.y+dify], checkForOpponent) && !this.fieldOccupied(field.x+2*difx, field.y+2*dify))
 				{
