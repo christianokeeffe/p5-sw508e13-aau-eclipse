@@ -1,33 +1,36 @@
-import java.util.Queue;
+import java.util.Stack;
 
 
 public class Move {
-	public Field moveFrom;
-	public Queue<Field> moveTo;
+	public Stack<Field> moves;
 	public boolean isJump;
+	public Stack<Piece> takenPieces;
 	
 	Move(Field movefrom, Field moveto, boolean isjump)
 	{
-		Queue<Field> moveToList = new Queue<Field>();
-		moveToList.addElement(moveto);
+		Stack<Field> moveToList = new Stack<Field>();
 		
-		this.moveFrom = movefrom;
-		this.moveTo = moveToList;
+		moveToList.push(moveto);
+		moveToList.push(movefrom);
+		this.moves = moveToList;
 		this.isJump = isjump;
 	}
 	
-	Move(Field movefrom, boolean isjump)
+	Move(Stack<Field> moveToList, boolean isjump)
 	{
-		Queue<Field> moveToList = new Queue<Field>();
-		
-		this.moveFrom = movefrom;
-		this.moveTo = moveToList;
+		this.moves = moveToList;
 		this.isJump = isjump;
+	}
+	
+	Move()
+	{
+		Stack<Field> moveToList = new Stack<Field>();
+		this.moves = moveToList;
 	}
 	
 	public void addStep(Field step)
 	{
-		this.moveTo.addElement(step);
+		this.moves.addElement(step);
 	}
 }
 
