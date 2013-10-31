@@ -19,30 +19,37 @@ public class MI
 		}
 	}
 	
-	
+	/* -----------------------------------------------------------------------------------  *
+	/* MI brain starts */
 	
 	/* how much the AI/MI looks forward */
 	private int numberofmovelook			= 3;
 	/*points*/
-	private int ownMovePoint				= 1;
-	private int ownJumpPoint				= 2;
+	private int ownMovePoint				= 2;
+	private int ownJumpPoint				= 4;
 	
 	private int opponentMovePoint			= 1;
-	private int opponentJumpPoint			= -1;
+	private int opponentJumpPoint			= 2;
 	
-	private int ownMiddleMoveBonus 			= 1;
-	private int opponentMiddleMoveBonus 	= 1;
+	/* bonus point for doing specific moves */
+	private int ownMiddleMoveBonus 			= 2;
+	private int opponentMiddleMoveBonus 	= 1; /* tror ikke kan bruges*/
+	
 	private int ownMoveLastRowPenalty 		= 1;
-	private int opponentMoveLastRowPenalty 	= 1;
-	private int ownMoveTowardMiddle			= 1;
+	private int opponentMoveLastRowPenalty 	= 2;
+	
+	/* how glad the MI/AI are for the result of the game */
+	private int gameIsWon = 10;
+	private int gameIsLost = 1;
+	private int gameIsdraw = 2;
 	
 	
-	public void lookForBestMove()
+	public Move lookForBestMove() /* does not start to see if the game is ended*/
 	{
 	    List<Move> Moves = possibleMovesForRobot();
-		Move bestMove;
+		Move bestMove = null;
 		
-		double price = -100, tempPrice;
+		double price = 0, tempPrice;
 		
 		for(Move move : Moves)
 		{
@@ -54,28 +61,39 @@ public class MI
 				bestMove = move;
 			}
 		}
-		/* do move  */
+		return bestMove;
 	}
+	
 	private double ownTurn(Move move, int moveLook)
 	{
 		int numberOfMoves = 0;
 		double sum = 0;
 		double price = 0;
+		/* do move on representation board */
 		
-		if(numberofmovelook >= moveLook)
+		int result = NXT.checkersBoard.gameIsEnded(true);
+		if( result != 0 && numberofmovelook >= moveLook)
+		{
+			if(result == 1)
+				price = gameIsLost;
+			if(result == 2)
+				price = gameIsWon;
+			if(result == 3)
+				price = gameIsdraw;
+		}
+		else if(numberofmovelook >= moveLook)
 		{
 			price = findOwnPrice(move);
-			/* do move on representation board */
 			List<Move> Moves = possibleMovesForRobot();
 			for(Move tempMove : Moves)
 			{
-				sum += opponentTurn(tempMove, moveLook);
+				sum = sum + opponentTurn(tempMove, moveLook+1);
 				numberOfMoves++;
 			}
-			/* undo move on representation board */
 			sum = sum/numberOfMoves;
 			moveLook ++;
 		}
+		/* undo move on representation board */
 		return price + sum;
 	}
 	
@@ -84,21 +102,32 @@ public class MI
 		int numberOfMoves = 0;
 		double sum = 0;
 		double price = 0;
+		/* do move on representation board */
 		
-		if(numberofmovelook >= moveLook)
+		int result = NXT.checkersBoard.gameIsEnded(false);
+		if( result > 0 && numberofmovelook >= moveLook)
+		{
+			if(result == 1)
+				price = gameIsLost;
+			if(result == 2)
+				price = gameIsWon;
+			if(result == 3)
+				price = gameIsdraw;
+		}
+		
+		else if(numberofmovelook >= moveLook)
 		{
 			price = findOpponentPrice(move);
-			/* do move on representation board */
 			List<Move> Moves = possibleMovesForHuman();
 			for(Move tempMove : Moves)
 			{
-				sum += ownTurn(tempMove, moveLook);
+				sum = sum + ownTurn(tempMove, moveLook+1);
 				numberOfMoves++;
 			}
-			/* undo move on representation board */
 			sum = sum/numberOfMoves;
 			moveLook ++;
 		}
+		/* undo move on representation board */
 		return price + sum;
 	}
 	
@@ -132,7 +161,8 @@ public class MI
 		return price;
 	}
 	
-	/*   */
+	/* MI brain stops */
+	/* -----------------------------------------------------------------------------------  */
 	private List<Move> possibleMovesForHuman()
 	{
 		return possibleMoves(-1);
