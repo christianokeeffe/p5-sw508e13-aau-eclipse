@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import customExceptions.NoKingLeft;
-import lejos.nxt.Button;
 import lejos.nxt.ColorSensor;
 import lejos.nxt.LCD;
 import lejos.nxt.MotorPort;
@@ -24,7 +23,8 @@ public class RemoteNXTFunctions {
 	private static final int xFactor = -228;
 	private static final int zFactor = 674;
 	//The displacement is multiplied with the yFactor to place the magnet on the right field.
-	private static final double displacementFactorY = 4.7;
+	private static final double displacementFactorY = 4.6;
+	private static final double displacementFactorX = 1.1;
 	private int presentY = 0;
 	private int presentX = 0;
 	private int presentZ = 0;
@@ -183,8 +183,12 @@ public class RemoteNXTFunctions {
 	}
 
 	private void adjustAngleAxisX(int angle, boolean goToMagnet) throws IOException{
-		motorX.rotate(angle*xFactor-presentX, true);
-		presentX = angle*xFactor;
+		int displacement = 0;
+		if(goToMagnet){
+			displacement = (int)(xFactor*displacementFactorX);
+		}
+		motorX.rotate(angle*xFactor-presentX+displacement, true);
+		presentX = angle*xFactor+displacement;
 	}
 
 	//latex start slaveNXT
