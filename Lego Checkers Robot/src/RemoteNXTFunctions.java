@@ -125,6 +125,41 @@ public class RemoteNXTFunctions {
 	}
 	//latex end
 
+	public void doMove(Move move) throws IOException, NoKingLeft
+	{
+		List<Field> takenPieces = new ArrayList<Field>();
+
+		int stop = move.moves.size()-1;
+		for(int i = 0; i < stop; i++)
+		{
+			Field jumpedField = movePieceOverField(move.moves.pop(),move.moves.peek());
+			if(jumpedField != null){
+				takenPieces.add(jumpedField);
+			}
+		}
+
+		for(int i = 0; i < takenPieces.size(); i++){
+			if(takenPieces.get(i).getPieceOnField().isCrowned && checkersBoard.checkAllegiance(takenPieces.get(i), true))
+			{
+				int j = checkersBoard.kingPlace.length-1;
+				while(j >= 0)
+				{
+					if(checkersBoard.kingPlace[j].isEmpty())
+						j = -1;
+					j--;
+				}
+				if(j < 0)
+					movePiece(takenPieces.get(i), trashField);
+				else
+					movePiece(takenPieces.get(i), checkersBoard.kingPlace[j]);
+			}
+			else
+			{
+				movePiece(takenPieces.get(i), trashField);
+			}
+		}
+	}
+	
 	//Makes a piece jump one or more pieces and then remove those pieces from the board
 	public void takePiece(Field fromField, List<Field> midwayFields) throws IOException, NoKingLeft
 	{
@@ -142,14 +177,19 @@ public class RemoteNXTFunctions {
 		}
 
 		for(int i = 0; i < takenPieces.size(); i++){
-			if(takenPieces.get(i).getPieceOnField().isCrowned)
+			if(takenPieces.get(i).getPieceOnField().isCrowned && checkersBoard.checkAllegiance(takenPieces.get(i), true))
 			{
 				int j = checkersBoard.kingPlace.length-1;
-				while(j >= 0 && checkersBoard.kingPlace[j].isEmpty())
+				while(j >= 0)
 				{
+					if(checkersBoard.kingPlace[j].isEmpty())
+						j = -1;
 					j--;
 				}
-				movePiece(takenPieces.get(i), checkersBoard.kingPlace[j]);
+				if(j < 0)
+					movePiece(takenPieces.get(i), trashField);
+				else
+					movePiece(takenPieces.get(i), checkersBoard.kingPlace[j]);
 			}
 			else
 			{
