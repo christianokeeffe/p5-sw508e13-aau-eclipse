@@ -281,6 +281,16 @@ public class Board {
 			}
 		}
 	}
+	private void resetEndFields()
+	{
+		for (Field[] f : myBoard)
+		{
+			for (Field field : f)
+			{
+				field.endField = false;
+			}
+		}
+	}
 	
 	public boolean checkForGameHasEnded(boolean isHumansTurn)
 	{
@@ -378,7 +388,6 @@ public class Board {
 		//Find the pieces that are currently moveable
 		updateMoveables();
 		checkRobotPieceReplaced();
-		
 		return true;
 	}
 	
@@ -498,74 +507,45 @@ public class Board {
 	{
 		movePiece(FromField, ToField.x, ToField.y);
 	}
+		
+	public List<Stack<Field>> jumpSequence(Field input, boolean checkForOpponent, boolean isCrowned) throws  InterruptedException, IOException, NoKingLeft 
 
-	//Checks weather a given jump is possible
-	private boolean checkSingleJump(Field field, int difX, int difY, Field originalField) throws InterruptedException, IOException, NoKingLeft 
 	{
-		//First check that the position is inbound
-		if(checkBounds(field.x + difX, field.y + difY))
+		List<Stack<Field>> returnList = new ArrayList<Stack<Field>>();
+		Field tempField = checkJumpDirection(input, -1, 1, checkForOpponent, isCrowned);
+		if(tempField != null)
 		{
-			//Check the correct color
-			if(checkAllegiance(myBoard[field.x + difX][field.y + difY], false))
-			{
-				//If there is no piece on the given field, and the field has not been visisted yet
-				if(!this.fieldOccupied(field.x+2*difX, field.y+2*difY) && !myBoard[field.x+2*difX][field.y+2*difY].visited)
-				{
-					if(!isFieldEmptyOnBoard(field.x+2*difX, field.y+2*difY))
-					{
-						movePiece(originalField, field.x+2*difX, field.y+2*difY);
-						//Empty jumped field and old field
-						myBoard[field.x][field.y].emptyThisField();
-						myBoard[field.x+difX][field.y+difY].emptyThisField();
-
-						return true;
-					}
-					else
-					{
-						//Else check further jumps
-						myBoard[field.x+2*difX][field.y+2*difY].visited = true;
-						boolean returnVal = checkJumps(myBoard[field.x+2*difX][field.y+2*difY], originalField);
-						if(returnVal)
-						{
-							myBoard[field.x][field.y].emptyThisField();
-							myBoard[field.x+difX][field.y+difY].emptyThisField();
-						}
-						return returnVal;
-					}
-				}
-			}
+			returnList.addAll(jumpSequence(tempField, checkForOpponent, isCrowned));
 		}
-		return false;
+		tempField = checkJumpDirection(input, -1, -1, checkForOpponent, isCrowned);
+		if(tempField != null)
+		{
+			returnList.addAll(jumpSequence(tempField, checkForOpponent, isCrowned));
+		}
+		tempField = checkJumpDirection(input, 1, -1, checkForOpponent, isCrowned);
+		if(tempField != null)
+		{
+			returnList.addAll(jumpSequence(tempField, checkForOpponent, isCrowned));
+		}
+		tempField = checkJumpDirection(input, 1, 1, checkForOpponent, isCrowned);
+		if(tempField != null)
+		{
+			returnList.addAll(jumpSequence(tempField, checkForOpponent, isCrowned));
+		}
+		
+		if(returnList.size() == 0)
+		{
+			returnList.add(new Stack<Field>());
+		}
+		
+		for(int i = 0; i < returnList.size();i++)
+		{
+			returnList.get(i).push(input);
+		}
+		
+		
+		return returnList;
 	}
-
-	//Checks if piece has jumped
-	private boolean checkJumps(Field field, Field originalField) throws InterruptedException, IOException, NoKingLeft
-	{
-		//latex start checkJumps
-		boolean foundPiece = false;
-
-		foundPiece = checkSingleJump(field, -1, -1, originalField);
-		//latex end
-
-		if(!foundPiece)
-		{
-			foundPiece = checkSingleJump(field, 1, -1, originalField);
-		}
-
-		//If the piece was a king, check also backwards directions
-		if(!foundPiece && originalField.getPieceOnField().isCrowned)
-		{
-			foundPiece = checkSingleJump(field, 1, 1, originalField);
-		}
-
-		if(!foundPiece && originalField.getPieceOnField().isCrowned)
-		{
-			foundPiece = checkSingleJump(field, -1, 1, originalField);
-		}
-
-		return foundPiece;
-	}
-
 	private boolean checkIfOthersHasMove(Field field, Field FromField) throws InterruptedException, IOException
 	{
 
@@ -673,25 +653,55 @@ public class Board {
 	//Try to find the piece which has been moved
 	private boolean trackMovement(Field field) throws IllegalMove, InterruptedException, IOException, NoKingLeft
 	{
-		boolean jumpable = field.getPieceOnField().canJump;
-		boolean jumpFound = checkJumps(field, field);
-		this.resetVisited();
-		boolean moveFound = false;
-
-		if(!jumpFound && jumpable)
-		{
-			throw new customExceptions.IllegalMove();
-		}
-		
-		if(!jumpFound)
-		{
-			if(checkMove(field,-1))
+		boolean pieceFound = false;
+		if(field.getPieceOnField().canJump)
+		{	
+			if(findJumpPiece(field))
 			{
-				moveFound = true;
+				pieceFound = true;
+			}
+			if(!pieceFound)
+			{
+				throw new customExceptions.IllegalMove();
 			}
 		}
+		else if(checkMove(field,-1))
+			{
+				pieceFound = true;
+			}
+
+		return pieceFound;
+	}
+	
+	private boolean findJumpPiece(Field field) throws InterruptedException, IOException, NoKingLeft
+	{
+		List<Stack<Field>> jumpList= new ArrayList<Stack<Field>>();
+		jumpList = jumpSequence(field, true, field.getPieceOnField().isCrowned);
 		
-		return moveFound;
+		for(int i=0; i<jumpList.size();i++)
+		{
+			Stack<Field> tempList = new Stack<Field>();
+			int stop = jumpList.get(i).size();
+			for(int j=0; j<stop;j++)
+			{
+				tempList.push(jumpList.get(i).pop()); 
+			}
+			Field desField = tempList.peek();
+			if(!isFieldEmptyOnBoard(desField.x, desField.y))
+			{
+				movePiece(field, desField);
+				int stopj = tempList.size();
+				for(int j=0;j<stopj;j++)
+				{
+					Field tempfield = tempList.pop();
+					Field tempfield2 = tempList.peek();
+					Field takenField = myBoard[(tempfield.x + tempfield2.x)/2][(tempfield.y + tempfield2.y)/2];
+					movePiece(takenField,remoteFunctions.trashField);
+				}
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private boolean isFieldEmptyOnBoard(int x, int y) throws InterruptedException, IOException
@@ -707,7 +717,6 @@ public class Board {
 			{
 				return false;
 			}
-
 		}
 		else
 			return false;
@@ -729,7 +738,7 @@ public class Board {
 	//latex start checkPiece
 	private void checkPiece(Field field, int dify, boolean checkForOpponent)
 	{
-		field.getPieceOnField().canJump = checkJump(field, dify, checkForOpponent);
+		field.getPieceOnField().canJump = checkJump(field, checkForOpponent, field.getPieceOnField().isCrowned);
 
 		if(field.getPieceOnField().canJump)
 		{
@@ -805,52 +814,39 @@ public class Board {
 	}
 
 	//Check if a given field is can jump
-	private boolean checkJump(Field field, int dif, boolean checkForOpponent)
+	private boolean checkJump(Field field, boolean checkForOpponent, boolean isCrowned)
 	{		
-		//Check forwards
-		if(checkJumpDirectionBoolean(field, 1, dif, checkForOpponent) ||checkJumpDirectionBoolean(field, -1, dif, checkForOpponent))
+		if(checkJumpDirectionBoolean(field, -1, -1, checkForOpponent, isCrowned)||checkJumpDirectionBoolean(field, 1, -1, checkForOpponent, isCrowned)
+				||checkJumpDirectionBoolean(field, 1, 1, checkForOpponent, isCrowned) ||checkJumpDirectionBoolean(field, -1, 1, checkForOpponent, isCrowned))
 		{
 			return true;
 		}		
-		//if king, check backwards
-		else if(field.getPieceOnField().isCrowned)
-		{ 
-			if(checkJumpDirectionBoolean(field,1, -dif, checkForOpponent || checkJumpDirectionBoolean(field, -1, -dif, checkForOpponent)))
-			{
-				return true;
-			}
-		}
 		return false;
 	}
 
 	//Checks jumps
-	public Field checkJumpDirection(Field field, int difx, int dify, boolean checkForOpponent)
+	public Field checkJumpDirection(Field field, int difx, int dify, boolean checkForOpponent, boolean isCrowned)
 	{
+		if(((checkForOpponent && dify == -1)||(!checkForOpponent && dify == 1)) && !isCrowned)
+			return null;
+		
 		//Forward
-		if(checkBounds(field.x+difx,field.y+dify))
-		{ 
-			if(checkAllegiance(myBoard[field.x+difx][field.y+dify], checkForOpponent) && !this.fieldOccupied(field.x+2*difx, field.y+2*dify))
+		if(checkBounds(field.x+2*difx,field.y+2*dify))
+		{
+			if(!myBoard[field.x+2*difx][field.y+2*dify].visited && !myBoard[field.x+2*difx][field.y+2*dify].endField)
 			{
-				return myBoard[field.x+2*difx][field.y+2*dify];
-			}
-		}
-		//if king, also check backwards
-		else if(field.getPieceOnField().isCrowned)
-		{ 
-			if(checkBounds(field.x+difx,field.y-dify))
-			{
-				if(checkAllegiance(myBoard[field.x+difx][field.y-dify], checkForOpponent) && !this.fieldOccupied(field.x+2*difx, field.y-2*dify))
+				if(checkAllegiance(myBoard[field.x+difx][field.y+dify], checkForOpponent) && !this.fieldOccupied(field.x+2*difx, field.y+2*dify))
 				{
-					return myBoard[field.x+2*difx][field.y-2*dify];
+					return myBoard[field.x+2*difx][field.y+2*dify];
 				}
 			}
 		}
 		return null;
 	}
 	
-	private boolean checkJumpDirectionBoolean(Field field, int difx, int dify, boolean checkForOpponent)
+	private boolean checkJumpDirectionBoolean(Field field, int difx, int dify, boolean checkForOpponent, boolean isCrowned)
 	{
-		if(checkJumpDirection(field, difx, dify, checkForOpponent) == null)
+		if(checkJumpDirection(field, difx, dify, checkForOpponent, isCrowned) == null)
 		{
 			return false;
 		}
