@@ -142,7 +142,19 @@ public class RemoteNXTFunctions {
 		}
 
 		for(int i = 0; i < takenPieces.size(); i++){
-			movePiece(takenPieces.get(i), trashField);
+			if(takenPieces.get(i).getPieceOnField().isCrowned)
+			{
+				int j = checkersBoard.kingPlace.length-1;
+				while(j >= 0 && checkersBoard.kingPlace[j].isEmpty())
+				{
+					j--;
+				}
+				movePiece(takenPieces.get(i), checkersBoard.kingPlace[j]);
+			}
+			else
+			{
+				movePiece(takenPieces.get(i), trashField);
+			}
 		}
 	}
 
