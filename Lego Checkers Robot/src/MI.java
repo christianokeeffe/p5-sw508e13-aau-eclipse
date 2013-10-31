@@ -9,17 +9,12 @@ import customExceptions.NoKingLeft;
 
 public class MI 
 {
-	RemoteNXTFunctions NXT;
+	RemoteNXTFunctions nXTF;
+	
 	private Stack<Move> simulatedMoves = new Stack<Move>();
-	MI()
+	MI(RemoteNXTFunctions NXT)
 	{
-		try {
-			NXT = new RemoteNXTFunctions();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		nXTF = NXT;
 	}
 	
 	/* -----------------------------------------------------------------------------------  *
@@ -74,7 +69,7 @@ public class MI
 		double price = 0;
 		simulateMove(move);
 		
-		int result = NXT.checkersBoard.gameIsEnded(true);
+		int result = nXTF.checkersBoard.gameIsEnded(true);
 		if( result != 0 && numberofmovelook >= moveLook)
 		{
 			if(result == 1)
@@ -107,7 +102,7 @@ public class MI
 		double price = 0;
 		simulateMove(move);
 		
-		int result = NXT.checkersBoard.gameIsEnded(false);
+		int result = nXTF.checkersBoard.gameIsEnded(false);
 		if( result > 0 && numberofmovelook >= moveLook)
 		{
 			if(result == 1)
@@ -187,8 +182,8 @@ public class MI
 			{
 				Field from = move.moves.pop();
 				Field to = move.moves.peek();
-				move.takenPieces.push(NXT.checkersBoard.myBoard[(from.x+to.x)/2][(from.y+to.y)/2].getPieceOnField());
-				NXT.checkersBoard.movePiece(from, to);
+				move.takenPieces.push(nXTF.checkersBoard.myBoard[(from.x+to.x)/2][(from.y+to.y)/2].getPieceOnField());
+				nXTF.checkersBoard.movePiece(from, to);
 				tempStack.push(from);
 			}
 			for(int i = 0; i < stop; i++)
@@ -197,7 +192,7 @@ public class MI
 		else if(!move.moves.isEmpty())
 		{
 			Field temp = move.moves.pop();
-			NXT.checkersBoard.movePiece(temp, move.moves.peek());
+			nXTF.checkersBoard.movePiece(temp, move.moves.peek());
 			move.moves.push(temp);
 			
 		}
@@ -220,13 +215,13 @@ public class MI
 			Move temp = simulatedMoves.pop();
 			int stop = temp.moves.size();
 			for(int i=0; i < stop;i++)
-				NXT.checkersBoard.movePiece(temp.moves.pop(), temp.moves.peek());
+				nXTF.checkersBoard.movePiece(temp.moves.pop(), temp.moves.peek());
 			stop = temp.takenPieces.size();
 
 			for(int i=0; i < stop;i++)
 			{
 				Piece tempPiece = temp.takenPieces.pop();
-				NXT.checkersBoard.myBoard[tempPiece.x][tempPiece.y].setPieceOnField(tempPiece);
+				nXTF.checkersBoard.myBoard[tempPiece.x][tempPiece.y].setPieceOnField(tempPiece);
 			}
 		}
 	}
@@ -235,22 +230,22 @@ public class MI
 	{
 		List<Move> movements = new ArrayList<Move>();
 		
-		for(Field[] f : NXT.checkersBoard.myBoard)
+		for(Field[] f : nXTF.checkersBoard.myBoard)
 		{
 			for(Field field : f)
 			{
 				if(field.getPieceOnField().isMoveable)
 				{
-					List<Field> possibleMoves = NXT.checkersBoard.checkMoveable(field, moveForSide);
+					List<Field> possibleMoves = nXTF.checkersBoard.checkMoveable(field, moveForSide);
 					//Jumps
-					Field jumpDirectionForward = NXT.checkersBoard.checkJumpDirection(field, 1, moveForSide, false, field.getPieceOnField().isCrowned);
+					Field jumpDirectionForward = nXTF.checkersBoard.checkJumpDirection(field, 1, moveForSide, false, field.getPieceOnField().isCrowned);
 					if(jumpDirectionForward != null)
 					{
 						Move movement = new Move(field, jumpDirectionForward, true);
 						movements.add(movement);
 					}
 					
-					Field jumpDirectionBackwards = NXT.checkersBoard.checkJumpDirection(field, -1, moveForSide, false, field.getPieceOnField().isCrowned);
+					Field jumpDirectionBackwards = nXTF.checkersBoard.checkJumpDirection(field, -1, moveForSide, false, field.getPieceOnField().isCrowned);
 					if(jumpDirectionBackwards != null)
 					{
 						Move movement = new Move(field, jumpDirectionBackwards, true);
