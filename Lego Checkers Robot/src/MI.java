@@ -180,7 +180,7 @@ public class MI
 	{
 		if(move.isJump)
 		{
-			int stop = move.moves.size();
+			int stop = move.moves.size()-1;
 
 			Stack<Field> tempStack = new Stack<Field>();
 			for(int i = 0; i < stop; i++)
