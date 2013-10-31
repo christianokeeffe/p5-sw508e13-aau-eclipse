@@ -185,7 +185,7 @@ public class RemoteNXTFunctions {
 	private void adjustAngleAxisX(int angle, boolean goToMagnet) throws IOException{
 		int displacement = 0;
 		if(goToMagnet){
-			displacement = (xFactor + displacementX);
+			displacement = (xFactor - displacementX);
 		}
 		motorX.rotate(angle*xFactor-presentX+displacement, true);
 		presentX = angle*xFactor+displacement;
