@@ -23,7 +23,8 @@ public class RemoteNXTFunctions {
 	private static final int xFactor = -228;
 	private static final int zFactor = 674;
 	//The displacement is multiplied with the yFactor to place the magnet on the right field.
-	private static final double displacementFactorY = 4.6;
+	private static final double displacementFactorY = 4.7;
+	private static final int displacementX = 2;
 	private int presentY = 0;
 	private int presentX = 0;
 	private int presentZ = 0;
@@ -184,7 +185,7 @@ public class RemoteNXTFunctions {
 	private void adjustAngleAxisX(int angle, boolean goToMagnet) throws IOException{
 		int displacement = 0;
 		if(goToMagnet){
-			displacement = (xFactor + 2);
+			displacement = (xFactor + displacementX);
 		}
 		motorX.rotate(angle*xFactor-presentX+displacement, true);
 		presentX = angle*xFactor+displacement;
