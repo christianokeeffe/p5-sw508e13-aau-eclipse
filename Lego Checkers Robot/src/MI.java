@@ -31,8 +31,8 @@ public class MI
 	private int ownMovePoint				= 4;
 	private int ownJumpPoint				= 8;
 	
-	private int opponentMovePoint			= 5;
-	private int opponentJumpPoint			= 3;
+	private int opponentMovePoint			= -ownMovePoint;
+	private int opponentJumpPoint			= -ownJumpPoint;
 	
 	/* bonus point for doing specific moves */
 	private int ownMiddleMoveBonus 			= 3;
@@ -42,9 +42,9 @@ public class MI
 	private int opponentMoveLastRowPenalty 	= 2;
 	
 	/* how glad the MI/AI are for the result of the game */
-	private int gameIsWon = 20;
-	private int gameIsLost = 1;
-	private int gameIsDraw = 13;
+	private int gameIsWon = 10;
+	private int gameIsLost = -gameIsWon;
+	private int gameIsDraw = 5;
 	
 	
 	public Move lookForBestMove() throws NoKingLeft, IOException /* does not start to see if the game is ended*/
@@ -52,7 +52,7 @@ public class MI
 	    List<Move> Moves = possibleMovesForRobot();
 		Move bestMove = null;
 		
-		double price = 0, tempPrice;
+		double price = Double.MIN_VALUE, tempPrice;
 		
 		for(Move move : Moves)
 		{
