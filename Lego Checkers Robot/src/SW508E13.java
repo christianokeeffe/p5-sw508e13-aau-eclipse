@@ -14,9 +14,10 @@ import lejos.util.Delay;
 public class SW508E13 {
 
 	public static void main(String[] args) throws IOException, NoKingLeft, InterruptedException {
-		//RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
-		FakeMI test = new FakeMI();
-		TouchSensor bigRedButton = new TouchSensor(test.NXT.bottomNXT.S3);
+		RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
+		//FakeMI test = new FakeMI();
+		MI brain = new MI(checkTopFunc);
+		TouchSensor bigRedButton = new TouchSensor(brain.nXTF.bottomNXT.S3);
 		communication Com = new communication();
 		/*
 		List<Field> FlytteListe = new ArrayList<Field>();
@@ -35,7 +36,39 @@ public class SW508E13 {
 
 		checkTopFunc.movePiece(outside,inside, false);*/
 
-		if(test.NXT.checkersBoard.myPeasentColor == 'r')
+		Move bestMove;
+		if(brain.nXTF.checkersBoard.myPeasentColor == 'r')
+		{
+			bestMove = brain.lookForBestMove();
+			brain.nXTF.doMove(bestMove);
+			brain.nXTF.getColorOnField(4, -2);
+		}
+		while(!Button.ESCAPE.isDown())
+		{
+			if(bigRedButton.isPressed()){
+				try {
+					brain.nXTF.checkersBoard.analyzeBoard();
+					if(!brain.nXTF.checkersBoard.checkForGameHasEnded(false))
+					{
+						bestMove = brain.lookForBestMove();
+						brain.nXTF.doMove(bestMove);
+						brain.nXTF.getColorOnField(4, -2);
+						if(!brain.nXTF.checkersBoard.checkForGameHasEnded(true))
+							Com.playYourTurn();
+					}
+
+				} catch (IllegalMove e) {
+					Com.illeagalMove();
+				}
+			}
+		}
+		
+		
+		
+		
+		
+		
+		/*if(test.NXT.checkersBoard.myPeasentColor == 'r')
 		{
 			test.decideMovement();
 			test.NXT.getColorOnField(4, -2);
@@ -57,7 +90,7 @@ public class SW508E13 {
 					Com.illeagalMove();
 				}
 			}
-		}
+		}*/
 
 		/*//code for printing a piece color
 		while(!Button.ESCAPE.isDown())
