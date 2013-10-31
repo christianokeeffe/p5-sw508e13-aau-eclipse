@@ -100,7 +100,7 @@ public class RemoteNXTFunctions {
 	public void movePiece(Field FromField, Field ToField) throws IOException, NoKingLeft
 	{
 		moveSensorTo(FromField.x,FromField.y,true);
-		Delay.msDelay(300);
+		Delay.msDelay(500);
 		moveZTo(1);
 		electromagnet.setPower(100);
 		Delay.msDelay(100);
@@ -113,7 +113,7 @@ public class RemoteNXTFunctions {
 			moveZTo(0.5);
 		}
 		moveSensorTo(ToField.x,ToField.y,true);
-		Delay.msDelay(300);
+		Delay.msDelay(500);
 		if(ToField != trashField)
 		{
 			moveZTo(1);
