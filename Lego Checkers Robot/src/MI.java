@@ -28,26 +28,26 @@ public class MI
 	/* how much the AI/MI looks forward */
 	private int numberofmovelook			= 3;
 	/*points*/
-	private int ownMovePoint				= 2;
-	private int ownJumpPoint				= 4;
+	private int ownMovePoint				= 4;
+	private int ownJumpPoint				= 8;
 	
-	private int opponentMovePoint			= 1;
-	private int opponentJumpPoint			= 2;
+	private int opponentMovePoint			= 5;
+	private int opponentJumpPoint			= 3;
 	
 	/* bonus point for doing specific moves */
-	private int ownMiddleMoveBonus 			= 2;
+	private int ownMiddleMoveBonus 			= 3;
 	private int opponentMiddleMoveBonus 	= 1; /* tror ikke kan bruges*/
 	
 	private int ownMoveLastRowPenalty 		= 1;
 	private int opponentMoveLastRowPenalty 	= 2;
 	
 	/* how glad the MI/AI are for the result of the game */
-	private int gameIsWon = 10;
+	private int gameIsWon = 20;
 	private int gameIsLost = 1;
-	private int gameIsdraw = 2;
+	private int gameIsDraw = 13;
 	
 	
-	public Move lookForBestMove() /* does not start to see if the game is ended*/
+	public Move lookForBestMove() throws NoKingLeft, IOException /* does not start to see if the game is ended*/
 	{
 	    List<Move> Moves = possibleMovesForRobot();
 		Move bestMove = null;
@@ -67,12 +67,12 @@ public class MI
 		return bestMove;
 	}
 	
-	private double ownTurn(Move move, int moveLook)
+	private double ownTurn(Move move, int moveLook) throws NoKingLeft, IOException
 	{
 		int numberOfMoves = 0;
 		double sum = 0;
 		double price = 0;
-		/* do move on representation board */
+		simulateMove(move);
 		
 		int result = NXT.checkersBoard.gameIsEnded(true);
 		if( result != 0 && numberofmovelook >= moveLook)
@@ -82,7 +82,7 @@ public class MI
 			if(result == 2)
 				price = gameIsWon;
 			if(result == 3)
-				price = gameIsdraw;
+				price = gameIsDraw;
 		}
 		else if(numberofmovelook >= moveLook)
 		{
@@ -96,16 +96,16 @@ public class MI
 			sum = sum/numberOfMoves;
 			moveLook ++;
 		}
-		/* undo move on representation board */
+		revertMove();
 		return price + sum;
 	}
 	
-	private double opponentTurn(Move move, int moveLook)
+	private double opponentTurn(Move move, int moveLook) throws NoKingLeft, IOException
 	{
 		int numberOfMoves = 0;
 		double sum = 0;
 		double price = 0;
-		/* do move on representation board */
+		simulateMove(move);
 		
 		int result = NXT.checkersBoard.gameIsEnded(false);
 		if( result > 0 && numberofmovelook >= moveLook)
@@ -115,7 +115,7 @@ public class MI
 			if(result == 2)
 				price = gameIsWon;
 			if(result == 3)
-				price = gameIsdraw;
+				price = gameIsDraw;
 		}
 		
 		else if(numberofmovelook >= moveLook)
@@ -130,7 +130,7 @@ public class MI
 			sum = sum/numberOfMoves;
 			moveLook ++;
 		}
-		/* undo move on representation board */
+		revertMove();
 		return price + sum;
 	}
 	
