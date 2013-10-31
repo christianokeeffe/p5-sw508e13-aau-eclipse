@@ -204,6 +204,15 @@ public class MI
 		simulatedMoves.push(move);
 	}
 	
+	private void revertAllMoves() throws NoKingLeft, IOException
+	{
+		int stop = simulatedMoves.size();
+		for(int i = 0; i < stop; i++)
+		{
+			revertMove();
+		}
+	}
+	
 	private void revertMove() throws NoKingLeft, IOException
 	{
 		if(simulatedMoves.size() != 0)
