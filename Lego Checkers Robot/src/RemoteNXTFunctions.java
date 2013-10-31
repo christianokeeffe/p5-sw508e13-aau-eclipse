@@ -137,6 +137,10 @@ public class RemoteNXTFunctions {
 		}
 
 		for(int i = 0; i < takenPieces.size(); i++){
+			if(takenPieces.get(i).isEmpty())
+				movePiece(takenPieces.get(i), trashField);
+			else
+			{
 			if(takenPieces.get(i).getPieceOnField().isCrowned && checkersBoard.checkAllegiance(takenPieces.get(i), true))
 			{
 				int j = checkersBoard.kingPlace.length-1;
@@ -154,6 +158,7 @@ public class RemoteNXTFunctions {
 			else
 			{
 				movePiece(takenPieces.get(i), trashField);
+			}
 			}
 		}
 	}
@@ -175,6 +180,10 @@ public class RemoteNXTFunctions {
 		}
 
 		for(int i = 0; i < takenPieces.size(); i++){
+			if(takenPieces.get(i).isEmpty())
+				movePiece(takenPieces.get(i), trashField);
+			else
+			{
 			if(takenPieces.get(i).getPieceOnField().isCrowned && checkersBoard.checkAllegiance(takenPieces.get(i), true))
 			{
 				int j = checkersBoard.kingPlace.length-1;
@@ -192,6 +201,7 @@ public class RemoteNXTFunctions {
 			else
 			{
 				movePiece(takenPieces.get(i), trashField);
+			}
 			}
 		}
 	}
