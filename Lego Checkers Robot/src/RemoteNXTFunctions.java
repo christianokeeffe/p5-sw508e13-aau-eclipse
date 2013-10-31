@@ -24,7 +24,7 @@ public class RemoteNXTFunctions {
 	private static final int zFactor = 674;
 	//The displacement is multiplied with the yFactor to place the magnet on the right field.
 	private static final double displacementFactorY = 4.7;
-	private static final int displacementX = 2;
+	private static final int displacementX = 1;
 	private int presentY = 0;
 	private int presentX = 0;
 	private int presentZ = 0;
