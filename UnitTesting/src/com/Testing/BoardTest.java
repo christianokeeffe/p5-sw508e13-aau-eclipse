@@ -268,6 +268,10 @@ public class BoardTest {
 		
 		assertEquals(test.checkMoveable(test.myBoard[2][5], -1),tempList);
 		
+		tempList = produceList(test.myBoard[0][5],-1);
+		
+		assertEquals(test.checkMoveable(test.myBoard[0][5], -1),tempList);
+		
 		tempList = produceList(test.myBoard[7][2],1);
 		
 		assertEquals(test.checkMoveable(test.myBoard[7][2], 1),tempList);
