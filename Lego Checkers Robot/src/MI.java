@@ -46,30 +46,14 @@ public class MI
 
 	public Move lookForBestMove() throws NoKingLeft, IOException /* does not start to see if the game is ended*/, InterruptedException
 	{
-
-
 		List<Move> Moves = possibleMovesForRobot();
-		LCD.clear();
-		LCD.drawString("TEST yes", 0, 0);
-		LCD.refresh();
-		Delay.msDelay(5000);
 
-		Move bestMove = null;
-
+		Move bestMove = new Move();
 		double price = Double.MIN_VALUE, tempPrice;
 
 		for(Move move : Moves)
 		{
-			LCD.clear();
-			LCD.drawString("TEST får opp : " + Moves.indexOf(move), 0, 0);
-			LCD.refresh();
-			Delay.msDelay(2000);;
 			tempPrice =  opponentTurn(move, 1);
-
-			LCD.clear();
-			LCD.drawString("TEST efter opp: " + Moves.indexOf(move), 0, 0);
-			LCD.refresh();
-			Delay.msDelay(2000);;
 
 			if(price < tempPrice)
 			{
@@ -79,7 +63,7 @@ public class MI
 		}
 		return bestMove;
 	}
-
+	
 	private double ownTurn(Move move, int moveLook) throws NoKingLeft, IOException, InterruptedException
 	{
 		int numberOfMoves = 0;
@@ -117,7 +101,9 @@ public class MI
 		
 		int numberOfMoves = 0;
 		double sum = 0;
+
 		double price = findOpponentPrice(move);
+
 		simulateMove(move);
 
 		int result = nXTF.checkersBoard.gameIsEnded(false);
@@ -130,10 +116,10 @@ public class MI
 			if(result == 3)
 				price = gameIsDraw;
 		}
-
 		else if(numberofmovelook >= moveLook)
 		{
 			List<Move> Moves = possibleMovesForHuman();
+			
 			for(Move tempMove : Moves)
 			{
 				sum = sum + ownTurn(tempMove, moveLook+1);
@@ -142,7 +128,13 @@ public class MI
 			sum = sum/numberOfMoves;
 			moveLook ++;
 		}
+		
 		revertMove();
+		/*
+		LCD.clear();
+		LCD.drawString("TEST", 0, 0);
+		LCD.refresh();
+		Delay.msDelay(3000); */
 		return price + sum;
 	}
 
@@ -230,11 +222,12 @@ public class MI
 		if(simulatedMoves.size() != 0)
 		{
 			Move temp = simulatedMoves.pop();
-			int stop = temp.moves.size();
+			int stop = temp.moves.size()-1;
+			
 			for(int i=0; i < stop;i++)
 				nXTF.checkersBoard.movePiece(temp.moves.pop(), temp.moves.peek());
 			stop = temp.takenPieces.size();
-
+			
 			for(int i=0; i < stop;i++)
 			{
 				Piece tempPiece = temp.takenPieces.pop();

@@ -4,7 +4,7 @@ import java.util.Stack;
 public class Move {
 	public Stack<Field> moves;
 	public boolean isJump;
-	public Stack<Piece> takenPieces;
+	public Stack<Piece> takenPieces = new Stack<Piece>();
 	
 	Move(Field movefrom, Field moveto, boolean isjump)
 	{
