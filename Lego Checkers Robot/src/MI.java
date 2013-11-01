@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 
+import lejos.nxt.LCD;
+import lejos.util.Delay;
 import customExceptions.NoKingLeft;
 
 
@@ -21,7 +23,7 @@ public class MI
 	/* MI brain starts */
 
 	/* how much the AI/MI looks forward */
-	private int numberofmovelook			= 3;
+	private int numberofmovelook			= 1;
 	/*points*/
 	private int ownMovePoint				= 4;
 	private int ownJumpPoint				= 8;
@@ -44,14 +46,30 @@ public class MI
 
 	public Move lookForBestMove() throws NoKingLeft, IOException /* does not start to see if the game is ended*/, InterruptedException
 	{
+
+
 		List<Move> Moves = possibleMovesForRobot();
+		LCD.clear();
+		LCD.drawString("TEST yes", 0, 0);
+		LCD.refresh();
+		Delay.msDelay(5000);
+
 		Move bestMove = null;
 
 		double price = Double.MIN_VALUE, tempPrice;
 
 		for(Move move : Moves)
 		{
+			LCD.clear();
+			LCD.drawString("TEST får opp : " + Moves.indexOf(move), 0, 0);
+			LCD.refresh();
+			Delay.msDelay(2000);;
 			tempPrice =  opponentTurn(move, 1);
+
+			LCD.clear();
+			LCD.drawString("TEST efter opp: " + Moves.indexOf(move), 0, 0);
+			LCD.refresh();
+			Delay.msDelay(2000);;
 
 			if(price < tempPrice)
 			{
@@ -66,7 +84,7 @@ public class MI
 	{
 		int numberOfMoves = 0;
 		double sum = 0;
-		double price = 0;
+		double price = findOwnPrice(move);
 		simulateMove(move);
 
 		int result = nXTF.checkersBoard.gameIsEnded(true);
@@ -81,7 +99,6 @@ public class MI
 		}
 		else if(numberofmovelook >= moveLook)
 		{
-			price = findOwnPrice(move);
 			List<Move> Moves = possibleMovesForRobot();
 			for(Move tempMove : Moves)
 			{
@@ -97,9 +114,10 @@ public class MI
 
 	private double opponentTurn(Move move, int moveLook) throws NoKingLeft, IOException, InterruptedException
 	{
+		
 		int numberOfMoves = 0;
 		double sum = 0;
-		double price = 0;
+		double price = findOpponentPrice(move);
 		simulateMove(move);
 
 		int result = nXTF.checkersBoard.gameIsEnded(false);
@@ -115,7 +133,6 @@ public class MI
 
 		else if(numberofmovelook >= moveLook)
 		{
-			price = findOpponentPrice(move);
 			List<Move> Moves = possibleMovesForHuman();
 			for(Move tempMove : Moves)
 			{
@@ -229,35 +246,37 @@ public class MI
 	private List<Move> possibleMoves(int moveForSide) throws InterruptedException, IOException, NoKingLeft //-1 = human, 1 = robot
 	{
 		List<Move> movements = new ArrayList<Move>();
-
 		for(Field[] f : nXTF.checkersBoard.myBoard)
 		{
 			for(Field field : f)
 			{
-				if(field.getPieceOnField().isMoveable)
+				if(!field.isEmpty())
 				{
-					//Jumps
-					List<Stack<Field>> listOfMoves = nXTF.checkersBoard.jumpSequence(field, moveForSide == 1, field.getPieceOnField().isCrowned);
-					
-					for(Stack<Field> stackOfFields : listOfMoves)
+					if(field.getPieceOnField().isMoveable)
 					{
-						movements.add(new Move(stackOfFields, true));
-					}
-					
-					if(!field.getPieceOnField().canJump)
-					{
-						List<Field> possibleMoves = nXTF.checkersBoard.checkMoveable(field, moveForSide);
-						//Simple moves
-						if(!possibleMoves.isEmpty())
+						//Jumps
+						List<Stack<Field>> listOfMoves = nXTF.checkersBoard.jumpSequence(field, moveForSide == 1, field.getPieceOnField().isCrowned);
+
+						for(Stack<Field> stackOfFields : listOfMoves)
 						{
-							for(Field posField : possibleMoves)
+							movements.add(new Move(stackOfFields, true));
+						}
+
+						if(!field.getPieceOnField().canJump)
+						{
+							List<Field> possibleMoves = nXTF.checkersBoard.checkMoveable(field, moveForSide);
+							//Simple moves
+							if(!possibleMoves.isEmpty())
 							{
-								Move movement = new Move(field, posField, false);
-								movements.add(movement);
+								for(Field posField : possibleMoves)
+								{
+									Move movement = new Move(field, posField, false);
+									movements.add(movement);
+								}
 							}
 						}
-					}
 
+					}
 				}
 			}
 		}
