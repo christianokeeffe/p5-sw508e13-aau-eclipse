@@ -533,7 +533,7 @@ public class Board {
 			returnList.get(i).push(input);
 		}
 		
-		
+		input.visited = true;
 		return returnList;
 	}
 	private boolean checkIfOthersHasMove(Field field, Field FromField) throws InterruptedException, IOException
@@ -667,6 +667,7 @@ public class Board {
 	{
 		List<Stack<Field>> jumpList = new ArrayList<Stack<Field>>();
 		jumpList = jumpSequence(field, false, field.getPieceOnField().isCrowned);
+		resetVisited();
 		for(int i=0; i<jumpList.size();i++)
 		{
 			Stack<Field> tempList = new Stack<Field>();
@@ -848,6 +849,7 @@ public class Board {
 	//Updates the moveable property on each piece
 	private void updateMoveables()
 	{
+		resetVisited();
 		for(Field[] f : myBoard)
 		{
 			for(Field field : f)
@@ -869,6 +871,7 @@ public class Board {
 				}
 			}
 		}
+		resetVisited();
 	}
 
 	private void printValues(Field field){
@@ -940,22 +943,22 @@ public class Board {
 		LCD.drawInt(red, 0, 1);
 		LCD.drawInt(green, 0, 2);
 		LCD.drawInt(blue, 0, 3);
-		if(red > 160  && green < 140 && green > 30 && blue < 140 && blue > 50)
+		if(175 < red && 55 < green && green < 115 && 60 < blue && blue < 115)
 		{
 			LCD.drawChar('r', 0, 0);LCD.refresh();
 			return 'r';
 		}
-		else if(red > 205 && green > 190 && blue > 180)
+		else if(red > 185 && green > 185 && blue > 185)
 		{
 			LCD.drawChar('w', 0, 0);LCD.refresh();
 			return 'w';
 		}
-		else if(red > 140 && red < 205 && green > 170  && blue < 200 && blue > 150)
+		else if(130 < red && red < 170 && 160 < green  && 150 < blue && blue < 200 )
 		{
 			LCD.drawChar('g', 0, 0);LCD.refresh();
 			return 'g';
 		}
-		else if(red < 160 && red > 100 && green < 220 && green > 150 && blue > 170)
+		else if(130 < red && red < 150 && 160 < green && green < 225 && 200 < blue)
 		{
 			LCD.drawChar('b', 0, 0);LCD.refresh();
 			return 'b';
