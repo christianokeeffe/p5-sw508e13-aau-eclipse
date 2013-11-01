@@ -17,7 +17,7 @@ public class SW508E13 {
 		RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
 		//FakeMI test = new FakeMI();
 		MI brain = new MI(checkTopFunc);
-		TouchSensor bigRedButton = new TouchSensor(brain.nXTF.bottomNXT.S3);
+		TouchSensor bigRedButton = new TouchSensor(checkTopFunc.bottomNXT.S3);
 		communication Com = new communication();
 		/*
 		List<Field> FlytteListe = new ArrayList<Field>();
@@ -37,23 +37,23 @@ public class SW508E13 {
 		checkTopFunc.movePiece(outside,inside, false);*/
 
 		Move bestMove;
-		if(brain.nXTF.checkersBoard.myPeasentColor == 'r')
+		if(checkTopFunc.checkersBoard.myPeasentColor == 'r')
 		{
 			bestMove = brain.lookForBestMove();
-			brain.nXTF.doMove(bestMove);
-			brain.nXTF.getColorOnField(4, -2);
+			checkTopFunc.doMove(bestMove);
+			checkTopFunc.getColorOnField(4, -2);
 		}
 		while(!Button.ESCAPE.isDown())
 		{
 			if(bigRedButton.isPressed()){
 				try {
-					brain.nXTF.checkersBoard.analyzeBoard();
-					if(!brain.nXTF.checkersBoard.checkForGameHasEnded(false))
+					checkTopFunc.checkersBoard.analyzeBoard();
+					if(!checkTopFunc.checkersBoard.checkForGameHasEnded(false))
 					{
 						bestMove = brain.lookForBestMove();
-						brain.nXTF.doMove(bestMove);
-						brain.nXTF.getColorOnField(4, -2);
-						if(!brain.nXTF.checkersBoard.checkForGameHasEnded(true))
+						checkTopFunc.doMove(bestMove);
+						checkTopFunc.getColorOnField(4, -2);
+						if(!checkTopFunc.checkersBoard.checkForGameHasEnded(true))
 							Com.playYourTurn();
 					}
 
