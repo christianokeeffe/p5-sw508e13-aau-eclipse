@@ -23,7 +23,7 @@ public class MI
 	/* MI brain starts */
 
 	/* how much the AI/MI looks forward */
-	private int numberofmovelook			= 1;
+	private int numberofmovelook			= 2;
 	/*points*/
 	private int ownMovePoint				= 4;
 	private int ownJumpPoint				= 8;
