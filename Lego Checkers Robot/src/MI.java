@@ -10,49 +10,49 @@ import customExceptions.NoKingLeft;
 public class MI 
 {
 	RemoteNXTFunctions nXTF;
-	
+
 	private Stack<Move> simulatedMoves = new Stack<Move>();
 	MI(RemoteNXTFunctions NXT)
 	{
 		nXTF = NXT;
 	}
-	
+
 	/* -----------------------------------------------------------------------------------  *
 	/* MI brain starts */
-	
+
 	/* how much the AI/MI looks forward */
 	private int numberofmovelook			= 3;
 	/*points*/
 	private int ownMovePoint				= 4;
 	private int ownJumpPoint				= 8;
-	
+
 	private int opponentMovePoint			= -ownMovePoint;
 	private int opponentJumpPoint			= -ownJumpPoint;
-	
+
 	/* bonus point for doing specific moves */
 	private int ownMiddleMoveBonus 			= 3;
 	private int opponentMiddleMoveBonus 	= 1; /* tror ikke kan bruges*/
-	
+
 	private int ownMoveLastRowPenalty 		= 1;
 	private int opponentMoveLastRowPenalty 	= 2;
-	
+
 	/* how glad the MI/AI are for the result of the game */
 	private int gameIsWon = 10;
 	private int gameIsLost = -gameIsWon;
 	private int gameIsDraw = 5;
-	
-	
-	public Move lookForBestMove() throws NoKingLeft, IOException /* does not start to see if the game is ended*/
+
+
+	public Move lookForBestMove() throws NoKingLeft, IOException /* does not start to see if the game is ended*/, InterruptedException
 	{
-	    List<Move> Moves = possibleMovesForRobot();
+		List<Move> Moves = possibleMovesForRobot();
 		Move bestMove = null;
-		
+
 		double price = Double.MIN_VALUE, tempPrice;
-		
+
 		for(Move move : Moves)
 		{
 			tempPrice =  opponentTurn(move, 1);
-			
+
 			if(price < tempPrice)
 			{
 				price = tempPrice;
@@ -61,14 +61,14 @@ public class MI
 		}
 		return bestMove;
 	}
-	
-	private double ownTurn(Move move, int moveLook) throws NoKingLeft, IOException
+
+	private double ownTurn(Move move, int moveLook) throws NoKingLeft, IOException, InterruptedException
 	{
 		int numberOfMoves = 0;
 		double sum = 0;
 		double price = 0;
 		simulateMove(move);
-		
+
 		int result = nXTF.checkersBoard.gameIsEnded(true);
 		if( result != 0 && numberofmovelook >= moveLook)
 		{
@@ -94,14 +94,14 @@ public class MI
 		revertMove();
 		return price + sum;
 	}
-	
-	private double opponentTurn(Move move, int moveLook) throws NoKingLeft, IOException
+
+	private double opponentTurn(Move move, int moveLook) throws NoKingLeft, IOException, InterruptedException
 	{
 		int numberOfMoves = 0;
 		double sum = 0;
 		double price = 0;
 		simulateMove(move);
-		
+
 		int result = nXTF.checkersBoard.gameIsEnded(false);
 		if( result > 0 && numberofmovelook >= moveLook)
 		{
@@ -112,7 +112,7 @@ public class MI
 			if(result == 3)
 				price = gameIsDraw;
 		}
-		
+
 		else if(numberofmovelook >= moveLook)
 		{
 			price = findOpponentPrice(move);
@@ -128,12 +128,12 @@ public class MI
 		revertMove();
 		return price + sum;
 	}
-	
-	
+
+
 	private double findOpponentPrice(Move move)
 	{
 		double price = 0;
-		
+
 		if(move.isJump == true)
 		{
 			price = price + opponentJumpPoint * move.moves.size();
@@ -147,7 +147,7 @@ public class MI
 	private double findOwnPrice(Move move)
 	{
 		double price = 0;
-		
+
 		if(move.isJump == true)
 		{
 			price = price + ownJumpPoint * move.moves.size();
@@ -158,19 +158,19 @@ public class MI
 		}
 		return price;
 	}
-	
+
 	/* MI brain stops */
 	/* -----------------------------------------------------------------------------------  */
-	private List<Move> possibleMovesForHuman()
+	private List<Move> possibleMovesForHuman() throws InterruptedException, IOException, NoKingLeft
 	{
 		return possibleMoves(-1);
 	}
-	
-	private List<Move> possibleMovesForRobot()
+
+	private List<Move> possibleMovesForRobot() throws InterruptedException, IOException, NoKingLeft
 	{
 		return possibleMoves(1);
 	}
-	
+
 	private void simulateMove(Move move) throws NoKingLeft, IOException
 	{
 		if(move.isJump)
@@ -194,11 +194,11 @@ public class MI
 			Field temp = move.moves.pop();
 			nXTF.checkersBoard.movePiece(temp, move.moves.peek());
 			move.moves.push(temp);
-			
+
 		}
 		simulatedMoves.push(move);
 	}
-	
+
 	private void revertAllMoves() throws NoKingLeft, IOException
 	{
 		int stop = simulatedMoves.size();
@@ -207,7 +207,7 @@ public class MI
 			revertMove();
 		}
 	}
-	
+
 	private void revertMove() throws NoKingLeft, IOException
 	{
 		if(simulatedMoves.size() != 0)
@@ -225,49 +225,43 @@ public class MI
 			}
 		}
 	}
-	
-	private List<Move> possibleMoves(int moveForSide) //-1 = human, 1 = robot
+
+	private List<Move> possibleMoves(int moveForSide) throws InterruptedException, IOException, NoKingLeft //-1 = human, 1 = robot
 	{
 		List<Move> movements = new ArrayList<Move>();
-		
+
 		for(Field[] f : nXTF.checkersBoard.myBoard)
 		{
 			for(Field field : f)
 			{
 				if(field.getPieceOnField().isMoveable)
 				{
-					List<Field> possibleMoves = nXTF.checkersBoard.checkMoveable(field, moveForSide);
 					//Jumps
-					Field jumpDirectionForward = nXTF.checkersBoard.checkJumpDirection(field, 1, moveForSide, false, field.getPieceOnField().isCrowned);
-					if(jumpDirectionForward != null)
+					List<Stack<Field>> listOfMoves = nXTF.checkersBoard.jumpSequence(field, moveForSide == 1, field.getPieceOnField().isCrowned);
+					
+					for(Stack<Field> stackOfFields : listOfMoves)
 					{
-						Move movement = new Move(field, jumpDirectionForward, true);
-						movements.add(movement);
+						movements.add(new Move(stackOfFields, true));
 					}
 					
-					Field jumpDirectionBackwards = nXTF.checkersBoard.checkJumpDirection(field, -1, moveForSide, false, field.getPieceOnField().isCrowned);
-					if(jumpDirectionBackwards != null)
-					{
-						Move movement = new Move(field, jumpDirectionBackwards, true);
-						movements.add(movement);
-					}
 					if(!field.getPieceOnField().canJump)
 					{
-					//Simple moves
-					if(!possibleMoves.isEmpty())
-					{
-						for(Field posField : possibleMoves)
+						List<Field> possibleMoves = nXTF.checkersBoard.checkMoveable(field, moveForSide);
+						//Simple moves
+						if(!possibleMoves.isEmpty())
 						{
-							Move movement = new Move(field, posField, false);
-							movements.add(movement);
+							for(Field posField : possibleMoves)
+							{
+								Move movement = new Move(field, posField, false);
+								movements.add(movement);
+							}
 						}
 					}
-					}
-					
+
 				}
 			}
 		}
-		
+
 		return movements;
 	}
 }
