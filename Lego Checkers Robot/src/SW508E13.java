@@ -53,15 +53,16 @@ public class SW508E13 {
 					//checkTopFunc.checkersBoard.analyzeBoard();
 					brain.nXTF.checkersBoard.analyzeBoard();
 					
-					if(!checkTopFunc.checkersBoard.checkForGameHasEnded(false))
+					if(!brain.nXTF.checkersBoard.checkForGameHasEnded(false))
 					{
 						
 						bestMove = brain.lookForBestMove();
-						
 						checkTopFunc.doMove(bestMove);
 						checkTopFunc.getColorOnField(4, -2);
 						
-						if(!checkTopFunc.checkersBoard.checkForGameHasEnded(true))
+						
+						
+						if(!brain.nXTF.checkersBoard.checkForGameHasEnded(true))
 							Com.playYourTurn();
 					
 					}
