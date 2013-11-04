@@ -58,8 +58,10 @@ public class SW508E13 {
 						
 						bestMove = brain.lookForBestMove();
 						
-						brain.nXTF.doMove(bestMove);
-						brain.nXTF.getColorOnField(4, -2);
+						
+						
+						//brain.nXTF.doMove(bestMove);
+						//brain.nXTF.getColorOnField(4, -2);
 						
 						
 						for(Field[] f : brain.nXTF.checkersBoard.myBoard)
@@ -69,6 +71,7 @@ public class SW508E13 {
 								if(field.getPieceOnField() != null)
 								{
 									brain.nXTF.checkersBoard.getColor(field.getPieceOnField().x, field.getPieceOnField().y);
+									Delay.msDelay(1000);
 								}
 							}
 						}
