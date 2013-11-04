@@ -23,20 +23,15 @@ public class MI
 	/* MI brain starts */
 
 	/* how much the AI/MI looks forward */
-	private int numberofmovelook			= 2;
+	private int numberofmovelook		= 2;
 	/*points*/
-	private int ownMovePoint				= 4;
-	private int ownJumpPoint				= 8;
-
-	private int opponentMovePoint			= -ownMovePoint;
-	private int opponentJumpPoint			= -ownJumpPoint;
+	private int MovePoint				= 4;
+	private int JumpPoint				= 8;
 
 	/* bonus point for doing specific moves */
-	private int ownMiddleMoveBonus 			= 3;
-	private int opponentMiddleMoveBonus 	= 1; /* tror ikke kan bruges*/
+	private int MiddleMoveBonus 		= 3;
 
-	private int ownMoveLastRowPenalty 		= 1;
-	private int opponentMoveLastRowPenalty 	= 2;
+	private int MoveLastRowPenalty 		= 1;
 
 	/* how glad the MI/AI are for the result of the game */
 	private int gameIsWon = 10;
@@ -69,7 +64,8 @@ public class MI
 	{
 		
 		int numberOfMoves = 0;
-		double sum = 0;
+		double temp = 0;
+		double bestMoveprice = Double.MIN_VALUE;
 		
 		double price = findPrice(move, robotMove);
 
@@ -101,11 +97,12 @@ public class MI
 			
 			for(Move tempMove : moves)
 			{
-				sum = sum + movePrice(tempMove, moveLook+1, robotMove*-1);
-				numberOfMoves++;
+				temp =  movePrice(tempMove, moveLook+1, robotMove*-1);
+				if(temp > bestMoveprice)
+				{
+					bestMoveprice = temp;
+				}
 			}
-			sum = sum/numberOfMoves;
-			moveLook ++;
 		}
 		
 		revertMove();
@@ -115,7 +112,7 @@ public class MI
 		LCD.refresh();
 		Delay.msDelay(3000); */
 		
-		return price + sum;
+		return price + bestMoveprice;
 	}
 
 	
@@ -125,11 +122,11 @@ public class MI
 
 		if(move.isJump == true)
 		{
-			price = price + (opponentJumpPoint*robotTurn) * move.moves.size();
+			price = price + (JumpPoint*robotTurn) * move.moves.size();
 		}
 		else
 		{
-			price = price + opponentMovePoint*robotTurn;
+			price = price + MovePoint*robotTurn;
 		}
 		return price;
 	}
