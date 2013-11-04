@@ -149,7 +149,7 @@ public class MI
 
 	public void simulateMove(Move move) throws NoKingLeft, IOException
 	{
-		if(move.isJump)
+		if(!move.moves.isEmpty())
 		{
 			int stop = move.moves.size()-1;
 
@@ -158,21 +158,19 @@ public class MI
 			{
 				Field from = move.moves.pop();
 				Field to = move.moves.peek();
-				move.takenPieces.push(nXTF.checkersBoard.myBoard[(from.x+to.x)/2][(from.y+to.y)/2].getPieceOnField());
+				if(Math.abs(from.x - to.x) == 2)
+				{
+					move.takenPieces.push(nXTF.checkersBoard.myBoard[(from.x+to.x)/2][(from.y+to.y)/2].getPieceOnField());
+					nXTF.checkersBoard.myBoard[(from.x+to.x)/2][(from.y+to.y)/2].setPieceOnField(null);
+				}
 				nXTF.checkersBoard.movePiece(from, to);
 				tempStack.push(from);
 			}
 			for(int i = 0; i < stop; i++)
 				move.moves.push(tempStack.pop());
+			
+			simulatedMoves.push(move);
 		}
-		else if(!move.moves.isEmpty())
-		{
-			Field temp = move.moves.pop();
-			nXTF.checkersBoard.movePiece(temp, move.moves.peek());
-			move.moves.push(temp);
-
-		}
-		simulatedMoves.push(move);
 	}
 
 	private void revertAllMoves() throws NoKingLeft, IOException
@@ -192,7 +190,10 @@ public class MI
 			int stop = temp.moves.size()-1;
 			
 			for(int i=0; i < stop;i++)
-				nXTF.checkersBoard.movePiece(temp.moves.pop(), temp.moves.peek());
+			{
+				Field tempmove = temp.moves.pop();
+				nXTF.checkersBoard.movePiece(temp.moves.peek(),tempmove);
+			}
 			stop = temp.takenPieces.size();
 			
 			for(int i=0; i < stop;i++)
