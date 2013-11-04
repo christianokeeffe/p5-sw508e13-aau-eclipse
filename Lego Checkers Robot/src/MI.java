@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 
+import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.util.Delay;
 import customExceptions.NoKingLeft;
@@ -42,20 +43,21 @@ public class MI
 	public Move lookForBestMove() throws NoKingLeft, IOException /* does not start to see if the game is ended*/, InterruptedException
 	{
 		List<Move> Moves = possibleMovesForRobot();
-
+		
 		Move bestMove = new Move();
 		double price = Double.MIN_VALUE, tempPrice;
 
 		for(Move move : Moves)
-		{
+		{	
 			tempPrice =  movePrice(move, 10, -1);
-
-			if(price < tempPrice)
+			
+			if(price < tempPrice && move.moves.size() > 0)
 			{
 				price = tempPrice;
 				bestMove = move;
 			}
 		}
+		
 		return bestMove;
 	}
 	
@@ -210,7 +212,7 @@ public class MI
 			{
 				if(!field.isEmpty())
 				{
-					if(field.getPieceOnField().isMoveable)
+					if(field.getPieceOnField().isMoveable && nXTF.checkersBoard.checkAllegiance(field, moveForSide == -1))
 					{
 						//Jumps
 						List<Stack<Field>> listOfMoves = nXTF.checkersBoard.jumpSequence(field, moveForSide == 1, field.getPieceOnField().isCrowned);
@@ -224,6 +226,7 @@ public class MI
 						{
 							List<Field> possibleMoves = nXTF.checkersBoard.checkMoveable(field, moveForSide);
 							//Simple moves
+							
 							if(!possibleMoves.isEmpty())
 							{
 								for(Field posField : possibleMoves)

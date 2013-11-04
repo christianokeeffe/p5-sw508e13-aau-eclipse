@@ -943,22 +943,22 @@ public class Board {
 		LCD.drawInt(red, 0, 1);
 		LCD.drawInt(green, 0, 2);
 		LCD.drawInt(blue, 0, 3);
-		if(175 < red && 55 < green && green < 115 && 60 < blue && blue < 140)
+		if(red > 160  && green < 140 && green > 30 && blue < 140 && blue > 50)
 		{
 			LCD.drawChar('r', 0, 0);LCD.refresh();
 			return 'r';
 		}
-		else if(red > 185 && green > 185 && blue > 185)
+		else if(red > 205 && green > 190 && blue > 180)
 		{
 			LCD.drawChar('w', 0, 0);LCD.refresh();
 			return 'w';
 		}
-		else if(130 < red && red < 170 && 160 < green  && 150 < blue && blue < 200 )
+		else if(red > 140 && red < 205 && green > 170  && blue < 200 && blue > 150)
 		{
 			LCD.drawChar('g', 0, 0);LCD.refresh();
 			return 'g';
 		}
-		else if(130 < red && red < 150 && 160 < green && green < 225 && 200 < blue)
+		else if(red < 160 && red > 100 && green < 220 && green > 150 && blue > 170)
 		{
 			LCD.drawChar('b', 0, 0);LCD.refresh();
 			return 'b';

@@ -39,9 +39,15 @@ public class SW508E13 {
 		Move bestMove;
 		if(checkTopFunc.checkersBoard.myPeasentColor == 'r')
 		{
-			
 			bestMove = brain.lookForBestMove();
-			checkTopFunc.doMove(bestMove);
+			if(bestMove != null)
+			{
+				checkTopFunc.doMove(bestMove);
+			}
+			else
+			{
+				Button.ENTER.waitForPress();
+			}
 			checkTopFunc.getColorOnField(4, -2);
 			
 		}
@@ -58,23 +64,11 @@ public class SW508E13 {
 						brain.nXTF.getColorOnField(4, -2);
 						bestMove = brain.lookForBestMove();
 
-						if(bestMove == null)
+						if(bestMove != null)
 						{
-							LCD.clear();
-							LCD.drawString("HEJ", 0, 0);
-							LCD.refresh();
-							Delay.msDelay(3000);
-						}
-						else
-						{
-							LCD.clear();
-							LCD.drawString("IKKE HEJ", 0, 0);
-							LCD.refresh();
-							Delay.msDelay(3000); 
+							brain.nXTF.doMove(bestMove);
 						}
 						
-						
-						brain.nXTF.doMove(bestMove);
 						brain.nXTF.getColorOnField(4, -2);
 						
 						/*
