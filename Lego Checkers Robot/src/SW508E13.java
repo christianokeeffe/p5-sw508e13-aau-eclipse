@@ -55,15 +55,29 @@ public class SW508E13 {
 					
 					if(!brain.nXTF.checkersBoard.checkForGameHasEnded(false))
 					{
-						
+						brain.nXTF.getColorOnField(4, -2);
 						bestMove = brain.lookForBestMove();
-						
+
+						if(bestMove == null)
+						{
+							LCD.clear();
+							LCD.drawString("HEJ", 0, 0);
+							LCD.refresh();
+							Delay.msDelay(3000);
+						}
+						else
+						{
+							LCD.clear();
+							LCD.drawString("IKKE HEJ", 0, 0);
+							LCD.refresh();
+							Delay.msDelay(3000); 
+						}
 						
 						
 						brain.nXTF.doMove(bestMove);
 						brain.nXTF.getColorOnField(4, -2);
 						
-						
+						/*
 						for(Field[] f : brain.nXTF.checkersBoard.myBoard)
 						{
 							for(Field field : f)
@@ -74,7 +88,7 @@ public class SW508E13 {
 									Delay.msDelay(1000);
 								}
 							}
-						}
+						} */
 						
 						
 						if(!brain.nXTF.checkersBoard.checkForGameHasEnded(true))
