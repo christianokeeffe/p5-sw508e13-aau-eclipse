@@ -180,7 +180,7 @@ public class MI
 		return possibleMoves(1);
 	}
 
-	private void simulateMove(Move move) throws NoKingLeft, IOException
+	public void simulateMove(Move move) throws NoKingLeft, IOException
 	{
 		if(move.isJump)
 		{
@@ -217,7 +217,7 @@ public class MI
 		}
 	}
 
-	private void revertMove() throws NoKingLeft, IOException
+	public void revertMove() throws NoKingLeft, IOException
 	{
 		if(simulatedMoves.size() != 0)
 		{
