@@ -53,7 +53,7 @@ public class MI
 
 		for(Move move : Moves)
 		{
-			tempPrice =  opponentTurn(move, 10);
+			tempPrice =  movePrice(move, 10, -1);
 
 			if(price < tempPrice)
 			{
@@ -64,45 +64,14 @@ public class MI
 		return bestMove;
 	}
 	
-	private double ownTurn(Move move, int moveLook) throws NoKingLeft, IOException, InterruptedException
-	{
-		int numberOfMoves = 0;
-		double sum = 0;
-		double price = findOwnPrice(move);
-		simulateMove(move);
-
-		int result = nXTF.checkersBoard.gameIsEnded(true);
-		if( result != 0 && numberofmovelook >= moveLook)
-		{
-			if(result == 1)
-				price = gameIsLost;
-			if(result == 2)
-				price = gameIsWon;
-			if(result == 3)
-				price = gameIsDraw;
-		}
-		else if(numberofmovelook >= moveLook)
-		{
-			List<Move> Moves = possibleMovesForRobot();
-			for(Move tempMove : Moves)
-			{
-				sum = sum + opponentTurn(tempMove, moveLook+1);
-				numberOfMoves++;
-			}
-			sum = sum/numberOfMoves;
-			moveLook ++;
-		}
-		revertMove();
-		return price + sum;
-	}
-
-	private double opponentTurn(Move move, int moveLook) throws NoKingLeft, IOException, InterruptedException
+	private double movePrice(Move move, int moveLook, int  robotMove) throws NoKingLeft, IOException //robotMove = +1 for robot, -1 for human
+, InterruptedException
 	{
 		
 		int numberOfMoves = 0;
 		double sum = 0;
-
-		double price = findOpponentPrice(move);
+		
+		double price = findPrice(move, robotMove);
 
 		simulateMove(move);
 
@@ -118,11 +87,21 @@ public class MI
 		}
 		else if(numberofmovelook >= moveLook)
 		{
-			List<Move> Moves = possibleMovesForHuman();
+			List<Move> moves;
 			
-			for(Move tempMove : Moves)
+			if(robotMove == 1)
 			{
-				sum = sum + ownTurn(tempMove, moveLook+1);
+				moves = possibleMovesForHuman();
+			}
+			else
+			{
+				moves = possibleMovesForRobot();
+			}
+			
+			
+			for(Move tempMove : moves)
+			{
+				sum = sum + movePrice(tempMove, moveLook+1, robotMove*-1);
 				numberOfMoves++;
 			}
 			sum = sum/numberOfMoves;
@@ -135,38 +114,26 @@ public class MI
 		LCD.drawString("TEST", 0, 0);
 		LCD.refresh();
 		Delay.msDelay(3000); */
+		
 		return price + sum;
 	}
 
-
-	private double findOpponentPrice(Move move)
+	
+	private double findPrice(Move move, int robotTurn) //robotTurn = +1 for robot, -1 for human
 	{
 		double price = 0;
 
 		if(move.isJump == true)
 		{
-			price = price + opponentJumpPoint * move.moves.size();
+			price = price + (opponentJumpPoint*robotTurn) * move.moves.size();
 		}
 		else
 		{
-			price = price + opponentMovePoint;
+			price = price + opponentMovePoint*robotTurn;
 		}
 		return price;
 	}
-	private double findOwnPrice(Move move)
-	{
-		double price = 0;
 
-		if(move.isJump == true)
-		{
-			price = price + ownJumpPoint * move.moves.size();
-		}
-		else
-		{
-			price = price + ownMovePoint;
-		}
-		return price;
-	}
 
 	/* MI brain stops */
 	/* -----------------------------------------------------------------------------------  */
