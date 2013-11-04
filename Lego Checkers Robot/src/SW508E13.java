@@ -60,8 +60,8 @@ public class SW508E13 {
 						
 						
 						
-						//brain.nXTF.doMove(bestMove);
-						//brain.nXTF.getColorOnField(4, -2);
+						brain.nXTF.doMove(bestMove);
+						brain.nXTF.getColorOnField(4, -2);
 						
 						
 						for(Field[] f : brain.nXTF.checkersBoard.myBoard)
