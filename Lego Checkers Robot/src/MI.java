@@ -48,7 +48,7 @@ public class MI
 
 		for(Move move : Moves)
 		{
-			tempPrice =  movePrice(move, 10, -1);
+			tempPrice =  movePrice(move, 1, -1);
 
 			if(price < tempPrice)
 			{
