@@ -30,7 +30,7 @@ public class Move {
 	
 	public void addStep(Field step)
 	{
-		this.moves.addElement(step);
+		this.moves.push(step);
 	}
 }
 
