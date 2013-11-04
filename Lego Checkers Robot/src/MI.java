@@ -53,7 +53,7 @@ public class MI
 
 		for(Move move : Moves)
 		{
-			tempPrice =  opponentTurn(move, 1);
+			tempPrice =  opponentTurn(move, 10);
 
 			if(price < tempPrice)
 			{
