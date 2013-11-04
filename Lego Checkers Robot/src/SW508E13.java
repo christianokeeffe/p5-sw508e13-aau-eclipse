@@ -62,6 +62,17 @@ public class SW508E13 {
 						brain.nXTF.getColorOnField(4, -2);
 						
 						
+						for(Field[] f : brain.nXTF.checkersBoard.myBoard)
+						{
+							for(Field field : f)
+							{
+								if(field.getPieceOnField() != null)
+								{
+									brain.nXTF.checkersBoard.getColor(field.getPieceOnField().x, field.getPieceOnField().y);
+								}
+							}
+						}
+						
 						
 						if(!brain.nXTF.checkersBoard.checkForGameHasEnded(true))
 							Com.playYourTurn();
