@@ -39,22 +39,42 @@ public class SW508E13 {
 		Move bestMove;
 		if(checkTopFunc.checkersBoard.myPeasentColor == 'r')
 		{
+			/*
 			bestMove = brain.lookForBestMove();
 			checkTopFunc.doMove(bestMove);
 			checkTopFunc.getColorOnField(4, -2);
+			*/
 		}
 		while(!Button.ESCAPE.isDown())
 		{
 			if(bigRedButton.isPressed()){
 				try {
+					
 					checkTopFunc.checkersBoard.analyzeBoard();
+					
 					if(!checkTopFunc.checkersBoard.checkForGameHasEnded(false))
 					{
+						/*
 						bestMove = brain.lookForBestMove();
 						checkTopFunc.doMove(bestMove);
 						checkTopFunc.getColorOnField(4, -2);
+						*/
 						if(!checkTopFunc.checkersBoard.checkForGameHasEnded(true))
 							Com.playYourTurn();
+					Field movefrom = new Field(1,2); 
+					Field moveto = new Field(2,3);
+					
+					// brain.nXTF = checkTopFunc
+					
+					
+					Move TempMove = new Move(movefrom, moveto, false);
+					
+					brain.simulateMove(TempMove);
+					// brain.revertMove();
+					LCD.clear();
+					LCD.drawChar(brain.nXTF.checkersBoard.myBoard[2][3].getPieceOnField().color , 0, 0);
+					LCD.refresh();
+					
 					}
 
 				} catch (IllegalMove e) {
