@@ -57,8 +57,9 @@ public class SW508E13 {
 					{
 						
 						bestMove = brain.lookForBestMove();
-						checkTopFunc.doMove(bestMove);
-						checkTopFunc.getColorOnField(4, -2);
+						
+						brain.nXTF.doMove(bestMove);
+						brain.nXTF.getColorOnField(4, -2);
 						
 						
 						
