@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 
 import customExceptions.NoKingLeft;
@@ -69,7 +70,7 @@ public class RemoteNXTFunctions {
 		Delay.msDelay(250);
 
 	}
-	
+
 	public void waitForRedButton()
 	{
 		TouchSensor bigRedButton = new TouchSensor(bottomNXT.S3);
@@ -87,7 +88,7 @@ public class RemoteNXTFunctions {
 		moveSensorTo(x, y, false);
 		return boardColorSensor.getColor();
 	}
-	
+
 	public void moveZTo(double pos)
 	{
 		motorZ.rotate((int)(pos*zFactor-presentZ), false);
@@ -118,7 +119,7 @@ public class RemoteNXTFunctions {
 		}
 		electromagnet.setPower(0);
 		moveZTo(0);
-		
+
 		checkersBoard.movePiece(FromField, ToField);
 	}
 	//latex end
@@ -141,28 +142,28 @@ public class RemoteNXTFunctions {
 				movePiece(takenPieces.get(i), trashField);
 			else
 			{
-			if(takenPieces.get(i).getPieceOnField().isCrowned && checkersBoard.checkAllegiance(takenPieces.get(i), true))
-			{
-				int j = checkersBoard.kingPlace.length-1;
-				while(j >= 0)
+				if(takenPieces.get(i).getPieceOnField().isCrowned && checkersBoard.checkAllegiance(takenPieces.get(i), true))
 				{
-					if(checkersBoard.kingPlace[j].isEmpty())
-						j = -1;
-					j--;
+					int j = checkersBoard.kingPlace.length-1;
+					while(j >= 0)
+					{
+						if(checkersBoard.kingPlace[j].isEmpty())
+							j = -1;
+						j--;
+					}
+					if(j < 0)
+						movePiece(takenPieces.get(i), trashField);
+					else
+						movePiece(takenPieces.get(i), checkersBoard.kingPlace[j]);
 				}
-				if(j < 0)
-					movePiece(takenPieces.get(i), trashField);
 				else
-					movePiece(takenPieces.get(i), checkersBoard.kingPlace[j]);
-			}
-			else
-			{
-				movePiece(takenPieces.get(i), trashField);
-			}
+				{
+					movePiece(takenPieces.get(i), trashField);
+				}
 			}
 		}
 	}
-	
+
 	//Makes a piece jump one or more pieces and then remove those pieces from the board
 	public void takePiece(Field fromField, List<Field> midwayFields) throws IOException, NoKingLeft
 	{
@@ -180,28 +181,31 @@ public class RemoteNXTFunctions {
 		}
 
 		for(int i = 0; i < takenPieces.size(); i++){
+
 			if(takenPieces.get(i).isEmpty())
+			{
 				movePiece(takenPieces.get(i), trashField);
+			}
 			else
 			{
-			if(takenPieces.get(i).getPieceOnField().isCrowned && checkersBoard.checkAllegiance(takenPieces.get(i), true))
-			{
-				int j = checkersBoard.kingPlace.length-1;
-				while(j >= 0)
+				if(takenPieces.get(i).getPieceOnField().isCrowned && checkersBoard.checkAllegiance(takenPieces.get(i), true))
 				{
-					if(checkersBoard.kingPlace[j].isEmpty())
-						j = -1;
-					j--;
+					int j = checkersBoard.kingPlace.length-1;
+					OUTERMOST:while(j >= 0)
+					{
+						if(checkersBoard.kingPlace[j].isEmpty())
+							break OUTERMOST;
+						j--;
+					}
+					if(j < 0)
+						movePiece(takenPieces.get(i), trashField);
+					else
+						movePiece(takenPieces.get(i), checkersBoard.kingPlace[j]);
 				}
-				if(j < 0)
-					movePiece(takenPieces.get(i), trashField);
 				else
-					movePiece(takenPieces.get(i), checkersBoard.kingPlace[j]);
-			}
-			else
-			{
-				movePiece(takenPieces.get(i), trashField);
-			}
+				{
+					movePiece(takenPieces.get(i), trashField);
+				}
 			}
 		}
 	}
@@ -210,10 +214,8 @@ public class RemoteNXTFunctions {
 		movePiece(fromField, toField);
 
 		if(Math.abs(fromField.x - toField.x) == 2){
-			Field returnField = new Field();
-			returnField.x = (fromField.x + toField.x)/2;
-			returnField.y = (fromField.y + toField.y)/2;
-			return returnField;
+
+			return checkersBoard.myBoard[(fromField.x + toField.x)/2][(fromField.y + toField.y)/2];
 		}
 		else
 		{
