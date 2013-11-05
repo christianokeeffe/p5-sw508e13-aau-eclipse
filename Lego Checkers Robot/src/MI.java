@@ -44,14 +44,18 @@ public class MI
 	{
 		List<Move> Moves = possibleMovesForRobot();
 		
+		LCD.clear();
+		LCD.drawString("size: "+ Moves.size(), 0, 0);
+		LCD.refresh();
+		Delay.msDelay(3000);
+		
 		Move bestMove = new Move();
-		double price = Double.MIN_VALUE, tempPrice;
-
+		double price = -1000, tempPrice;
+		
 		for(Move move : Moves)
-		{	
+		{
 			tempPrice =  movePrice(move, 10, -1);
-			
-			if(price < tempPrice && move.moves.size() > 0)
+			if(price < tempPrice)
 			{
 				price = tempPrice;
 				bestMove = move;
@@ -229,7 +233,6 @@ public class MI
 						{
 							List<Field> possibleMoves = nXTF.checkersBoard.checkMoveable(field, moveForSide);
 							//Simple moves
-							
 							if(!possibleMoves.isEmpty())
 							{
 								for(Field posField : possibleMoves)
