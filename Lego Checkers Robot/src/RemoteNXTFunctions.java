@@ -38,6 +38,7 @@ public class RemoteNXTFunctions {
 	private NXTRegulatedMotor motorZ;
 	private NXTRegulatedMotor motorX;
 	Field trashField = new Field(3,-6);
+	TouchSensor bigRedButton;
 
 	public RemoteNXTFunctions() throws InterruptedException, IOException{
 		connect();
@@ -46,6 +47,7 @@ public class RemoteNXTFunctions {
 		motorZ.setSpeed(150);
 		motorX.setSpeed(900);
 
+		bigRedButton = new TouchSensor(bottomNXT.S3);
 		touchSensorX = new TouchSensor(bottomNXT.S1);
 		touchSensorZ = new TouchSensor(SensorPort.S2);
 		touchSensorY1 = new TouchSensor(bottomNXT.S2);
@@ -73,7 +75,6 @@ public class RemoteNXTFunctions {
 
 	public void waitForRedButton()
 	{
-		TouchSensor bigRedButton = new TouchSensor(bottomNXT.S3);
 		boolean checkButton = true;
 		while(checkButton)
 		{
@@ -93,6 +94,11 @@ public class RemoteNXTFunctions {
 	{
 		motorZ.rotate((int)(pos*zFactor-presentZ), false);
 		presentZ = (int)(pos*zFactor);
+	}
+	
+	public void resetAfterMove() throws IOException
+	{
+		moveSensorTo(1, -2, false);
 	}
 
 	//latex start movePiece
