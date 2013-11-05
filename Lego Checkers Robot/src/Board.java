@@ -783,7 +783,7 @@ public class Board {
 			return possibleMoves;
 	}
 
-	//Check if a given field is can jump
+	//Check if a given field can jump
 	//latex start checkJump
 	private boolean checkJump(Field field, boolean checkForOpponent, boolean isCrowned)
 	{		
@@ -797,12 +797,12 @@ public class Board {
 	//latex end
 	
 	//Checks jumps
+	//latex start jumpDirection
 	public Field checkJumpDirection(Field field, int difx, int dify, boolean checkForOpponent, boolean isCrowned)
 	{
 		if(((checkForOpponent && dify == -1)||(!checkForOpponent && dify == 1)) && !isCrowned)
 			return null;
 		
-		//Forward
 		if(checkBounds(field.x+2*difx,field.y+2*dify))
 		{
 			if(!myBoard[field.x+2*difx][field.y+2*dify].visited)
@@ -815,6 +815,7 @@ public class Board {
 		}
 		return null;
 	}
+	//latex end
 	
 	private boolean checkJumpDirectionBoolean(Field field, int difx, int dify, boolean checkForOpponent, boolean isCrowned)
 	{
