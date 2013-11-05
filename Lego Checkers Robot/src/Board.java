@@ -741,6 +741,7 @@ public class Board {
 	}
 	//latex end
 	
+	
 	private boolean checkMoveableBoolean(Field field, int dif)
 	{
 		if(checkMoveable(field, dif).isEmpty())
@@ -783,6 +784,7 @@ public class Board {
 	}
 
 	//Check if a given field is can jump
+	//latex start checkJump
 	private boolean checkJump(Field field, boolean checkForOpponent, boolean isCrowned)
 	{		
 		if(checkJumpDirectionBoolean(field, -1, -1, checkForOpponent, isCrowned)||checkJumpDirectionBoolean(field, 1, -1, checkForOpponent, isCrowned)
@@ -792,7 +794,8 @@ public class Board {
 		}		
 		return false;
 	}
-
+	//latex end
+	
 	//Checks jumps
 	public Field checkJumpDirection(Field field, int difx, int dify, boolean checkForOpponent, boolean isCrowned)
 	{
