@@ -231,13 +231,7 @@ public class MI
 							{
 								for(Field posField : possibleMoves)
 								{
-									LCD.clear();
-									LCD.drawString("From: " + field.x + "," + field.y, 0, 0);
-									LCD.drawString("To: " + posField.x + "," + posField.y, 0, 1);
-									
-									LCD.refresh();
-									Button.ENTER.waitForAnyPress();
-									
+				
 									Move movement = new Move(field, posField, false);
 									movements.add(movement);
 								}
@@ -249,6 +243,19 @@ public class MI
 			}
 		}
 
+		for(Move m : movements)
+		{
+			LCD.clear();
+			
+			LCD.drawString("Number of moves: " + m.moves.size(), 0, 0);
+			LCD.drawString("From: " + m.moves.peek().x + ", " + m.moves.pop().y, 0, 1);
+			LCD.drawString("To: " + m.moves.peek().x + ", " + m.moves.pop().y, 0, 2);
+			
+			LCD.refresh();
+			Button.ENTER.waitForAnyPress();
+			
+		}
+		
 		return movements;
 	}
 }
