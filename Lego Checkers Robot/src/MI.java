@@ -246,14 +246,36 @@ public class MI
 		for(Move m : movements)
 		{
 			LCD.clear();
-			
-			LCD.drawString("Number of moves: " + m.moves.size(), 0, 0);
-			LCD.drawString("From: " + m.moves.peek().x + ", " + m.moves.pop().y, 0, 1);
-			LCD.drawString("To: " + m.moves.peek().x + ", " + m.moves.pop().y, 0, 2);
-			
-			LCD.refresh();
-			Button.ENTER.waitForAnyPress();
-			
+			int count =0;
+			int zerocount = 0;
+			int onecount = 0;
+			if(m.moves.size() > 2)
+			{
+				LCD.drawString("count: " + count, 0, 0);
+				count++;
+				LCD.drawString("Number of moves: " + m.moves.size(), 0, 1);
+				LCD.drawString("From: " + m.moves.peek().x + ", " + m.moves.pop().y, 0, 2);
+				LCD.drawString("To: " + m.moves.peek().x + ", " + m.moves.pop().y, 0, 3);
+				
+				LCD.refresh();
+				Button.ENTER.waitForAnyPress();
+			}
+			else if(m.moves.size() == 1)
+			{
+				LCD.clear();
+				LCD.drawString("found one: size: " + onecount, 0, 4);
+				LCD.refresh();
+				Button.ENTER.waitForAnyPress();
+				onecount++;
+			}
+			else if(m.moves.size() == 0)
+			{
+				LCD.clear();
+				LCD.drawString("found zero: size: " + zerocount, 0, 5);
+				LCD.refresh();
+				Button.ENTER.waitForAnyPress();
+				zerocount++;
+			}
 		}
 		
 		return movements;
