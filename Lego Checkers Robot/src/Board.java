@@ -753,53 +753,32 @@ public class Board {
 		}
 	}
 
-	//Checks if a given field is moveable
+	//Checks if a given field is movable
 	public List<Field> checkMoveable(Field field, int dif)
 	{
 		List<Field> possibleMoves = new ArrayList<Field>();
 		
 		//Check forward
-		if((!this.fieldOccupied(field.x-1, field.y+dif)) && !this.fieldOccupied(field.x+1, field.y+dif))
+		if(!this.fieldOccupied(field.x-1, field.y+dif))
 		{
 			possibleMoves.add(myBoard[field.x-1][field.y+dif]);
-			possibleMoves.add(myBoard[field.x+1][field.y+dif]);
-			return possibleMoves;
 		}
-		else if(!this.fieldOccupied(field.x-1, field.y+dif))
-		{
-			possibleMoves.add(myBoard[field.x-1][field.y+dif]);
-			return possibleMoves;
-		}
-		else if(!this.fieldOccupied(field.x+1, field.y+dif))
+		if(!this.fieldOccupied(field.x+1, field.y+dif))
 		{
 			possibleMoves.add(myBoard[field.x+1][field.y+dif]);
-			return possibleMoves;
 		}
 		//if king, check backwards also
-		else if(field.getPieceOnField().isCrowned)
+		if(field.getPieceOnField().isCrowned)
 		{
-			if(!this.fieldOccupied(field.x - 1, field.y - dif) &&  !this.fieldOccupied(field.x + 1, field.y - dif))
+			if(!this.fieldOccupied(field.x - 1, field.y - dif))
 			{
 				possibleMoves.add(myBoard[field.x-1][field.y-dif]);
-				possibleMoves.add(myBoard[field.x+1][field.y-dif]);
-				return possibleMoves;
 			}
-			else if(!this.fieldOccupied(field.x - 1, field.y - dif))
-			{
-				possibleMoves.add(myBoard[field.x-1][field.y-dif]);
-				return possibleMoves;
-			}
-			else if(!this.fieldOccupied(field.x + 1, field.y - dif))
+			if(!this.fieldOccupied(field.x + 1, field.y - dif))
 			{
 				possibleMoves.add(myBoard[field.x+1][field.y-dif]);
-				return possibleMoves;
-			}
-			else
-			{
-				return possibleMoves;
 			}
 		}
-		else
 			return possibleMoves;
 	}
 
