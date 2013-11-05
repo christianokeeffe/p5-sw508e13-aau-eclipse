@@ -249,7 +249,7 @@ public class MI
 			int count =0;
 			int zerocount = 0;
 			int onecount = 0;
-			if(m.moves.size() > 2)
+			if(m.moves.size() >= 2)
 			{
 				LCD.drawString("count: " + count, 0, 0);
 				count++;
