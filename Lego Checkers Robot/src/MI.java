@@ -49,13 +49,15 @@ public class MI
 		
 		for(Move move : Moves)
 		{
-			
+			bestMove = move;
+			/*
 			tempPrice =  movePrice(move, 10, -1);
 			if(price < tempPrice)
 			{
 				price = tempPrice;
 				bestMove = move;
 			}
+			*/
 		}
 		
 		return bestMove;
