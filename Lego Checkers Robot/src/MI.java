@@ -44,16 +44,12 @@ public class MI
 	{
 		List<Move> Moves = possibleMovesForRobot();
 		
-		LCD.clear();
-		LCD.drawString("size: "+ Moves.size(), 0, 0);
-		LCD.refresh();
-		Delay.msDelay(3000);
-		
 		Move bestMove = new Move();
 		double price = -1000, tempPrice;
 		
 		for(Move move : Moves)
 		{
+			
 			tempPrice =  movePrice(move, 10, -1);
 			if(price < tempPrice)
 			{
@@ -71,11 +67,12 @@ public class MI
 		
 		int numberOfMoves = 0;
 		double temp = 0;
-		double bestMoveprice = Double.MIN_VALUE;
+		double bestMoveprice = -1000;
 		
 		double price = findPrice(move, robotMove);
-
+		
 		simulateMove(move);
+		
 
 		int result = nXTF.checkersBoard.gameIsEnded(false);
 		if( result > 0 && numberofmovelook >= moveLook)
