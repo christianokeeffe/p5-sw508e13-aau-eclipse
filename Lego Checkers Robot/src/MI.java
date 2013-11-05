@@ -231,6 +231,13 @@ public class MI
 							{
 								for(Field posField : possibleMoves)
 								{
+									LCD.clear();
+									LCD.drawString("From: " + field.x + "," + field.y, 0, 0);
+									LCD.drawString("To: " + posField.x + "," + posField.y, 0, 1);
+									
+									LCD.refresh();
+									Button.ENTER.waitForAnyPress();
+									
 									Move movement = new Move(field, posField, false);
 									movements.add(movement);
 								}
