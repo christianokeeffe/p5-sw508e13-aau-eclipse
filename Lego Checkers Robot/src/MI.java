@@ -260,6 +260,7 @@ public class MI
 				LCD.refresh();
 				Button.ENTER.waitForAnyPress();
 			}
+			/*
 			else if(m.moves.size() == 1)
 			{
 				LCD.clear();
@@ -276,6 +277,7 @@ public class MI
 				Button.ENTER.waitForAnyPress();
 				zerocount++;
 			}
+			*/
 		}
 		
 		return movements;
