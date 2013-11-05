@@ -50,14 +50,13 @@ public class MI
 		for(Move move : Moves)
 		{
 			bestMove = move;
-			/*
-			tempPrice =  movePrice(move, 10, -1);
+			tempPrice =  movePrice(move, 1, -1);
 			if(price < tempPrice)
 			{
 				price = tempPrice;
 				bestMove = move;
 			}
-			*/
+			
 		}
 		
 		return bestMove;
@@ -74,7 +73,7 @@ public class MI
 		double price = findPrice(move, robotMove);
 		
 		simulateMove(move);
-		
+
 
 		int result = nXTF.checkersBoard.gameIsEnded(false);
 		if( result > 0 && numberofmovelook >= moveLook)
@@ -190,12 +189,21 @@ public class MI
 		{
 			Move temp = simulatedMoves.pop();
 			int stop = temp.moves.size()-1;
+			Stack<Field> tempMoves = new Stack<Field>();
+			Field tempMove = null;
 			
 			for(int i=0; i < stop;i++)
 			{
-				Field tempmove = temp.moves.pop();
-				nXTF.checkersBoard.movePiece(temp.moves.peek(),tempmove);
+				tempMove = temp.moves.pop();
+				nXTF.checkersBoard.movePiece(temp.moves.peek(),tempMove);
+				tempMoves.push(tempMove);
 			}
+			
+			for(int j=0; j < tempMoves.size(); j++)
+			{
+				temp.moves.push(tempMoves.pop());
+			}
+			
 			stop = temp.takenPieces.size();
 			
 			for(int i=0; i < stop;i++)
