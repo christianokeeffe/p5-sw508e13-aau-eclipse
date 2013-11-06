@@ -465,9 +465,9 @@ public class Board {
 					if(!kingPlace[i].isEmpty())
 					{
 						//Move old piece to trash
-						remoteFunctions.movePiece(field, remoteFunctions.trashField);
+						remoteFunctions.trashPieceOnField(field);
 						//Insert king at location
-						remoteFunctions.movePiece(kingPlace[i], field);
+						remoteFunctions.doMove(new Move(kingPlace[i], field,false));
 						foundOne = true;
 					}
 					i++;

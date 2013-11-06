@@ -32,13 +32,13 @@ public class RemoteNXTFunctions {
 	private TouchSensor touchSensorZ;
 	private TouchSensor touchSensorY1;
 	private TouchSensor touchSensorY2;
-	public ColorSensor boardColorSensor;
-	Board checkersBoard;
-	NXTMotor electromagnet;
+	private ColorSensor boardColorSensor;
+	public Board checkersBoard;
+	private NXTMotor electromagnet;
 	private NXTRegulatedMotor motorZ;
 	private NXTRegulatedMotor motorX;
-	Field trashField = new Field(3,-6);
-	TouchSensor bigRedButton;
+	public Field trashField = new Field(3,-6);
+	private TouchSensor bigRedButton;
 
 	public RemoteNXTFunctions() throws InterruptedException, IOException{
 		connect();
@@ -70,7 +70,6 @@ public class RemoteNXTFunctions {
 		Delay.msDelay(250);
 		boardColorSensor.calibrateHigh();;
 		Delay.msDelay(250);
-
 	}
 
 	public void waitForRedButton()
@@ -90,19 +89,19 @@ public class RemoteNXTFunctions {
 		return boardColorSensor.getColor();
 	}
 
-	public void moveZTo(double pos)
+	private void moveZTo(double pos)
 	{
 		motorZ.rotate((int)(pos*zFactor-presentZ), false);
 		presentZ = (int)(pos*zFactor);
 	}
-	
+
 	public void resetAfterMove() throws IOException
 	{
 		moveSensorTo(1, -2, false);
 	}
 
 	//latex start movePiece
-	public void movePiece(Field FromField, Field ToField) throws IOException, NoKingLeft
+	private void movePiece(Field FromField, Field ToField) throws IOException, NoKingLeft
 	{
 		moveSensorTo(FromField.x,FromField.y,true);
 		Delay.msDelay(500);
@@ -129,6 +128,28 @@ public class RemoteNXTFunctions {
 		checkersBoard.movePiece(FromField, ToField);
 	}
 	//latex end
+	
+	public void trashPieceOnField(Field field) throws IOException, NoKingLeft
+	{
+		if(field.getPieceOnField().isCrowned && checkersBoard.checkAllegiance(field, true))
+		{
+			int j = checkersBoard.kingPlace.length-1;
+			OUTERMOST:while(j >= 0)
+			{
+				if(checkersBoard.kingPlace[j].isEmpty())
+					break OUTERMOST;
+				j--;
+			}
+			if(j < 0)
+				movePiece(field, trashField);
+			else
+				movePiece(field, checkersBoard.kingPlace[j]);
+		}
+		else
+		{
+			movePiece(field, trashField);
+		}
+	}
 
 	public void doMove(Move move) throws IOException, NoKingLeft
 	{
@@ -143,34 +164,11 @@ public class RemoteNXTFunctions {
 			}
 		}
 
-		for(int i = 0; i < takenPieces.size(); i++){
-			if(takenPieces.get(i).isEmpty())
-				movePiece(takenPieces.get(i), trashField);
-			else
-			{
-				if(takenPieces.get(i).getPieceOnField().isCrowned && checkersBoard.checkAllegiance(takenPieces.get(i), true))
-				{
-					int j = checkersBoard.kingPlace.length-1;
-					while(j >= 0)
-					{
-						if(checkersBoard.kingPlace[j].isEmpty())
-							j = -1;
-						j--;
-					}
-					if(j < 0)
-						movePiece(takenPieces.get(i), trashField);
-					else
-						movePiece(takenPieces.get(i), checkersBoard.kingPlace[j]);
-				}
-				else
-				{
-					movePiece(takenPieces.get(i), trashField);
-				}
-			}
-		}
+		for(int i = 0; i < takenPieces.size(); i++)
+			trashPieceOnField(takenPieces.get(i));
 	}
 
-	//Makes a piece jump one or more pieces and then remove those pieces from the board
+	/*//Makes a piece jump one or more pieces and then remove those pieces from the board
 	public void takePiece(Field fromField, List<Field> midwayFields) throws IOException, NoKingLeft
 	{
 		Field presentField = fromField;
@@ -214,7 +212,7 @@ public class RemoteNXTFunctions {
 				}
 			}
 		}
-	}
+	}*/
 
 	private Field movePieceOverField(Field fromField, Field toField) throws IOException, NoKingLeft{
 		movePiece(fromField, toField);
