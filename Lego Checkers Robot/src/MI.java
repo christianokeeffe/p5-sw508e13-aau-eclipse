@@ -46,7 +46,7 @@ public class MI
 		
 		Move bestMove = new Move();
 		double price = -1000, tempPrice;
-		
+		int antal = 0;
 		for(Move move : Moves)
 		{	
 			revertAllMoves();
@@ -54,7 +54,13 @@ public class MI
 			
 			tempPrice =  Negamax(numberofmovelook, 1, -10000, 10000);
 			revertMove();
-			
+			antal ++;
+			LCD.clear();
+			LCD.drawString("P:  "+ price, 0, 0);
+			LCD.drawString("TP: "+ tempPrice, 0, 1);
+			CD.drawString("gang: "+ antal, 0, 2);
+			LCD.refresh();
+			Button.ENTER.waitForAnyPress();
 			if(price < tempPrice)
 			{
 				price = tempPrice;
