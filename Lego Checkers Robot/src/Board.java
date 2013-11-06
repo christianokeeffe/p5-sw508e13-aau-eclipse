@@ -503,7 +503,7 @@ public class Board {
 	{
 		movePiece(FromField, ToField.x, ToField.y);
 	}
-
+	
 	public List<Stack<Field>> jumpSequence(Field input, boolean checkForOpponent, boolean isCrowned) throws  InterruptedException, IOException, NoKingLeft 
 
 	{
