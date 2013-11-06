@@ -194,7 +194,6 @@ public class MI
 	    
 	    int[] newBoard = new int[32];
 	    List<Move> moves;
-	    //generateMoves(board, turn);
 	    if(turn == 1)
 	    {
 	    	moves = possibleMovesForRobot();
@@ -205,19 +204,10 @@ public class MI
 	    }
 	    
 	    
-	    //System.arraycopy(board, 0, newBoard, 0, 32);
-	    
 	    for (Move move : moves) 
 	    {
-	        //int source = Integer.parseInt(possibleMoves.elementAt(z).toString());
-	        //System.out.println("SOURCE= " + source);
-	        
-	        //int dest = Integer.parseInt(possibleMoves.elementAt(z + 1).toString());// (int[])possibleMoves.elementAt(z+1);
-	        //System.out.println("DEST = " + dest);
-	        
-	        
+	          
 	        simulateMove(move);
-	        //applyMove(newBoard, source, dest);
 
 	        double newScore = -Negamax(depth - 1, turn*-1, -beta, -alpha);
 	        if (newScore >= beta) // alpha-beta cutoff
@@ -225,10 +215,14 @@ public class MI
 	        	revertMove();
 	        	return newScore;
 	        }
-	        if(newScore > alpha)
+	        else if(newScore > alpha)
 	        {
 	        	revertMove();
 	        	alpha = newScore;
+	        }
+	        else
+	        {
+	        	revertMove();
 	        }
 	    }
 	    return alpha;
