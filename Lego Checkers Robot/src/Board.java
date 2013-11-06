@@ -24,7 +24,7 @@ public class Board {
 	public Board(RemoteNXTFunctions remoteFunc) throws InterruptedException, IOException
 	{
 		remoteFunctions = remoteFunc;
-		
+
 		findMyColors();
 		findOpponentColors();
 
@@ -92,9 +92,9 @@ public class Board {
 		}
 		//latex end
 	}
-	
-	/*returns 0 if game is not ended, 1 if human won, 2 if robot win and 3 if there is a draw*/
-	public int gameIsEnded(boolean IsHumanTurn)
+
+	/*returns 0 if game has not ended, 1 if the human won, 2 if the robot won and 3 if it was a draw*/
+	public int gameHasEnded(boolean humanTurn)
 	{
 		updateMoveables();
 
@@ -125,12 +125,12 @@ public class Board {
 				}
 			}
 		}
-		
-		if(robotPieceList.size() == 0 || (!IsHumanTurn && !robotHasMovable))
+
+		if(robotPieceList.size() == 0 || (!humanTurn && !robotHasMovable))
 		{
 			return 1;
 		}
-		if(humanPieceList.size() == 0 || (IsHumanTurn && !humanHasMovable))
+		if(humanPieceList.size() == 0 || (humanTurn && !humanHasMovable))
 		{
 			return 2;
 		}
@@ -138,7 +138,7 @@ public class Board {
 		{
 			if(robotPieceList.get(0).isCrowned && humanPieceList.get(0).isCrowned)
 			{
-				if(IsHumanTurn)
+				if(humanTurn)
 				{
 					if(isOnDoubleCorners(humanPieceList.get(0)) && isNearDoubleCorners(robotPieceList.get(0)) && !hasTheMove(true))
 						return 3;
@@ -152,18 +152,18 @@ public class Board {
 		}
 		return 0;
 	}
-	
+
 	private boolean hasTheMove(boolean humansTurn)
 	{
 		int rowToCheck = 0;
-		
+
 		if(!humansTurn)
 		{
 			rowToCheck = 1;
 		}
-		
+
 		int pieceCount = 0;
-		
+
 		for(int i = rowToCheck; i < 8 ; i += 2)
 		{
 			for(int j = 0; j < 8; j++)
@@ -172,19 +172,19 @@ public class Board {
 					pieceCount++;
 			}
 		}
-		
+
 		if(pieceCount % 2 == 1)
 			return true;
 		return false;
 	}
-	
+
 	private boolean isOnDoubleCorners(Piece piece)
 	{
 		if((piece.x == 0 && piece.y == 1)||(piece.x == 1 && piece.y == 0)||(piece.x == 7 && piece.y == 6)||(piece.x == 6 && piece.y == 7))
 			return true;
 		return false;
 	}
-	
+
 	private boolean isNearDoubleCorners(Piece piece)
 	{
 		if((piece.x == 1 && piece.y == 2)||(piece.x == 2 && piece.y == 1)||(piece.x == 6 && piece.y == 5)||(piece.x == 5 && piece.y == 6)||(piece.x == 2 && piece.y == 3)||(piece.x == 3 && piece.y == 2)||(piece.x == 4 && piece.y == 5)||(piece.x == 5 && piece.y == 4))
@@ -281,10 +281,10 @@ public class Board {
 			}
 		}
 	}
-	
+
 	public boolean checkForGameHasEnded(boolean isHumansTurn)
 	{
-		switch (gameIsEnded(isHumansTurn)) {
+		switch (gameHasEnded(isHumansTurn)) {
 		case 0:
 			return false;
 		case 1:
@@ -304,83 +304,89 @@ public class Board {
 	//Analyzes the current board setup
 	public boolean analyzeBoard() throws InterruptedException, IOException, NoKingLeft, IllegalMove
 	{	
-		totalAnalyzeRuns += 1;
-		
-		if(totalAnalyzeRuns > analyzeRunsBeforeReset)
+		if(!checkForGameHasEnded(true))
 		{
-			totalAnalyzeRuns = 0;
-			remoteFunctions.resetMotors();
-		}
-		
-		//Find the pieces that are currently moveable
-		updateMoveables();
+			totalAnalyzeRuns += 1;
 
-		List<Field> moveableList = new ArrayList<Field>();
-
-		for (Field[] f : myBoard) 
-		{
-			for (Field field : f) 
+			if(totalAnalyzeRuns > analyzeRunsBeforeReset)
 			{
-				if(!field.isEmpty()){
-					if(field.getPieceOnField().isMoveable && checkAllegiance(field, true))
-					{
-						moveableList.add(field);
+				totalAnalyzeRuns = 0;
+				remoteFunctions.resetMotors();
+			}
+
+			//Find the pieces that are currently moveable
+			updateMoveables();
+
+			List<Field> moveableList = new ArrayList<Field>();
+
+			for (Field[] f : myBoard) 
+			{
+				for (Field field : f) 
+				{
+					if(!field.isEmpty()){
+						if(field.getPieceOnField().isMoveable && checkAllegiance(field, true))
+						{
+							moveableList.add(field);
+						}
 					}
 				}
 			}
-		}
 
-		sortListOfFields(moveableList);
-		boolean foundOne = false;
-		boolean mustJump = false;
-		if(moveableList.size() != 0)
-			mustJump = moveableList.get(0).getPieceOnField().canJump;
+			sortListOfFields(moveableList);
+			boolean foundOne = false;
+			boolean mustJump = false;
+			if(moveableList.size() != 0)
+				mustJump = moveableList.get(0).getPieceOnField().canJump;
 
-		OUTERMOST: for(Field field : moveableList){
-			if(this.isFieldEmptyOnBoard(field.x, field.y))
-			{
-				if(mustJump&&!field.getPieceOnField().canJump)
+			OUTERMOST: for(Field field : moveableList){
+				if(this.isFieldEmptyOnBoard(field.x, field.y))
 				{
-					throw new customExceptions.IllegalMove();
-				}
+					if(mustJump&&!field.getPieceOnField().canJump)
+					{
+						throw new customExceptions.IllegalMove();
+					}
 
-				if(this.trackMovement(field))
+					if(this.trackMovement(field))
+					{
+
+						foundOne = true;
+						//Break the loop
+						break OUTERMOST;
+					}
+
+				}
+			}
+
+			if(foundOne == false){
+				if(analyzeBoardRepeatNumber < 3)
 				{
-
-					foundOne = true;
-					//Break the loop
-					break OUTERMOST;
+					analyzeBoardRepeatNumber ++;
+					analyzeBoard();
+					analyzeBoardRepeatNumber = 0;
 				}
-
+				else if(analyzeBoardRepeatNumber < 6)
+				{
+					remoteFunctions.resetMotors();
+					analyzeBoardRepeatNumber ++;
+					analyzeBoard();
+					analyzeBoardRepeatNumber = 0;
+				}
+				else
+				{
+					findMissingPiece();
+				}
 			}
+
+			//Find the pieces that are currently moveable
+			updateMoveables();
+			checkRobotPieceReplaced();
+			if(!checkForGameHasEnded(false)){
+				return true;
+			}	
 		}
-
-		if(foundOne == false){
-			if(analyzeBoardRepeatNumber < 3)
-			{
-				analyzeBoardRepeatNumber ++;
-				analyzeBoard();
-				analyzeBoardRepeatNumber = 0;
-			}
-			else if(analyzeBoardRepeatNumber < 6)
-			{
-				remoteFunctions.resetMotors();
-				analyzeBoardRepeatNumber ++;
-				analyzeBoard();
-				analyzeBoardRepeatNumber = 0;
-			}
-			else
-			{
-				findMissingPiece();
-			}
-		}
-
-		//Find the pieces that are currently moveable
-		updateMoveables();
-		checkRobotPieceReplaced();
-		return true;
+		return false;
 	}
-	
+
 	//Function to check if user have replaced the robots peasent piece with a king piece
 	private void checkRobotPieceReplaced() throws IOException
 	{
@@ -497,7 +503,7 @@ public class Board {
 	{
 		movePiece(FromField, ToField.x, ToField.y);
 	}
-		
+
 	public List<Stack<Field>> jumpSequence(Field input, boolean checkForOpponent, boolean isCrowned) throws  InterruptedException, IOException, NoKingLeft 
 
 	{
@@ -522,17 +528,17 @@ public class Board {
 		{
 			returnList.addAll(jumpSequence(tempField, checkForOpponent, isCrowned));
 		}
-		
+
 		if(returnList.size() == 0)
 		{
 			returnList.add(new Stack<Field>());
 		}
-		
+
 		for(int i = 0; i < returnList.size();i++)
 		{
 			returnList.get(i).push(input);
 		}
-		
+
 		input.visited = true;
 		return returnList;
 	}
@@ -656,13 +662,13 @@ public class Board {
 			}
 		}
 		else if(checkMove(field,-1))
-			{
-				pieceFound = true;
-			}
+		{
+			pieceFound = true;
+		}
 
 		return pieceFound;
 	}
-	
+
 	private boolean findJumpPiece(Field field) throws InterruptedException, IOException, NoKingLeft
 	{
 		List<Stack<Field>> jumpList = new ArrayList<Stack<Field>>();
@@ -740,8 +746,8 @@ public class Board {
 		}
 	}
 	//latex end
-	
-	
+
+
 	private boolean checkMoveableBoolean(Field field, int dif)
 	{
 		if(checkMoveable(field, dif).isEmpty())
@@ -758,7 +764,7 @@ public class Board {
 	public List<Field> checkMoveable(Field field, int dif)
 	{
 		List<Field> possibleMoves = new ArrayList<Field>();
-		
+
 		//Check forward
 		if(!this.fieldOccupied(field.x-1, field.y+dif))
 		{
@@ -780,7 +786,7 @@ public class Board {
 				possibleMoves.add(myBoard[field.x+1][field.y-dif]);
 			}
 		}
-			return possibleMoves;
+		return possibleMoves;
 	}
 
 	//Check if a given field can jump
@@ -795,14 +801,14 @@ public class Board {
 		return false;
 	}
 	//latex end
-	
+
 	//Checks jumps
 	//latex start jumpDirection
 	public Field checkJumpDirection(Field field, int difx, int dify, boolean checkForOpponent, boolean isCrowned)
 	{
 		if(((checkForOpponent && dify == -1)||(!checkForOpponent && dify == 1)) && !isCrowned)
 			return null;
-		
+
 		if(checkBounds(field.x+2*difx,field.y+2*dify))
 		{
 			if(!myBoard[field.x+2*difx][field.y+2*dify].visited)
@@ -816,7 +822,7 @@ public class Board {
 		return null;
 	}
 	//latex end
-	
+
 	private boolean checkJumpDirectionBoolean(Field field, int difx, int dify, boolean checkForOpponent, boolean isCrowned)
 	{
 		if(checkJumpDirection(field, difx, dify, checkForOpponent, isCrowned) == null)
