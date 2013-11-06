@@ -178,7 +178,7 @@ public class MI
 
 	public void simulateMove(Move move) throws NoKingLeft, IOException
 	{
-		if(!move.moves.isEmpty())
+		if(move.moves.size() >= 2)
 		{
 			int stop = move.moves.size()-1;
 
