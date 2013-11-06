@@ -124,7 +124,7 @@ public class MI
 	{
 		double price = 0;
 
-		if(move.isJump == true)
+		if(move.isJump() == true)
 		{
 			price = price + (JumpPoint*robotTurn) * move.moves.size();
 		}
@@ -232,7 +232,7 @@ public class MI
 						{
 							if(stackOfFields.size() >= 2) 
 							{
-								movements.add(new Move(stackOfFields, true));
+								movements.add(new Move(stackOfFields));
 							}
 						}
 
@@ -245,7 +245,7 @@ public class MI
 								for(Field posField : possibleMoves)
 								{
 				
-									Move movement = new Move(field, posField, false);
+									Move movement = new Move(field, posField);
 									movements.add(movement);
 								}
 							}
