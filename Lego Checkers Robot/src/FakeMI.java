@@ -76,7 +76,7 @@ public class FakeMI{
 		}
 	}
 
-	public boolean decideMovement() throws IOException, NoKingLeft{
+	public void decideMovement() throws IOException, NoKingLeft{
 		updateList();
 		if(!jumpList.isEmpty())
 		{
@@ -95,8 +95,6 @@ public class FakeMI{
 				NXT.checkersBoard.informer.nothingPossible();
 			}
 		}
-		
-		return VHUMAN;
 	}
 
 	private void callMove(Field from, Field to){
