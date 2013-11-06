@@ -16,12 +16,12 @@ public class SW508E13 {
 
 	public static void main(String[] args) throws IOException, NoKingLeft, InterruptedException {
 		RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
-		MI brain = new MI(checkTopFunc);
+		MI mi = new MI(checkTopFunc);
 
 		Move bestMove;
 		if(checkTopFunc.checkersBoard.myPeasentColor == 'r')
 		{
-			bestMove = brain.lookForBestMove();
+			bestMove = mi.lookForBestMove();
 			checkTopFunc.doMove(bestMove);
 			checkTopFunc.getColorOnField(4, -2);
 		}
@@ -29,21 +29,21 @@ public class SW508E13 {
 		{
 			checkTopFunc.waitForRedButton();
 			try {
-				if(brain.nXTF.checkersBoard.analyzeBoard())
+				if(mi.nXTF.checkersBoard.analyzeBoard())
 				{
-					bestMove = brain.lookForBestMove();
+					bestMove = mi.lookForBestMove();
 
 					if(bestMove != null)
-						brain.nXTF.doMove(bestMove);
+						mi.nXTF.doMove(bestMove);
 
 					checkTopFunc.resetAfterMove();
 
-					if(!brain.nXTF.checkersBoard.checkForGameHasEnded(true))
-						brain.nXTF.checkersBoard.informer.playYourTurn();
+					if(!mi.nXTF.checkersBoard.checkForGameHasEnded(true))
+						mi.nXTF.checkersBoard.informer.playYourTurn();
 				}
 
 			} catch (IllegalMove e) {
-				brain.nXTF.checkersBoard.informer.illeagalMove();
+				mi.nXTF.checkersBoard.informer.illeagalMove();
 			}
 		}
 
