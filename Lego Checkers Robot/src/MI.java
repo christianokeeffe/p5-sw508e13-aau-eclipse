@@ -244,7 +244,6 @@ public class MI
 							{
 								for(Field posField : possibleMoves)
 								{
-				
 									Move movement = new Move(field, posField);
 									movements.add(movement);
 								}
