@@ -48,14 +48,22 @@ public class MI
 		double price = -1000, tempPrice;
 		
 		for(Move move : Moves)
+		{	
+			
+			tempPrice =  movePrice(move, 10, -1);
 		{
 			bestMove = move;
+			tempPrice =  movePrice(move, 1, -1);
+			
+			tempPrice =  movePrice(move, 1, -1);
 			tempPrice =  movePrice(move, 1, -1);
 			if(price < tempPrice)
 			{
 				price = tempPrice;
 				bestMove = move;
 			}
+
+			
 			
 		}
 		
@@ -117,6 +125,116 @@ public class MI
 		Delay.msDelay(3000); */
 		
 		return price + bestMoveprice;
+	}
+	
+	private int miniMaxAlphaBeta(Move m, int alpha, int beta, boolean isMaximumAgent) throws InterruptedException, IOException, NoKingLeft
+	{
+		simulateMove(m);
+		
+		int result = nXTF.checkersBoard.gameIsEnded(false);
+		if(result != 0)
+		{
+			if(result == 1)
+			{
+				return gameIsLost;
+			}
+			else if(result == 2)
+			{
+				return gameIsWon;
+			}
+			else if(result == 3)
+			{
+				return gameIsDraw;
+			}
+		}
+		
+		if(isMaximumAgent)
+		{
+			List<Move > moves = possibleMovesForRobot();
+			for(Move move : moves)
+			{
+				alpha =max(alpha, miniMaxAlphaBeta(move, alpha, beta, false));
+				
+				if(alpha >= beta)
+				{
+					return beta;
+				}
+				else
+				{
+					return alpha;
+				}
+			}
+		}
+		else
+		{
+			List<Move > moves = possibleMovesForHuman();
+			for(Move move : moves)
+			{
+				beta = max(alpha, miniMaxAlphaBeta(move, alpha, beta, true));
+				
+				if(alpha >= beta)
+				{
+					return alpha;
+				}
+				else
+				{
+					return beta;
+				}
+			}
+		}
+		
+		return 0;
+	}
+	
+	
+	
+	public double Negamax(int depth, int turn, double alpha, double beta) 
+	{
+	    if (depth == 0)
+	    {
+	        return evaluation(turn, nXTF.checkersBoard.myBoard);
+	    }
+	    
+	    int[] newBoard = new int[32];
+	    
+	    generateMoves(board, turn);
+	    
+	    System.arraycopy(board, 0, newBoard, 0, 32);
+	    
+	    for (int z = 0; z < possibleMoves.size(); z += 2) 
+	    {
+	        int source = Integer.parseInt(possibleMoves.elementAt(z).toString());
+	        //System.out.println("SOURCE= " + source);
+	        
+	        int dest = Integer.parseInt(possibleMoves.elementAt(z + 1).toString());// (int[])possibleMoves.elementAt(z+1);
+	        //System.out.println("DEST = " + dest);
+	        
+	        
+	        applyMove(newBoard, source, dest);
+
+	        double newScore = -Negamax(newBoard, depth - 1, opponent(turn), -beta, -alpha);
+	        if (newScore >= beta) // alpha-beta cutoff
+	        {
+	        	return newScore;
+	        }
+	        if(newScore > alpha)
+	        {
+	        	alpha = newScore;
+	        }
+	    }
+	    return alpha;
+	}
+	
+	private int max(int x, int y)
+	{
+		if(x > y)
+		{
+			return x;
+		}
+		else
+		{
+			return y;
+		}
 	}
 
 	
@@ -194,6 +312,23 @@ public class MI
 			
 			for(int i=0; i < stop;i++)
 			{
+				tempMove = temp.moves.pop();
+				nXTF.checkersBoard.movePiece(temp.moves.peek(),tempMove);
+				tempMoves.push(tempMove);
+			}
+			
+			for(int j=0; j < tempMoves.size(); j++)
+			{
+				temp.moves.push(tempMoves.pop());
+				
+				tempMove = temp.moves.pop();
+				nXTF.checkersBoard.movePiece(temp.moves.peek(),tempMove);
+				tempMoves.push(tempMove);
+			}
+			
+			for(int j=0; j < tempMoves.size(); j++)
+			{
+				temp.moves.push(tempMoves.pop());
 				tempMove = temp.moves.pop();
 				nXTF.checkersBoard.movePiece(temp.moves.peek(),tempMove);
 				tempMoves.push(tempMove);
