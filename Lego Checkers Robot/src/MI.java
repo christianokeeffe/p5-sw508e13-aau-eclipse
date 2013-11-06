@@ -68,122 +68,6 @@ public class MI
 		return bestMove;
 	}
 	
-	private double movePrice(Move move, int moveLook, int  robotMove) throws NoKingLeft, IOException //robotMove = +1 for robot, -1 for human
-, InterruptedException
-	{
-		
-		int numberOfMoves = 0;
-		double temp = 0;
-		double bestMoveprice = -1000;
-		
-		double price = findPrice(move, robotMove);
-		
-		simulateMove(move);
-
-
-		int result = nXTF.checkersBoard.analyzeFunctions.gameHasEnded(false);
-		if( result > 0 && numberofmovelook >= moveLook)
-		{
-			if(result == 1)
-				price = gameIsLost;
-			if(result == 2)
-				price = gameIsWon;
-			if(result == 3)
-				price = gameIsDraw;
-		}
-		else if(numberofmovelook >= moveLook)
-		{
-			List<Move> moves;
-			
-			if(robotMove == 1)
-			{
-				moves = possibleMovesForHuman();
-			}
-			else
-			{
-				moves = possibleMovesForRobot();
-			}
-			
-			
-			for(Move tempMove : moves)
-			{
-				temp =  movePrice(tempMove, moveLook+1, robotMove*-1);
-				if(temp > bestMoveprice)
-				{
-					bestMoveprice = temp;
-				}
-			}
-		}
-		
-		revertMove();
-		/*
-		LCD.clear();
-		LCD.drawString("TEST", 0, 0);
-		LCD.refresh();
-		Delay.msDelay(3000); */
-		
-		return price + bestMoveprice;
-	}
-	/*
-	private int miniMaxAlphaBeta(Move m, int depth, boolean isMaximumAgent, int alpha, int beta) throws InterruptedException, IOException, NoKingLeft
-	{
-		
-		int result = nXTF.checkersBoard.gameHasEnded(false);
-		if(result != 0)
-		{
-			if(result == 1)
-			{
-				return gameIsLost;
-			}
-			else if(result == 2)
-			{
-				return gameIsWon;
-			}
-			else if(result == 3)
-			{
-				return gameIsDraw;
-			}
-		}
-		
-		if(isMaximumAgent)
-		{
-			List<Move > moves = possibleMovesForRobot();
-			for(Move move : moves)
-			{
-				alpha =max(alpha, miniMaxAlphaBeta(move,false, alpha, beta));
-				
-				if(alpha >= beta)
-				{
-					return beta;
-				}
-				else
-				{
-					return alpha;
-				}
-			}
-		}
-		else
-		{
-			List<Move > moves = possibleMovesForHuman();
-			for(Move move : moves)
-			{
-				beta = max(alpha, miniMaxAlphaBeta(move, alpha, beta, true));
-				
-				if(alpha >= beta)
-				{
-					return alpha;
-				}
-				else
-				{
-					return beta;
-				}
-			}
-		}
-		
-		return 0;
-	} */
-	
-	
 	
 	public double Negamax(int depth, int turn, double alpha, double beta) throws NoKingLeft, IOException, InterruptedException 
 	{
@@ -203,12 +87,9 @@ public class MI
 	    	moves = possibleMovesForHuman();
 	    }
 	    
-	    
 	    for (Move move : moves) 
 	    {
-	          
 	        simulateMove(move);
-
 	        double newScore = -Negamax(depth - 1, turn*-1, -beta, -alpha);
 	        if (newScore >= beta) // alpha-beta cutoff
 	        {
@@ -250,8 +131,6 @@ public class MI
 				}
 			}
 		}
-		
-		
 		return OWpieces-OPpieces;
 	}
 	
@@ -353,7 +232,7 @@ public class MI
 				temp.moves.push(tempMoves.pop());
 				
 				tempMove = temp.moves.pop();
-				nXTF.doMove(new Move(temp.moves.peek(), tempMove));
+				nXTF.checkersBoard.movePieceInRepresentation(temp.moves.peek(), tempMove);
 				tempMoves.push(tempMove);
 			}
 			
@@ -361,7 +240,7 @@ public class MI
 			{
 				temp.moves.push(tempMoves.pop());
 				tempMove = temp.moves.pop();
-				nXTF.doMove(new Move(temp.moves.peek(), tempMove));
+				nXTF.checkersBoard.movePieceInRepresentation(temp.moves.peek(), tempMove);
 				tempMoves.push(tempMove);
 			}
 			
