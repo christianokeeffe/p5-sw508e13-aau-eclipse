@@ -2,38 +2,40 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Stack;
 
 import customExceptions.NoKingLeft;
-import lejos.nxt.Button;
-import lejos.nxt.LCD;
-
 
 //This is a test class to emulate a MI, not suppose to be part of the release
 public class FakeMI{
 	Random numberGen;
+	int GLOBAL_y;
+	boolean VHUMAN;
 	List<Field> jumpList;
 	List<Field> moveList;
 	List<Field> jumpPath;
 	RemoteNXTFunctions NXT;
 
-	FakeMI()
-	{
+	FakeMI(RemoteNXTFunctions inputNXT, boolean versusHuman){
 		numberGen = new Random();
 		jumpList = new ArrayList<Field>();
 		moveList = new ArrayList<Field>();
-		try {
-			NXT = new RemoteNXTFunctions();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+
+		NXT = inputNXT;
+
+		if(versusHuman){
+			GLOBAL_y = 1;
+			VHUMAN = true;
+		}
+		else{
+			GLOBAL_y = -1;
+			VHUMAN = false;
 		}
 
 		updateList();
 	}
 
-	public void updateList()
-	{
+	public void updateList(){
 		moveList.clear();
 		jumpList.clear();
 		for(Field[] arrayField : NXT.checkersBoard.myBoard)
@@ -41,16 +43,32 @@ public class FakeMI{
 			for(Field field : arrayField)
 			{
 				if(field.getPieceOnField() != null){
-					if(NXT.checkersBoard.checkAllegiance(field, false))
-					{
-						Piece temp = field.getPieceOnField();
-						if(temp.isMoveable)
+					if(VHUMAN){
+						if(NXT.checkersBoard.checkAllegiance(field, false))
 						{
-							moveList.add(field);
+							Piece temp = field.getPieceOnField();
+							if(temp.isMoveable)
+							{
+								moveList.add(field);
+							}
+							if(temp.canJump)
+							{
+								jumpList.add(field);
+							}
 						}
-						if(temp.canJump)
+					}
+					else{
+						if(NXT.checkersBoard.checkAllegiance(field, true))
 						{
-							jumpList.add(field);
+							Piece temp = field.getPieceOnField();
+							if(temp.isMoveable)
+							{
+								moveList.add(field);
+							}
+							if(temp.canJump)
+							{
+								jumpList.add(field);
+							}
 						}
 					}
 				}
@@ -58,8 +76,7 @@ public class FakeMI{
 		}
 	}
 
-	public void decideMovement() throws IOException, NoKingLeft
-	{
+	public boolean decideMovement() throws IOException, NoKingLeft{
 		updateList();
 		if(!jumpList.isEmpty())
 		{
@@ -75,145 +92,132 @@ public class FakeMI{
 			}
 			else
 			{
-				LCD.clear();
-				LCD.drawString("ERROR press enter", 0, 0);
-				LCD.refresh();
-				Button.ENTER.waitForPress();
+				NXT.checkersBoard.informer.nothingPossible();
 			}
 		}
-
+		
+		return VHUMAN;
 	}
 
-	private void Move(Field f) throws IOException, NoKingLeft
-	{
-		if(!f.getPieceOnField().isCrowned)
-		{
-			if(!NXT.checkersBoard.fieldOccupied(f.x + 1, f.y + 1) && !NXT.checkersBoard.fieldOccupied(f.x - 1, f.y + 1))
-			{
+	private void callMove(Field from, Field to){
+		try {
+			NXT.doMove(new Move(from,to));
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (NoKingLeft e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void Move(Field f){
+		if(!f.getPieceOnField().isCrowned){
+			if(!NXT.checkersBoard.fieldOccupied(f.x + 1, f.y + GLOBAL_y) && !NXT.checkersBoard.fieldOccupied(f.x - 1, f.y + GLOBAL_y)){
 				int random = numberGen.nextInt(2);
-				if(random == 0)
-				{
-					NXT.movePiece(f, NXT.checkersBoard.myBoard[f.x+1][f.y+1]);
+				if(random == 0){
+					callMove(f, NXT.checkersBoard.myBoard[f.x+1][f.y+GLOBAL_y]);
 				}
-				else if(random == 1)
-				{
-					NXT.movePiece(f, NXT.checkersBoard.myBoard[f.x-1][f.y+1]);
+				else if(random == 1){
+					callMove(f, NXT.checkersBoard.myBoard[f.x-1][f.y+GLOBAL_y]);
 				}
 			}
-			else if(!NXT.checkersBoard.fieldOccupied(f.x + 1, f.y + 1))
-			{
-				NXT.movePiece(f, NXT.checkersBoard.myBoard[f.x+1][f.y+1]);
+			else if(!NXT.checkersBoard.fieldOccupied(f.x + 1, f.y + GLOBAL_y)){
+				callMove(f, NXT.checkersBoard.myBoard[f.x+1][f.y+GLOBAL_y]);
 			}
-			else if(!NXT.checkersBoard.fieldOccupied(f.x - 1, f.y + 1))
-			{
-				NXT.movePiece(f, NXT.checkersBoard.myBoard[f.x-1][f.y+1]);
+			else if(!NXT.checkersBoard.fieldOccupied(f.x - 1, f.y + GLOBAL_y)){
+				callMove(f, NXT.checkersBoard.myBoard[f.x-1][f.y+GLOBAL_y]);
 			}
 		}
-		else if(f.getPieceOnField().isCrowned)
-		{
-			if(!NXT.checkersBoard.fieldOccupied(f.x + 1, f.y + 1) && !NXT.checkersBoard.fieldOccupied(f.x - 1, f.y + 1) && !NXT.checkersBoard.fieldOccupied(f.x + 1, f.y - 1) && !NXT.checkersBoard.fieldOccupied(f.x - 1, f.y - 1))
-			{
+		else if(f.getPieceOnField().isCrowned){
+			if(!NXT.checkersBoard.fieldOccupied(f.x + 1, f.y + GLOBAL_y) && !NXT.checkersBoard.fieldOccupied(f.x - 1, f.y + GLOBAL_y) && !NXT.checkersBoard.fieldOccupied(f.x + 1, f.y - GLOBAL_y) && !NXT.checkersBoard.fieldOccupied(f.x - 1, f.y - GLOBAL_y)){
 				int random = numberGen.nextInt(4);
-				if(random == 0)
-				{
-					NXT.movePiece(f, NXT.checkersBoard.myBoard[f.x+1][f.y+1]);
+				if(random == 0){
+					callMove(f, NXT.checkersBoard.myBoard[f.x+1][f.y+GLOBAL_y]);
 				}
-				else if(random == 1)
-				{
-					NXT.movePiece(f, NXT.checkersBoard.myBoard[f.x-1][f.y+1]);
+				else if(random == 1){
+					callMove(f, NXT.checkersBoard.myBoard[f.x-1][f.y+GLOBAL_y]);
 				}
-				else if(random == 3)
-				{
-					NXT.movePiece(f, NXT.checkersBoard.myBoard[f.x+1][f.y-1]);
+				else if(random == 3){
+					callMove(f, NXT.checkersBoard.myBoard[f.x+1][f.y-GLOBAL_y]);
 				}
-				else if(random == 4)
-				{
-					NXT.movePiece(f, NXT.checkersBoard.myBoard[f.x-1][f.y-1]);
+				else if(random == 4){
+					callMove(f, NXT.checkersBoard.myBoard[f.x-1][f.y-GLOBAL_y]);
 				}
 			}
-			else if(!NXT.checkersBoard.fieldOccupied(f.x + 1, f.y + 1))
-			{
-				NXT.movePiece(f, NXT.checkersBoard.myBoard[f.x+1][f.y+1]);
+			else if(!NXT.checkersBoard.fieldOccupied(f.x + 1, f.y + GLOBAL_y)){
+				callMove(f, NXT.checkersBoard.myBoard[f.x+1][f.y+GLOBAL_y]);
 			}
-			else if(!NXT.checkersBoard.fieldOccupied(f.x - 1, f.y + 1))
-			{
-				NXT.movePiece(f, NXT.checkersBoard.myBoard[f.x-1][f.y+1]);
+			else if(!NXT.checkersBoard.fieldOccupied(f.x - 1, f.y + GLOBAL_y)){
+				callMove(f, NXT.checkersBoard.myBoard[f.x-1][f.y+GLOBAL_y]);
 			}
-			else if(!NXT.checkersBoard.fieldOccupied(f.x + 1, f.y - 1))
-			{
-				NXT.movePiece(f, NXT.checkersBoard.myBoard[f.x+1][f.y-1]);
+			else if(!NXT.checkersBoard.fieldOccupied(f.x + 1, f.y - GLOBAL_y)){
+				callMove(f, NXT.checkersBoard.myBoard[f.x+1][f.y-GLOBAL_y]);
 			}
-			else if(!NXT.checkersBoard.fieldOccupied(f.x - 1, f.y - 1))
-			{
-				NXT.movePiece(f, NXT.checkersBoard.myBoard[f.x-1][f.y-1]);
+			else if(!NXT.checkersBoard.fieldOccupied(f.x - 1, f.y - GLOBAL_y)){
+				callMove(f, NXT.checkersBoard.myBoard[f.x-1][f.y-GLOBAL_y]);
 			}
 		}
 	}
 
-	private boolean CalculateJump(Field f) throws IOException, NoKingLeft
+	private void CalculateJump(Field f) throws IOException, NoKingLeft
 	{
 		List<Field> jumpPath = new ArrayList<Field>();
 		jumpPath = Jump(f, jumpPath,f.getPieceOnField());
-		if(!jumpPath.isEmpty())
-		{
-			NXT.takePiece(f, jumpPath);
-			jumpPath.clear();
-			return true;
-		}
-		else
-		{
-			return false;
+		if(!jumpPath.isEmpty()){
+			Stack<Field> jumpSequence = new Stack<Field>();
+
+			for(int i = jumpPath.size(); i >= 0; i--){
+				jumpSequence.push(jumpPath.get(i));
+			}
+
+			NXT.doMove(new Move(jumpSequence));
 		}
 	}
 
-	private boolean checkList(List<Field> lf, int x, int y)
-	{
+	private boolean checkList(List<Field> lf, int x, int y){
 		boolean contain = false;
-		for(Field f : lf)
-		{
-			if(f.x == x && f.y == y)
-			{
+
+		for(Field f : lf){
+			if(f.x == x && f.y == y){
 				contain = true;
 			}
 		}
+
 		return contain;
 	}
-	
-	private boolean checkColor(int x, int y, boolean oppenentColor)
+
+	private boolean checkColor(int x, int y)
 	{
-		if(x <= 7 && x >= 0 && y <= 7 && y >= 0)
-		{
-			return NXT.checkersBoard.checkAllegiance(NXT.checkersBoard.myBoard[x][y],oppenentColor);
+		if(x <= 7 && x >= 0 && y <= 7 && y >= 0){
+			if(VHUMAN){
+				return NXT.checkersBoard.checkAllegiance(NXT.checkersBoard.myBoard[x][y],true);
+			}
+			else{
+				return NXT.checkersBoard.checkAllegiance(NXT.checkersBoard.myBoard[x][y],false);
+			}
 		}
-		else
-		{
+		else{
 			return false;
 		}
 	}
 
 	private List<Field> Jump(Field f, List<Field> lf, Piece orginalPiece)
 	{
-		if(checkColor(f.x-1,f.y+1, true) && !NXT.checkersBoard.fieldOccupied(f.x-2, f.y+2) && !checkList(lf,f.x-2,f.y+2))
-		{
-			lf.add(NXT.checkersBoard.myBoard[f.x-2][f.y+2]);
-			return Jump(NXT.checkersBoard.myBoard[f.x-2][f.y+2],lf,orginalPiece);
+		if(checkColor(f.x-1,f.y+GLOBAL_y) && !NXT.checkersBoard.fieldOccupied(f.x-2, f.y+(GLOBAL_y*2)) && !checkList(lf,f.x-2,f.y+(GLOBAL_y*2))){
+			lf.add(NXT.checkersBoard.myBoard[f.x-2][f.y+(GLOBAL_y*2)]);
+			return Jump(NXT.checkersBoard.myBoard[f.x-2][f.y+(GLOBAL_y*2)],lf,orginalPiece);
 		}
-		else if(checkColor(f.x+1,f.y+1, true) && !NXT.checkersBoard.fieldOccupied(f.x+2, f.y+2) && !checkList(lf,f.x+2,f.y+2))
-		{
-			lf.add(NXT.checkersBoard.myBoard[f.x+2][f.y+2]);
-			return Jump(NXT.checkersBoard.myBoard[f.x+2][f.y+2],lf,orginalPiece);
+		else if(checkColor(f.x+1,f.y+GLOBAL_y) && !NXT.checkersBoard.fieldOccupied(f.x+2, f.y+(GLOBAL_y*2)) && !checkList(lf,f.x+2,f.y+(GLOBAL_y*2))){
+			lf.add(NXT.checkersBoard.myBoard[f.x+2][f.y+(GLOBAL_y*2)]);
+			return Jump(NXT.checkersBoard.myBoard[f.x+2][f.y+(GLOBAL_y*2)],lf,orginalPiece);
 		}
-		if(orginalPiece.isCrowned)
-		{
-			if(checkColor(f.x-1,f.y-1, true) && !NXT.checkersBoard.fieldOccupied(f.x-2, f.y-2) && !checkList(lf,f.x-2,f.y-2))
-			{
-				lf.add(NXT.checkersBoard.myBoard[f.x-2][f.y-2]);
-				return Jump(NXT.checkersBoard.myBoard[f.x-2][f.y-2],lf,orginalPiece);
+		if(orginalPiece.isCrowned){
+			if(checkColor(f.x-1,f.y-GLOBAL_y) && !NXT.checkersBoard.fieldOccupied(f.x-2, f.y-(GLOBAL_y*2)) && !checkList(lf,f.x-2,f.y-(GLOBAL_y*2))){
+				lf.add(NXT.checkersBoard.myBoard[f.x-2][f.y-(GLOBAL_y*2)]);
+				return Jump(NXT.checkersBoard.myBoard[f.x-2][f.y-(GLOBAL_y*2)],lf,orginalPiece);
 			}
-			else if(checkColor(f.x+1,f.y-1, true) && !NXT.checkersBoard.fieldOccupied(f.x+2, f.y-2) && !checkList(lf,f.x+2,f.y-2))
-			{
-				lf.add(NXT.checkersBoard.myBoard[f.x+2][f.y-2]);
-				return Jump(NXT.checkersBoard.myBoard[f.x+2][f.y-2],lf,orginalPiece);
+			else if(checkColor(f.x+1,f.y-GLOBAL_y) && !NXT.checkersBoard.fieldOccupied(f.x+2, f.y-(GLOBAL_y*2)) && !checkList(lf,f.x+2,f.y-(GLOBAL_y*2))){
+				lf.add(NXT.checkersBoard.myBoard[f.x+2][f.y-(GLOBAL_y*2)]);
+				return Jump(NXT.checkersBoard.myBoard[f.x+2][f.y-(GLOBAL_y*2)],lf,orginalPiece);
 			}
 		}
 		return lf;
