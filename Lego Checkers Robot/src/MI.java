@@ -211,9 +211,7 @@ public class MI
 			Field tempMove = null;
 			
 			for(int j=0; j < stop; j++)
-			{
-				temp.moves.push(tempMoves.pop());
-				
+			{	
 				tempMove = temp.moves.pop();
 				nXTF.checkersBoard.movePieceInRepresentation(temp.moves.peek(), tempMove);
 				tempMoves.push(tempMove);
