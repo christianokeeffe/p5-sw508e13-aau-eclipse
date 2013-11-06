@@ -83,7 +83,7 @@ public class MI
 		simulateMove(move);
 
 
-		int result = nXTF.checkersBoard.gameHasEnded(false);
+		int result = nXTF.checkersBoard.analyzeFunctions.gameHasEnded(false);
 		if( result > 0 && numberofmovelook >= moveLook)
 		{
 			if(result == 1)
@@ -282,7 +282,7 @@ public class MI
 					move.takenPieces.push(nXTF.checkersBoard.myBoard[(from.x+to.x)/2][(from.y+to.y)/2].getPieceOnField());
 					nXTF.checkersBoard.myBoard[(from.x+to.x)/2][(from.y+to.y)/2].setPieceOnField(null);
 				}
-				nXTF.checkersBoard.movePiece(from, to);
+				nXTF.checkersBoard.movePieceInRepresentation(from, to);
 				tempStack.push(from);
 			}
 			for(int i = 0; i < stop; i++)
@@ -313,7 +313,7 @@ public class MI
 			for(int i=0; i < stop;i++)
 			{
 				tempMove = temp.moves.pop();
-				nXTF.checkersBoard.movePiece(temp.moves.peek(),tempMove);
+				nXTF.checkersBoard.movePieceInRepresentation(temp.moves.peek(),tempMove);
 				tempMoves.push(tempMove);
 			}
 			
@@ -361,7 +361,7 @@ public class MI
 					if(field.getPieceOnField().isMoveable && nXTF.checkersBoard.checkAllegiance(field, moveForSide == -1))
 					{
 						//Jumps
-						List<Stack<Field>> listOfMoves = nXTF.checkersBoard.jumpSequence(field, moveForSide == 1, field.getPieceOnField().isCrowned);
+						List<Stack<Field>> listOfMoves = nXTF.checkersBoard.analyzeFunctions.jumpSequence(field, moveForSide == 1, field.getPieceOnField().isCrowned);
 
 						for(Stack<Field> stackOfFields : listOfMoves)
 						{

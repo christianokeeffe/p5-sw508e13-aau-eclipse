@@ -29,7 +29,7 @@ public class SW508E13 {
 		{
 			checkTopFunc.waitForRedButton();
 			try {
-				if(mi.nXTF.checkersBoard.analyzeBoard())
+				if(mi.nXTF.checkersBoard.analyzeFunctions.analyzeBoard())
 				{
 					bestMove = mi.lookForBestMove();
 
@@ -38,7 +38,7 @@ public class SW508E13 {
 
 					checkTopFunc.resetAfterMove();
 
-					if(!mi.nXTF.checkersBoard.checkForGameHasEnded(true))
+					if(!mi.nXTF.checkersBoard.analyzeFunctions.checkForGameHasEnded(true))
 						mi.nXTF.checkersBoard.informer.playYourTurn();
 				}
 
