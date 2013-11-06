@@ -29,9 +29,7 @@ public class SW508E13 {
 		{
 			checkTopFunc.waitForRedButton();
 			try {
-				brain.nXTF.checkersBoard.analyzeBoard();
-
-				if(!brain.nXTF.checkersBoard.checkForGameHasEnded(false))
+				if(brain.nXTF.checkersBoard.analyzeBoard())
 				{
 					bestMove = brain.lookForBestMove();
 
