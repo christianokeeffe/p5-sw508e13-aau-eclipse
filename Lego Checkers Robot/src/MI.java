@@ -49,20 +49,17 @@ public class MI
 		
 		for(Move move : Moves)
 		{	
+			revertAllMoves();
 			simulateMove(move);
 			
 			tempPrice =  Negamax(numberofmovelook, 1, -10000, 10000);
 			revertMove();
 			
-			bestMove = move;
 			if(price < tempPrice)
 			{
 				price = tempPrice;
 				bestMove = move;
 			}
-
-			
-			
 		}
 		
 		return bestMove;
@@ -75,8 +72,6 @@ public class MI
 	    {
 	        return evaluation(turn /*, nXTF.checkersBoard.myBoard*/);
 	    }
-	    
-	    int[] newBoard = new int[32];
 	    List<Move> moves;
 	    if(turn == 1)
 	    {
@@ -91,19 +86,14 @@ public class MI
 	    {
 	        simulateMove(move);
 	        double newScore = -Negamax(depth - 1, turn*-1, -beta, -alpha);
+        	revertMove();
 	        if (newScore >= beta) // alpha-beta cutoff
 	        {
-	        	revertMove();
 	        	return newScore;
 	        }
 	        else if(newScore > alpha)
 	        {
-	        	revertMove();
 	        	alpha = newScore;
-	        }
-	        else
-	        {
-	        	revertMove();
 	        }
 	    }
 	    return alpha;
