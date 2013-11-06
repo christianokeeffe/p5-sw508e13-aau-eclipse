@@ -49,14 +49,12 @@ public class MI
 		
 		for(Move move : Moves)
 		{	
+			simulateMove(move);
 			
-			tempPrice =  movePrice(move, 10, -1);
-		{
+			tempPrice =  Negamax(numberofmovelook, 1, -10000, 10000);
+			revertMove();
+			
 			bestMove = move;
-			tempPrice =  movePrice(move, 1, -1);
-			
-			tempPrice =  movePrice(move, 1, -1);
-			tempPrice =  movePrice(move, 1, -1);
 			if(price < tempPrice)
 			{
 				price = tempPrice;
@@ -126,12 +124,11 @@ public class MI
 		
 		return price + bestMoveprice;
 	}
-	
-	private int miniMaxAlphaBeta(Move m, int alpha, int beta, boolean isMaximumAgent) throws InterruptedException, IOException, NoKingLeft
+	/*
+	private int miniMaxAlphaBeta(Move m, int depth, boolean isMaximumAgent, int alpha, int beta) throws InterruptedException, IOException, NoKingLeft
 	{
-		simulateMove(m);
 		
-		int result = nXTF.checkersBoard.gameIsEnded(false);
+		int result = nXTF.checkersBoard.gameHasEnded(false);
 		if(result != 0)
 		{
 			if(result == 1)
@@ -153,7 +150,7 @@ public class MI
 			List<Move > moves = possibleMovesForRobot();
 			for(Move move : moves)
 			{
-				alpha =max(alpha, miniMaxAlphaBeta(move, alpha, beta, false));
+				alpha =max(alpha, miniMaxAlphaBeta(move,false, alpha, beta));
 				
 				if(alpha >= beta)
 				{
@@ -184,46 +181,86 @@ public class MI
 		}
 		
 		return 0;
-	}
+	} */
 	
 	
 	
-	public double Negamax(int depth, int turn, double alpha, double beta) 
+	public double Negamax(int depth, int turn, double alpha, double beta) throws NoKingLeft, IOException, InterruptedException 
 	{
 	    if (depth == 0)
 	    {
-	        return evaluation(turn, nXTF.checkersBoard.myBoard);
+	        return evaluation(turn /*, nXTF.checkersBoard.myBoard*/);
 	    }
 	    
 	    int[] newBoard = new int[32];
-	    
-	    generateMoves(board, turn);
-	    
-	    System.arraycopy(board, 0, newBoard, 0, 32);
-	    
-	    for (int z = 0; z < possibleMoves.size(); z += 2) 
+	    List<Move> moves;
+	    //generateMoves(board, turn);
+	    if(turn == 1)
 	    {
-	        int source = Integer.parseInt(possibleMoves.elementAt(z).toString());
+	    	moves = possibleMovesForRobot();
+	    }
+	    else
+	    {
+	    	moves = possibleMovesForHuman();
+	    }
+	    
+	    
+	    //System.arraycopy(board, 0, newBoard, 0, 32);
+	    
+	    for (Move move : moves) 
+	    {
+	        //int source = Integer.parseInt(possibleMoves.elementAt(z).toString());
 	        //System.out.println("SOURCE= " + source);
 	        
-	        int dest = Integer.parseInt(possibleMoves.elementAt(z + 1).toString());// (int[])possibleMoves.elementAt(z+1);
+	        //int dest = Integer.parseInt(possibleMoves.elementAt(z + 1).toString());// (int[])possibleMoves.elementAt(z+1);
 	        //System.out.println("DEST = " + dest);
 	        
 	        
-	        applyMove(newBoard, source, dest);
+	        simulateMove(move);
+	        //applyMove(newBoard, source, dest);
 
-	        double newScore = -Negamax(newBoard, depth - 1, opponent(turn), -beta, -alpha);
+	        double newScore = -Negamax(depth - 1, turn*-1, -beta, -alpha);
 	        if (newScore >= beta) // alpha-beta cutoff
 	        {
+	        	revertMove();
 	        	return newScore;
 	        }
 	        if(newScore > alpha)
 	        {
+	        	revertMove();
 	        	alpha = newScore;
 	        }
 	    }
 	    return alpha;
 	}
+	
+	private double evaluation(int turn)
+	{
+		int OPpieces = 0;
+		int OWpieces = 0;
+		for(Field[] F: nXTF.checkersBoard.myBoard)
+		{
+			for(Field Q: F)
+			{
+				if(Q.getPieceOnField() != null)
+				{
+					if(Q.getPieceOnField().color == nXTF.checkersBoard.myPeasentColor 
+							|| Q.getPieceOnField().color == nXTF.checkersBoard.myKingColor)
+					{
+						OWpieces ++;
+					}
+					else
+					{
+						OPpieces++;
+					}
+				}
+			}
+		}
+		
+		
+		return OWpieces-OPpieces;
+	}
+	
 	
 	private int max(int x, int y)
 	{
@@ -322,7 +359,7 @@ public class MI
 				temp.moves.push(tempMoves.pop());
 				
 				tempMove = temp.moves.pop();
-				nXTF.checkersBoard.movePiece(temp.moves.peek(),tempMove);
+				nXTF.doMove(new Move(temp.moves.peek(), tempMove));
 				tempMoves.push(tempMove);
 			}
 			
@@ -330,7 +367,7 @@ public class MI
 			{
 				temp.moves.push(tempMoves.pop());
 				tempMove = temp.moves.pop();
-				nXTF.checkersBoard.movePiece(temp.moves.peek(),tempMove);
+				nXTF.doMove(new Move(temp.moves.peek(), tempMove));
 				tempMoves.push(tempMove);
 			}
 			
