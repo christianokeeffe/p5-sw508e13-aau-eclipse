@@ -473,7 +473,7 @@ public class Board {
 						//Move old piece to trash
 						remoteFunctions.trashPieceOnField(field);
 						//Insert king at location
-						remoteFunctions.doMove(new Move(kingPlace[i], field,false));
+						remoteFunctions.doMove(new Move(kingPlace[i], field));
 						foundOne = true;
 					}
 					i++;
