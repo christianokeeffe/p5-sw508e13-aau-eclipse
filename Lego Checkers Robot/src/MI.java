@@ -210,14 +210,7 @@ public class MI
 			Stack<Field> tempMoves = new Stack<Field>();
 			Field tempMove = null;
 			
-			for(int i=0; i < stop;i++)
-			{
-				tempMove = temp.moves.pop();
-				nXTF.checkersBoard.movePieceInRepresentation(temp.moves.peek(),tempMove);
-				tempMoves.push(tempMove);
-			}
-			
-			for(int j=0; j < tempMoves.size(); j++)
+			for(int j=0; j < stop; j++)
 			{
 				temp.moves.push(tempMoves.pop());
 				
@@ -226,15 +219,8 @@ public class MI
 				tempMoves.push(tempMove);
 			}
 			
-			for(int j=0; j < tempMoves.size(); j++)
-			{
-				temp.moves.push(tempMoves.pop());
-				tempMove = temp.moves.pop();
-				nXTF.checkersBoard.movePieceInRepresentation(temp.moves.peek(), tempMove);
-				tempMoves.push(tempMove);
-			}
-			
-			for(int j=0; j < tempMoves.size(); j++)
+			stop = tempMoves.size();
+			for(int j=0; j < stop; j++)
 			{
 				temp.moves.push(tempMoves.pop());
 			}
