@@ -1,25 +1,43 @@
 import java.util.Stack;
 
+import lejos.robotics.navigation.Move.MoveType;
+
 
 public class Move {
 	public Stack<Field> moves;
-	public boolean isJump;
+	//public boolean isJump;
 	public Stack<Piece> takenPieces = new Stack<Piece>();
 	
-	Move(Field movefrom, Field moveto, boolean isjump)
+	Move(Field movefrom, Field moveto)
 	{
 		Stack<Field> moveToList = new Stack<Field>();
 		
 		moveToList.push(moveto);
 		moveToList.push(movefrom);
 		this.moves = moveToList;
-		this.isJump = isjump;
 	}
 	
-	Move(Stack<Field> moveToList, boolean isjump)
+	Move(Stack<Field> moveToList)
 	{
 		this.moves = moveToList;
-		this.isJump = isjump;
+	}
+	
+	public boolean isJump()
+	{
+		if(moves.size() >= 2)
+		{
+			Field from = moves.pop();
+			Field to = moves.peek();
+			moves.push(from);
+			
+			if(Math.abs(from.x - to.x) == 2 && Math.abs(from.y - to.y) == 2)
+				return true;
+			return false;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	
 	Move()
