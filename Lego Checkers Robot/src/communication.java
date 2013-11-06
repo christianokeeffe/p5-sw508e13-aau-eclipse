@@ -47,4 +47,11 @@ public class communication {
 		LCD.drawString("Place my king", 0, 0);
 		LCD.refresh();
 	}
+	
+	public void nothingPossible(){
+		Sound.buzz();
+		LCD.clear();
+		LCD.drawString("No possible movement", 0, 0);
+		LCD.refresh();
+	}
 }
