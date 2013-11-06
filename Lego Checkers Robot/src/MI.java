@@ -75,7 +75,7 @@ public class MI
 		simulateMove(move);
 
 
-		int result = nXTF.checkersBoard.gameIsEnded(false);
+		int result = nXTF.checkersBoard.gameHasEnded(false);
 		if( result > 0 && numberofmovelook >= moveLook)
 		{
 			if(result == 1)
