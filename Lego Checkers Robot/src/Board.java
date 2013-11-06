@@ -4,7 +4,6 @@ import java.util.*;
 import customExceptions.NoKingLeft;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
-import lejos.robotics.Color;
 
 public class Board {
 

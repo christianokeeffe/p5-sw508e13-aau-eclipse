@@ -5,12 +5,6 @@ import java.io.IOException;
 import customExceptions.IllegalMove;
 import customExceptions.NoKingLeft;
 import lejos.nxt.Button;
-import lejos.nxt.LCD;
-import lejos.nxt.TouchSensor;
-import lejos.nxt.remote.RemoteNXT;
-import lejos.util.Delay;
-
-
 
 public class SW508E13 {
 
@@ -23,7 +17,7 @@ public class SW508E13 {
 		{
 			bestMove = mi.lookForBestMove();
 			checkTopFunc.doMove(bestMove);
-			checkTopFunc.getColorOnField(4, -2);
+			checkTopFunc.resetAfterMove();
 		}
 		while(!Button.ESCAPE.isDown())
 		{

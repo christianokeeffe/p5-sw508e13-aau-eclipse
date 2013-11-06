@@ -1,8 +1,5 @@
 import java.util.Stack;
 
-import lejos.robotics.navigation.Move.MoveType;
-
-
 public class Move {
 	public Stack<Field> moves;
 	//public boolean isJump;
