@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Stack;
 
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
 import customExceptions.NoKingLeft;
 
 //This is a test class to emulate a MI, not suppose to be part of the release
@@ -76,12 +78,13 @@ public class FakeMI{
 		}
 	}
 
-	public void decideMovement() throws IOException, NoKingLeft{
+	public void decideMovement() throws IOException, NoKingLeft, InterruptedException{
 		updateList();
 		if(!jumpList.isEmpty())
 		{
 			int jtemp = numberGen.nextInt(jumpList.size());
 			CalculateJump(jumpList.get(jtemp));
+			NXT.checkersBoard.updateMoveables();
 		}
 		else
 		{
@@ -89,6 +92,7 @@ public class FakeMI{
 			{
 				int mtemp = numberGen.nextInt(moveList.size());
 				Move(moveList.get(mtemp));
+				NXT.checkersBoard.updateMoveables();
 			}
 			else
 			{
@@ -156,68 +160,24 @@ public class FakeMI{
 		}
 	}
 
-	private void CalculateJump(Field f) throws IOException, NoKingLeft
+	private void CalculateJump(Field f) throws IOException, NoKingLeft, InterruptedException
 	{
-		List<Field> jumpPath = new ArrayList<Field>();
-		jumpPath = Jump(f, jumpPath,f.getPieceOnField());
-		if(!jumpPath.isEmpty()){
-			Stack<Field> jumpSequence = new Stack<Field>();
-
-			for(int i = jumpPath.size(); i >= 0; i--){
-				jumpSequence.push(jumpPath.get(i));
+		List<Stack<Field>> jumpPath = new ArrayList<Stack<Field>>();
+		if(f.getPieceOnField()!= null){
+			jumpPath = NXT.checkersBoard.jumpSequence(f, VHUMAN, f.getPieceOnField().isCrowned);
+			NXT.checkersBoard.resetVisited();
+			if(jumpPath.size() == 1){
+				NXT.doMove(new Move(jumpPath.get(0)));
 			}
-
-			NXT.doMove(new Move(jumpSequence));
-		}
-	}
-
-	private boolean checkList(List<Field> lf, int x, int y){
-		boolean contain = false;
-
-		for(Field f : lf){
-			if(f.x == x && f.y == y){
-				contain = true;
-			}
-		}
-
-		return contain;
-	}
-
-	private boolean checkColor(int x, int y)
-	{
-		if(x <= 7 && x >= 0 && y <= 7 && y >= 0){
-			if(VHUMAN){
-				return NXT.checkersBoard.checkAllegiance(NXT.checkersBoard.myBoard[x][y],true);
+			else if(jumpPath.size() > 1){
+				NXT.doMove(new Move(jumpPath.get(numberGen.nextInt(jumpPath.size() - 1))));
 			}
 			else{
-				return NXT.checkersBoard.checkAllegiance(NXT.checkersBoard.myBoard[x][y],false);
+				LCD.clear();
+				LCD.drawString("stack er tom", 0, 0);
+				LCD.refresh();
+				Button.ENTER.waitForPress();
 			}
 		}
-		else{
-			return false;
-		}
-	}
-
-	private List<Field> Jump(Field f, List<Field> lf, Piece orginalPiece)
-	{
-		if(checkColor(f.x-1,f.y+GLOBAL_y) && !NXT.checkersBoard.fieldOccupied(f.x-2, f.y+(GLOBAL_y*2)) && !checkList(lf,f.x-2,f.y+(GLOBAL_y*2))){
-			lf.add(NXT.checkersBoard.myBoard[f.x-2][f.y+(GLOBAL_y*2)]);
-			return Jump(NXT.checkersBoard.myBoard[f.x-2][f.y+(GLOBAL_y*2)],lf,orginalPiece);
-		}
-		else if(checkColor(f.x+1,f.y+GLOBAL_y) && !NXT.checkersBoard.fieldOccupied(f.x+2, f.y+(GLOBAL_y*2)) && !checkList(lf,f.x+2,f.y+(GLOBAL_y*2))){
-			lf.add(NXT.checkersBoard.myBoard[f.x+2][f.y+(GLOBAL_y*2)]);
-			return Jump(NXT.checkersBoard.myBoard[f.x+2][f.y+(GLOBAL_y*2)],lf,orginalPiece);
-		}
-		if(orginalPiece.isCrowned){
-			if(checkColor(f.x-1,f.y-GLOBAL_y) && !NXT.checkersBoard.fieldOccupied(f.x-2, f.y-(GLOBAL_y*2)) && !checkList(lf,f.x-2,f.y-(GLOBAL_y*2))){
-				lf.add(NXT.checkersBoard.myBoard[f.x-2][f.y-(GLOBAL_y*2)]);
-				return Jump(NXT.checkersBoard.myBoard[f.x-2][f.y-(GLOBAL_y*2)],lf,orginalPiece);
-			}
-			else if(checkColor(f.x+1,f.y-GLOBAL_y) && !NXT.checkersBoard.fieldOccupied(f.x+2, f.y-(GLOBAL_y*2)) && !checkList(lf,f.x+2,f.y-(GLOBAL_y*2))){
-				lf.add(NXT.checkersBoard.myBoard[f.x+2][f.y-(GLOBAL_y*2)]);
-				return Jump(NXT.checkersBoard.myBoard[f.x+2][f.y-(GLOBAL_y*2)],lf,orginalPiece);
-			}
-		}
-		return lf;
 	}
 }
