@@ -58,7 +58,7 @@ public class MI
 			LCD.clear();
 			LCD.drawString("P:  "+ price, 0, 0);
 			LCD.drawString("TP: "+ tempPrice, 0, 1);
-			CD.drawString("gang: "+ antal, 0, 2);
+			LCD.drawString("gang: "+ antal, 0, 2);
 			LCD.refresh();
 			Button.ENTER.waitForAnyPress();
 			if(price < tempPrice)
