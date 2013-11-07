@@ -244,14 +244,14 @@ public class Board {
 	}
 
 	//Moves a piece in the board representation
-	public void movePieceInRepresentation(Field fromField, int toField_x, int toField_y) throws NoKingLeft, IOException
+	public void movePieceInRepresentation(Field fromField, int toField_x, int toField_y, boolean isSimulated) throws NoKingLeft, IOException
 	{
 		//latex start movePiece
 		if(checkBounds(toField_x,toField_y))
 		{	
 			myBoard[toField_x][toField_y].setPieceOnField(fromField.getPieceOnField());
 			fromField.emptyThisField();
-			analyzeFunctions.checkForUpgradeKing(myBoard[toField_x][toField_y]);
+			analyzeFunctions.checkForUpgradeKing(myBoard[toField_x][toField_y], isSimulated);
 		}
 		else
 		{
@@ -260,9 +260,9 @@ public class Board {
 		//latex end
 	}
 
-	public void movePieceInRepresentation(Field FromField, Field ToField) throws NoKingLeft, IOException
+	public void movePieceInRepresentation(Field FromField, Field ToField, boolean isSimulated) throws NoKingLeft, IOException
 	{
-		movePieceInRepresentation(FromField, ToField.x, ToField.y);
+		movePieceInRepresentation(FromField, ToField.x, ToField.y, isSimulated);
 	}
 
 	//Check if field has been occupied
