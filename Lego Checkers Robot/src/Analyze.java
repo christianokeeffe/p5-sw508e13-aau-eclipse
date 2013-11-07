@@ -228,8 +228,8 @@ public class Analyze {
 	}
 
 	public List<Stack<Field>> jumpSequence(Field input, boolean checkForOpponent, boolean isCrowned) throws  InterruptedException, IOException, NoKingLeft 
-
 	{
+		input.visited = true;
 		List<Stack<Field>> returnList = new ArrayList<Stack<Field>>();
 		Field tempField = checkersBoard.checkJumpDirection(input, -1, 1, checkForOpponent, isCrowned);
 		if(tempField != null)
@@ -261,8 +261,6 @@ public class Analyze {
 		{
 			returnList.get(i).push(input);
 		}
-
-		input.visited = true;
 		return returnList;
 	}
 
