@@ -328,7 +328,7 @@ public class Analyze {
 							//Move old piece to trash
 							remoteFunctions.trashPieceOnField(field);
 							//Insert king at location
-							remoteFunctions.doMove(new Move(checkersBoard.kingPlace[i], field));
+							remoteFunctions.doMove(new Move(checkersBoard.kingPlace[i], field, true));
 							foundOne = true;
 						}
 						i++;
