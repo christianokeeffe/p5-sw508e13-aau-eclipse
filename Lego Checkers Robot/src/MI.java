@@ -24,22 +24,6 @@ public class MI
 	/* -----------------------------------------------------------------------------------  *
 	/* MI brain starts */
 
-	/* how much the AI/MI looks forward */
-	private int numberofmovelook		= 2;
-	/*points*/
-	private int MovePoint				= 4;
-	private int JumpPoint				= 8;
-
-	/* bonus point for doing specific moves */
-	private int MiddleMoveBonus 		= 3;
-
-	private int MoveLastRowPenalty 		= 1;
-
-	/* how glad the MI/AI are for the result of the game */
-	private int gameIsWon = 10;
-	private int gameIsLost = -gameIsWon;
-	private int gameIsDraw = 5;
-
 	///Test method
 	public void scanPieces(int side) throws IOException
 	{
@@ -133,10 +117,25 @@ public class MI
 	    return alpha;
 	}
 	
+	/* how much the AI/MI looks forward */
+	private int numberofmovelook		= 2;
+
+	/* how glad the MI/AI are for the result of the game */
+	private int gameIsWon = 100;
+	private int gameIsDraw = 20;
+	
+	private final int valueOfPiece = 10;
+	private final int middleBonus = 3;
+	private final int backlineBonus = 5;
+	private final int pieceDifferenceFactor = 4;
+	private final int kingBonus = 8;
+	
 	private double evaluation(int turn)
 	{
 		int OPpieces = 0;
 		int OWpieces = 0;
+		double valueOfBoard = 0;
+		nXTF.checkersBoard.updateMoveables();
 		for(Field[] F: nXTF.checkersBoard.myBoard)
 		{
 			for(Field Q: F)
@@ -146,15 +145,58 @@ public class MI
 					if(nXTF.checkersBoard.checkAllegiance(Q, false))
 					{
 						OWpieces ++;
+						
+						valueOfBoard += priceForField(Q);
 					}
 					else
 					{
 						OPpieces++;
+						valueOfBoard -= priceForField(Q);
 					}
 				}
 			}
 		}
-		return OWpieces-OPpieces;
+
+		switch(nXTF.checkersBoard.analyzeFunctions.gameHasEnded(false))
+		{
+		case 0:
+			break;
+		case 1:
+			valueOfBoard -= gameIsWon;
+			break;
+		case 2:
+			valueOfBoard += gameIsWon;
+			break;
+		case 3:
+			if(OWpieces-OPpieces > 0)
+				valueOfBoard -= gameIsDraw;
+			else if(OWpieces-OPpieces < 0)
+				valueOfBoard += gameIsDraw;
+			break;
+		}
+
+		valueOfBoard +=  pieceDifferenceFactor*((OWpieces/OPpieces)-1);
+		
+		return valueOfBoard;
+	}
+	
+	private double priceForField(Field field)
+	{
+		int returnValue = 0;
+		
+		returnValue += valueOfPiece +middleBonus - min(Math.abs(3-field.x), Math.abs(4-field.x));
+		if(!field.getPieceOnField().isCrowned && ((nXTF.checkersBoard.checkAllegiance(field, true) && field.y == 7) || (nXTF.checkersBoard.checkAllegiance(field, false) && field.y == 0)))
+			returnValue += backlineBonus;
+		if(field.getPieceOnField().isCrowned)
+			returnValue+= kingBonus;
+		return returnValue;
+	}
+	
+	private int min(int x, int y)
+	{
+		if(x < y)
+			return x;
+		return y;
 	}
 
 
