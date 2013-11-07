@@ -320,6 +320,24 @@ public class MI
 			}
 		}
 		
+
+
+		nXTF.checkersBoard.sortListOfMoves(movements);;
+		boolean mustJump = false;
+		if(movements.size() != 0)
+		{
+			mustJump = movements.get(0).isJump();
+			
+			for(int i = 0 ; movements.size() > i ; i++ )
+			{
+				if(mustJump && !movements.get(i).isJump())
+				{
+					movements.remove(i);
+					i--;
+				}
+			}
+		
+		}	
 		return movements;
 	}
 }
