@@ -124,7 +124,7 @@ public class MI
 	private int numberofmovelook		= 2;
 
 	/* how glad the MI/AI are for the result of the game */
-	private int gameIsWon = 100;
+	private double gameIsWon = inf;
 	private int gameIsDraw = 20;
 	
 	private final int valueOfPiece = 10;
