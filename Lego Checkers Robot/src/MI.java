@@ -114,7 +114,9 @@ public class MI
         	bestValue = max(bestValue, newScore);
         	alpha = max(alpha, newScore);
         	if(alpha >= beta)
+        	{
         		break OUTERMOST;
+        	}
 	    }
 	    return bestValue;
 	}
