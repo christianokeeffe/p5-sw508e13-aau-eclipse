@@ -1,7 +1,10 @@
 import java.io.IOException;
+
 import customExceptions.IllegalMove;
 import customExceptions.NoKingLeft;
 import lejos.nxt.Button;
+import lejos.nxt.ButtonListener;
+import lejos.nxt.LCD;
 
 public class SW508E13 {
 
@@ -16,6 +19,18 @@ public class SW508E13 {
 			checkTopFunc.doMove(bestMove);
 			checkTopFunc.resetAfterMove();
 		}
+		
+	    Button.LEFT.addButtonListener(new ButtonListener() {
+	        public void buttonPressed(Button b) 
+	        {
+	          LCD.drawString("ENTER pressed", 0, 0);
+	        }
+	        
+	        public void buttonReleased(Button b) {
+	            LCD.clear();
+	          }
+	        });
+		
 		while(!Button.ESCAPE.isDown())
 		{
 			checkTopFunc.waitForRedButton();
