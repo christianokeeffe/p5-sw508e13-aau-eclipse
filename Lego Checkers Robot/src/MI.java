@@ -271,6 +271,20 @@ public class MI
 			{	
 				tempMove = temp.moves.pop();
 				nXTF.checkersBoard.movePieceInRepresentation(temp.moves.peek(), tempMove, true);
+				if(tempMove.getPieceOnField().isCrowned && !temp.wasKingBefore)
+				{
+					
+					if(nXTF.checkersBoard.checkAllegiance(tempMove, true))
+					{
+						tempMove.getPieceOnField().color = nXTF.checkersBoard.opponentPeasentColor;
+					}
+					else
+					{
+						tempMove.getPieceOnField().color = nXTF.checkersBoard.myPeasentColor;
+					}
+					
+					tempMove.getPieceOnField().isCrowned = false;
+				}
 				tempMoves.push(tempMove);
 			}
 			
@@ -309,7 +323,7 @@ public class MI
 						{
 							if(stackOfFields.size() >= 2) 
 							{
-								movements.add(new Move(stackOfFields));
+								movements.add(new Move(stackOfFields, field.getPieceOnField().isCrowned));
 							}
 						}
 
@@ -321,7 +335,7 @@ public class MI
 							{
 								for(Field posField : possibleMoves)
 								{
-									Move movement = new Move(field, posField);
+									Move movement = new Move(field, posField, field.getPieceOnField().isCrowned);
 									movements.add(movement);
 								}
 							}
