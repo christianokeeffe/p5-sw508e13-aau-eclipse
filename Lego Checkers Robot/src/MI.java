@@ -49,7 +49,8 @@ public class MI
 		double price = -1000, tempPrice;
 		int antal = 0;
 		for(Move move : Moves)
-		{	
+		{
+			revertAllMoves();
 			simulateMove(move);
 			
 			tempPrice =  -Negamax(numberofmovelook, -1, -10000, -price);
