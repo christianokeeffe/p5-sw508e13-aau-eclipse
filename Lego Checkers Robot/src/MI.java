@@ -261,7 +261,7 @@ public class MI
 	private Stack<Field> flipStack(Stack<Field> inputMoves)
 	{
 		Stack<Field> tmpMove = new Stack<Field>();
-		int stop = inputMoves.size()-1;
+		int stop = inputMoves.size();
 		
 		for(int i=0; i < stop; i++)
 		{
