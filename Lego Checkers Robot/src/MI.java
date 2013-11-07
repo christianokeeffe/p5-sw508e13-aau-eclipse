@@ -69,14 +69,14 @@ public class MI
 			tempPrice =  -Negamax(numberofmovelook, -1, -inf, -price);
 			revertMove();
 			antal ++;
-			LCD.clear();
+			/*LCD.clear();
 			LCD.drawString("P:  "+ price, 0, 0);
 			LCD.drawString("TP: "+ tempPrice, 0, 1);
 			LCD.drawString("From X: " + move.moves.peek().x, 0, 3);
 			LCD.drawString("From Y: " + move.moves.peek().y, 0, 4);
 			LCD.drawString("gang: "+ antal, 0, 2);
 			LCD.refresh();
-			Button.ENTER.waitForAnyPress();
+			Button.ENTER.waitForAnyPress();*/
 			if(tempPrice > price)
 			{
 				price = tempPrice;
@@ -273,17 +273,16 @@ public class MI
 				nXTF.checkersBoard.movePieceInRepresentation(temp.moves.peek(), tempMove, true);
 				if(tempMove.getPieceOnField().isCrowned && !temp.wasKingBefore)
 				{
-					
 					if(nXTF.checkersBoard.checkAllegiance(tempMove, true))
 					{
 						tempMove.getPieceOnField().color = nXTF.checkersBoard.opponentPeasentColor;
 					}
-					else
+					else if(nXTF.checkersBoard.checkAllegiance(tempMove, false))
 					{
 						tempMove.getPieceOnField().color = nXTF.checkersBoard.myPeasentColor;
 					}
-					
-					tempMove.getPieceOnField().isCrowned = false;
+					if(!tempMove.isEmpty())
+						tempMove.getPieceOnField().isCrowned = false;
 				}
 				tempMoves.push(tempMove);
 			}
