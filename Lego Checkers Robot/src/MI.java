@@ -128,35 +128,6 @@ public class MI
 		}
 		return OWpieces-OPpieces;
 	}
-	
-	
-	private int max(int x, int y)
-	{
-		if(x > y)
-		{
-			return x;
-		}
-		else
-		{
-			return y;
-		}
-	}
-
-	
-	private double findPrice(Move move, int robotTurn) //robotTurn = +1 for robot, -1 for human
-	{
-		double price = 0;
-
-		if(move.isJump() == true)
-		{
-			price = price + (JumpPoint*robotTurn) * move.moves.size();
-		}
-		else
-		{
-			price = price + MovePoint*robotTurn;
-		}
-		return price;
-	}
 
 
 	/* MI brain stops */
