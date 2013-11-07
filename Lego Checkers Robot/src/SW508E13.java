@@ -10,7 +10,7 @@ public class SW508E13 {
 
 	public static void main(String[] args) throws IOException, NoKingLeft, InterruptedException {
 		RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
-		MI mi = new MI(checkTopFunc);
+	    final MI mi = new MI(checkTopFunc);
 
 		Move bestMove;
 		if(checkTopFunc.checkersBoard.myPeasentColor == 'r')
@@ -23,7 +23,29 @@ public class SW508E13 {
 	    Button.LEFT.addButtonListener(new ButtonListener() {
 	        public void buttonPressed(Button b) 
 	        {
-	          LCD.drawString("ENTER pressed", 0, 0);
+	          try {
+				mi.scanPieces(1);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        }
+	        
+	        public void buttonReleased(Button b) {
+	            LCD.clear();
+	          }
+	        });
+	    
+		
+	    Button.RIGHT.addButtonListener(new ButtonListener() {
+	        public void buttonPressed(Button b) 
+	        {
+	          try {
+				mi.scanPieces(0);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	        }
 	        
 	        public void buttonReleased(Button b) {
