@@ -113,10 +113,9 @@ public class MI
 		{
 			for(Field Q: F)
 			{
-				if(Q.getPieceOnField() != null)
+				if(!Q.isEmpty())
 				{
-					if(Q.getPieceOnField().color == nXTF.checkersBoard.myPeasentColor 
-							|| Q.getPieceOnField().color == nXTF.checkersBoard.myKingColor)
+					if(nXTF.checkersBoard.checkAllegiance(Q, false))
 					{
 						OWpieces ++;
 					}
