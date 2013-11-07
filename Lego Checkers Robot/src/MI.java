@@ -49,10 +49,9 @@ public class MI
 		int antal = 0;
 		for(Move move : Moves)
 		{	
-			revertAllMoves();
 			simulateMove(move);
 			
-			tempPrice =  Negamax(numberofmovelook, 1, -10000, 10000);
+			tempPrice =  -Negamax(numberofmovelook, -1, -10000, -price);
 			revertMove();
 			antal ++;
 			LCD.clear();
@@ -61,13 +60,12 @@ public class MI
 			LCD.drawString("gang: "+ antal, 0, 2);
 			LCD.refresh();
 			Button.ENTER.waitForAnyPress();
-			if(price < tempPrice)
+			if(tempPrice > price)
 			{
 				price = tempPrice;
 				bestMove = move;
 			}
 		}
-		
 		return bestMove;
 	}
 	
