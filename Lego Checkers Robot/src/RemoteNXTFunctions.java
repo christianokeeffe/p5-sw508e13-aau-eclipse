@@ -124,7 +124,7 @@ public class RemoteNXTFunctions {
 		electromagnet.setPower(0);
 		moveZTo(0);
 
-		checkersBoard.movePieceInRepresentation(FromField, ToField);
+		checkersBoard.movePieceInRepresentation(FromField, ToField, false);
 	}
 	//latex end
 	

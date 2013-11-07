@@ -237,7 +237,7 @@ public class MI
 					move.takenPieces.push(nXTF.checkersBoard.myBoard[(from.x+to.x)/2][(from.y+to.y)/2].getPieceOnField());
 					nXTF.checkersBoard.myBoard[(from.x+to.x)/2][(from.y+to.y)/2].setPieceOnField(null);
 				}
-				nXTF.checkersBoard.movePieceInRepresentation(from, to);
+				nXTF.checkersBoard.movePieceInRepresentation(from, to, true);
 				tempStack.push(from);
 			}
 			for(int i = 0; i < stop; i++)
@@ -268,7 +268,7 @@ public class MI
 			for(int j=0; j < stop; j++)
 			{	
 				tempMove = temp.moves.pop();
-				nXTF.checkersBoard.movePieceInRepresentation(temp.moves.peek(), tempMove);
+				nXTF.checkersBoard.movePieceInRepresentation(temp.moves.peek(), tempMove, true);
 				tempMoves.push(tempMove);
 			}
 			

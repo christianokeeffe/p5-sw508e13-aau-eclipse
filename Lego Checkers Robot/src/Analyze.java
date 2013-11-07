@@ -143,7 +143,7 @@ public class Analyze {
 			{
 				if(checkIfOthersHasMove(checkersBoard.myBoard[field.x+1][field.y+directY],field))
 				{
-					checkersBoard.movePieceInRepresentation(field, field.x+1, field.y+directY);
+					checkersBoard.movePieceInRepresentation(field, field.x+1, field.y+directY, false);
 					return true;
 				}
 				else
@@ -156,7 +156,7 @@ public class Analyze {
 			{
 				if(checkIfOthersHasMove(checkersBoard.myBoard[field.x-1][field.y+directY], field))
 				{
-					checkersBoard.movePieceInRepresentation(field, field.x-1, field.y+directY);
+					checkersBoard.movePieceInRepresentation(field, field.x-1, field.y+directY, false);
 					return true;
 				}
 				else
@@ -171,7 +171,7 @@ public class Analyze {
 				{
 					if(checkIfOthersHasMove(checkersBoard.myBoard[field.x+1][field.y-directY], field))
 					{
-						checkersBoard.movePieceInRepresentation(field, field.x+1, field.y-directY);
+						checkersBoard.movePieceInRepresentation(field, field.x+1, field.y-directY, false);
 						return true;
 					}
 					else
@@ -183,7 +183,7 @@ public class Analyze {
 				{
 					if(checkIfOthersHasMove(checkersBoard.myBoard[field.x-1][field.y-directY], field))
 					{
-						checkersBoard.movePieceInRepresentation(field, field.x-1, field.y-directY);
+						checkersBoard.movePieceInRepresentation(field, field.x-1, field.y-directY, false);
 						return true;
 					}
 					else
@@ -280,14 +280,14 @@ public class Analyze {
 			Field desField = tempList.peek();
 			if(!checkersBoard.isFieldEmptyOnBoard(desField.x, desField.y))
 			{
-				checkersBoard.movePieceInRepresentation(field, desField);
+				checkersBoard.movePieceInRepresentation(field, desField, false);
 				int stopj = tempList.size()-1;
 				for(int j=0;j<stopj;j++)
 				{
 					Field tempfield = tempList.pop();
 					Field tempfield2 = tempList.peek();
 					Field takenField = checkersBoard.myBoard[(tempfield.x + tempfield2.x)/2][(tempfield.y + tempfield2.y)/2];
-					checkersBoard.movePieceInRepresentation(takenField,remoteFunctions.trashField);
+					checkersBoard.movePieceInRepresentation(takenField,remoteFunctions.trashField, false);
 				}
 				return true;
 			}
@@ -295,7 +295,7 @@ public class Analyze {
 		return false;
 	}
 
-	public void checkForUpgradeKing(Field field) throws NoKingLeft, IOException
+	public void checkForUpgradeKing(Field field, boolean isSimulated) throws NoKingLeft, IOException
 	{
 		if(checkersBoard.peasentIsOnEndRow(field))
 		{
@@ -303,54 +303,63 @@ public class Analyze {
 			{
 				field.getPieceOnField().color = checkersBoard.myKingColor;
 				field.getPieceOnField().isCrowned = true;
-				fieldToCheck = field;
+				if(!isSimulated)
+					fieldToCheck = field;
 			}
 			else
 			{
-				boolean foundOne = false;
-				int i = 0;
-				while(!foundOne)
+				if(isSimulated)
 				{
-					if(i>7)
+					field.getPieceOnField().color = checkersBoard.opponentKingColor;
+					field.getPieceOnField().isCrowned = true;
+				}
+				else
+				{
+					boolean foundOne = false;
+					int i = 0;
+					while(!foundOne)
 					{
-						throw new customExceptions.NoKingLeft();
+						if(i>7)
+						{
+							throw new customExceptions.NoKingLeft();
+						}
+						if(!checkersBoard.kingPlace[i].isEmpty())
+						{
+							//Move old piece to trash
+							remoteFunctions.trashPieceOnField(field);
+							//Insert king at location
+							remoteFunctions.doMove(new Move(checkersBoard.kingPlace[i], field));
+							foundOne = true;
+						}
+						i++;
 					}
-					if(!checkersBoard.kingPlace[i].isEmpty())
-					{
-						//Move old piece to trash
-						remoteFunctions.trashPieceOnField(field);
-						//Insert king at location
-						remoteFunctions.doMove(new Move(checkersBoard.kingPlace[i], field));
-						foundOne = true;
-					}
-					i++;
 				}
 			}
 		}
 	}
-	
+
 	//Function to check if user have replaced the robots peasent piece with a king piece
-		public void checkRobotPieceReplaced() throws IOException
+	public void checkRobotPieceReplaced() throws IOException
+	{
+		if(fieldToCheck != null)
 		{
-			if(fieldToCheck != null)
+			boolean checkCondition = true;
+			while(checkCondition)
 			{
-				boolean checkCondition = true;
-				while(checkCondition)
+				if(getColor(fieldToCheck.x, fieldToCheck.y) == checkersBoard.myKingColor)
 				{
-					if(getColor(fieldToCheck.x, fieldToCheck.y) == checkersBoard.myKingColor)
-					{
-						checkCondition = false;
-						fieldToCheck = null;
-					}
-					else
-					{
-						checkersBoard.informer.myKingNotPlaced();
-						remoteFunctions.waitForRedButton();
-					}
+					checkCondition = false;
+					fieldToCheck = null;
+				}
+				else
+				{
+					checkersBoard.informer.myKingNotPlaced();
+					remoteFunctions.waitForRedButton();
 				}
 			}
 		}
-	
+	}
+
 	//Sets the colors of the pieces of the robot
 	public void findMyColors() throws InterruptedException, IOException
 	{
@@ -370,44 +379,44 @@ public class Analyze {
 	}
 
 	//Returns the color on the given position
-		public char getColor(int x, int y) throws IOException
-		{
-			Color colorResult = remoteFunctions.getColorOnField(x, y);
+	public char getColor(int x, int y) throws IOException
+	{
+		Color colorResult = remoteFunctions.getColorOnField(x, y);
 
-			LCD.clear();
-			int red = colorResult.getRed();
-			int green = colorResult.getGreen();
-			int blue = colorResult.getBlue();
-			LCD.drawInt(red, 0, 1);
-			LCD.drawInt(green, 0, 2);
-			LCD.drawInt(blue, 0, 3);
-			if(red > 160  && green < 140 && green > 30 && blue < 140 && blue > 50)
-			{
-				LCD.drawChar('r', 0, 0);LCD.refresh();
-				return 'r';
-			}
-			else if(red > 205 && green > 190 && blue > 180)
-			{
-				LCD.drawChar('w', 0, 0);LCD.refresh();
-				return 'w';
-			}
-			else if(red > 140 && red < 205 && green > 170  && blue < 200 && blue > 150)
-			{
-				LCD.drawChar('g', 0, 0);LCD.refresh();
-				return 'g';
-			}
-			else if(red < 160 && red > 100 && green < 220 && green > 150 && blue > 170)
-			{
-				LCD.drawChar('b', 0, 0);LCD.refresh();
-				return 'b';
-			}
-			else
-			{
-				LCD.drawChar('e', 0, 0);LCD.refresh();
-				return ' ';
-			}
+		LCD.clear();
+		int red = colorResult.getRed();
+		int green = colorResult.getGreen();
+		int blue = colorResult.getBlue();
+		LCD.drawInt(red, 0, 1);
+		LCD.drawInt(green, 0, 2);
+		LCD.drawInt(blue, 0, 3);
+		if(red > 160  && green < 140 && green > 30 && blue < 140 && blue > 50)
+		{
+			LCD.drawChar('r', 0, 0);LCD.refresh();
+			return 'r';
 		}
-		
+		else if(red > 205 && green > 190 && blue > 180)
+		{
+			LCD.drawChar('w', 0, 0);LCD.refresh();
+			return 'w';
+		}
+		else if(red > 140 && red < 205 && green > 170  && blue < 200 && blue > 150)
+		{
+			LCD.drawChar('g', 0, 0);LCD.refresh();
+			return 'g';
+		}
+		else if(red < 160 && red > 100 && green < 220 && green > 150 && blue > 170)
+		{
+			LCD.drawChar('b', 0, 0);LCD.refresh();
+			return 'b';
+		}
+		else
+		{
+			LCD.drawChar('e', 0, 0);LCD.refresh();
+			return ' ';
+		}
+	}
+
 	public boolean checkForGameHasEnded(boolean isHumansTurn)
 	{
 		switch (gameHasEnded(isHumansTurn)) {
@@ -426,7 +435,7 @@ public class Analyze {
 			return false;
 		}
 	}
-	
+
 	/*returns 0 if game has not ended, 1 if the human won, 2 if the robot won and 3 if it was a draw*/
 	public int gameHasEnded(boolean humanTurn)
 	{
