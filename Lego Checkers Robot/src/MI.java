@@ -71,6 +71,8 @@ public class MI
 			LCD.clear();
 			LCD.drawString("P:  "+ price, 0, 0);
 			LCD.drawString("TP: "+ tempPrice, 0, 1);
+			LCD.drawString("From X: " + move.moves.peek().x, 0, 3);
+			LCD.drawString("From Y: " + move.moves.peek().y, 0, 4);
 			LCD.drawString("gang: "+ antal, 0, 2);
 			LCD.refresh();
 			Button.ENTER.waitForAnyPress();
@@ -88,7 +90,7 @@ public class MI
 	{
 	    if (depth == 0)
 	    {
-	        return evaluation(turn /*, nXTF.checkersBoard.myBoard*/);
+	        return turn*evaluation(turn);
 	    }
 	    List<Move> moves;
 	    if(turn == 1)
@@ -100,23 +102,21 @@ public class MI
 	    	moves = possibleMovesForHuman();
 	    }
 	    
-	    for (Move move : moves) 
+	    double bestValue = -100000;
+	    
+	    OUTERMOST:for (Move move : moves) 
 	    {
 	        simulateMove(move);
 	        double newScore = -Negamax(depth - 1, turn*-1, -beta, -alpha);
         	revertMove();
-	        if (newScore >= beta) // alpha-beta cutoff
-	        {
-	        	return newScore;
-	        }
-	        else if(newScore > alpha)
-	        {
-	        	alpha = newScore;
-	        }
+        	
+        	bestValue = max(bestValue, newScore);
+        	alpha = max(alpha, newScore);
+        	if(alpha >= beta)
+        		break OUTERMOST;
 	    }
-	    return alpha;
+	    return bestValue;
 	}
-	
 	/* how much the AI/MI looks forward */
 	private int numberofmovelook		= 2;
 
@@ -156,8 +156,9 @@ public class MI
 				}
 			}
 		}
+		boolean isHuman = (turn ==-1);
 
-		switch(nXTF.checkersBoard.analyzeFunctions.gameHasEnded(false))
+		switch(nXTF.checkersBoard.analyzeFunctions.gameHasEnded(isHuman))
 		{
 		case 0:
 			break;
@@ -193,6 +194,13 @@ public class MI
 	}
 	
 	private int min(int x, int y)
+	{
+		if(x < y)
+			return x;
+		return y;
+	}
+	
+	private double max(double x, double y)
 	{
 		if(x < y)
 			return x;
