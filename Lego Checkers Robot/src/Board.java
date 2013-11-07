@@ -123,6 +123,30 @@ public class Board {
 		}
 	}
 
+	//Sorts the list of fields to search to minimize robot movement
+		public void sortListOfMoves(List<Move> listOfMoves)
+		{
+			int x = 0;
+			int y = 0;
+			for(int i = 0; i < listOfMoves.size(); i++)
+			{
+				for(int n = i+1; n < listOfMoves.size(); n++)
+				{
+					if(!isGreater(listOfMoves.get(i).moves.peek(), listOfMoves.get(n).moves.peek(),x,y))
+					{
+						Move temp1 = listOfMoves.get(i);
+						Move temp2 = listOfMoves.get(n);
+						listOfMoves.remove(n);
+						listOfMoves.remove(i);
+						listOfMoves.add(i, temp2);
+						listOfMoves.add(n,temp1);
+					}
+				}
+				x = listOfMoves.get(i).moves.peek().x;
+				y = listOfMoves.get(i).moves.peek().y;
+			}
+		}
+	
 	//Method to used in sorting the list of places to move the robot
 	public boolean isGreater(Field inputField, Field fieldToCompare, int compX, int compY)
 	{
