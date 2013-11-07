@@ -1,7 +1,4 @@
-
-
 import java.io.IOException;
-
 import customExceptions.IllegalMove;
 import customExceptions.NoKingLeft;
 import lejos.nxt.Button;
@@ -40,31 +37,25 @@ public class SW508E13 {
 				mi.nXTF.checkersBoard.informer.illeagalMove();
 			}
 		}
-
-		/*
-		  //FakeMI test = new FakeMI();
-		  if(test.NXT.checkersBoard.myPeasentColor == 'r')
+		/*FakeMI fm1 = new FakeMI(checkTopFunc,true);
+		FakeMI fm2 = new FakeMI(checkTopFunc,false);
+		if(checkTopFunc.checkersBoard.myPeasentColor == 'r')
 		{
-			test.decideMovement();
-			test.NXT.getColorOnField(4, -2);
+			fm1.decideMovement();
+			checkTopFunc.getColorOnField(4, -2);
 		}
-		while(!Button.ESCAPE.isDown())
+		boolean endGame = true;
+		while(!Button.ESCAPE.isDown() && endGame)
 		{
-			if(bigRedButton.isPressed()){
-				try {
-					test.NXT.checkersBoard.analyzeBoard();
-					if(!test.NXT.checkersBoard.checkForGameHasEnded(false))
-					{
-						test.decideMovement();
-						test.NXT.getColorOnField(4, -2);
-						if(!test.NXT.checkersBoard.checkForGameHasEnded(true))
-							brain.nXTF.checkersBoard.informer.playYourTurn();
-					}
-
-				} catch (IllegalMove e) {
-					brain.nXTF.checkersBoard.informer.illeagalMove();
-				}
-			}
+			LCD.clear();
+			LCD.drawString("human", 0, 0);
+			LCD.refresh();
+			endGame = fm2.decideMovement();
+			
+			LCD.clear();
+			LCD.drawString("robot", 0, 0);
+			LCD.refresh();
+			endGame = fm1.decideMovement();
 		}*/
 	}
 }

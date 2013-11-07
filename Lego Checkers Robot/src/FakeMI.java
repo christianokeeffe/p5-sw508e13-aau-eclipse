@@ -78,27 +78,27 @@ public class FakeMI{
 		}
 	}
 
-	public void decideMovement() throws IOException, NoKingLeft, InterruptedException{
+	public boolean decideMovement() throws IOException, NoKingLeft, InterruptedException{
 		updateList();
-		if(!jumpList.isEmpty())
-		{
-			int jtemp = numberGen.nextInt(jumpList.size());
-			CalculateJump(jumpList.get(jtemp));
-			NXT.checkersBoard.updateMoveables();
-		}
-		else
-		{
-			if(!moveList.isEmpty())
-			{
-				int mtemp = numberGen.nextInt(moveList.size());
-				Move(moveList.get(mtemp));
+		if(!NXT.checkersBoard.analyzeFunctions.checkForGameHasEnded(!VHUMAN)){
+			if(!jumpList.isEmpty()){
+				int jtemp = numberGen.nextInt(jumpList.size());
+				CalculateJump(jumpList.get(jtemp));
 				NXT.checkersBoard.updateMoveables();
 			}
-			else
-			{
-				NXT.checkersBoard.informer.nothingPossible();
+			else{
+				if(!moveList.isEmpty()){
+					int mtemp = numberGen.nextInt(moveList.size());
+					Move(moveList.get(mtemp));
+					NXT.checkersBoard.updateMoveables();
+				}
+				else{
+					NXT.checkersBoard.informer.nothingPossible();
+				}
 			}
+			return true;
 		}
+		return false;
 	}
 
 	private void callMove(Field from, Field to){
