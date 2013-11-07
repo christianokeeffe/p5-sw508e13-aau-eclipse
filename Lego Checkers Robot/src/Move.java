@@ -4,19 +4,22 @@ public class Move {
 	public Stack<Field> moves;
 	//public boolean isJump;
 	public Stack<Piece> takenPieces = new Stack<Piece>();
+	public boolean wasKingBefore = false;
 	
-	Move(Field movefrom, Field moveto)
+	Move(Field movefrom, Field moveto, boolean wasKing)
 	{
 		Stack<Field> moveToList = new Stack<Field>();
 		
 		moveToList.push(moveto);
 		moveToList.push(movefrom);
 		this.moves = moveToList;
+		this.wasKingBefore = wasKing;
 	}
 	
-	Move(Stack<Field> moveToList)
+	Move(Stack<Field> moveToList, boolean wasKing)
 	{
 		this.moves = moveToList;
+		this.wasKingBefore = wasKing;
 	}
 	
 	public boolean isJump()
