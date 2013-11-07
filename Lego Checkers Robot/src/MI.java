@@ -257,6 +257,19 @@ public class MI
 			revertMove();
 		}
 	}
+	
+	private Stack<Field> flipStack(Stack<Field> inputMoves)
+	{
+		Stack<Field> tmpMove = new Stack<Field>();
+		int stop = inputMoves.size()-1;
+		
+		for(int i=0; i < stop; i++)
+		{
+			tmpMove.push(inputMoves.pop());
+		}
+		
+		return tmpMove;
+	}
 
 	public void revertMove() throws NoKingLeft, IOException
 	{
@@ -266,6 +279,8 @@ public class MI
 			int stop = temp.moves.size()-1;
 			Stack<Field> tempMoves = new Stack<Field>();
 			Field tempMove = null;
+			
+			temp.moves = flipStack(temp.moves);
 			
 			for(int j=0; j < stop; j++)
 			{	
@@ -286,6 +301,8 @@ public class MI
 				}
 				tempMoves.push(tempMove);
 			}
+			
+			tempMoves  = flipStack(tempMoves);
 			
 			stop = tempMoves.size();
 			for(int j=0; j < stop; j++)
