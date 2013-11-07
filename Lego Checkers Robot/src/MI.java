@@ -40,7 +40,35 @@ public class MI
 	private int gameIsLost = -gameIsWon;
 	private int gameIsDraw = 5;
 
-
+	///Test method
+	public void scanPieces(int side) throws IOException
+	{
+		for(Field[] F: nXTF.checkersBoard.myBoard)
+		{
+			for(Field Q: F)
+			{
+				if(!Q.isEmpty())
+				{
+					if(side == 1)
+					{
+						if(nXTF.checkersBoard.checkAllegiance(Q, false))
+						{
+							nXTF.getColorOnField(Q.x, Q.y);
+						}
+					}
+					else
+					{
+						if(nXTF.checkersBoard.checkAllegiance(Q, true))
+						{
+							nXTF.getColorOnField(Q.x, Q.y);
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	
 	public Move lookForBestMove() throws NoKingLeft, IOException /* does not start to see if the game is ended*/, InterruptedException
 	{
 		List<Move> Moves = possibleMovesForRobot();
@@ -245,7 +273,6 @@ public class MI
 								}
 							}
 						}
-
 					}
 				}
 			}
