@@ -6,6 +6,7 @@ import java.util.Stack;
 
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
+import lejos.nxt.NXT;
 import lejos.util.Delay;
 import customExceptions.NoKingLeft;
 
@@ -210,6 +211,7 @@ public class MI
 	private List<Move> possibleMoves(int moveForSide) throws InterruptedException, IOException, NoKingLeft //-1 = human, 1 = robot
 	{
 		List<Move> movements = new ArrayList<Move>();
+		nXTF.checkersBoard.updateMoveables();
 		for(Field[] f : nXTF.checkersBoard.myBoard)
 		{
 			for(Field field : f)
