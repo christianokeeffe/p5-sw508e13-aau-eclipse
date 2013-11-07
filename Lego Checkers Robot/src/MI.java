@@ -14,6 +14,7 @@ import customExceptions.NoKingLeft;
 public class MI 
 {
 	RemoteNXTFunctions nXTF;
+	public double inf = 100000;
 
 	private Stack<Move> simulatedMoves = new Stack<Move>();
 	MI(RemoteNXTFunctions NXT)
@@ -58,14 +59,14 @@ public class MI
 		List<Move> Moves = possibleMovesForRobot();
 		
 		Move bestMove = new Move();
-		double price = -1000, tempPrice;
+		double price = -inf, tempPrice;
 		int antal = 0;
 		for(Move move : Moves)
 		{
 			revertAllMoves();
 			simulateMove(move);
 			
-			tempPrice =  -Negamax(numberofmovelook, -1, -10000, -price);
+			tempPrice =  -Negamax(numberofmovelook, -1, -inf, -price);
 			revertMove();
 			antal ++;
 			LCD.clear();
@@ -102,12 +103,12 @@ public class MI
 	    	moves = possibleMovesForHuman();
 	    }
 	    
-	    double bestValue = -100000;
+	    double bestValue = -inf;
 	    
 	    OUTERMOST:for (Move move : moves) 
 	    {
 	        simulateMove(move);
-	        double newScore = -Negamax(depth - 1, turn*-1, -beta, -alpha);
+	        double newScore = -Negamax(depth - 1, -turn, -beta, -alpha);
         	revertMove();
         	
         	bestValue = max(bestValue, newScore);
@@ -203,8 +204,8 @@ public class MI
 	private double max(double x, double y)
 	{
 		if(x < y)
-			return x;
-		return y;
+			return y;
+		return x;
 	}
 
 
