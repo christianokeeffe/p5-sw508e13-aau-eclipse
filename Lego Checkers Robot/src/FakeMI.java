@@ -103,7 +103,7 @@ public class FakeMI{
 
 	private void callMove(Field from, Field to){
 		try {
-			NXT.doMove(new Move(from,to));
+			NXT.doMove(new Move(from,to, from.getPieceOnField().isCrowned));
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (NoKingLeft e) {
@@ -167,10 +167,10 @@ public class FakeMI{
 			jumpPath = NXT.checkersBoard.analyzeFunctions.jumpSequence(f, VHUMAN, f.getPieceOnField().isCrowned);
 			NXT.checkersBoard.resetVisited();
 			if(jumpPath.size() == 1){
-				NXT.doMove(new Move(jumpPath.get(0)));
+				NXT.doMove(new Move(jumpPath.get(0),f.getPieceOnField().isCrowned));
 			}
 			else if(jumpPath.size() > 1){
-				NXT.doMove(new Move(jumpPath.get(numberGen.nextInt(jumpPath.size() - 1))));
+				NXT.doMove(new Move(jumpPath.get(numberGen.nextInt(jumpPath.size() - 1)),f.getPieceOnField().isCrowned));
 			}
 			else{
 				LCD.clear();
