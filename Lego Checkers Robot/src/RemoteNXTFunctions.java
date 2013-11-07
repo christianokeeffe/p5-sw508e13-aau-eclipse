@@ -167,52 +167,6 @@ public class RemoteNXTFunctions {
 			trashPieceOnField(takenPieces.get(i));
 	}
 
-	/*//Makes a piece jump one or more pieces and then remove those pieces from the board
-	public void takePiece(Field fromField, List<Field> midwayFields) throws IOException, NoKingLeft
-	{
-		Field presentField = fromField;
-
-		List<Field> takenPieces = new ArrayList<Field>();
-
-		for(int i = 0; i < midwayFields.size(); i++)
-		{
-			Field jumpedField = movePieceOverField(presentField,midwayFields.get(i));
-			if(jumpedField != null){
-				takenPieces.add(jumpedField);
-			}
-			presentField = midwayFields.get(i);
-		}
-
-		for(int i = 0; i < takenPieces.size(); i++){
-
-			if(takenPieces.get(i).isEmpty())
-			{
-				movePiece(takenPieces.get(i), trashField);
-			}
-			else
-			{
-				if(takenPieces.get(i).getPieceOnField().isCrowned && checkersBoard.checkAllegiance(takenPieces.get(i), true))
-				{
-					int j = checkersBoard.kingPlace.length-1;
-					OUTERMOST:while(j >= 0)
-					{
-						if(checkersBoard.kingPlace[j].isEmpty())
-							break OUTERMOST;
-						j--;
-					}
-					if(j < 0)
-						movePiece(takenPieces.get(i), trashField);
-					else
-						movePiece(takenPieces.get(i), checkersBoard.kingPlace[j]);
-				}
-				else
-				{
-					movePiece(takenPieces.get(i), trashField);
-				}
-			}
-		}
-	}*/
-
 	private Field movePieceOverField(Field fromField, Field toField) throws IOException, NoKingLeft{
 		movePiece(fromField, toField);
 

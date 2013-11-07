@@ -286,18 +286,21 @@ public class MI
 			{	
 				tempMove = temp.moves.pop();
 				nXTF.checkersBoard.movePieceInRepresentation(temp.moves.peek(), tempMove, true);
-				if(tempMove.getPieceOnField().isCrowned && !temp.wasKingBefore)
+				if(!tempMove.isEmpty())
 				{
-					if(nXTF.checkersBoard.checkAllegiance(tempMove, true))
+					if(tempMove.getPieceOnField().isCrowned && !temp.wasKingBefore)
 					{
-						tempMove.getPieceOnField().color = nXTF.checkersBoard.opponentPeasentColor;
+						if(nXTF.checkersBoard.checkAllegiance(tempMove, true))
+						{
+							tempMove.getPieceOnField().color = nXTF.checkersBoard.opponentPeasentColor;
+						}
+						else if(nXTF.checkersBoard.checkAllegiance(tempMove, false))
+						{
+							tempMove.getPieceOnField().color = nXTF.checkersBoard.myPeasentColor;
+						}
+						if(!tempMove.isEmpty())
+							tempMove.getPieceOnField().isCrowned = false;
 					}
-					else if(nXTF.checkersBoard.checkAllegiance(tempMove, false))
-					{
-						tempMove.getPieceOnField().color = nXTF.checkersBoard.myPeasentColor;
-					}
-					if(!tempMove.isEmpty())
-						tempMove.getPieceOnField().isCrowned = false;
 				}
 				tempMoves.push(tempMove);
 			}
