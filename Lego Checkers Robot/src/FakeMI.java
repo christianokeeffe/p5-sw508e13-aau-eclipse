@@ -164,7 +164,7 @@ public class FakeMI{
 	{
 		List<Stack<Field>> jumpPath = new ArrayList<Stack<Field>>();
 		if(f.getPieceOnField()!= null){
-			jumpPath = NXT.checkersBoard.jumpSequence(f, VHUMAN, f.getPieceOnField().isCrowned);
+			jumpPath = NXT.checkersBoard.analyzeFunctions.jumpSequence(f, VHUMAN, f.getPieceOnField().isCrowned);
 			NXT.checkersBoard.resetVisited();
 			if(jumpPath.size() == 1){
 				NXT.doMove(new Move(jumpPath.get(0)));
