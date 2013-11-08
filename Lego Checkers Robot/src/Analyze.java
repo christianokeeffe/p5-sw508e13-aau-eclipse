@@ -15,39 +15,34 @@ public class Analyze {
     private Field fieldToCheck;
     private int analyzeBoardRepeatNumber = 0;
     private int totalAnalyzeRuns = 0;
-    private static final int analyzeRunsBeforeReset = 10;
+    private final int analyzeRunsBeforeReset = 10;
     private RemoteNXTFunctions remoteFunctions;
 
-    public Analyze(Board input, RemoteNXTFunctions remoteInput)
-    {
+    public Analyze(Board input, RemoteNXTFunctions remoteInput) {
         checkersBoard = input;
         remoteFunctions = remoteInput;
-    }
+        }
     //Analyzes the current board setup
-    public boolean analyzeBoard() throws InterruptedException, IOException, NoKingLeft, IllegalMove
-    {    
-        if(!checkForGameHasEnded(true))
-        {
+    public final boolean analyzeBoard() throws InterruptedException,
+    IOException, NoKingLeft, IllegalMove {
+        if (!checkForGameHasEnded(true)) {
             totalAnalyzeRuns += 1;
 
-            if(totalAnalyzeRuns > analyzeRunsBeforeReset)
-            {
+            if (totalAnalyzeRuns > analyzeRunsBeforeReset) {
                 totalAnalyzeRuns = 0;
                 remoteFunctions.resetMotors();
-            }
+                }
 
             //Find the pieces that are currently moveable
             checkersBoard.updateMoveables();
 
             List<Field> moveableList = new ArrayList<Field>();
 
-            for (Field[] f : checkersBoard.myBoard) 
-            {
-                for (Field field : f) 
-                {
-                    if(!field.isEmpty()){
-                        if(field.getPieceOnField().isMoveable && checkersBoard.checkAllegiance(field, true))
-                        {
+            for (Field[] f : checkersBoard.myBoard) {
+                for (Field field : f) {
+                    if (!field.isEmpty()) {
+                        if (field.getPieceOnField().isMoveable
+                            && checkersBoard.checkAllegiance(field, true)) {
                             moveableList.add(field);
                         }
                     }
