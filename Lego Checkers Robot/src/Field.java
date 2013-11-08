@@ -5,60 +5,39 @@ public class Field {
     public boolean visited = false;
     public int x;
     public int y;
-    
     private Piece pieceOnField = null;
-    
-    public Field(){};
-    public Field(int inputx, int inputy){
+    public Field() { };
+    public Field(final int inputx, final int inputy) {
         x = inputx;
         y = inputy;
     }
-    
-    //Get and Set to access to private variable pieceOnField. Updates the coordinates of an piece when assigned to a field. 
-    public void setPieceOnField(Piece inputPiece)
-    {
+
+    //Get and Set to access to private variable pieceOnField. 
+    //Updates the coordinates of an piece when assigned to a field. 
+    public final void setPieceOnField(Piece inputPiece) {
         pieceOnField = inputPiece;
-        if(!isEmpty())
-        {
+        if (!isEmpty()) {
             pieceOnField.x = x;
             pieceOnField.y = y;
         }
     }
 
-    public Piece getPieceOnField(){
+    public final Piece getPieceOnField() {
         return pieceOnField;
     }
-    
+
     //A field is empty, if no piece is assigned to it.
-    public boolean isEmpty(){
-        if(pieceOnField == null)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+    public final boolean isEmpty() {
+        return !(pieceOnField != null);
     }
-    
+
     //Returns true if there is a piece on the field, and the piece is of the given color.
-    public boolean isPieceOfColor(char input){
-        if(isEmpty()){
-            return false;
-        }
-        else{
-            if(pieceOnField.color == input){
-                return true;
-            }else{
-                return false;
-            }
-        }
+    public final boolean isPieceOfColor(char input) {
+        return !isEmpty();
     }
-    
+
     //Empty the field, by deassigning the piece of the field.
-    public void emptyThisField()
-    {
+    public final void emptyThisField() {
         pieceOnField = null;
     }
-    
 }
