@@ -284,39 +284,38 @@ public class MI {
             }
         }
     }
-
-    private List<Move> possibleMoves(int moveForSide) throws InterruptedException, IOException, NoKingLeft //-1 = human, 1 = robot
-    {
+    
+    //-1 = human, 1 = robot
+    private List<Move> possibleMoves(int moveForSide) throws
+                    InterruptedException, IOException, NoKingLeft {
         List<Move> movements = new ArrayList<Move>();
         removeNXT.checkersBoard.updateMoveables();
-        for(Field[] f : removeNXT.checkersBoard.myBoard)
-        {
-            for(Field field : f)
-            {
-                if(!field.isEmpty())
-                {
-                    if(field.getPieceOnField().isMoveable && removeNXT.checkersBoard.checkAllegiance(field, moveForSide == -1))
-                    {
+        for (Field[] f : removeNXT.checkersBoard.myBoard) {
+            for (Field field : f) {
+                if (!field.isEmpty()) {
+                    if (field.getPieceOnField().isMoveable
+                            && removeNXT.checkersBoard.checkAllegiance(field, moveForSide == -1)) {
                         //Jumps
-                        List<Stack<Field>> listOfMoves = removeNXT.checkersBoard.analyzeFunctions.jumpSequence(field, moveForSide == 1, field.getPieceOnField().isCrowned);
+                        List<Stack<Field>> listOfMoves =
+                                removeNXT.checkersBoard.analyzeFunctions.jumpSequence(
+                                        field, moveForSide == 1,
+                                        field.getPieceOnField().isCrowned);
 
-                        for(Stack<Field> stackOfFields : listOfMoves)
-                        {
-                            if(stackOfFields.size() >= 2) 
-                            {
-                                movements.add(new Move(stackOfFields, field.getPieceOnField().isCrowned));
+                        for (Stack<Field> stackOfFields : listOfMoves) {
+                            if (stackOfFields.size() >= 2) {
+                                movements.add(new Move(stackOfFields,
+                                        field.getPieceOnField().isCrowned));
                             }
                         }
 
-                        if(!field.getPieceOnField().canJump)
-                        {
-                            List<Field> possibleMoves = removeNXT.checkersBoard.checkMoveable(field, moveForSide);
+                        if (!field.getPieceOnField().canJump) {
+                            List<Field> possibleMoves =
+                                    removeNXT.checkersBoard.checkMoveable(field, moveForSide);
                             //Simple moves
-                            if(!possibleMoves.isEmpty())
-                            {
-                                for(Field posField : possibleMoves)
-                                {
-                                    Move movement = new Move(field, posField, field.getPieceOnField().isCrowned);
+                            if (!possibleMoves.isEmpty()) {
+                                for (Field posField : possibleMoves) {
+                                    Move movement = new Move(field,
+                                            posField, field.getPieceOnField().isCrowned);
                                     movements.add(movement);
                                 }
                             }
@@ -330,20 +329,16 @@ public class MI {
 
         removeNXT.checkersBoard.sortListOfMoves(movements);;
         boolean mustJump = false;
-        if(movements.size() != 0)
-        {
+        if (movements.size() != 0) {
             mustJump = movements.get(0).isJump();
 
-            for(int i = 0 ; movements.size() > i ; i++ )
-            {
-                if(mustJump && !movements.get(i).isJump())
-                {
+            for (int i = 0; movements.size() > i; i++) {
+                if (mustJump && !movements.get(i).isJump()) {
                     movements.remove(i);
                     i--;
                 }
             }
-
-        }    
+        }
         return movements;
     }
 }
