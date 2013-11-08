@@ -8,38 +8,35 @@ import lejos.nxt.LCD;
 
 public class SW508E13 {
 
-    public static void main(String[] args) throws IOException, NoKingLeft, InterruptedException {
+    public static void main (String[] args)
+            throws IOException, NoKingLeft, InterruptedException {
         RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
         MI mi = new MI(checkTopFunc);
 
         Move bestMove;
-        if(checkTopFunc.checkersBoard.myPeasentColor == 'r')
-        {
+        if (checkTopFunc.checkersBoard.myPeasentColor == 'r') {
             bestMove = mi.lookForBestMove();
             checkTopFunc.doMove(bestMove);
             checkTopFunc.resetAfterMove();
         }
-        
-        while(!Button.ESCAPE.isDown())
-        {
+        while (!Button.ESCAPE.isDown()) {
             checkTopFunc.waitForRedButton();
             try {
-                if(mi.removeNXT.checkersBoard.analyzeFunctions.analyzeBoard())
+                if (mi.removeNXT.checkersBoard.analyzeFunctions.analyzeBoard())
                 {
                     bestMove = mi.lookForBestMove();
 
-                    if(bestMove != null)
+                    if (bestMove != null) {
                         mi.removeNXT.doMove(bestMove);
                         mi.scanPieces(1);
-                        
                         Button.ENTER.waitForAnyPress();
-                        
                         mi.scanPieces(0);
-
+                    }
                     checkTopFunc.resetAfterMove();
 
-                    if(!mi.removeNXT.checkersBoard.analyzeFunctions.checkForGameHasEnded(true))
+                    if (!mi.removeNXT.checkersBoard.analyzeFunctions.checkForGameHasEnded(true)) {
                         mi.removeNXT.checkersBoard.informer.playYourTurn();
+                    }
                 }
 
             } catch (IllegalMove e) {
