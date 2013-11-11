@@ -250,7 +250,7 @@ public class MI {
             for (int j = 0; j < stop; j++) {
                 tempMove = temp.moves.pop();
                 removeNXT.checkersBoard.movePieceInRepresentation(
-                        temp.moves.peek(), tempMove, true);
+                        tempMove, temp.moves.peek(), true);
                 if (!tempMove.isEmpty()) {
                     if (tempMove.getPieceOnField().isCrowned && !temp.wasKingBefore) {
                         if (removeNXT.checkersBoard.checkAllegiance(tempMove, true)) {
@@ -265,8 +265,6 @@ public class MI {
                 }
                 tempMoves.push(tempMove);
             }
-
-            tempMoves  = flipStack(tempMoves);
 
             stop = tempMoves.size();
             for (int j = 0; j < stop; j++) {
