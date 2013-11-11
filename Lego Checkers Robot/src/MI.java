@@ -13,8 +13,8 @@ public class MI {
     private final double inf = 100000.0;
 
     private Stack<Move> simulatedMoves = new Stack<Move>();
-    MI(RemoteNXTFunctions remoteNXT) {
-        remoteNXT = remoteNXT;
+    MI(RemoteNXTFunctions inputRemoteNXT) {
+        remoteNXT = inputRemoteNXT;
     }
 
     /* ------------------------------------------------------------------  *
