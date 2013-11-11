@@ -9,66 +9,55 @@ import lejos.nxt.LCD;
 import customExceptions.NoKingLeft;
 
 //This is a test class to emulate a MI, not suppose to be part of the release
-public class FakeMI{
+public class FakeMI {
     Random numberGen;
-    int GLOBAL_y;
-    boolean VHUMAN;
+    int globalY;
+    boolean vHUMAN;
     List<Field> jumpList;
     List<Field> moveList;
-    List<Field> jumpPath;
-    RemoteNXTFunctions NXT;
+    RemoteNXTFunctions nxt;
 
-    FakeMI(RemoteNXTFunctions inputNXT, boolean versusHuman){
+    FakeMI(RemoteNXTFunctions inputNXT, boolean versusHuman) {
         numberGen = new Random();
         jumpList = new ArrayList<Field>();
         moveList = new ArrayList<Field>();
 
-        NXT = inputNXT;
+        nxt = inputNXT;
 
-        if(versusHuman){
-            GLOBAL_y = 1;
-            VHUMAN = true;
-        }
-        else{
-            GLOBAL_y = -1;
-            VHUMAN = false;
+        if (versusHuman) {
+            globalY = 1;
+            vHUMAN = true;
+        } else {
+            globalY = -1;
+            vHUMAN = false;
         }
 
         updateList();
     }
 
-    public void updateList(){
+    public final void updateList() {
         moveList.clear();
         jumpList.clear();
-        for(Field[] arrayField : NXT.checkersBoard.myBoard)
-        {
-            for(Field field : arrayField)
-            {
-                if(field.getPieceOnField() != null){
-                    if(VHUMAN){
-                        if(NXT.checkersBoard.checkAllegiance(field, false))
-                        {
+        for (Field[] arrayField : nxt.checkersBoard.myBoard) {
+            for (Field field : arrayField) {
+                if (field.getPieceOnField() != null) {
+                    if (vHUMAN) {
+                        if (nxt.checkersBoard.checkAllegiance(field, false)) {
                             Piece temp = field.getPieceOnField();
-                            if(temp.isMoveable)
-                            {
+                            if (temp.isMoveable) {
                                 moveList.add(field);
                             }
-                            if(temp.canJump)
-                            {
+                            if (temp.canJump) {
                                 jumpList.add(field);
                             }
                         }
-                    }
-                    else{
-                        if(NXT.checkersBoard.checkAllegiance(field, true))
-                        {
+                    } else {
+                        if (nxt.checkersBoard.checkAllegiance(field, true)) {
                             Piece temp = field.getPieceOnField();
-                            if(temp.isMoveable)
-                            {
+                            if (temp.isMoveable) {
                                 moveList.add(field);
                             }
-                            if(temp.canJump)
-                            {
+                            if (temp.canJump) {
                                 jumpList.add(field);
                             }
                         }
@@ -78,22 +67,21 @@ public class FakeMI{
         }
     }
 
-    public boolean decideMovement() throws IOException, NoKingLeft, InterruptedException{
+    public final boolean decideMovement()
+            throws IOException, NoKingLeft, InterruptedException {
         updateList();
-        if(!NXT.checkersBoard.analyzeFunctions.checkForGameHasEnded(!VHUMAN)){
-            if(!jumpList.isEmpty()){
+        if (!nxt.checkersBoard.analyzeFunctions.checkForGameHasEnded(!vHUMAN)) {
+            if (!jumpList.isEmpty()) {
                 int jtemp = numberGen.nextInt(jumpList.size());
-                CalculateJump(jumpList.get(jtemp));
-                NXT.checkersBoard.updateMoveables();
-            }
-            else{
-                if(!moveList.isEmpty()){
+                calculateJump(jumpList.get(jtemp));
+                nxt.checkersBoard.updateMoveables();
+            } else {
+                if (!moveList.isEmpty()) {
                     int mtemp = numberGen.nextInt(moveList.size());
-                    Move(moveList.get(mtemp));
-                    NXT.checkersBoard.updateMoveables();
-                }
-                else{
-                    NXT.checkersBoard.informer.nothingPossible();
+                    move(moveList.get(mtemp));
+                    nxt.checkersBoard.updateMoveables();
+                } else {
+                    nxt.checkersBoard.informer.nothingPossible();
                 }
             }
             return true;
@@ -101,9 +89,9 @@ public class FakeMI{
         return false;
     }
 
-    private void callMove(Field from, Field to){
+    private void callMove(Field from, Field to) {
         try {
-            NXT.doMove(new Move(from,to, from.getPieceOnField().isCrowned));
+            nxt.doMove(new Move(from, to, from.getPieceOnField().isCrowned));
         } catch (IOException e) {
             e.printStackTrace();
         } catch (NoKingLeft e) {
@@ -111,68 +99,79 @@ public class FakeMI{
         }
     }
 
-    private void Move(Field f){
-        if(!f.getPieceOnField().isCrowned){
-            if(!NXT.checkersBoard.fieldOccupied(f.x + 1, f.y + GLOBAL_y) && !NXT.checkersBoard.fieldOccupied(f.x - 1, f.y + GLOBAL_y)){
+    private void move(Field f) {
+        if (!f.getPieceOnField().isCrowned) {
+            if (!nxt.checkersBoard.fieldOccupied(f.x + 1, f.y + globalY)
+               && !nxt.checkersBoard.fieldOccupied(f.x - 1, f.y + globalY)) {
                 int random = numberGen.nextInt(2);
-                if(random == 0){
-                    callMove(f, NXT.checkersBoard.myBoard[f.x+1][f.y+GLOBAL_y]);
+                if (random == 0) {
+                    callMove(f, nxt.checkersBoard.myBoard
+                            [f.x + 1][f.y + globalY]);
+                } else if (random == 1) {
+                    callMove(f, nxt.checkersBoard.myBoard
+                            [f.x - 1][f.y + globalY]);
                 }
-                else if(random == 1){
-                    callMove(f, NXT.checkersBoard.myBoard[f.x-1][f.y+GLOBAL_y]);
-                }
+            } else
+              if (!nxt.checkersBoard.fieldOccupied(f.x + 1, f.y + globalY)) {
+              callMove(f, nxt.checkersBoard.myBoard[f.x + 1][f.y + globalY]);
+            } else
+              if (!nxt.checkersBoard.fieldOccupied(f.x - 1, f.y + globalY)) {
+                callMove(f, nxt.checkersBoard.myBoard[f.x - 1][f.y + globalY]);
             }
-            else if(!NXT.checkersBoard.fieldOccupied(f.x + 1, f.y + GLOBAL_y)){
-                callMove(f, NXT.checkersBoard.myBoard[f.x+1][f.y+GLOBAL_y]);
-            }
-            else if(!NXT.checkersBoard.fieldOccupied(f.x - 1, f.y + GLOBAL_y)){
-                callMove(f, NXT.checkersBoard.myBoard[f.x-1][f.y+GLOBAL_y]);
-            }
-        }
-        else if(f.getPieceOnField().isCrowned){
-            if(!NXT.checkersBoard.fieldOccupied(f.x + 1, f.y + GLOBAL_y) && !NXT.checkersBoard.fieldOccupied(f.x - 1, f.y + GLOBAL_y) && !NXT.checkersBoard.fieldOccupied(f.x + 1, f.y - GLOBAL_y) && !NXT.checkersBoard.fieldOccupied(f.x - 1, f.y - GLOBAL_y)){
+        } else if (f.getPieceOnField().isCrowned) {
+            if (!nxt.checkersBoard.fieldOccupied(f.x + 1, f.y + globalY)
+                && !nxt.checkersBoard.fieldOccupied(f.x - 1, f.y + globalY)
+                && !nxt.checkersBoard.fieldOccupied(f.x + 1, f.y - globalY)
+                && !nxt.checkersBoard.fieldOccupied(f.x - 1, f.y - globalY)) {
+
                 int random = numberGen.nextInt(4);
-                if(random == 0){
-                    callMove(f, NXT.checkersBoard.myBoard[f.x+1][f.y+GLOBAL_y]);
+                if (random == 0) {
+                    callMove(f, nxt.checkersBoard.myBoard
+                            [f.x + 1][f.y + globalY]);
+                } else if (random == 1) {
+                    callMove(f, nxt.checkersBoard.myBoard
+                            [f.x - 1][f.y + globalY]);
+                } else if (random == 3) {
+                    callMove(f, nxt.checkersBoard.myBoard
+                            [f.x + 1][f.y - globalY]);
+                } else if (random == 4) {
+                    callMove(f, nxt.checkersBoard.myBoard
+                            [f.x - 1][f.y - globalY]);
                 }
-                else if(random == 1){
-                    callMove(f, NXT.checkersBoard.myBoard[f.x-1][f.y+GLOBAL_y]);
-                }
-                else if(random == 3){
-                    callMove(f, NXT.checkersBoard.myBoard[f.x+1][f.y-GLOBAL_y]);
-                }
-                else if(random == 4){
-                    callMove(f, NXT.checkersBoard.myBoard[f.x-1][f.y-GLOBAL_y]);
-                }
-            }
-            else if(!NXT.checkersBoard.fieldOccupied(f.x + 1, f.y + GLOBAL_y)){
-                callMove(f, NXT.checkersBoard.myBoard[f.x+1][f.y+GLOBAL_y]);
-            }
-            else if(!NXT.checkersBoard.fieldOccupied(f.x - 1, f.y + GLOBAL_y)){
-                callMove(f, NXT.checkersBoard.myBoard[f.x-1][f.y+GLOBAL_y]);
-            }
-            else if(!NXT.checkersBoard.fieldOccupied(f.x + 1, f.y - GLOBAL_y)){
-                callMove(f, NXT.checkersBoard.myBoard[f.x+1][f.y-GLOBAL_y]);
-            }
-            else if(!NXT.checkersBoard.fieldOccupied(f.x - 1, f.y - GLOBAL_y)){
-                callMove(f, NXT.checkersBoard.myBoard[f.x-1][f.y-GLOBAL_y]);
+            } else
+                if (!nxt.checkersBoard.fieldOccupied(f.x + 1, f.y + globalY)) {
+                callMove(f, nxt.checkersBoard.myBoard
+                        [f.x + 1][f.y + globalY]);
+            } else
+                if (!nxt.checkersBoard.fieldOccupied(f.x - 1, f.y + globalY)) {
+                callMove(f, nxt.checkersBoard.myBoard
+                        [f.x - 1][f.y + globalY]);
+            } else
+                if (!nxt.checkersBoard.fieldOccupied(f.x + 1, f.y - globalY)) {
+                callMove(f, nxt.checkersBoard.myBoard
+                        [f.x + 1][f.y - globalY]);
+            } else
+                if (!nxt.checkersBoard.fieldOccupied(f.x - 1, f.y - globalY)) {
+                callMove(f, nxt.checkersBoard.myBoard[f.x - 1][f.y - globalY]);
             }
         }
     }
 
-    private void CalculateJump(Field f) throws IOException, NoKingLeft, InterruptedException
-    {
+    private void calculateJump(Field f)
+            throws IOException, NoKingLeft, InterruptedException {
         List<Stack<Field>> jumpPath = new ArrayList<Stack<Field>>();
-        if(f.getPieceOnField()!= null){
-            jumpPath = NXT.checkersBoard.analyzeFunctions.jumpSequence(f, VHUMAN, f.getPieceOnField().isCrowned);
-            NXT.checkersBoard.resetVisited();
-            if(jumpPath.size() == 1){
-                NXT.doMove(new Move(jumpPath.get(0),f.getPieceOnField().isCrowned));
-            }
-            else if(jumpPath.size() > 1){
-                NXT.doMove(new Move(jumpPath.get(numberGen.nextInt(jumpPath.size() - 1)),f.getPieceOnField().isCrowned));
-            }
-            else{
+        if (f.getPieceOnField() != null) {
+            jumpPath = nxt.checkersBoard.analyzeFunctions.
+                    jumpSequence(f, vHUMAN, f.getPieceOnField().isCrowned);
+            nxt.checkersBoard.resetVisited();
+            if (jumpPath.size() == 1) {
+                nxt.doMove(new Move(jumpPath.get(0),
+                        f.getPieceOnField().isCrowned));
+            } else if (jumpPath.size() > 1) {
+                nxt.doMove(new Move(jumpPath.
+                        get(numberGen.nextInt(jumpPath.size() - 1)),
+                        f.getPieceOnField().isCrowned));
+            } else {
                 LCD.clear();
                 LCD.drawString("stack er tom", 0, 0);
                 LCD.refresh();
