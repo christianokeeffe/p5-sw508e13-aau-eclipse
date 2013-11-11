@@ -26,7 +26,7 @@ public class MI {
             for (Field q: f) {
                 if (!q.isEmpty()) {
                     if (side == 1) {
-                        if (remoteNXT.checkersBoard.checkAllegiance(q, false)) {
+                        if (remoteNXT.checkersBoard.checkAllegiance(q, false)&& q.getPieceOnField().isCrowned) {
                             remoteNXT.getColorOnField(q.x, q.y);
                             
                             if(!q.isEmpty() && q.getPieceOnField().isCrowned)
@@ -35,7 +35,7 @@ public class MI {
                             }
                         }
                     } else {
-                        if (remoteNXT.checkersBoard.checkAllegiance(q, true)) {
+                        if (remoteNXT.checkersBoard.checkAllegiance(q, true)&& q.getPieceOnField().isCrowned) {
                             remoteNXT.getColorOnField(q.x, q.y);
                             
                             if(!q.isEmpty() && q.getPieceOnField().isCrowned)
@@ -261,8 +261,7 @@ public class MI {
 
             for (int j = 0; j < stop; j++) {
                 tempMove = temp.moves.pop();
-                remoteNXT.checkersBoard.movePieceInRepresentation(
-                        tempMove, temp.moves.peek(), true);
+                
                 if (!tempMove.isEmpty()) {
                     if (tempMove.getPieceOnField().isCrowned && !temp.wasKingBefore) {
                         if (remoteNXT.checkersBoard.checkAllegiance(tempMove, true)) {
@@ -270,11 +269,11 @@ public class MI {
                         } else if (remoteNXT.checkersBoard.checkAllegiance(tempMove, false)) {
                             tempMove.getPieceOnField().color = remoteNXT.checkersBoard.myPeasentColor;
                         }
-                        if (!tempMove.isEmpty()) {
-                            tempMove.getPieceOnField().isCrowned = false;
-                        }
+                        tempMove.getPieceOnField().isCrowned = false;
                     }
                 }
+                remoteNXT.checkersBoard.movePieceInRepresentation(
+                        tempMove, temp.moves.peek(), true);
                 tempMoves.push(tempMove);
             }
             

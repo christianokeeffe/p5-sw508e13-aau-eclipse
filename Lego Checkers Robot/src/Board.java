@@ -1,5 +1,6 @@
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import customExceptions.NoKingLeft;
 import lejos.nxt.Button;
@@ -14,68 +15,58 @@ public class Board {
     public communication informer = new communication();
 
     char myPeasentColor, myKingColor, opponentPeasentColor, opponentKingColor;
-    
 
-    public Board(RemoteNXTFunctions remoteFunc) throws InterruptedException, IOException
-    {
+    public Board(RemoteNXTFunctions remoteFunc)
+            throws InterruptedException, IOException {
         analyzeFunctions = new Analyze(this, remoteFunc);
 
         analyzeFunctions.findMyColors();
         findOpponentColors();
 
-        int x,y;
+        int x, y;
 
         //Create the 8 times 8 board
-        for(x = 0; x<8; x++)
-        {
-            for(y=0; y<8; y++)
-            {
+        for (x = 0; x < 8; x++) {
+            for (y = 0; y < 8; y++) {
                 Field temp = new Field();
                 temp.x = x;
                 temp.y = y;
 
                 //Every second field is an allowed field
                 //latex start ConstructorLoop
-                if((x+y)%2 == 1)
-                {
+                if ((x + y) % 2 == 1) {
                     temp.allowedField = true;
                     Piece pieceOnBoard = null;
-                    if(y < 3)
-                    {
+                    if (y < 3) {
                         pieceOnBoard = new Piece();
                         pieceOnBoard.color = myPeasentColor;
 
-                        //Every piece on the front line of each player is moveable from the start
-                        if(y == 2)
-                        {
+                        //Every piece on the front line of each player
+                        //is moveable from the start
+                        if (y == 2) {
                             pieceOnBoard.isMoveable = true;
                         }
                     }
                     //latex end
 
-                    if(y > 4)
-                    {
+                    if (y > 4) {
                         pieceOnBoard = new Piece();
                         pieceOnBoard.color = opponentPeasentColor;
-                        if(y==5)
-                        {
+                        if (y == 5) {
                             pieceOnBoard.isMoveable = true;
                         }
                     }
                     temp.setPieceOnField(pieceOnBoard);
-                }
-                else
-                {
+                } else {
                     temp.allowedField = false;
                 }
                 myBoard[x][y] = temp;
-            }    
+            }
         }
 
         //Set the location of the human players king pieces
         //latex start ConstructorKing
-        for (int i = 0; i < 8; i++)
-        {
+        for (int i = 0; i < 8; i++) {
             Field temp = new Field();
             temp.x = i;
             temp.y = -2;
@@ -88,28 +79,21 @@ public class Board {
         //latex end
     }
 
-    public void resetVisited()
-    {
-        for (Field[] f : myBoard)
-        {
-            for (Field field : f)
-            {
+    public final void resetVisited() {
+        for (Field[] f : myBoard) {
+            for (Field field : f) {
                 field.visited = false;
             }
         }
     }
-    
+
     //Sorts the list of fields to search to minimize robot movement
-    public void sortListOfFields(List<Field> listOfFields)
-    {
+    public final void sortListOfFields(List<Field> listOfFields) {
         int x = 0;
         int y = 0;
-        for(int i = 0; i < listOfFields.size(); i++)
-        {
-            for(int n = i+1; n < listOfFields.size(); n++)
-            {
-                if(!isGreater(listOfFields.get(i), listOfFields.get(n),x,y))
-                {
+        for (int i = 0; i < listOfFields.size(); i++) {
+            for (int n = i + 1; n < listOfFields.size(); n++) {
+                if (!isGreater(listOfFields.get(i), listOfFields.get(n), x, y)) {
                     Field temp1 = listOfFields.get(i);
                     Field temp2 = listOfFields.get(n);
                     listOfFields.remove(n);
