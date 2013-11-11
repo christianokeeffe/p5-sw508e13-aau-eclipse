@@ -44,8 +44,7 @@ public class MI {
 
         Move bestMove = new Move();
         double price = -inf, tempPrice;
-        for (Move move : posMoves)
-        {
+        for (Move move : posMoves) {
             revertAllMoves();
             simulateMove(move);
 
@@ -195,7 +194,7 @@ public class MI {
         return possibleMoves(1);
     }
 
-    public void simulateMove(Move move) throws NoKingLeft, IOException {
+    public final void simulateMove(Move move) throws NoKingLeft, IOException {
         if (move.moves.size() >= 2) {
             int stop = move.moves.size() - 1;
 
@@ -205,9 +204,11 @@ public class MI {
                 Field to = move.moves.peek();
                 if (Math.abs(from.x - to.x) == 2) {
                     move.takenPieces.push(removeNXT.checkersBoard.myBoard
-                            [(from.x + to.x) / 2][(from.y + to.y) / 2].getPieceOnField());
+                            [(from.x + to.x) / 2]
+                            [(from.y + to.y) / 2].getPieceOnField());
                     removeNXT.checkersBoard.myBoard
-                            [(from.x + to.x) / 2][(from.y + to.y) / 2].setPieceOnField(null);
+                            [(from.x + to.x) / 2]
+                            [(from.y + to.y) / 2].setPieceOnField(null);
                 }
                 removeNXT.checkersBoard.movePieceInRepresentation(from, to, true);
                 tempStack.push(from);
@@ -220,8 +221,7 @@ public class MI {
         }
     }
 
-    private void revertAllMoves() throws NoKingLeft, IOException
-    {
+    private void revertAllMoves() throws NoKingLeft, IOException {
         int stop = simulatedMoves.size();
         for (int i = 0; i < stop; i++) {
             revertMove();
@@ -239,7 +239,7 @@ public class MI {
         return tmpMove;
     }
 
-    public void revertMove() throws NoKingLeft, IOException {
+    public final void revertMove() throws NoKingLeft, IOException {
         if (simulatedMoves.size() != 0) {
             Move temp = simulatedMoves.pop();
             int stop = temp.moves.size() - 1;
@@ -281,7 +281,7 @@ public class MI {
             }
         }
     }
-    
+
     //-1 = human, 1 = robot
     private List<Move> possibleMoves(int moveForSide) throws
                     InterruptedException, IOException, NoKingLeft {
@@ -324,7 +324,7 @@ public class MI {
 
 
 
-        removeNXT.checkersBoard.sortListOfMoves(movements);;
+        removeNXT.checkersBoard.sortListOfMoves(movements);
         boolean mustJump = false;
         if (movements.size() != 0) {
             mustJump = movements.get(0).isJump();
