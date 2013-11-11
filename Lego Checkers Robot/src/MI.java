@@ -27,10 +27,20 @@ public class MI {
                     if (side == 1) {
                         if (remoteNXT.checkersBoard.checkAllegiance(q, false)) {
                             remoteNXT.getColorOnField(q.x, q.y);
+                            
+                            if(q.getPieceOnField().isCrowned)
+                            {
+                            	Sound.twoBeeps();
+                            }
                         }
                     } else {
                         if (remoteNXT.checkersBoard.checkAllegiance(q, true)) {
                             remoteNXT.getColorOnField(q.x, q.y);
+                            
+                            if(q.getPieceOnField().isCrowned)
+                            {
+                            	Sound.twoBeeps();
+                            }
                         }
                     }
                 }
