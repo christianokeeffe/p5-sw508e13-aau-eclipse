@@ -11,15 +11,15 @@ public class MI {
     private final double inf = 100000.0;
 
     private Stack<Move> simulatedMoves = new Stack<Move>();
-    MI(RemoteNXTFunctions NXT){
-        removeNXT = NXT;
+    MI(RemoteNXTFunctions remoteNXT) {
+        removeNXT = remoteNXT;
     }
 
     /* ------------------------------------------------------------------  *
     /* MI brain starts */
 
     ///Test method
-    public void scanPieces(int side) throws IOException {
+    public final void scanPieces(int side) throws IOException {
         for (Field[] f:removeNXT.checkersBoard.myBoard) {
             for (Field q: f) {
                 if (!q.isEmpty()) {
@@ -38,13 +38,12 @@ public class MI {
     }
 
 
-    public Move lookForBestMove() throws NoKingLeft, IOException,
+    public final Move lookForBestMove() throws NoKingLeft, IOException,
                                          InterruptedException {
         List<Move> posMoves = possibleMovesForRobot();
 
         Move bestMove = new Move();
         double price = -inf, tempPrice;
-        int antal = 0;
         for (Move move : posMoves)
         {
             revertAllMoves();
@@ -52,13 +51,11 @@ public class MI {
 
             tempPrice =  -negaMax(numberofmovelook, -1, -inf, -price);
             revertMove();
-            antal++;
             /*LCD.clear();
             LCD.drawString("P:  "+ price, 0, 0);
             LCD.drawString("TP: "+ tempPrice, 0, 1);
             LCD.drawString("From X: " + move.moves.peek().x, 0, 3);
             LCD.drawString("From Y: " + move.moves.peek().y, 0, 4);
-            LCD.drawString("gang: "+ antal, 0, 2);
             LCD.refresh();
             Button.ENTER.waitForAnyPress();*/
             if (tempPrice > price) {
@@ -70,7 +67,7 @@ public class MI {
     }
 
 
-    public double negaMax(int depth, int turn, double alpha, double beta)
+    public final double negaMax(int depth, int turn, double alpha, double beta)
             throws NoKingLeft, IOException, InterruptedException {
         if (depth == 0) {
             return turn * evaluation(turn);
