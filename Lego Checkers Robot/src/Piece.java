@@ -1,6 +1,6 @@
 
 public class Piece {
-    int x,y;
+    int x, y;
     char color;
     boolean isMoveable = false;
     boolean canJump = false;
