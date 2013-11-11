@@ -2,8 +2,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-
-import lejos.nxt.Button;
 import lejos.nxt.Sound;
 import customExceptions.NoKingLeft;
 
@@ -26,21 +24,21 @@ public class MI {
             for (Field q: f) {
                 if (!q.isEmpty()) {
                     if (side == 1) {
-                        if (remoteNXT.checkersBoard.checkAllegiance(q, false)&& q.getPieceOnField().isCrowned) {
+                        if (remoteNXT.checkersBoard.checkAllegiance(q, false)
+                                && q.getPieceOnField().isCrowned) {
                             remoteNXT.getColorOnField(q.x, q.y);
-                            
-                            if(!q.isEmpty() && q.getPieceOnField().isCrowned)
-                            {
-                            	Sound.twoBeeps();
+
+                            if (!q.isEmpty() && q.getPieceOnField().isCrowned) {
+                                Sound.twoBeeps();
                             }
                         }
                     } else {
-                        if (remoteNXT.checkersBoard.checkAllegiance(q, true)&& q.getPieceOnField().isCrowned) {
+                        if (remoteNXT.checkersBoard.checkAllegiance(q, true)
+                                && q.getPieceOnField().isCrowned) {
                             remoteNXT.getColorOnField(q.x, q.y);
-                            
-                            if(!q.isEmpty() && q.getPieceOnField().isCrowned)
-                            {
-                            	Sound.twoBeeps();
+
+                            if (!q.isEmpty() && q.getPieceOnField().isCrowned) {
+                                Sound.twoBeeps();
                             }
                         }
                     }
@@ -56,11 +54,11 @@ public class MI {
 
         Move bestMove = new Move();
         double price = -inf, tempPrice;
-        
-        if(posMoves.size() == 1) {
+
+        if (posMoves.size() == 1) {
             return posMoves.get(0);
         }
-        
+
         for (Move move : posMoves) {
             revertAllMoves();
             simulateMove(move);
@@ -85,8 +83,9 @@ public class MI {
 
     public final double negaMax(int depth, int turn, double alpha, double beta)
             throws NoKingLeft, IOException, InterruptedException {
-        if (depth == 0 
-                || remoteNXT.checkersBoard.analyzeFunctions.gameHasEnded(1 == turn) !=0) {
+        if (depth == 0
+                || remoteNXT.checkersBoard.analyzeFunctions.
+                gameHasEnded(1 == turn) != 0) {
             return turn * evaluation(turn);
         }
         List<Move> moves;
@@ -144,7 +143,8 @@ public class MI {
         }
         boolean isHuman = (turn == -1);
 
-        switch (remoteNXT.checkersBoard.analyzeFunctions.gameHasEnded(isHuman)) {
+        switch (remoteNXT.checkersBoard.
+                analyzeFunctions.gameHasEnded(isHuman)) {
         case 1:
             valueOfBoard -= gameIsWon;
             break;
@@ -228,13 +228,14 @@ public class MI {
                             [(from.x + to.x) / 2]
                             [(from.y + to.y) / 2].setPieceOnField(null);
                 }
-                remoteNXT.checkersBoard.movePieceInRepresentation(from, to, true);
+                remoteNXT.checkersBoard.
+                    movePieceInRepresentation(from, to, true);
                 tempStack.push(from);
             }
             for (int i = 0; i < stop; i++) {
                 move.moves.push(tempStack.pop());
             }
-            
+
             simulatedMoves.push(move);
         }
     }
@@ -267,13 +268,17 @@ public class MI {
 
             for (int j = 0; j < stop; j++) {
                 tempMove = temp.moves.pop();
-                
                 if (!tempMove.isEmpty()) {
-                    if (tempMove.getPieceOnField().isCrowned && !temp.wasKingBefore) {
-                        if (remoteNXT.checkersBoard.checkAllegiance(tempMove, true)) {
-                            tempMove.getPieceOnField().color = remoteNXT.checkersBoard.opponentPeasentColor;
-                        } else if (remoteNXT.checkersBoard.checkAllegiance(tempMove, false)) {
-                            tempMove.getPieceOnField().color = remoteNXT.checkersBoard.myPeasentColor;
+                    if (tempMove.getPieceOnField().isCrowned
+                            && !temp.wasKingBefore) {
+                        if (remoteNXT.checkersBoard.
+                                checkAllegiance(tempMove, true)) {
+                            tempMove.getPieceOnField().color =
+                                   remoteNXT.checkersBoard.opponentPeasentColor;
+                        } else if (remoteNXT.checkersBoard.
+                                checkAllegiance(tempMove, false)) {
+                            tempMove.getPieceOnField().color =
+                                    remoteNXT.checkersBoard.myPeasentColor;
                         }
                         tempMove.getPieceOnField().isCrowned = false;
                     }
@@ -282,8 +287,6 @@ public class MI {
                         tempMove, temp.moves.peek(), true);
                 tempMoves.push(tempMove);
             }
-            
-            
 
             stop = tempMoves.size();
             for (int j = 0; j < stop; j++) {
@@ -294,7 +297,8 @@ public class MI {
 
             for (int i = 0; i < stop; i++) {
                 Piece tempPiece = temp.takenPieces.pop();
-                remoteNXT.checkersBoard.myBoard[tempPiece.x][tempPiece.y].setPieceOnField(tempPiece);
+                remoteNXT.checkersBoard.myBoard
+                    [tempPiece.x][tempPiece.y].setPieceOnField(tempPiece);
             }
         }
     }
@@ -308,10 +312,12 @@ public class MI {
             for (Field field : f) {
                 if (!field.isEmpty()) {
                     if (field.getPieceOnField().isMoveable
-                            && remoteNXT.checkersBoard.checkAllegiance(field, moveForSide == -1)) {
+                            && remoteNXT.checkersBoard.
+                            checkAllegiance(field, moveForSide == -1)) {
                         //Jumps
                         List<Stack<Field>> listOfMoves =
-                                remoteNXT.checkersBoard.analyzeFunctions.jumpSequence(
+                                remoteNXT.checkersBoard.
+                                        analyzeFunctions.jumpSequence(
                                         field, moveForSide == 1,
                                         field.getPieceOnField().isCrowned);
 
@@ -324,12 +330,13 @@ public class MI {
 
                         if (!field.getPieceOnField().canJump) {
                             List<Field> possibleMoves =
-                                    remoteNXT.checkersBoard.checkMoveable(field, moveForSide);
+                                    remoteNXT.checkersBoard.
+                                    checkMoveable(field, moveForSide);
                             //Simple moves
                             if (!possibleMoves.isEmpty()) {
                                 for (Field posField : possibleMoves) {
-                                    Move movement = new Move(field,
-                                            posField, field.getPieceOnField().isCrowned);
+                                    Move movement = new Move(field, posField,
+                                            field.getPieceOnField().isCrowned);
                                     movements.add(movement);
                                 }
                             }

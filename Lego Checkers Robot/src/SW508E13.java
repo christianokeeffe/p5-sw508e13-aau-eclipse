@@ -30,9 +30,6 @@ public final class SW508E13 {
 
                     if (bestMove != null) {
                         mi.remoteNXT.doMove(bestMove);
-                        mi.scanPieces(1);
-                        Button.waitForAnyPress();
-                        mi.scanPieces(0);
                     }
                     checkTopFunc.resetAfterMove();
 
