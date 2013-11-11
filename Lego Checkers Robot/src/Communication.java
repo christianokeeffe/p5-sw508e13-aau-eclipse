@@ -16,14 +16,14 @@ public class Communication {
     }
 
     public final void humanWon() {
-        Sound.beepSequenceUp();;
+        Sound.beepSequenceUp();
         LCD.clear();
         LCD.drawString("You won!", 0, 0);
         LCD.refresh();
     }
 
     public final void robotWon() {
-        Sound.beepSequence();;
+        Sound.beepSequence();
         LCD.clear();
         LCD.drawString("You lost!", 0, 0);
         LCD.refresh();
