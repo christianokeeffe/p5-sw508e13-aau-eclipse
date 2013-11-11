@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Stack;
 
 import lejos.nxt.Button;
+import lejos.nxt.Sound;
 import customExceptions.NoKingLeft;
 
 
@@ -28,7 +29,7 @@ public class MI {
                         if (remoteNXT.checkersBoard.checkAllegiance(q, false)) {
                             remoteNXT.getColorOnField(q.x, q.y);
                             
-                            if(q.getPieceOnField().isCrowned)
+                            if(!q.isEmpty() && q.getPieceOnField().isCrowned)
                             {
                             	Sound.twoBeeps();
                             }
@@ -37,7 +38,7 @@ public class MI {
                         if (remoteNXT.checkersBoard.checkAllegiance(q, true)) {
                             remoteNXT.getColorOnField(q.x, q.y);
                             
-                            if(q.getPieceOnField().isCrowned)
+                            if(!q.isEmpty() && q.getPieceOnField().isCrowned)
                             {
                             	Sound.twoBeeps();
                             }
