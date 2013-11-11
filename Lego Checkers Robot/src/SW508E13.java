@@ -3,8 +3,6 @@ import java.io.IOException;
 import customExceptions.IllegalMove;
 import customExceptions.NoKingLeft;
 import lejos.nxt.Button;
-import lejos.nxt.ButtonListener;
-import lejos.nxt.LCD;
 
 public class SW508E13 {
 
@@ -57,7 +55,6 @@ public class SW508E13 {
             LCD.drawString("human", 0, 0);
             LCD.refresh();
             endGame = fm2.decideMovement();
-            
             LCD.clear();
             LCD.drawString("robot", 0, 0);
             LCD.refresh();
