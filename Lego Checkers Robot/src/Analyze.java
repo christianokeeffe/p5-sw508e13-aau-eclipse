@@ -298,12 +298,13 @@ public class Analyze {
             {
                 field.getPieceOnField().color = checkersBoard.myKingColor;
                 field.getPieceOnField().isCrowned = true;
-                if(!isSimulated)
+                if (!isSimulated) {
                     fieldToCheck = field;
+                }
             }
             else
             {
-                if(isSimulated)
+                if (isSimulated)
                 {
                     field.getPieceOnField().color = checkersBoard.opponentKingColor;
                     field.getPieceOnField().isCrowned = true;
