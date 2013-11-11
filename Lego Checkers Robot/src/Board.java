@@ -93,13 +93,14 @@ public class Board {
         int y = 0;
         for (int i = 0; i < listOfFields.size(); i++) {
             for (int n = i + 1; n < listOfFields.size(); n++) {
-                if (!isGreater(listOfFields.get(i), listOfFields.get(n), x, y)) {
+                if (!isGreater(listOfFields.get(i),
+                        listOfFields.get(n), x, y)) {
                     Field temp1 = listOfFields.get(i);
                     Field temp2 = listOfFields.get(n);
                     listOfFields.remove(n);
                     listOfFields.remove(i);
                     listOfFields.add(i, temp2);
-                    listOfFields.add(n,temp1);
+                    listOfFields.add(n, temp1);
                 }
             }
             x = listOfFields.get(i).x;
@@ -108,99 +109,70 @@ public class Board {
     }
 
     //Sorts the list of fields to search to minimize robot movement
-        public void sortListOfMoves(List<Move> listOfMoves)
-        {
+        public final void sortListOfMoves(List<Move> listOfMoves) {
             int x = 0;
             int y = 0;
-            for(int i = 0; i < listOfMoves.size(); i++)
-            {
-                for(int n = i+1; n < listOfMoves.size(); n++)
-                {
-                    if(!isGreater(listOfMoves.get(i).moves.peek(), listOfMoves.get(n).moves.peek(),x,y))
-                    {
+            for (int i = 0; i < listOfMoves.size(); i++) {
+                for (int n = i + 1; n < listOfMoves.size(); n++) {
+                    if (!isGreater(listOfMoves.get(i).moves.peek(),
+                            listOfMoves.get(n).moves.peek(), x, y)) {
                         Move temp1 = listOfMoves.get(i);
                         Move temp2 = listOfMoves.get(n);
                         listOfMoves.remove(n);
                         listOfMoves.remove(i);
                         listOfMoves.add(i, temp2);
-                        listOfMoves.add(n,temp1);
+                        listOfMoves.add(n, temp1);
                     }
                 }
                 x = listOfMoves.get(i).moves.peek().x;
                 y = listOfMoves.get(i).moves.peek().y;
             }
         }
-    
     //Method to used in sorting the list of places to move the robot
-    public boolean isGreater(Field inputField, Field fieldToCompare, int compX, int compY)
-    {
+    public final boolean isGreater(Field inputField,
+            Field fieldToCompare, int compX, int compY) {
         //Check jumps to be crowned first
-        if(inputField.getPieceOnField().canJump && !inputField.getPieceOnField().isCrowned && inputField.getPieceOnField().color == opponentPeasentColor && inputField.getPieceOnField().y == 2)
-        {
+        if (inputField.getPieceOnField().canJump
+                && !inputField.getPieceOnField().isCrowned
+                && inputField.getPieceOnField().color == opponentPeasentColor
+                && inputField.getPieceOnField().y == 2) {
             return true;
-        }
-        else if(inputField.getPieceOnField().canJump && !fieldToCompare.getPieceOnField().canJump)
-        {
+        } else if (inputField.getPieceOnField().canJump
+                && !fieldToCompare.getPieceOnField().canJump) {
             return true;
-        }
-        else if(fieldToCompare.getPieceOnField().canJump && !inputField.getPieceOnField().canJump)
-        {
+        } else if (fieldToCompare.getPieceOnField().canJump
+                && !inputField.getPieceOnField().canJump) {
             return false;
-        }
-        else
-        {
-            if(inputField.y == 1 && fieldToCompare.y != 1 && inputField.getPieceOnField().isCrowned != true)
-            {
+        } else {
+            if (inputField.y == 1 && fieldToCompare.y != 1
+                    && !inputField.getPieceOnField().isCrowned) {
                 return true;
-            }else if (fieldToCompare.y == 1 && inputField.y != 1 && fieldToCompare.getPieceOnField().isCrowned != true)
-            {
+            } else if (fieldToCompare.y == 1 && inputField.y != 1
+                    && !fieldToCompare.getPieceOnField().isCrowned) {
                 return false;
-            }
-            else
-            {
-                if(weight(inputField,compX,compY) > weight(fieldToCompare,compX,compY))
-                {
+            } else {
+                if (weight(inputField, compX, compY)
+                    > weight(fieldToCompare, compX, compY)) {
                     return false;
-                }
-                else if(weight(inputField, compX, compY) < weight(fieldToCompare, compX, compY))
-                {
+                } else if (weight(inputField, compX, compY)
+                           < weight(fieldToCompare, compX, compY)) {
                     return true;
-                }
-                else
-                {
-                    if(inputField.y < fieldToCompare.y)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                } else {
+                    return (inputField.y < fieldToCompare.y);
                 }
             }
         }
     }
 
-    private int weight(Field inputField, int x, int y)
-    {
+    private int weight(Field inputField, int x, int y) {
         return Math.abs(inputField.x - x) + Math.abs(inputField.y - y);
     }
 
-    
-
-    public boolean verifyOpPieceIsOnField(Field field) throws InterruptedException, IOException
-    {
-        if(checkAllegiance(field, true))
-        {
-            if(field.getPieceOnField().isMoveable)
-            {
-                if(isFieldEmptyOnBoard(field.x, field.y))
-                {
-                    return false;
-                }else
-                {
-                    return true;
-                }
+    public final boolean verifyOpPieceIsOnField(Field field) throws
+    InterruptedException, IOException {
+        if (checkAllegiance(field, true)) {
+            if (field.getPieceOnField().isMoveable) {
+                return !(isFieldEmptyOnBoard(field.x, field.y));
             }
         }
         return true;
@@ -222,7 +194,7 @@ public class Board {
             if(field.y == checkRow && !field.getPieceOnField().isCrowned)
             {
                 return true;
-            }    
+            }
         }
         return false;
     }
@@ -232,7 +204,7 @@ public class Board {
     {
         //latex start movePiece
         if(checkBounds(toField_x,toField_y))
-        {    
+        {
             myBoard[toField_x][toField_y].setPieceOnField(fromField.getPieceOnField());
             fromField.emptyThisField();
             analyzeFunctions.checkForUpgradeKing(myBoard[toField_x][toField_y], isSimulated);
@@ -259,7 +231,7 @@ public class Board {
     }
 
     public boolean isFieldEmptyOnBoard(int x, int y) throws InterruptedException, IOException
-    {    
+    {
         if(checkBounds(x,y)){
             char color = analyzeFunctions.getColor(x, y);
 
@@ -300,7 +272,7 @@ public class Board {
         }
         else
         {
-            field.getPieceOnField().isMoveable = checkMoveableBoolean(field, dify);    
+            field.getPieceOnField().isMoveable = checkMoveableBoolean(field, dify);
         }
     }
     //latex end
@@ -349,12 +321,12 @@ public class Board {
     //Check if a given field can jump
     //latex start checkJump
     private boolean checkJump(Field field, boolean checkForOpponent, boolean isCrowned)
-    {        
+    {
         if(checkJumpDirectionBoolean(field, -1, -1, checkForOpponent, isCrowned)||checkJumpDirectionBoolean(field, 1, -1, checkForOpponent, isCrowned)
                 ||checkJumpDirectionBoolean(field, 1, 1, checkForOpponent, isCrowned) ||checkJumpDirectionBoolean(field, -1, 1, checkForOpponent, isCrowned))
         {
             return true;
-        }        
+        }
         return false;
     }
     //latex end
@@ -407,13 +379,13 @@ public class Board {
                         if(checkAllegiance(field,false))
                         {
                             checkPiece(field, 1, true);
-                        }            
+                        }
                         //Check moveable for human
                         else if(checkAllegiance(field, true))
                         {
                             checkPiece(field, -1, false);
                         }
-                    }                
+                    }
                 }
             }
         }
@@ -444,7 +416,6 @@ public class Board {
         Button.ENTER.waitForPress();
     }
 
-    
     //Sets the colors of the human players pieces
     private void findOpponentColors()
     {
@@ -468,7 +439,7 @@ public class Board {
         boolean changer = true;
 
         for(i=0;i<8;i++)
-        {    
+        {
             //Change direction of the robot, to minimize robot movement
             if(changer)
             {
