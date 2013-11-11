@@ -4,9 +4,13 @@ import customExceptions.IllegalMove;
 import customExceptions.NoKingLeft;
 import lejos.nxt.Button;
 
-public class SW508E13 {
+public final class SW508E13 {
 
-    public static void main (String[] args)
+    private SW508E13() {
+        throw new AssertionError();
+    }
+
+    public static void main(String[] args)
             throws IOException, NoKingLeft, InterruptedException {
         RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
         MI mi = new MI(checkTopFunc);
@@ -27,12 +31,13 @@ public class SW508E13 {
                     if (bestMove != null) {
                         mi.remoteNXT.doMove(bestMove);
                         mi.scanPieces(1);
-                        Button.ENTER.waitForAnyPress();
+                        Button.waitForAnyPress();
                         mi.scanPieces(0);
                     }
                     checkTopFunc.resetAfterMove();
 
-                    if (!mi.remoteNXT.checkersBoard.analyzeFunctions.checkForGameHasEnded(true)) {
+                    if (!mi.remoteNXT.checkersBoard.
+                            analyzeFunctions.checkForGameHasEnded(true)) {
                         mi.remoteNXT.checkersBoard.informer.playYourTurn();
                     }
                 }
