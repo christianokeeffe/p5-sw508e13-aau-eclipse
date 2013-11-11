@@ -1,5 +1,5 @@
 package custom.Exceptions;
 
-public class NoKingLeft extends Exception{
+public class NoKingLeft extends Exception {
 
 }
