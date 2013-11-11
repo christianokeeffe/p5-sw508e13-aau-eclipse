@@ -2,8 +2,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+
 import lejos.nxt.Sound;
-import customExceptions.NoKingLeft;
+import custom.Exceptions.NoKingLeft;
 
 
 public class MI {

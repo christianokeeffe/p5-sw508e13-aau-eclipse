@@ -1,7 +1,7 @@
 import java.io.IOException;
 
-import customExceptions.IllegalMove;
-import customExceptions.NoKingLeft;
+import custom.Exceptions.IllegalMove;
+import custom.Exceptions.NoKingLeft;
 import lejos.nxt.Button;
 
 public final class SW508E13 {
