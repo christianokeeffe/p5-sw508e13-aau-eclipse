@@ -20,25 +20,25 @@ public class SW508E13 {
         while (!Button.ESCAPE.isDown()) {
             checkTopFunc.waitForRedButton();
             try {
-                if (mi.removeNXT.checkersBoard.analyzeFunctions.analyzeBoard())
+                if (mi.remoteNXT.checkersBoard.analyzeFunctions.analyzeBoard())
                 {
                     bestMove = mi.lookForBestMove();
 
                     if (bestMove != null) {
-                        mi.removeNXT.doMove(bestMove);
+                        mi.remoteNXT.doMove(bestMove);
                         mi.scanPieces(1);
                         Button.ENTER.waitForAnyPress();
                         mi.scanPieces(0);
                     }
                     checkTopFunc.resetAfterMove();
 
-                    if (!mi.removeNXT.checkersBoard.analyzeFunctions.checkForGameHasEnded(true)) {
-                        mi.removeNXT.checkersBoard.informer.playYourTurn();
+                    if (!mi.remoteNXT.checkersBoard.analyzeFunctions.checkForGameHasEnded(true)) {
+                        mi.remoteNXT.checkersBoard.informer.playYourTurn();
                     }
                 }
 
             } catch (IllegalMove e) {
-                mi.removeNXT.checkersBoard.informer.illeagalMove();
+                mi.remoteNXT.checkersBoard.informer.illeagalMove();
             }
         }
         /*FakeMI fm1 = new FakeMI(checkTopFunc,true);
