@@ -178,21 +178,16 @@ public class Board {
         return true;
     }
 
-    public boolean peasentIsOnEndRow(Field field)
-    {
-        if(!field.isEmpty()){
+    public final boolean peasentIsOnEndRow(Field field) {
+        if (!field.isEmpty()) {
             int checkRow;
-            if(checkAllegiance(field, true))
-            {
+            if (checkAllegiance(field, true)) {
                 checkRow = 0;
-            }
-            else
-            {
+            } else {
                 checkRow = 7;
             }
 
-            if(field.y == checkRow && !field.getPieceOnField().isCrowned)
-            {
+            if (field.y == checkRow && !field.getPieceOnField().isCrowned) {
                 return true;
             }
         }
@@ -200,14 +195,15 @@ public class Board {
     }
 
     //Moves a piece in the board representation
-    public void movePieceInRepresentation(Field fromField, int toField_x, int toField_y, boolean isSimulated) throws NoKingLeft, IOException
+    public final void movePieceInRepresentation(Field fromField, int toFieldX,
+            int toField_y, boolean isSimulated) throws NoKingLeft, IOException
     {
         //latex start movePiece
-        if(checkBounds(toField_x,toField_y))
+        if(checkBounds(toFieldX,toField_y))
         {
-            myBoard[toField_x][toField_y].setPieceOnField(fromField.getPieceOnField());
+            myBoard[toFieldX][toField_y].setPieceOnField(fromField.getPieceOnField());
             fromField.emptyThisField();
-            analyzeFunctions.checkForUpgradeKing(myBoard[toField_x][toField_y], isSimulated);
+            analyzeFunctions.checkForUpgradeKing(myBoard[toFieldX][toField_y], isSimulated);
         }
         else
         {
