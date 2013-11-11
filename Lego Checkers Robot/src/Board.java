@@ -2,7 +2,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import customExceptions.NoKingLeft;
+import custom.Exceptions.NoKingLeft;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 
@@ -196,119 +196,88 @@ public class Board {
 
     //Moves a piece in the board representation
     public final void movePieceInRepresentation(Field fromField, int toFieldX,
-            int toField_y, boolean isSimulated) throws NoKingLeft, IOException
-    {
+            int toFieldY, boolean isSimulated) throws NoKingLeft, IOException {
         //latex start movePiece
-        if(checkBounds(toFieldX,toField_y))
-        {
-            myBoard[toFieldX][toField_y].setPieceOnField(fromField.getPieceOnField());
+        if (checkBounds(toFieldX, toFieldY)) {
+            myBoard[toFieldX][toFieldY].
+                setPieceOnField(fromField.getPieceOnField());
             fromField.emptyThisField();
-            analyzeFunctions.checkForUpgradeKing(myBoard[toFieldX][toField_y], isSimulated);
-        }
-        else
-        {
+            analyzeFunctions.checkForUpgradeKing(
+                    myBoard[toFieldX][toFieldY], isSimulated);
+        } else {
             myBoard[fromField.x][fromField.y].emptyThisField();
         }
         //latex end
     }
 
-    public void movePieceInRepresentation(Field FromField, Field ToField, boolean isSimulated) throws NoKingLeft, IOException
-    {
-        movePieceInRepresentation(FromField, ToField.x, ToField.y, isSimulated);
+    public final void movePieceInRepresentation(Field fromField,
+            Field toField, boolean isSimulated) throws NoKingLeft, IOException {
+        movePieceInRepresentation(fromField, toField.x, toField.y, isSimulated);
     }
 
     //Check if field has been occupied
-    public boolean checkMoveDirection(Field field, int directX, int directY) throws InterruptedException, IOException
-    {
-        if(!fieldOccupied(field.x+directX,field.y+directY) && !this.isFieldEmptyOnBoard(field.x+directX, field.y+directY))
-            return true;
-        else
-            return false;
+    public final boolean checkMoveDirection(Field field,
+            int directX, int directY) throws InterruptedException, IOException {
+        return (!fieldOccupied(field.x + directX, field.y + directY)
+            && !this.isFieldEmptyOnBoard(field.x + directX, field.y + directY));
     }
 
-    public boolean isFieldEmptyOnBoard(int x, int y) throws InterruptedException, IOException
-    {
-        if(checkBounds(x,y)){
+    public final boolean isFieldEmptyOnBoard(int x, int y)
+            throws InterruptedException, IOException {
+        if (checkBounds(x, y)) {
             char color = analyzeFunctions.getColor(x, y);
 
-            if(color == ' ')
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        else
+            return color == ' ';
+        } else {
             return false;
+        }
     }
 
-    public boolean fieldOccupied(int x, int y)
-    {
-        if(checkBounds(x,y))
-        {
+    public final boolean fieldOccupied(int x, int y) {
+        if (checkBounds(x, y)) {
             return !myBoard[x][y].isEmpty();
-        }
-        else
-        {
+        } else {
             return true;
         }
     }
 
     //Check if a piece can move and is jumpable
     //latex start checkPiece
-    private void checkPiece(Field field, int dify, boolean checkForOpponent)
-    {
-        field.getPieceOnField().canJump = checkJump(field, checkForOpponent, field.getPieceOnField().isCrowned);
+    private void checkPiece(Field field, int dify, boolean checkForOpponent) {
+        field.getPieceOnField().canJump = checkJump(field,
+                checkForOpponent, field.getPieceOnField().isCrowned);
 
-        if(field.getPieceOnField().canJump)
-        {
+        if (field.getPieceOnField().canJump) {
             field.getPieceOnField().isMoveable = true;
-        }
-        else
-        {
-            field.getPieceOnField().isMoveable = checkMoveableBoolean(field, dify);
+        } else {
+            field.getPieceOnField().isMoveable =
+                    checkMoveableBoolean(field, dify);
         }
     }
     //latex end
 
-    private boolean checkMoveableBoolean(Field field, int dif)
-    {
-        if(checkMoveable(field, dif).isEmpty())
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+    private boolean checkMoveableBoolean(Field field, int dif) {
+        return !checkMoveable(field, dif).isEmpty();
     }
 
     //Checks if a given field is movable
-    public List<Field> checkMoveable(Field field, int dif)
-    {
+    public final List<Field> checkMoveable(Field field, int dif) {
         List<Field> possibleMoves = new ArrayList<Field>();
 
         //Check forward
-        if(!this.fieldOccupied(field.x-1, field.y+dif))
-        {
-            possibleMoves.add(myBoard[field.x-1][field.y+dif]);
+        if (!this.fieldOccupied(field.x - 1, field.y + dif)) {
+            possibleMoves.add(myBoard[field.x - 1][field.y + dif]);
         }
-        if(!this.fieldOccupied(field.x+1, field.y+dif))
-        {
-            possibleMoves.add(myBoard[field.x+1][field.y+dif]);
+        if (!this.fieldOccupied(field.x + 1, field.y + dif)) {
+            possibleMoves.add(myBoard[field.x + 1][field.y + dif]);
         }
         //if king, check backwards also
-        if(field.getPieceOnField().isCrowned)
-        {
-            if(!this.fieldOccupied(field.x - 1, field.y - dif))
-            {
-                possibleMoves.add(myBoard[field.x-1][field.y-dif]);
+        if (field.getPieceOnField().isCrowned) {
+            if (!this.fieldOccupied(field.x - 1, field.y - dif)) {
+                possibleMoves.add(myBoard[field.x - 1][field.y - dif]);
             }
-            if(!this.fieldOccupied(field.x + 1, field.y - dif))
-            {
-                possibleMoves.add(myBoard[field.x+1][field.y-dif]);
+            if (!this.fieldOccupied(field.x + 1, field.y - dif)) {
+                possibleMoves.add(myBoard[field.x + 1][field.y - dif]);
             }
         }
         return possibleMoves;
@@ -316,31 +285,35 @@ public class Board {
 
     //Check if a given field can jump
     //latex start checkJump
-    private boolean checkJump(Field field, boolean checkForOpponent, boolean isCrowned)
-    {
-        if(checkJumpDirectionBoolean(field, -1, -1, checkForOpponent, isCrowned)||checkJumpDirectionBoolean(field, 1, -1, checkForOpponent, isCrowned)
-                ||checkJumpDirectionBoolean(field, 1, 1, checkForOpponent, isCrowned) ||checkJumpDirectionBoolean(field, -1, 1, checkForOpponent, isCrowned))
-        {
-            return true;
-        }
-        return false;
+    private boolean checkJump(Field field,
+            boolean checkForOpponent, boolean isCrowned) {
+        return (checkJumpDirectionBoolean(field, -1, -1,
+                        checkForOpponent, isCrowned)
+                || checkJumpDirectionBoolean(field, 1, -1,
+                        checkForOpponent, isCrowned)
+                || checkJumpDirectionBoolean(field, 1, 1,
+                        checkForOpponent, isCrowned)
+                || checkJumpDirectionBoolean(field, -1, 1,
+                        checkForOpponent, isCrowned));
     }
     //latex end
 
     //Checks jumps
     //latex start jumpDirection
-    public Field checkJumpDirection(Field field, int difx, int dify, boolean checkForOpponent, boolean isCrowned)
-    {
-        if(((checkForOpponent && dify == -1)||(!checkForOpponent && dify == 1)) && !isCrowned)
+    public final Field checkJumpDirection(Field field, int difx,
+            int dify, boolean checkForOpponent, boolean isCrowned) {
+        if (((checkForOpponent && dify == -1)
+                || (!checkForOpponent && dify == 1)) && !isCrowned) {
             return null;
+        }
 
-        if(checkBounds(field.x+2*difx,field.y+2*dify))
-        {
-            if(!myBoard[field.x+2*difx][field.y+2*dify].visited)
-            {
-                if(checkAllegiance(myBoard[field.x+difx][field.y+dify], checkForOpponent) && !this.fieldOccupied(field.x+2*difx, field.y+2*dify))
-                {
-                    return myBoard[field.x+2*difx][field.y+2*dify];
+        if (checkBounds(field.x + 2 * difx, field.y + 2 * dify)) {
+            if (!myBoard[field.x + 2 * difx][field.y + 2 * dify].visited) {
+                if (checkAllegiance(
+                      myBoard[field.x + difx][field.y + dify], checkForOpponent)
+                      && !this.fieldOccupied(
+                      field.x + 2 * difx, field.y + 2 * dify)) {
+                    return myBoard[field.x + 2 * difx][field.y + 2 * dify];
                 }
             }
         }
@@ -348,37 +321,25 @@ public class Board {
     }
     //latex end
 
-    private boolean checkJumpDirectionBoolean(Field field, int difx, int dify, boolean checkForOpponent, boolean isCrowned)
-    {
-        if(checkJumpDirection(field, difx, dify, checkForOpponent, isCrowned) == null)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+    private boolean checkJumpDirectionBoolean(Field field,
+            int difx, int dify, boolean checkForOpponent, boolean isCrowned) {
+        return !(checkJumpDirection(field, difx, dify,
+                checkForOpponent, isCrowned) == null);
     }
 
     //Updates the moveable property on each piece
-    public void updateMoveables()
-    {
+    public final void updateMoveables() {
         resetVisited();
-        for(Field[] f : myBoard)
-        {
-            for(Field field : f)
-            {
-                if(field.allowedField)
-                {
-                    //Check moveables for robot
-                    if(field.getPieceOnField() != null){
-                        if(checkAllegiance(field,false))
-                        {
+        for (Field[] f : myBoard) {
+            for (Field field : f) {
+                if (field.allowedField) {
+                    if (field.getPieceOnField() != null) {
+                        //Check moveables for robot
+                        if (checkAllegiance(field, false)) {
                             checkPiece(field, 1, true);
-                        }
+
                         //Check moveable for human
-                        else if(checkAllegiance(field, true))
-                        {
+                        } else if (checkAllegiance(field, true)) {
                             checkPiece(field, -1, false);
                         }
                     }
@@ -388,40 +349,12 @@ public class Board {
         resetVisited();
     }
 
-    private void printValues(Field field){
-        boolean moveable = field.getPieceOnField().isMoveable;
-        boolean canJump = field.getPieceOnField().canJump;
-        int x = field.getPieceOnField().x;
-        int y = field.getPieceOnField().y;
-
-        LCD.drawInt(x, 0, 0);
-        LCD.drawInt(y, 2, 0);
-        if(moveable){
-            LCD.drawString("moveable = true", 0, 1);
-        }
-        else{
-            LCD.drawString("moveable = false", 0, 1);
-        }
-        if(canJump){
-            LCD.drawString("canJump = true", 0, 2);
-        }
-        else{
-            LCD.drawString("canJump = false", 0, 2);
-        }
-        LCD.refresh();
-        Button.ENTER.waitForPress();
-    }
-
     //Sets the colors of the human players pieces
-    private void findOpponentColors()
-    {
-        if(myPeasentColor == 'r')
-        {
+    private void findOpponentColors() {
+        if (myPeasentColor == 'r') {
             opponentPeasentColor = 'w';
             opponentKingColor = 'g';
-        }
-        else
-        {
+        } else {
             opponentPeasentColor = 'r';
             opponentKingColor = 'b';
         }
@@ -429,31 +362,23 @@ public class Board {
 
 
     //if a piece is missing, scan whole board
-    public void findMissingPiece() throws InterruptedException, IOException
-    {
-        int i,j;
+    public final void findMissingPiece()
+            throws InterruptedException, IOException {
+        int i, j;
         boolean changer = true;
 
-        for(i=0;i<8;i++)
-        {
+        for (i = 0; i < 8; i++) {
             //Change direction of the robot, to minimize robot movement
-            if(changer)
-            {
-                for(j=0;j<8;j++)
-                {
-                    if((i+j)%2 == 1)
-                    {
+            if (changer) {
+                for (j = 0; j < 8; j++) {
+                    if ((i + j) % 2 == 1) {
                         myBoard[i][j].setPieceOnField(getPiece(i, j));
                     }
                 }
                 changer = false;
-            }
-            else
-            {
-                for(j=7;j>=0;j--)
-                {
-                    if((i+j)%2 == 1)
-                    {
+            } else {
+                for (j = 7; j >= 0; j--) {
+                    if ((i + j) % 2 == 1) {
                         myBoard[i][j].setPieceOnField(getPiece(i, j));
                     }
                 }
@@ -467,12 +392,9 @@ public class Board {
     //Get piece on given position
     private Piece getPiece(int x, int y) throws IOException{
         char color = analyzeFunctions.getColor(x, y);
-        if(color == ' ')
-        {
+        if (color == ' ') {
             return null;
-        }
-        else
-        {
+        } else {
             Piece temp = new Piece();
             temp.color = color;
             temp.isCrowned = (color == 'g' || color == 'b');
@@ -481,16 +403,16 @@ public class Board {
     }
 
     //Check if a given piece is the robots or the opponents
-    public boolean checkAllegiance(Field input, boolean checkForOpponent)
+    public final boolean checkAllegiance(Field input, boolean checkForOpponent)
     {
-        if(checkBounds(input.x, input.y))
-        {
-            if((input.isPieceOfColor(myPeasentColor) || input.isPieceOfColor(myKingColor)) && !checkForOpponent)
-            {
+        if (checkBounds(input.x, input.y)) {
+            if ((input.isPieceOfColor(myPeasentColor)
+                   || input.isPieceOfColor(myKingColor)) && !checkForOpponent) {
                 return true;
             }
-            if((input.isPieceOfColor(opponentPeasentColor) || input.isPieceOfColor(opponentKingColor)) && checkForOpponent)
-            {
+            if ((input.isPieceOfColor(opponentPeasentColor)
+                    || input.isPieceOfColor(opponentKingColor))
+                    && checkForOpponent) {
                 return true;
             }
         }
@@ -498,11 +420,7 @@ public class Board {
     }
 
     //Return true if the given position is inbounds
-    public boolean checkBounds(int x, int y)
-    {
-        if(x >= 0 && x <= 7 && y >= 0 && y <= 7)
-            return true;
-        else
-            return false;
+    public final boolean checkBounds(int x, int y) {
+        return x >= 0 && x <= 7 && y >= 0 && y <= 7;
     }
 }

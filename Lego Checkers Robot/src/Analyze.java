@@ -5,8 +5,8 @@ import java.util.Stack;
 
 import lejos.nxt.LCD;
 import lejos.robotics.Color;
-import customExceptions.IllegalMove;
-import customExceptions.NoKingLeft;
+import custom.Exceptions.IllegalMove;
+import custom.Exceptions.NoKingLeft;
 
 
 public class Analyze {
@@ -59,7 +59,7 @@ public class Analyze {
             OUTERMOST: for (Field field : moveableList) {
                 if (checkersBoard.isFieldEmptyOnBoard(field.x, field.y)) {
                     if (mustJump && !field.getPieceOnField().canJump) {
-                        throw new customExceptions.IllegalMove();
+                        throw new custom.Exceptions.IllegalMove();
                     }
 
                     if (this.trackMovement(field)) {
@@ -105,7 +105,7 @@ public class Analyze {
                 pieceFound = true;
             }
             if (!pieceFound) {
-                throw new customExceptions.IllegalMove();
+                throw new custom.Exceptions.IllegalMove();
             }
         } else if (checkMove(field, -1)) {
             pieceFound = true;
@@ -287,7 +287,7 @@ public class Analyze {
                     int i = 0;
                     while (!foundOne) {
                         if (i > 7) {
-                            throw new customExceptions.NoKingLeft();
+                            throw new custom.Exceptions.NoKingLeft();
                         }
                         if (!checkersBoard.kingPlace[i].isEmpty()) {
                             //Move old piece to trash

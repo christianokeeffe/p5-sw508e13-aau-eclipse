@@ -6,7 +6,7 @@ import java.util.Stack;
 
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
-import customExceptions.NoKingLeft;
+import custom.Exceptions.NoKingLeft;
 
 //This is a test class to emulate a MI, not suppose to be part of the release
 public class FakeMI {
