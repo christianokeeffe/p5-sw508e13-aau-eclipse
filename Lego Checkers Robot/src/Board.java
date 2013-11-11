@@ -390,7 +390,7 @@ public class Board {
     }
 
     //Get piece on given position
-    private Piece getPiece(int x, int y) throws IOException{
+    private Piece getPiece(int x, int y) throws IOException {
         char color = analyzeFunctions.getColor(x, y);
         if (color == ' ') {
             return null;
