@@ -56,6 +56,11 @@ public class MI {
 
         Move bestMove = new Move();
         double price = -inf, tempPrice;
+        
+        if(posMoves.size() == 1) {
+            return posMoves.get(0);
+        }
+        
         for (Move move : posMoves) {
             revertAllMoves();
             simulateMove(move);
