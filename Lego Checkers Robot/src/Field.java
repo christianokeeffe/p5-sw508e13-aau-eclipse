@@ -7,13 +7,13 @@ public class Field {
     public int y;
     private Piece pieceOnField = null;
     public Field() { };
-    public Field(final int inputx, final int inputy) {
+    public Field(int inputx, int inputy) {
         x = inputx;
         y = inputy;
     }
 
-    //Get and Set to access to private variable pieceOnField. 
-    //Updates the coordinates of an piece when assigned to a field. 
+    //Get and Set to access to private variable pieceOnField.
+    //Updates the coordinates of an piece when assigned to a field.
     public final void setPieceOnField(Piece inputPiece) {
         pieceOnField = inputPiece;
         if (!isEmpty()) {
@@ -31,21 +31,19 @@ public class Field {
         return !(pieceOnField != null);
     }
 
-    //Returns true if there is a piece on the field, and the piece is of the given color.
-    public boolean isPieceOfColor(char input){
-        if(isEmpty()){
+    //Returns true if there is a piece on the field,
+    //and the piece is of the given color.
+    public final boolean isPieceOfColor(char input) {
+        if (isEmpty()) {
             return false;
-        }
-        else{
-            if(pieceOnField.color == input){
-                return true;
-            }else{
-                return false;
-            }
+        } else if (pieceOnField.color != input) {
+            return false;
+        } else {
+            return true;
         }
     }
 
-    //Empty the field, by deassigning the piece of the field.
+    //Empty the field, by de-assigning the piece of the field.
     public final void emptyThisField() {
         pieceOnField = null;
     }
