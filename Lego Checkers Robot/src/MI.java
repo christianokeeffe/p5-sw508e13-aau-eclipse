@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import lejos.nxt.Button;
 import customExceptions.NoKingLeft;
 
 
@@ -216,7 +217,7 @@ public class MI {
             for (int i = 0; i < stop; i++) {
                 move.moves.push(tempStack.pop());
             }
-
+            
             simulatedMoves.push(move);
         }
     }
@@ -265,12 +266,14 @@ public class MI {
                 }
                 tempMoves.push(tempMove);
             }
+            
+            
 
             stop = tempMoves.size();
             for (int j = 0; j < stop; j++) {
                 temp.moves.push(tempMoves.pop());
             }
-
+            temp.moves = flipStack(temp.moves);
             stop = temp.takenPieces.size();
 
             for (int i = 0; i < stop; i++) {
