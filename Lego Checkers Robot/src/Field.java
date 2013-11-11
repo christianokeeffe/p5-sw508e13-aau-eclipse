@@ -32,8 +32,17 @@ public class Field {
     }
 
     //Returns true if there is a piece on the field, and the piece is of the given color.
-    public final boolean isPieceOfColor(char input) {
-        return !isEmpty();
+    public boolean isPieceOfColor(char input){
+        if(isEmpty()){
+            return false;
+        }
+        else{
+            if(pieceOnField.color == input){
+                return true;
+            }else{
+                return false;
+            }
+        }
     }
 
     //Empty the field, by deassigning the piece of the field.
