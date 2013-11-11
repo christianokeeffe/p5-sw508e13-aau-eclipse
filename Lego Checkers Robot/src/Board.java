@@ -12,7 +12,7 @@ public class Board {
     public Field[] kingPlace = new Field[8];
     public Analyze analyzeFunctions;
 
-    public communication informer = new communication();
+    public Communication informer = new Communication();
 
     char myPeasentColor, myKingColor, opponentPeasentColor, opponentKingColor;
 
