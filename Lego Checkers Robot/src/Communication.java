@@ -1,5 +1,7 @@
 import lejos.nxt.LCD;
+
 import lejos.nxt.Sound;
+
 
 public class Communication {
     public final void playYourTurn() {
