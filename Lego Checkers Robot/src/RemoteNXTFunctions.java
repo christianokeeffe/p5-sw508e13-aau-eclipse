@@ -18,12 +18,14 @@ import lejos.util.Delay;
 
 public class RemoteNXTFunctions {
     RemoteNXT bottomNXT = null;
-    //Each of the factor variables determines how far the motor associated with that axis will move. 
-    private static final int yFactor = -268;
-    private static final int xFactor = -228;
-    private static final int zFactor = 674;
-    //The displacement is multiplied with the yFactor to place the magnet on the right field.
-    private static final double displacementFactorY = 4.7;
+    //Each of the factor variables determines
+    //how far the motor associated with that axis will move.
+    private static final int Y_FACTOR = -268;
+    private static final int X_FACTOR = -228;
+    private static final int Z_FACTOR = 674;
+    //The displacement is multiplied with the
+    //Y_FACTOR to place the magnet on the right field.
+    private static final double DISPLACEMENT_FACTOR_Y = 4.7;
     private int presentY = 0;
     private int presentX = 0;
     private int presentZ = 0;
@@ -36,10 +38,10 @@ public class RemoteNXTFunctions {
     private NXTMotor electromagnet;
     private NXTRegulatedMotor motorZ;
     private NXTRegulatedMotor motorX;
-    public Field trashField = new Field(3,-6);
+    public Field trashField = new Field(3, -6);
     private TouchSensor bigRedButton;
 
-    public RemoteNXTFunctions() throws InterruptedException, IOException{
+    public RemoteNXTFunctions() throws InterruptedException, IOException {
         connect();
         motorZ = new NXTRegulatedMotor(MotorPort.A);
         motorX = new NXTRegulatedMotor(MotorPort.B);
@@ -59,131 +61,119 @@ public class RemoteNXTFunctions {
     }
 
     //The Color sensor is calibrated
-    public void initColorSensor() throws IOException
-    {
+    public final void initColorSensor() throws IOException {
         getColorOnField(0, 3);
         Delay.msDelay(250);
-        boardColorSensor.calibrateLow();;
+        boardColorSensor.calibrateLow();
         Delay.msDelay(250);
         getColorOnField(0, 2);
         Delay.msDelay(250);
-        boardColorSensor.calibrateHigh();;
+        boardColorSensor.calibrateHigh();
         Delay.msDelay(250);
     }
 
-    public void waitForRedButton()
-    {
+    public final void waitForRedButton() {
         boolean checkButton = true;
-        while(checkButton)
-        {
-            if(bigRedButton.isPressed())
-            {
+        while (checkButton) {
+            if (bigRedButton.isPressed()) {
                 checkButton = false;
             }
         }
     }
 
-    public Color getColorOnField (int x, int y) throws IOException{
+    public final Color getColorOnField(int x, int y) throws IOException {
         moveSensorTo(x, y, false);
         return boardColorSensor.getColor();
     }
 
-    private void moveZTo(double pos)
-    {
-        motorZ.rotate((int)(pos*zFactor-presentZ), false);
-        presentZ = (int)(pos*zFactor);
+    private void moveZTo(double pos) {
+        motorZ.rotate((int) (pos * Z_FACTOR - presentZ), false);
+        presentZ = (int) (pos * Z_FACTOR);
     }
 
-    public void resetAfterMove() throws IOException
-    {
+    public final void resetAfterMove() throws IOException {
         moveSensorTo(1, -2, false);
     }
 
     //latex start movePiece
-    private void movePiece(Field FromField, Field ToField) throws IOException, NoKingLeft
-    {
-        moveSensorTo(FromField.x,FromField.y,true);
+    private void movePiece(Field fromField, Field toField)
+            throws IOException, NoKingLeft {
+        moveSensorTo(fromField.x, fromField.y, true);
         Delay.msDelay(500);
         moveZTo(1);
         electromagnet.setPower(100);
         Delay.msDelay(100);
-        if(ToField == trashField)
-        {
+        if (toField == trashField) {
             moveZTo(0);
-        }
-        else
-        {
+        } else {
             moveZTo(0.5);
         }
-        moveSensorTo(ToField.x,ToField.y,true);
+        moveSensorTo(toField.x, toField.y, true);
         Delay.msDelay(500);
-        if(ToField != trashField)
-        {
+        if (toField != trashField) {
             moveZTo(1);
         }
         electromagnet.setPower(0);
         moveZTo(0);
 
-        checkersBoard.movePieceInRepresentation(FromField, ToField, false);
+        checkersBoard.movePieceInRepresentation(fromField, toField, false);
     }
     //latex end
-    
-    public void trashPieceOnField(Field field) throws IOException, NoKingLeft
-    {
-        if(field.getPieceOnField().isCrowned && checkersBoard.checkAllegiance(field, true))
-        {
-            int j = checkersBoard.kingPlace.length-1;
-            OUTERMOST:while(j >= 0)
-            {
-                if(checkersBoard.kingPlace[j].isEmpty())
+
+    public final void trashPieceOnField(Field field)
+            throws IOException, NoKingLeft {
+        if (field.getPieceOnField().isCrowned
+                && checkersBoard.checkAllegiance(field, true)) {
+            int j = checkersBoard.kingPlace.length - 1;
+            OUTERMOST: while (j >= 0) {
+                if (checkersBoard.kingPlace[j].isEmpty()) {
                     break OUTERMOST;
+                }
                 j--;
             }
-            if(j < 0)
+            if (j < 0) {
                 movePiece(field, trashField);
-            else
+            } else {
                 movePiece(field, checkersBoard.kingPlace[j]);
-        }
-        else
-        {
+            }
+        } else {
             movePiece(field, trashField);
         }
     }
 
-    public void doMove(Move move) throws IOException, NoKingLeft
-    {
+    public final void doMove(Move move) throws IOException, NoKingLeft {
         List<Field> takenPieces = new ArrayList<Field>();
 
-        int stop = move.moves.size()-1;
-        for(int i = 0; i < stop; i++)
-        {
-            Field jumpedField = movePieceOverField(move.moves.pop(),move.moves.peek());
-            if(jumpedField != null){
+        int stop = move.moves.size() - 1;
+        for (int i = 0; i < stop; i++) {
+            Field jumpedField = movePieceOverField(move.moves.pop(),
+                                                   move.moves.peek());
+            if (jumpedField != null) {
                 takenPieces.add(jumpedField);
             }
         }
 
-        for(int i = 0; i < takenPieces.size(); i++)
+        for (int i = 0; i < takenPieces.size(); i++) {
             trashPieceOnField(takenPieces.get(i));
+        }
     }
 
-    private Field movePieceOverField(Field fromField, Field toField) throws IOException, NoKingLeft{
+    private Field movePieceOverField(Field fromField, Field toField)
+            throws IOException, NoKingLeft {
         movePiece(fromField, toField);
 
-        if(Math.abs(fromField.x - toField.x) == 2){
-
-            return checkersBoard.myBoard[(fromField.x + toField.x)/2][(fromField.y + toField.y)/2];
-        }
-        else
-        {
+        if (Math.abs(fromField.x - toField.x) == 2) {
+            return checkersBoard.myBoard[(fromField.x + toField.x) / 2]
+                                        [(fromField.y + toField.y) / 2];
+        } else {
             return null;
         }
     }
     //latex start MoveSensor
-    private void moveSensorTo(int x, int y, boolean goToMagnet) throws IOException
-    {
+    private void moveSensorTo(int x, int y, boolean goToMagnet)
+            throws IOException {
         adjustAngleAxisX(x, goToMagnet);
-        moveMotorsAxisY(y,goToMagnet);
+        moveMotorsAxisY(y, goToMagnet);
 
         bottomNXT.A.waitComplete();
         bottomNXT.B.waitComplete();
@@ -191,30 +181,30 @@ public class RemoteNXTFunctions {
     }
     //latex end
 
-    private void moveMotorsAxisY(int y, boolean GoToMagnet)
-    {
+    private void moveMotorsAxisY(int y, boolean goToMagnet) {
         int displacement = 0;
-        if(GoToMagnet == true){
-            displacement =  (int) (yFactor*displacementFactorY);
+        if (goToMagnet) {
+            displacement =  (int) (Y_FACTOR * DISPLACEMENT_FACTOR_Y);
         }
-        adjustAngleAxisY(y*yFactor-presentY+displacement);
+        adjustAngleAxisY(y * Y_FACTOR - presentY + displacement);
 
-        presentY = y*yFactor+displacement;
+        presentY = y * Y_FACTOR + displacement;
     }
 
-    private void adjustAngleAxisX(int angle, boolean goToMagnet) throws IOException{
-        motorX.rotate(angle*xFactor-presentX, true);
-        presentX = angle*xFactor;
+    private void adjustAngleAxisX(int angle, boolean goToMagnet)
+            throws IOException {
+        motorX.rotate(angle * X_FACTOR - presentX, true);
+        presentX = angle * X_FACTOR;
     }
 
     //latex start slaveNXT
-    private void adjustAngleAxisY(int angle){
+    private void adjustAngleAxisY(int angle) {
         bottomNXT.A.rotate(angle, true);
-        bottomNXT.B.rotate(angle,true);
+        bottomNXT.B.rotate(angle, true);
     }
     //latex end
 
-    private void startMotorsReset(){
+    private void startMotorsReset() {
         bottomNXT.A.setAcceleration(6000);
         bottomNXT.B.setAcceleration(6000);
         motorZ.setSpeed(150);
@@ -224,7 +214,7 @@ public class RemoteNXTFunctions {
 
         motorX.backward();
         bottomNXT.A.backward();
-        bottomNXT.B.backward();    
+        bottomNXT.B.backward();
         motorZ.forward();
         Delay.msDelay(1000);
 
@@ -234,7 +224,7 @@ public class RemoteNXTFunctions {
         bottomNXT.B.forward();
     }
 
-    private void stopMotorsReset(){
+    private void stopMotorsReset() {
         motorX.stop();
         motorZ.stop();
         bottomNXT.A.stop();
@@ -251,20 +241,20 @@ public class RemoteNXTFunctions {
         bottomNXT.B.setAcceleration(300);
     }
     //Resets the motors to their starting positions
-    public void resetMotors(){
+    public final void resetMotors() {
         startMotorsReset();
-        while(!touchSensorX.isPressed() || !touchSensorZ.isPressed()|| !touchSensorY1.isPressed()|| !touchSensorY2.isPressed())
-        {
-            if(touchSensorX.isPressed()){
+        while (!touchSensorX.isPressed() || !touchSensorZ.isPressed()
+               || !touchSensorY1.isPressed() || !touchSensorY2.isPressed()) {
+            if (touchSensorX.isPressed()) {
                 motorX.stop();
             }
-            if(touchSensorZ.isPressed()){
+            if (touchSensorZ.isPressed()) {
                 motorZ.stop();
             }
-            if(touchSensorY1.isPressed()){
+            if (touchSensorY1.isPressed()) {
                 bottomNXT.A.stop();
             }
-            if(touchSensorY2.isPressed()){
+            if (touchSensorY2.isPressed()) {
                 bottomNXT.B.stop();
             }
         }
@@ -273,18 +263,18 @@ public class RemoteNXTFunctions {
         stopMotorsReset();
     }
     //latex start connect
-    private void connect() throws InterruptedException{
+    private void connect() throws InterruptedException {
         // Now connect
         try {
             LCD.clear();
-            LCD.drawString("Connecting...",0,0);
+            LCD.drawString("Connecting...", 0, 0);
             bottomNXT = new RemoteNXT("CheckBottom", Bluetooth.getConnector());
             LCD.clear();
-            LCD.drawString("Connected",0,1);
+            LCD.drawString("Connected", 0, 1);
             Thread.sleep(2000);
         } catch (IOException ioe) {
             LCD.clear();
-            LCD.drawString("Conn Failed",0,0);
+            LCD.drawString("Conn Failed", 0, 0);
             Thread.sleep(2000);
             System.exit(1);
         }
