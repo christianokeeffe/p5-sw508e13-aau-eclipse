@@ -85,7 +85,8 @@ public class MI {
 
     public final double negaMax(int depth, int turn, double alpha, double beta)
             throws NoKingLeft, IOException, InterruptedException {
-        if (depth == 0) {
+        if (depth == 0 
+                || remoteNXT.checkersBoard.analyzeFunctions.gameHasEnded(1 == turn) !=0) {
             return turn * evaluation(turn);
         }
         List<Move> moves;
