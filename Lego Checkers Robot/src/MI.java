@@ -8,12 +8,12 @@ import customExceptions.NoKingLeft;
 
 
 public class MI {
-    public RemoteNXTFunctions removeNXT;
+    public RemoteNXTFunctions remoteNXT;
     private final double inf = 100000.0;
 
     private Stack<Move> simulatedMoves = new Stack<Move>();
     MI(RemoteNXTFunctions remoteNXT) {
-        removeNXT = remoteNXT;
+        remoteNXT = remoteNXT;
     }
 
     /* ------------------------------------------------------------------  *
@@ -21,16 +21,16 @@ public class MI {
 
     ///Test method
     public final void scanPieces(int side) throws IOException {
-        for (Field[] f:removeNXT.checkersBoard.myBoard) {
+        for (Field[] f:remoteNXT.checkersBoard.myBoard) {
             for (Field q: f) {
                 if (!q.isEmpty()) {
                     if (side == 1) {
-                        if (removeNXT.checkersBoard.checkAllegiance(q, false)) {
-                            removeNXT.getColorOnField(q.x, q.y);
+                        if (remoteNXT.checkersBoard.checkAllegiance(q, false)) {
+                            remoteNXT.getColorOnField(q.x, q.y);
                         }
                     } else {
-                        if (removeNXT.checkersBoard.checkAllegiance(q, true)) {
-                            removeNXT.getColorOnField(q.x, q.y);
+                        if (remoteNXT.checkersBoard.checkAllegiance(q, true)) {
+                            remoteNXT.getColorOnField(q.x, q.y);
                         }
                     }
                 }
@@ -111,11 +111,11 @@ public class MI {
         int oppPieces = 0;
         int ownPieces = 0;
         double valueOfBoard = 0;
-        removeNXT.checkersBoard.updateMoveables();
-        for (Field[] f: removeNXT.checkersBoard.myBoard) {
+        remoteNXT.checkersBoard.updateMoveables();
+        for (Field[] f: remoteNXT.checkersBoard.myBoard) {
             for (Field q: f) {
                 if (!q.isEmpty()) {
-                    if (removeNXT.checkersBoard.checkAllegiance(q, false)) {
+                    if (remoteNXT.checkersBoard.checkAllegiance(q, false)) {
                         ownPieces++;
                         valueOfBoard += priceForField(q);
                     } else {
@@ -127,7 +127,7 @@ public class MI {
         }
         boolean isHuman = (turn == -1);
 
-        switch (removeNXT.checkersBoard.analyzeFunctions.gameHasEnded(isHuman)) {
+        switch (remoteNXT.checkersBoard.analyzeFunctions.gameHasEnded(isHuman)) {
         case 1:
             valueOfBoard -= gameIsWon;
             break;
@@ -156,9 +156,9 @@ public class MI {
         returnValue += valueOfPiece + middleBonus
                        - min(Math.abs(3 - field.x), Math.abs(4 - field.x));
         if (!field.getPieceOnField().isCrowned
-                && ((removeNXT.checkersBoard.checkAllegiance(field, true)
+                && ((remoteNXT.checkersBoard.checkAllegiance(field, true)
                         && field.y == 7)
-                || (removeNXT.checkersBoard.checkAllegiance(field, false)
+                || (remoteNXT.checkersBoard.checkAllegiance(field, false)
                         && field.y == 0))) {
             returnValue += backlineBonus;
         }
@@ -204,14 +204,14 @@ public class MI {
                 Field from = move.moves.pop();
                 Field to = move.moves.peek();
                 if (Math.abs(from.x - to.x) == 2) {
-                    move.takenPieces.push(removeNXT.checkersBoard.myBoard
+                    move.takenPieces.push(remoteNXT.checkersBoard.myBoard
                             [(from.x + to.x) / 2]
                             [(from.y + to.y) / 2].getPieceOnField());
-                    removeNXT.checkersBoard.myBoard
+                    remoteNXT.checkersBoard.myBoard
                             [(from.x + to.x) / 2]
                             [(from.y + to.y) / 2].setPieceOnField(null);
                 }
-                removeNXT.checkersBoard.movePieceInRepresentation(from, to, true);
+                remoteNXT.checkersBoard.movePieceInRepresentation(from, to, true);
                 tempStack.push(from);
             }
             for (int i = 0; i < stop; i++) {
@@ -250,14 +250,14 @@ public class MI {
 
             for (int j = 0; j < stop; j++) {
                 tempMove = temp.moves.pop();
-                removeNXT.checkersBoard.movePieceInRepresentation(
+                remoteNXT.checkersBoard.movePieceInRepresentation(
                         tempMove, temp.moves.peek(), true);
                 if (!tempMove.isEmpty()) {
                     if (tempMove.getPieceOnField().isCrowned && !temp.wasKingBefore) {
-                        if (removeNXT.checkersBoard.checkAllegiance(tempMove, true)) {
-                            tempMove.getPieceOnField().color = removeNXT.checkersBoard.opponentPeasentColor;
-                        } else if (removeNXT.checkersBoard.checkAllegiance(tempMove, false)) {
-                            tempMove.getPieceOnField().color = removeNXT.checkersBoard.myPeasentColor;
+                        if (remoteNXT.checkersBoard.checkAllegiance(tempMove, true)) {
+                            tempMove.getPieceOnField().color = remoteNXT.checkersBoard.opponentPeasentColor;
+                        } else if (remoteNXT.checkersBoard.checkAllegiance(tempMove, false)) {
+                            tempMove.getPieceOnField().color = remoteNXT.checkersBoard.myPeasentColor;
                         }
                         if (!tempMove.isEmpty()) {
                             tempMove.getPieceOnField().isCrowned = false;
@@ -278,7 +278,7 @@ public class MI {
 
             for (int i = 0; i < stop; i++) {
                 Piece tempPiece = temp.takenPieces.pop();
-                removeNXT.checkersBoard.myBoard[tempPiece.x][tempPiece.y].setPieceOnField(tempPiece);
+                remoteNXT.checkersBoard.myBoard[tempPiece.x][tempPiece.y].setPieceOnField(tempPiece);
             }
         }
     }
@@ -287,15 +287,15 @@ public class MI {
     private List<Move> possibleMoves(int moveForSide) throws
                     InterruptedException, IOException, NoKingLeft {
         List<Move> movements = new ArrayList<Move>();
-        removeNXT.checkersBoard.updateMoveables();
-        for (Field[] f : removeNXT.checkersBoard.myBoard) {
+        remoteNXT.checkersBoard.updateMoveables();
+        for (Field[] f : remoteNXT.checkersBoard.myBoard) {
             for (Field field : f) {
                 if (!field.isEmpty()) {
                     if (field.getPieceOnField().isMoveable
-                            && removeNXT.checkersBoard.checkAllegiance(field, moveForSide == -1)) {
+                            && remoteNXT.checkersBoard.checkAllegiance(field, moveForSide == -1)) {
                         //Jumps
                         List<Stack<Field>> listOfMoves =
-                                removeNXT.checkersBoard.analyzeFunctions.jumpSequence(
+                                remoteNXT.checkersBoard.analyzeFunctions.jumpSequence(
                                         field, moveForSide == 1,
                                         field.getPieceOnField().isCrowned);
 
@@ -308,7 +308,7 @@ public class MI {
 
                         if (!field.getPieceOnField().canJump) {
                             List<Field> possibleMoves =
-                                    removeNXT.checkersBoard.checkMoveable(field, moveForSide);
+                                    remoteNXT.checkersBoard.checkMoveable(field, moveForSide);
                             //Simple moves
                             if (!possibleMoves.isEmpty()) {
                                 for (Field posField : possibleMoves) {
@@ -325,7 +325,7 @@ public class MI {
 
 
 
-        removeNXT.checkersBoard.sortListOfMoves(movements);
+        remoteNXT.checkersBoard.sortListOfMoves(movements);
         boolean mustJump = false;
         if (movements.size() != 0) {
             mustJump = movements.get(0).isJump();
