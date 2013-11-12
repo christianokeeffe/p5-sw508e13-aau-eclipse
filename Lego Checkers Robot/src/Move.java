@@ -30,14 +30,11 @@ public class Move {
             //Field from = moves.pop();
             //Field to = moves.peek();                      ///HERE CHANGE
             //moves.push(from);
-            
-            Field to = moves.get(moves.size()-1);
-            Field from  = moves.get(moves.size()-2);
-            
-            if (Math.abs(from.x - to.x) == 2 && Math.abs(from.y - to.y) == 2) {
-                return true;
-            }
-            return false;
+
+            Field to = moves.get(0);
+            Field from  = moves.get(1);
+
+            return Math.abs(from.x - to.x) == 2 && Math.abs(from.y - to.y) == 2;
         } else {
             return false;
         }
