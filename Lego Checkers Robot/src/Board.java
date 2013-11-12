@@ -208,7 +208,8 @@ public class Board {
     //Moves a piece in the board representation
     public final void movePieceInRepresentation(Field fromField, int toFieldX,
             int toFieldY, boolean isSimulated) throws NoKingLeft, IOException {
-        movePieceInRepresentation(fromField, toFieldX, toFieldY, isSimulated);
+        movePieceInRepresentation(fromField,
+                myBoard[toFieldX][toFieldY], isSimulated);
     }
 
     public final void movePieceInRepresentation(Field fromField,
