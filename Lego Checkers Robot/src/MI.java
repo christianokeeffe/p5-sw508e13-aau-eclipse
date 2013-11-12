@@ -331,7 +331,7 @@ public class MI {
                                 }
                             }
                         }
-
+                        // Moves
                         else {
                             List<Field> possibleMoves =
                                     remoteNXT.checkersBoard.
