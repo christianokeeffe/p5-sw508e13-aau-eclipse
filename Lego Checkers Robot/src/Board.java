@@ -1,13 +1,16 @@
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
 import custom.Exceptions.NoKingLeft;
 
 public class Board {
 
     public Field[][] myBoard = new Field[8][8];
     public Field[] kingPlace = new Field[8];
-    public Field[][] trashPlace = new Field[7][2];
+    public Field[][] trashPlace = new Field[8][2];
     public Analyze analyzeFunctions;
 
     public Communication informer = new Communication();
@@ -63,6 +66,7 @@ public class Board {
         }
 
         //Set the location of the human players king pieces
+        //And Trashfield
         //latex start ConstructorKing
         for (int i = 0; i < 8; i++) {
             Field temp = new Field();
@@ -75,6 +79,14 @@ public class Board {
             kingPlace[i] = temp;
         }
         //latex end
+        for (int j = 0; j < 2; j++) {
+        for (int i = 0; i < 8; i++) {
+            Field temp = new Field();
+            temp.x = i;
+            temp.y = -3 - j;
+            trashPlace[i][j] = temp;
+        }
+        }
     }
 
     public final void resetVisited() {
@@ -196,22 +208,19 @@ public class Board {
     //Moves a piece in the board representation
     public final void movePieceInRepresentation(Field fromField, int toFieldX,
             int toFieldY, boolean isSimulated) throws NoKingLeft, IOException {
-        //latex start movePiece
-        if (checkBounds(toFieldX, toFieldY)) {
-            myBoard[toFieldX][toFieldY].
-                setPieceOnField(fromField.getPieceOnField());
-            fromField.emptyThisField();
-            analyzeFunctions.checkForUpgradeKing(
-                    myBoard[toFieldX][toFieldY], isSimulated);
-        } else {
-            myBoard[fromField.x][fromField.y].emptyThisField();
-        }
-        //latex end
+        movePieceInRepresentation(fromField, toFieldX, toFieldY, isSimulated);
     }
 
     public final void movePieceInRepresentation(Field fromField,
             Field toField, boolean isSimulated) throws NoKingLeft, IOException {
-        movePieceInRepresentation(fromField, toField.x, toField.y, isSimulated);
+        //latex start movePiece
+        toField.setPieceOnField(fromField.getPieceOnField());
+        fromField.emptyThisField();
+        if (checkBounds(toField.x, toField.y)) {
+            analyzeFunctions.checkForUpgradeKing(
+                    toField, isSimulated);
+        }
+        //latex end
     }
 
     //Check if field has been occupied
