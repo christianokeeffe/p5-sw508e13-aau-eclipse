@@ -3,6 +3,7 @@ import java.io.IOException;
 import custom.Exceptions.IllegalMove;
 import custom.Exceptions.NoKingLeft;
 import lejos.nxt.Button;
+import lejos.nxt.LCD;
 
 public final class SW508E13 {
 
@@ -15,13 +16,8 @@ public final class SW508E13 {
         RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
         MI mi = new MI(checkTopFunc);
 
-        Piece temp = new Piece();
-        temp.isCrowned = true;
-        temp.canJump = true;
-        temp.color = 'g';
-        checkTopFunc.checkersBoard.myBoard[4][7].setPieceOnField(temp);
         Move bestMove;
-        if (checkTopFunc.checkersBoard.myPeasentColor == 'r') {
+        /*if (checkTopFunc.checkersBoard.myPeasentColor == 'r') {
             bestMove = mi.lookForBestMove();
             checkTopFunc.doMove(bestMove);
             checkTopFunc.resetAfterMove();
@@ -47,17 +43,14 @@ public final class SW508E13 {
             } catch (IllegalMove e) {
                 mi.remoteNXT.checkersBoard.informer.illeagalMove();
             }
-        }
-        /*FakeMI fm1 = new FakeMI(checkTopFunc,true);
-        FakeMI fm2 = new FakeMI(checkTopFunc,false);
-        if(checkTopFunc.checkersBoard.myPeasentColor == 'r')
-        {
-            fm1.decideMovement();
-            checkTopFunc.getColorOnField(4, -2);
+        }*/
+        FakeMI fm2 = new FakeMI(checkTopFunc, false);
+        if (checkTopFunc.checkersBoard.myPeasentColor == 'r') {
+            bestMove = mi.lookForBestMove();
+            checkTopFunc.doMove(bestMove);
         }
         boolean endGame = true;
-        while(!Button.ESCAPE.isDown() && endGame)
-        {
+        while (!Button.ESCAPE.isDown() && endGame) {
             LCD.clear();
             LCD.drawString("human", 0, 0);
             LCD.refresh();
@@ -65,7 +58,12 @@ public final class SW508E13 {
             LCD.clear();
             LCD.drawString("robot", 0, 0);
             LCD.refresh();
-            endGame = fm1.decideMovement();
-        }*/
+
+            bestMove = mi.lookForBestMove();
+
+            if (bestMove != null) {
+                checkTopFunc.doMove(bestMove);
+            }
+        }
     }
 }
