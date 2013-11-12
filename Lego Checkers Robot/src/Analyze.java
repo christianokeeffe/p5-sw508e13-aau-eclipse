@@ -205,7 +205,7 @@ public class Analyze {
                 -1, 1, checkForOpponent, isCrowned);
         if (tempField != null) {
             returnList.addAll(jumpSequence(tempField, checkForOpponent,
-                    isCrowned));  
+                    isCrowned));
         }
         tempField = checkersBoard.checkJumpDirection(input,
                 -1, -1, checkForOpponent, isCrowned);
