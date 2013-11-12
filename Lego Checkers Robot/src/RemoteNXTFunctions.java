@@ -95,7 +95,7 @@ public class RemoteNXTFunctions {
         moveSensorTo(1, -2, false);
     }
 
-    //latex start movePiece
+    //latex start movePieceRemote
     private void movePiece(Field fromField, Field toField)
             throws IOException, NoKingLeft {
         moveSensorTo(fromField.x, fromField.y, true);
