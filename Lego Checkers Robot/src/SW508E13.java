@@ -17,7 +17,7 @@ public final class SW508E13 {
         MI mi = new MI(checkTopFunc);
 
         Move bestMove;
-        /*if (checkTopFunc.checkersBoard.myPeasentColor == 'r') {
+        if (checkTopFunc.checkersBoard.myPeasentColor == 'r') {
             bestMove = mi.lookForBestMove();
             checkTopFunc.doMove(bestMove);
             checkTopFunc.resetAfterMove();
@@ -43,8 +43,8 @@ public final class SW508E13 {
             } catch (IllegalMove e) {
                 mi.remoteNXT.checkersBoard.informer.illeagalMove();
             }
-        }*/
-        FakeMI fm2 = new FakeMI(checkTopFunc, false);
+        }
+        /*FakeMI fm2 = new FakeMI(checkTopFunc, false);
         if (checkTopFunc.checkersBoard.myPeasentColor == 'r') {
             bestMove = mi.lookForBestMove();
             checkTopFunc.doMove(bestMove);
@@ -64,6 +64,6 @@ public final class SW508E13 {
             if (bestMove != null) {
                 checkTopFunc.doMove(bestMove);
             }
-        }
+        }*/
     }
 }
