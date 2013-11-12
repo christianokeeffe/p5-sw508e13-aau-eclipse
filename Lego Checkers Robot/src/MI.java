@@ -323,7 +323,7 @@ public class MI {
             Field tempMove = null;
            // temp.moves = flipStack(temp.moves);           HERE CHANGE
 
-            for (int j = stop; j >= 0; j--) {                       //HERE CHANGE DIRECTION
+            for (int j = stop; j >= 1; j--) {                       //HERE CHANGE DIRECTION
                 tempMove = temp.moves.get(j);
                 if (!tempMove.isEmpty()) {
                     if (tempMove.getPieceOnField().isCrowned
@@ -341,7 +341,7 @@ public class MI {
                     }
                 }
                 remoteNXT.checkersBoard.movePieceInRepresentation(
-                        tempMove, temp.moves.get(temp.moves.size()-1), true);       ///CHANGE HERE
+                        tempMove, temp.moves.get(j-1), true);       ///CHANGE HERE
                //tempMoves.push(tempMove);
             }
 
