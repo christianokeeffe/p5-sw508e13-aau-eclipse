@@ -10,7 +10,7 @@ public class MI {
     public RemoteNXTFunctions remoteNXT;
     private final double inf = 100000.0;
 
-    private Stack<Move> simulatedMoves = new Stack<Move>();
+    private List<Move> simulatedMoves = new ArrayList<Move>();
     MI(RemoteNXTFunctions inputRemoteNXT) {
         remoteNXT = inputRemoteNXT;
     }
@@ -65,6 +65,9 @@ public class MI {
 
             tempPrice =  -negaMax(numberofmovelook, -1, -inf, -price);
             revertMove();
+            
+            
+            
             /*LCD.clear();
             LCD.drawString("P:  "+ price, 0, 0);
             LCD.drawString("TP: "+ tempPrice, 0, 1);
@@ -287,7 +290,7 @@ public class MI {
             //    move.moves.push(tempStack.pop());             //HERE CHANGE
             //}
 
-            simulatedMoves.push(move);
+            simulatedMoves.add(move);
         }
     }
 
@@ -310,10 +313,13 @@ public class MI {
     }
 
     public final void revertMove() throws NoKingLeft, IOException {
+        
         if (simulatedMoves.size() != 0) {
-            Move temp = simulatedMoves.pop();
+            Move temp = simulatedMoves.get(simulatedMoves.size()-1);
+            simulatedMoves.remove(simulatedMoves.size()-1);
+            
             int stop = temp.moves.size() - 1;
-            Stack<Field> tempMoves = new Stack<Field>();
+            //Stack<Field> tempMoves = new Stack<Field>();
             Field tempMove = null;
            // temp.moves = flipStack(temp.moves);           HERE CHANGE
 
@@ -336,7 +342,7 @@ public class MI {
                 }
                 remoteNXT.checkersBoard.movePieceInRepresentation(
                         tempMove, temp.moves.get(temp.moves.size()-1), true);       ///CHANGE HERE
-                tempMoves.push(tempMove);
+               //tempMoves.push(tempMove);
             }
 
            // temp.moves = flipStack(temp.moves);  CHANGE SHOULD NOT BE NEEDED ANYMORE
