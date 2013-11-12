@@ -363,7 +363,7 @@ public class MI {
         }
         return movements;
           */
-        if (!(jumpMovements.size() == 0)) {
+        if (jumpMovements.size() != 0) {
             return jumpMovements;
         } else {
             return movements;
