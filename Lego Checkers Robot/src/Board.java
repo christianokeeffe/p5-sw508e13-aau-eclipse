@@ -88,8 +88,9 @@ public class Board {
     public final void sortListOfFields(List<Field> listOfFields) {
         int x = 0;
         int y = 0;
-        for (int i = 0; i < listOfFields.size(); i++) {
-            for (int n = i + 1; n < listOfFields.size(); n++) {
+        int sizeOflistOfFields = listOfFields.size();
+        for (int i = 0; i < sizeOflistOfFields; i++) {
+            for (int n = i + 1; n < sizeOflistOfFields; n++) {
                 if (!isGreater(listOfFields.get(i),
                         listOfFields.get(n), x, y)) {
                     Field temp1 = listOfFields.get(i);
