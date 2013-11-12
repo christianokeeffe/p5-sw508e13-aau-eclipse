@@ -31,8 +31,8 @@ public class Move {
             //Field to = moves.peek();                      ///HERE CHANGE
             //moves.push(from);
 
-            Field to = moves.get(0);
-            Field from  = moves.get(1);
+            Field to = moves.get(1);
+            Field from  = moves.get(0);
 
             return Math.abs(from.x - to.x) == 2 && Math.abs(from.y - to.y) == 2;
         } else {
