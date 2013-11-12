@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 import lejos.nxt.LCD;
 import lejos.robotics.Color;
@@ -197,16 +196,16 @@ public class Analyze {
         return returnValue;
     }
 
-    public final List<Stack<Field>> jumpSequence(Field input,
+    public final List<List<Field>> jumpSequence(Field input,
             boolean checkForOpponent, boolean isCrowned) throws
             InterruptedException, IOException, NoKingLeft {
         input.visited = true;
-        List<Stack<Field>> returnList = new ArrayList<Stack<Field>>();
+        List<List<Field>> returnList = new ArrayList<List<Field>>();
         Field tempField = checkersBoard.checkJumpDirection(input,
                 -1, 1, checkForOpponent, isCrowned);
         if (tempField != null) {
             returnList.addAll(jumpSequence(tempField, checkForOpponent,
-                    isCrowned));
+                    isCrowned));  
         }
         tempField = checkersBoard.checkJumpDirection(input,
                 -1, -1, checkForOpponent, isCrowned);
@@ -228,37 +227,45 @@ public class Analyze {
         }
 
         if (returnList.size() == 0) {
-            returnList.add(new Stack<Field>());
+            returnList.add(new ArrayList<Field>());
         }
 
         for (int i = 0; i < returnList.size(); i++) {
-            returnList.get(i).push(input);
+            returnList.get(i).add(0,input);                                         /// <---                            HERE CHANGE
         }
         return returnList;
     }
 
     private boolean findJumpPiece(Field field) throws
         InterruptedException, IOException, NoKingLeft {
-        List<Stack<Field>> jumpList = new ArrayList<Stack<Field>>();
+        List<List<Field>> jumpList = new ArrayList<List<Field>>();
         jumpList = jumpSequence(field, false,
                 field.getPieceOnField().isCrowned);
         checkersBoard.resetVisited();
         for (int i = 0; i < jumpList.size(); i++) {
-            Stack<Field> tempList = new Stack<Field>();
-            int stop = jumpList.get(i).size();
-            for (int j = 0; j < stop; j++) {
-                tempList.push(jumpList.get(i).pop());
-            }
-            Field desField = tempList.peek();
+            List<Field> tempList = jumpList.get(i);
+            //int stop = jumpList.get(i).size();
+            //for (int j = 0; j < stop; j++) {
+                //tempList.push(jumpList.get(i).pop());    // <-----                                  HERE CHANGE
+               // }
+            
+            //Field desField = tempList.peek();  // <-----                                  HERE CHANGE
+            Field desField = tempList.get(tempList.size()-1);
             if (!checkersBoard.isFieldEmptyOnBoard(desField.x, desField.y)) {
                 checkersBoard.movePieceInRepresentation(field, desField, false);
                 int stopj = tempList.size() - 1;
                 for (int j = 0; j < stopj; j++) {
-                    Field tempfield = tempList.pop();
-                    Field tempfield2 = tempList.peek();
+                    //Field tempfield = tempList.pop();                                 // <-----                                  HERE CHANGE
+                    //Field tempfield2 = tempList.peek();                             // <-----                                  HERE CHANGE
+                    
+                    Field tempfield = tempList.get(tempList.size()-1);          // <-----                                  HERE CHANGE
+                    Field tempfield2 = tempList.get(tempList.size()-2);         // <-----                                  HERE CHANGE
+                    tempList.remove(tempList.size()-1);                             // <-----                                  HERE CHANGE
+                    
+                    
                     Field takenField = checkersBoard.myBoard
                             [(tempfield.x + tempfield2.x) / 2]
-                            [(tempfield.y + tempfield2.y) / 2];
+                                    [(tempfield.y + tempfield2.y) / 2];
                     checkersBoard.movePieceInRepresentation(takenField,
                             remoteFunctions.trashField, false);
                 }
