@@ -122,22 +122,31 @@ public class RemoteNXTFunctions {
 
     public final void trashPieceOnField(Field field)
             throws IOException, NoKingLeft {
-        if (field.getPieceOnField().isCrowned
-                && checkersBoard.checkAllegiance(field, true)) {
-            int j = checkersBoard.kingPlace.length - 1;
-            OUTERMOST: while (j >= 0) {
-                if (checkersBoard.kingPlace[j].isEmpty()) {
-                    break OUTERMOST;
+        if (checkersBoard.checkAllegiance(field, true)) {
+            if (field.getPieceOnField().isCrowned) {
+                int j = checkersBoard.kingPlace.length - 1;
+                OUTERMOST: while (j >= 0) {
+                    if (checkersBoard.kingPlace[j].isEmpty()) {
+                        break OUTERMOST;
+                    }
+                    j--;
                 }
-                j--;
-            }
-            if (j < 0) {
-                movePiece(field, trashField);
-            } else {
                 movePiece(field, checkersBoard.kingPlace[j]);
+            } else {
+                int l = checkersBoard.trashPlace.length - 1;
+                int h = checkersBoard.trashPlace[0].length - 1;
+                OUTER: while (h >= 0) {
+                    while (l >= 0) {
+                        if (checkersBoard.trashPlace[l][h].isEmpty()) {
+                            break OUTER;
+                        }
+                        l--;
+                    }
+                    h--;
+                    l = checkersBoard.trashPlace.length - 1;
+                }
+                movePiece(field, checkersBoard.trashPlace[l][h]);
             }
-        } else {
-            movePiece(field, trashField);
         }
     }
 
