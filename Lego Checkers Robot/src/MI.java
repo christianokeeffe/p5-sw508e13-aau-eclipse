@@ -2,7 +2,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-
 import lejos.nxt.Sound;
 import custom.Exceptions.NoKingLeft;
 
@@ -120,28 +119,41 @@ public class MI {
 
     private final int valueOfPiece = 10;
     private final int middleBonus = 3;
-    private final int backlineBonus = 5;
+    private final int closeBonus = 4;
+    private final int backlineBonus = 7;
     private final int pieceDifferenceFactor = 4;
     private final int kingBonus = 8;
 
+    private final int isMidgame = 1;
+    private final int isEndgame = 2;
+    private final int midgameEnd = 7;
+
     private double evaluation(int turn) {
-        int oppPieces = 0;
-        int ownPieces = 0;
+        List<Field> ownPieces = new ArrayList<Field>();
+        List<Field> oppPieces = new ArrayList<Field>();
         double valueOfBoard = 0;
         remoteNXT.checkersBoard.updateMoveables();
         for (Field[] f: remoteNXT.checkersBoard.myBoard) {
             for (Field q: f) {
                 if (!q.isEmpty()) {
                     if (remoteNXT.checkersBoard.checkAllegiance(q, false)) {
-                        ownPieces++;
-                        valueOfBoard += priceForField(q);
+                        ownPieces.add(q);
                     } else {
-                        oppPieces++;
-                        valueOfBoard -= priceForField(q);
+                        oppPieces.add(q);
                     }
                 }
             }
         }
+
+        int state = gameState(ownPieces.size(), oppPieces.size());
+
+        for (int i = 0; i < ownPieces.size(); i++) {
+            valueOfBoard += priceForField(ownPieces.get(i), state);
+        }
+        for (int i = 0; i < ownPieces.size(); i++) {
+            valueOfBoard -= priceForField(ownPieces.get(i), state);
+        }
+
         boolean isHuman = (turn == -1);
 
         switch (remoteNXT.checkersBoard.
@@ -153,9 +165,9 @@ public class MI {
             valueOfBoard += gameIsWon;
             break;
         case 3:
-            if (ownPieces - oppPieces > 0) {
+            if (ownPieces.size() - oppPieces.size() > 0) {
                 valueOfBoard -= gameIsDraw;
-            } else if (ownPieces - oppPieces < 0) {
+            } else if (ownPieces.size() - oppPieces.size() < 0) {
                 valueOfBoard += gameIsDraw;
             }
             break;
@@ -163,16 +175,30 @@ public class MI {
             break;
         }
 
-        valueOfBoard +=  pieceDifferenceFactor * ((ownPieces / oppPieces) - 1);
+        valueOfBoard +=  pieceDifferenceFactor
+                * ((ownPieces.size() / oppPieces.size()) - 1);
 
         return valueOfBoard;
     }
 
-    private double priceForField(Field field) {
+    private int gameState(int ownPieces, int oppPieces) {
+        if (min(ownPieces, oppPieces) >= midgameEnd) {
+            return isMidgame;
+        }
+        return isEndgame;
+    }
+
+    private double priceForField(Field field, int gameState) {
         int returnValue = 0;
 
-        returnValue += valueOfPiece + middleBonus
+        if (gameState == isMidgame) {
+            returnValue += valueOfPiece + middleBonus
                        - min(Math.abs(3 - field.x), Math.abs(4 - field.x));
+        }
+        if (gameState == isEndgame) {
+            returnValue += closeBonus - closestPiece(field);
+        }
+
         if (!field.getPieceOnField().isCrowned
                 && ((remoteNXT.checkersBoard.checkAllegiance(field, true)
                         && field.y == 7)
@@ -184,6 +210,26 @@ public class MI {
             returnValue += kingBonus;
         }
         return returnValue;
+    }
+
+    private int closestPiece(Field field) {
+        boolean found = false;
+        int distance = 0;
+        while (!found && distance < 8) {
+            distance += 1;
+            for (int i = -distance; i < 1 + distance; i++) {
+                for (int j = -distance; j < 1 + distance; j++) {
+                    if (remoteNXT.checkersBoard.checkAllegiance(
+                            remoteNXT.checkersBoard.
+                            myBoard[field.x + i][field.y + j], true)) {
+                        found = true;
+                        i = (int) inf;
+                        j = (int) inf;
+                    }
+                }
+            }
+        }
+        return distance;
     }
 
     private int min(int x, int y) {
