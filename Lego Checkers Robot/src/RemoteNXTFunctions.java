@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import custom.Exceptions.NoKingLeft;
+import lejos.nxt.Button;
 import lejos.nxt.ColorSensor;
 import lejos.nxt.LCD;
 import lejos.nxt.MotorPort;

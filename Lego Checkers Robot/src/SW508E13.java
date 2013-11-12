@@ -15,6 +15,11 @@ public final class SW508E13 {
         RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
         MI mi = new MI(checkTopFunc);
 
+        Piece temp = new Piece();
+        temp.isCrowned = true;
+        temp.canJump = true;
+        temp.color = 'g';
+        checkTopFunc.checkersBoard.myBoard[4][7].setPieceOnField(temp);
         Move bestMove;
         if (checkTopFunc.checkersBoard.myPeasentColor == 'r') {
             bestMove = mi.lookForBestMove();
