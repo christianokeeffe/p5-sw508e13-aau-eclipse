@@ -332,7 +332,7 @@ public class MI {
                             }
                         }
 
-                        else if (!field.getPieceOnField().canJump) {
+                        else {
                             List<Field> possibleMoves =
                                     remoteNXT.checkersBoard.
                                     checkMoveable(field, moveForSide);
