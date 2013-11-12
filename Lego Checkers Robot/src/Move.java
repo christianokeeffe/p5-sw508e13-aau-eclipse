@@ -1,34 +1,39 @@
-import java.util.Stack;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Move {
-    public Stack<Field> moves;
+    public List<Field> moves;
     //public boolean isJump;
-    public Stack<Piece> takenPieces = new Stack<Piece>();
+    public List<Piece> takenPieces = new ArrayList<Piece>();
     public boolean wasKingBefore = false;
 
     Move(Field movefrom, Field moveto, boolean wasKing) {
-        Stack<Field> moveToList = new Stack<Field>();
-        moveToList.push(moveto);
-        moveToList.push(movefrom);
+        List<Field> moveToList = new ArrayList<Field>();
+        moveToList.add(movefrom);
+        moveToList.add(moveto);                                             //HERE CHANGE
         this.moves = moveToList;
         this.wasKingBefore = wasKing;
     }
 
-    Move(Stack<Field> moveToList, boolean wasKing) {
+    Move(List<Field> moveToList, boolean wasKing) {
         this.moves = moveToList;
         this.wasKingBefore = wasKing;
     }
 
     Move() {
-        Stack<Field> moveToList = new Stack<Field>();
+        List<Field> moveToList = new ArrayList<Field>();
         this.moves = moveToList;
     }
 
     public final boolean isJump() {
         if (moves.size() >= 2) {
-            Field from = moves.pop();
-            Field to = moves.peek();
-            moves.push(from);
+            //Field from = moves.pop();
+            //Field to = moves.peek();                      ///HERE CHANGE
+            //moves.push(from);
+            
+            Field to = moves.get(moves.size()-1);
+            Field from  = moves.get(moves.size()-2);
+            
             if (Math.abs(from.x - to.x) == 2 && Math.abs(from.y - to.y) == 2) {
                 return true;
             }
@@ -39,7 +44,7 @@ public class Move {
     }
 
     public final void addStep(Field step) {
-        this.moves.push(step);
+        this.moves.add(step);
     }
 }
 

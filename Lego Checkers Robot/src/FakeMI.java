@@ -159,7 +159,7 @@ public class FakeMI {
 
     private void calculateJump(Field f)
             throws IOException, NoKingLeft, InterruptedException {
-        List<Stack<Field>> jumpPath = new ArrayList<Stack<Field>>();
+        List<List<Field>> jumpPath = new ArrayList<List<Field>>();
         if (f.getPieceOnField() != null) {
             jumpPath = nxt.checkersBoard.analyzeFunctions.
                     jumpSequence(f, vHUMAN, f.getPieceOnField().isCrowned);

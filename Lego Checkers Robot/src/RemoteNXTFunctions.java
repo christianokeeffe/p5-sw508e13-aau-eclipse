@@ -155,8 +155,8 @@ public class RemoteNXTFunctions {
 
         int stop = move.moves.size() - 1;
         for (int i = 0; i < stop; i++) {
-            Field jumpedField = movePieceOverField(move.moves.pop(),
-                                                   move.moves.peek());
+            Field jumpedField = movePieceOverField(move.moves.get(move.moves.size()-1-i),
+                                                   move.moves.get(move.moves.size()-2-i));
             if (jumpedField != null) {
                 takenPieces.add(jumpedField);
             }
