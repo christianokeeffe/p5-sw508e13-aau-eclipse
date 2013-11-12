@@ -330,9 +330,7 @@ public class MI {
                                             field.getPieceOnField().isCrowned));
                                 }
                             }
-                        }
-                        // Moves
-                        else {
+                        } else {  // Moves
                             List<Field> possibleMoves =
                                     remoteNXT.checkersBoard.
                                     checkMoveable(field, moveForSide);
@@ -349,7 +347,6 @@ public class MI {
                 }
             }
         }
-        
         /*
         remoteNXT.checkersBoard.sortListOfMoves(movements);
         boolean mustJump = false;
@@ -365,13 +362,11 @@ public class MI {
             }
         }
         return movements;
-        */
+          */
         if (!(jumpMovements.size() == 0)) {
             return jumpMovements;
-        }
-        else {
+        } else {
             return movements;
         }
-        
     }
 }
