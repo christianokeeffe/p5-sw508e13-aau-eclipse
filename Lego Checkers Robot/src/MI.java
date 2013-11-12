@@ -217,12 +217,16 @@ public class MI {
         if (move.moves.size() >= 2) {
             int stop = move.moves.size() - 1;
 
-            Stack<Field> tempStack = new Stack<Field>();
+           // Stack<Field> tempStack = new Stack<Field>();                                                    //HERE CHANGE
             for (int i = 0; i < stop; i++) {
-                Field from = move.moves.pop();
-                Field to = move.moves.peek();
+                //Field from = move.moves.pop();                                                                        //HERE CHANGE
+               // Field to = move.moves.peek();                                                                 //HERE CHANGE
+                
+                Field from = move.moves.get(move.moves.size()-1-i);                                     //HERE CHANGE
+                Field to = move.moves.get(move.moves.size()-2-i);                                       //HERE CHANGE
+                
                 if (Math.abs(from.x - to.x) == 2) {
-                    move.takenPieces.push(remoteNXT.checkersBoard.myBoard
+                    move.takenPieces.add(remoteNXT.checkersBoard.myBoard                ////HERE CHANGE
                             [(from.x + to.x) / 2]
                             [(from.y + to.y) / 2].getPieceOnField());
                     remoteNXT.checkersBoard.myBoard
@@ -231,11 +235,11 @@ public class MI {
                 }
                 remoteNXT.checkersBoard.
                     movePieceInRepresentation(from, to, true);
-                tempStack.push(from);
+                //tempStack.push(from);                                                         //HERE CHANGE
             }
-            for (int i = 0; i < stop; i++) {
-                move.moves.push(tempStack.pop());
-            }
+            //for (int i = 0; i < stop; i++) {
+            //    move.moves.push(tempStack.pop());             //HERE CHANGE
+            //}
 
             simulatedMoves.push(move);
         }
@@ -265,10 +269,10 @@ public class MI {
             int stop = temp.moves.size() - 1;
             Stack<Field> tempMoves = new Stack<Field>();
             Field tempMove = null;
-            temp.moves = flipStack(temp.moves);
+           // temp.moves = flipStack(temp.moves);           HERE CHANGE
 
-            for (int j = 0; j < stop; j++) {
-                tempMove = temp.moves.pop();
+            for (int j = stop; j >= 0; j--) {                       //HERE CHANGE DIRECTION
+                tempMove = temp.moves.get(j);
                 if (!tempMove.isEmpty()) {
                     if (tempMove.getPieceOnField().isCrowned
                             && !temp.wasKingBefore) {
@@ -285,19 +289,15 @@ public class MI {
                     }
                 }
                 remoteNXT.checkersBoard.movePieceInRepresentation(
-                        tempMove, temp.moves.peek(), true);
+                        tempMove, temp.moves.get(temp.moves.size()-1), true);       ///CHANGE HERE
                 tempMoves.push(tempMove);
             }
 
-            stop = tempMoves.size();
-            for (int j = 0; j < stop; j++) {
-                temp.moves.push(tempMoves.pop());
-            }
-            temp.moves = flipStack(temp.moves);
+           // temp.moves = flipStack(temp.moves);  CHANGE SHOULD NOT BE NEEDED ANYMORE
             stop = temp.takenPieces.size();
 
             for (int i = 0; i < stop; i++) {
-                Piece tempPiece = temp.takenPieces.pop();
+                Piece tempPiece = temp.takenPieces.get(i);
                 remoteNXT.checkersBoard.myBoard
                     [tempPiece.x][tempPiece.y].setPieceOnField(tempPiece);
             }
@@ -318,13 +318,13 @@ public class MI {
                             checkAllegiance(field, moveForSide == -1)) {
                         //Jumps
                         if (field.getPieceOnField().canJump) {
-                            List<Stack<Field>> listOfMoves =
+                            List<List<Field>> listOfMoves =
                                     remoteNXT.checkersBoard.
                                     analyzeFunctions.jumpSequence(
                                             field, moveForSide == 1,
                                             field.getPieceOnField().isCrowned);
 
-                            for (Stack<Field> stackOfFields : listOfMoves) {
+                            for (List<Field> stackOfFields : listOfMoves) {
                                 if (stackOfFields.size() >= 2) {
                                     jumpMovements.add(new Move(stackOfFields,
                                             field.getPieceOnField().isCrowned));
@@ -363,7 +363,7 @@ public class MI {
         }
         return movements;
           */
-        if (jumpMovements.size() != 0) {
+        if (!(jumpMovements.size() == 0)) {
             return jumpMovements;
         } else {
             return movements;
