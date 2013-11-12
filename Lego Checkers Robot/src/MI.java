@@ -86,7 +86,7 @@ public class MI {
             throws NoKingLeft, IOException, InterruptedException {
         if (depth == 0
                 || remoteNXT.checkersBoard.analyzeFunctions.
-                gameHasEnded(1 == turn) != 0) {
+                gameHasEnded(-1 == turn) != 0) {
             return turn * evaluation(turn);
         }
         List<Move> moves;
@@ -307,6 +307,7 @@ public class MI {
     //-1 = human, 1 = robot
     private List<Move> possibleMoves(int moveForSide) throws
                     InterruptedException, IOException, NoKingLeft {
+        List<Move> jumpMovements = new ArrayList<Move>();
         List<Move> movements = new ArrayList<Move>();
         remoteNXT.checkersBoard.updateMoveables();
         for (Field[] f : remoteNXT.checkersBoard.myBoard) {
@@ -316,20 +317,22 @@ public class MI {
                             && remoteNXT.checkersBoard.
                             checkAllegiance(field, moveForSide == -1)) {
                         //Jumps
-                        List<Stack<Field>> listOfMoves =
-                                remoteNXT.checkersBoard.
-                                        analyzeFunctions.jumpSequence(
-                                        field, moveForSide == 1,
-                                        field.getPieceOnField().isCrowned);
+                        if (field.getPieceOnField().canJump) {
+                            List<Stack<Field>> listOfMoves =
+                                    remoteNXT.checkersBoard.
+                                    analyzeFunctions.jumpSequence(
+                                            field, moveForSide == 1,
+                                            field.getPieceOnField().isCrowned);
 
-                        for (Stack<Field> stackOfFields : listOfMoves) {
-                            if (stackOfFields.size() >= 2) {
-                                movements.add(new Move(stackOfFields,
-                                        field.getPieceOnField().isCrowned));
+                            for (Stack<Field> stackOfFields : listOfMoves) {
+                                if (stackOfFields.size() >= 2) {
+                                    jumpMovements.add(new Move(stackOfFields,
+                                            field.getPieceOnField().isCrowned));
+                                }
                             }
                         }
 
-                        if (!field.getPieceOnField().canJump) {
+                        else if (!field.getPieceOnField().canJump) {
                             List<Field> possibleMoves =
                                     remoteNXT.checkersBoard.
                                     checkMoveable(field, moveForSide);
@@ -346,21 +349,29 @@ public class MI {
                 }
             }
         }
-
-
-
+        
+        /*
         remoteNXT.checkersBoard.sortListOfMoves(movements);
         boolean mustJump = false;
         if (movements.size() != 0) {
             mustJump = movements.get(0).isJump();
-
-            for (int i = 0; movements.size() > i; i++) {
-                if (mustJump && !movements.get(i).isJump()) {
-                    movements.remove(i);
-                    i--;
+            if (mustJump) {
+                for (int i = 0; movements.size() > i; i++) {
+                    if (!movements.get(i).isJump()) {
+                        movements.remove(i);
+                        i--;
+                    }
                 }
             }
         }
         return movements;
+        */
+        if (!(jumpMovements.size() == 0)) {
+            return jumpMovements;
+        }
+        else {
+            return movements;
+        }
+        
     }
 }
