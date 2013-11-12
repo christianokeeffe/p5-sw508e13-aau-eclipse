@@ -7,6 +7,7 @@ public class Board {
 
     public Field[][] myBoard = new Field[8][8];
     public Field[] kingPlace = new Field[8];
+    public Field[][] trashPlace = new Field[7][2];
     public Analyze analyzeFunctions;
 
     public Communication informer = new Communication();
@@ -239,7 +240,7 @@ public class Board {
         }
     }
 
-    //Check if a piece can move and is jumpable
+    //Check if a piece can move and is jumpeable
     //latex start checkPiece
     private void checkPiece(Field field, int dify, boolean checkForOpponent) {
         field.getPieceOnField().canJump = checkJump(field,
