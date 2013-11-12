@@ -271,8 +271,8 @@ public class MI {
                 //Field from = move.moves.pop();                                                                        //HERE CHANGE
                // Field to = move.moves.peek();                                                                 //HERE CHANGE
                 
-                Field from = move.moves.get(move.moves.size()-1-i);                                     //HERE CHANGE
-                Field to = move.moves.get(move.moves.size()-2-i);                                       //HERE CHANGE
+                Field from = move.moves.get(i);                                     //HERE CHANGE
+                Field to = move.moves.get(i+1);                                       //HERE CHANGE
                 
                 if (Math.abs(from.x - to.x) == 2) {
                     move.takenPieces.add(remoteNXT.checkersBoard.myBoard                ////HERE CHANGE
