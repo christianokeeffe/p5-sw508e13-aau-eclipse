@@ -39,7 +39,7 @@ public class RemoteNXTFunctions {
     private NXTMotor electromagnet;
     private NXTRegulatedMotor motorZ;
     private NXTRegulatedMotor motorX;
-    public Field trashField = new Field(3, -6);
+
     private TouchSensor bigRedButton;
 
     public RemoteNXTFunctions() throws InterruptedException, IOException {
@@ -104,16 +104,8 @@ public class RemoteNXTFunctions {
         moveZTo(1);
         electromagnet.setPower(100);
         Delay.msDelay(100);
-        if (toField == trashField) {
-            moveZTo(0);
-        } else {
-            moveZTo(0.5);
-        }
         moveSensorTo(toField.x, toField.y, true);
         Delay.msDelay(500);
-        if (toField != trashField) {
-            moveZTo(1);
-        }
         electromagnet.setPower(0);
         moveZTo(0);
 

@@ -16,7 +16,7 @@ public class Analyze {
     private int totalAnalyzeRuns = 0;
     private final int analyzeRunsBeforeReset = 10;
     private RemoteNXTFunctions remoteFunctions;
-
+    private Field trashField = new Field(3, -6);
     public Analyze(Board input, RemoteNXTFunctions remoteInput) {
         checkersBoard = input;
         remoteFunctions = remoteInput;
@@ -267,7 +267,7 @@ public class Analyze {
                             [(tempfield.x + tempfield2.x) / 2]
                                     [(tempfield.y + tempfield2.y) / 2];
                     checkersBoard.movePieceInRepresentation(takenField,
-                            remoteFunctions.trashField, false);
+                            trashField, false);
                 }
                 return true;
             }

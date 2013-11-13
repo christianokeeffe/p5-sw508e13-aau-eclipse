@@ -83,7 +83,7 @@ public class Board {
         for (int i = 0; i < 8; i++) {
             Field temp = new Field();
             temp.x = i;
-            temp.y = -3 - j;
+            temp.y = -4 - j;
             trashPlace[i][j] = temp;
         }
         }
