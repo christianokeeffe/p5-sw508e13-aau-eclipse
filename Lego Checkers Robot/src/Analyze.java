@@ -258,9 +258,9 @@ public class Analyze {
                     //Field tempfield = tempList.pop();                                 // <-----                                  HERE CHANGE
                     //Field tempfield2 = tempList.peek();                             // <-----                                  HERE CHANGE
                     
-                    Field tempfield = tempList.get(tempList.size()-1);          // <-----                                  HERE CHANGE
-                    Field tempfield2 = tempList.get(tempList.size()-2);         // <-----                                  HERE CHANGE
-                    tempList.remove(tempList.size()-1);                             // <-----                                  HERE CHANGE
+                    Field tempfield = tempList.get(j);          // <-----                                  HERE CHANGE
+                    Field tempfield2 = tempList.get(j+1);         // <-----                                  HERE CHANGE
+                    //tempList.remove(tempList.size()-1);                             // <-----                                  HERE CHANGE
                     
                     
                     Field takenField = checkersBoard.myBoard

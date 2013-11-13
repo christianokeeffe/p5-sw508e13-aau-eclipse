@@ -117,7 +117,7 @@ public class MI {
     private int numberofmovelook        = 2;
 
     /* how glad the MI/AI are for the result of the game */
-    private double gameIsWon = inf;
+    private double gameIsWon = inf / 2;
     private final int gameIsDraw = 20;
 
     private final int valueOfPiece = 10;
@@ -153,8 +153,8 @@ public class MI {
         for (int i = 0; i < ownPieces.size(); i++) {
             valueOfBoard += priceForField(ownPieces.get(i), state);
         }
-        for (int i = 0; i < ownPieces.size(); i++) {
-            valueOfBoard -= priceForField(ownPieces.get(i), state);
+        for (int i = 0; i < oppPieces.size(); i++) {
+            valueOfBoard -= priceForField(oppPieces.get(i), state);
         }
 
         boolean isHuman = (turn == -1);
@@ -185,7 +185,7 @@ public class MI {
     }
 
     private int gameState(int ownPieces, int oppPieces) {
-        if (min(ownPieces, oppPieces) >= midgameEnd) {
+        if (max(ownPieces, oppPieces) >= midgameEnd) {
             return isMidgame;
         }
         return isEndgame;
@@ -207,7 +207,10 @@ public class MI {
                         && field.y == 7)
                 || (remoteNXT.checkersBoard.checkAllegiance(field, false)
                         && field.y == 0))) {
-            returnValue += backlineBonus;
+            if (gameState == isMidgame) {
+                returnValue += backlineBonus / 2;
+            }
+            returnValue += backlineBonus / 2;
         }
         if (field.getPieceOnField().isCrowned) {
             returnValue += kingBonus;
@@ -222,12 +225,14 @@ public class MI {
             distance += 1;
             for (int i = -distance; i < 1 + distance; i++) {
                 for (int j = -distance; j < 1 + distance; j++) {
-                    if (remoteNXT.checkersBoard.checkAllegiance(
-                            remoteNXT.checkersBoard.
-                            myBoard[field.x + i][field.y + j], true)) {
-                        found = true;
-                        i = (int) inf;
-                        j = (int) inf;
+                    if(remoteNXT.checkersBoard.checkBounds(field.x + i, field.y + j)) {
+                        if (remoteNXT.checkersBoard.checkAllegiance(
+                                remoteNXT.checkersBoard.
+                                myBoard[field.x + i][field.y + j], true)) {
+                            found = true;
+                            i = (int) inf;
+                            j = (int) inf;
+                        }
                     }
                 }
             }

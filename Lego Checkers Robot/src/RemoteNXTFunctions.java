@@ -104,8 +104,11 @@ public class RemoteNXTFunctions {
         moveZTo(1);
         electromagnet.setPower(100);
         Delay.msDelay(100);
+        moveZTo(0);
+        Delay.msDelay(100);
         moveSensorTo(toField.x, toField.y, true);
         Delay.msDelay(500);
+        moveZTo(1);
         electromagnet.setPower(0);
         moveZTo(0);
 
