@@ -10,7 +10,7 @@ public class Move {
     Move(Field movefrom, Field moveto, boolean wasKing) {
         List<Field> moveToList = new ArrayList<Field>();
         moveToList.add(movefrom);
-        moveToList.add(moveto);                                             //HERE CHANGE
+        moveToList.add(moveto);
         this.moves = moveToList;
         this.wasKingBefore = wasKing;
     }
@@ -27,10 +27,6 @@ public class Move {
 
     public final boolean isJump() {
         if (moves.size() >= 2) {
-            //Field from = moves.pop();
-            //Field to = moves.peek();                      ///HERE CHANGE
-            //moves.push(from);
-
             Field to = moves.get(1);
             Field from  = moves.get(0);
 
