@@ -32,7 +32,7 @@ public class Analyze {
                 remoteFunctions.resetMotors();
                 }
 
-            //Find the pieces that are currently moveable
+            //Find the pieces that are currently movable
             checkersBoard.updateMoveables();
 
             List<Field> moveableList = new ArrayList<Field>();
@@ -85,7 +85,7 @@ public class Analyze {
                 }
             }
 
-            //Find the pieces that are currently moveable
+            //Find the pieces that are currently movable
             checkersBoard.updateMoveables();
             checkRobotPieceReplaced();
             if (!checkForGameHasEnded(false)) {
@@ -300,7 +300,7 @@ public class Analyze {
     }
 
     //Function to check if user have replaced the
-    //robots peasent piece with a king piece
+    //robots peasant piece with a king piece
     public final void checkRobotPieceReplaced() throws IOException {
         if (fieldToCheck != null) {
             boolean checkCondition = true;
