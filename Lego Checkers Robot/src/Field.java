@@ -41,7 +41,7 @@ public class Field {
         }
     }
 
-    //Empty the field, by de-assigning the piece of the field.
+    //Empty the field, by un-assigning the piece of the field.
     public final void emptyThisField() {
         pieceOnField = null;
     }
