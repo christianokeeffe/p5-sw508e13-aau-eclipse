@@ -61,6 +61,10 @@ public class MI {
         List<Move> bestMoves = new ArrayList<Move>();
         double price = -inf;
         double tempPrice;
+        totalTimeForPossibleMoves = 0;
+        numberOftimesforPossibleMoves = 0;
+        totalTimeForEvaluation = 0;
+        numberOftimesforEvaluation = 0;
 
         if (posMoves.size() == 1) {
             return posMoves.get(0);
