@@ -177,7 +177,7 @@ public class RemoteNXTFunctions {
     //latex start MoveSensor
     private void moveSensorTo(int x, int y, boolean goToMagnet)
             throws IOException {
-        adjustAngleAxisX(x, goToMagnet);
+        adjustAngleAxisX(x);
         moveMotorsAxisY(y, goToMagnet);
 
         bottomNXT.A.waitComplete();
@@ -196,7 +196,7 @@ public class RemoteNXTFunctions {
         presentY = y * Y_FACTOR + displacement;
     }
 
-    private void adjustAngleAxisX(int angle, boolean goToMagnet)
+    private void adjustAngleAxisX(int angle)
             throws IOException {
         motorX.rotate(angle * X_FACTOR - presentX, true);
         presentX = angle * X_FACTOR;
