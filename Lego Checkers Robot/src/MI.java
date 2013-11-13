@@ -286,16 +286,13 @@ public class MI {
         if (move.moves.size() >= 2) {
             int stop = move.moves.size() - 1;
 
-           // Stack<Field> tempStack = new Stack<Field>();                                                    //HERE CHANGE
+
             for (int i = 0; i < stop; i++) {
-                //Field from = move.moves.pop();                                                                        //HERE CHANGE
-               // Field to = move.moves.peek();                                                                 //HERE CHANGE
-                
-                Field from = move.moves.get(i);                                     //HERE CHANGE
-                Field to = move.moves.get(i+1);                                       //HERE CHANGE
-                
+                Field from = move.moves.get(i);
+                Field to = move.moves.get(i + 1);
+
                 if (Math.abs(from.x - to.x) == 2) {
-                    move.takenPieces.add(remoteNXT.checkersBoard.myBoard                ////HERE CHANGE
+                    move.takenPieces.add(remoteNXT.checkersBoard.myBoard
                             [(from.x + to.x) / 2]
                             [(from.y + to.y) / 2].getPieceOnField());
                     remoteNXT.checkersBoard.myBoard
@@ -304,12 +301,7 @@ public class MI {
                 }
                 remoteNXT.checkersBoard.
                     movePieceInRepresentation(from, to, true);
-                //tempStack.push(from);                                                         //HERE CHANGE
             }
-            //for (int i = 0; i < stop; i++) {
-            //    move.moves.push(tempStack.pop());             //HERE CHANGE
-            //}
-
             simulatedMoves.add(move);
         }
     }
@@ -328,11 +320,9 @@ public class MI {
             simulatedMoves.remove(simulatedMoves.size() - 1);
 
             int stop = temp.moves.size() - 1;
-            //Stack<Field> tempMoves = new Stack<Field>();
             Field tempMove = null;
-           // temp.moves = flipStack(temp.moves);           HERE CHANGE
 
-            for (int j = stop; j >= 1; j--) {                       //HERE CHANGE DIRECTION
+            for (int j = stop; j >= 1; j--) {
                 tempMove = temp.moves.get(j);
                 if (!tempMove.isEmpty()) {
                     if (tempMove.getPieceOnField().isCrowned
@@ -350,11 +340,9 @@ public class MI {
                     }
                 }
                 remoteNXT.checkersBoard.movePieceInRepresentation(
-                        tempMove, temp.moves.get(j-1), true);       ///CHANGE HERE
-               //tempMoves.push(tempMove);
+                        tempMove, temp.moves.get(j - 1), true);
             }
 
-           // temp.moves = flipStack(temp.moves);  CHANGE SHOULD NOT BE NEEDED ANYMORE
             stop = temp.takenPieces.size();
 
             for (int i = 0; i < stop; i++) {
@@ -425,7 +413,7 @@ public class MI {
         }
         return movements;
          */
-        numberOftimesforPossibleMoves ++;
+        numberOftimesforPossibleMoves++;
         totalTimeForPossibleMoves = sW.elapsed();
         if (jumpMovements.size() != 0) {
             return jumpMovements;
