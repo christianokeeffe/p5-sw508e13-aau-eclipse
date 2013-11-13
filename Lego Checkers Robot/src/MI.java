@@ -16,11 +16,26 @@ public class MI {
     private List<Move> simulatedMoves = new ArrayList<Move>();
     MI(RemoteNXTFunctions inputRemoteNXT) {
         remoteNXT = inputRemoteNXT;
+
+        for (Field[] f: remoteNXT.checkersBoard.myBoard) {
+            for (Field q: f) {
+                if (!q.isEmpty()) {
+                    if (remoteNXT.checkersBoard.checkAllegiance(q, false)) {
+                        ownPieces.add(q.getPieceOnField());
+                    } else {
+                        oppPieces.add(q.getPieceOnField());
+                    }
+                }
+            }
+        }
     }
     public int totalTimeForPossibleMoves = 0;
     public int numberOftimesforPossibleMoves = 0;
     public int totalTimeForEvaluation = 0;
     public int numberOftimesforEvaluation = 0;
+
+    List<Piece> ownPieces = new ArrayList<Piece>();
+    List<Piece> oppPieces = new ArrayList<Piece>();
 
     /* ------------------------------------------------------------------  *
     /* MI brain starts */
@@ -85,7 +100,7 @@ public class MI {
                 bestMoves.add(move);
             }
         }
-        LCD.clear();
+        /*LCD.clear();
         LCD.drawString("E TT: " + totalTimeForEvaluation, 0, 0);
         LCD.drawString("E N: " + numberOftimesforEvaluation, 0, 1);
         LCD.refresh();
@@ -95,7 +110,11 @@ public class MI {
         LCD.drawString("P N: " + numberOftimesforPossibleMoves, 0, 1);
         LCD.refresh();
         Button.waitForAnyPress();
-
+        int number = (int) (Math.random() * (bestMoves.size() - 1));
+        LCD.clear();
+        LCD.drawInt(number, 0, 0);
+        LCD.refresh();
+        Button.waitForAnyPress();*/
         return bestMoves.get((int) (Math.random() * (bestMoves.size() - 1)));
     }
 
@@ -149,29 +168,15 @@ public class MI {
 
     private double evaluation(int turn) {
         sW.reset();
-        List<Field> ownPieces = new ArrayList<Field>();
-        List<Field> oppPieces = new ArrayList<Field>();
         double valueOfBoard = 0;
-        remoteNXT.checkersBoard.updateMoveables();
-        for (Field[] f: remoteNXT.checkersBoard.myBoard) {
-            for (Field q: f) {
-                if (!q.isEmpty()) {
-                    if (remoteNXT.checkersBoard.checkAllegiance(q, false)) {
-                        ownPieces.add(q);
-                    } else {
-                        oppPieces.add(q);
-                    }
-                }
-            }
-        }
 
-        int state = gameState(ownPieces.size(), oppPieces.size());
+        int state = gameState();
 
         for (int i = 0; i < ownPieces.size(); i++) {
-            valueOfBoard += priceForField(ownPieces.get(i), state);
+            valueOfBoard += priceForPiece(ownPieces.get(i), state);
         }
         for (int i = 0; i < oppPieces.size(); i++) {
-            valueOfBoard -= priceForField(oppPieces.get(i), state);
+            valueOfBoard -= priceForPiece(oppPieces.get(i), state);
         }
 
         boolean isHuman = (turn == -1);
@@ -202,41 +207,41 @@ public class MI {
         return valueOfBoard;
     }
 
-    private int gameState(int ownPieces, int oppPieces) {
-        if (max(ownPieces, oppPieces) >= midgameEnd) {
+    private int gameState() {
+        if (max(ownPieces.size(), oppPieces.size()) >= midgameEnd) {
             return isMidgame;
         }
         return isEndgame;
     }
 
-    private double priceForField(Field field, int gameState) {
+    private double priceForPiece(Piece piece, int gameState) {
         int returnValue = 0;
 
         if (gameState == isMidgame) {
             returnValue += valueOfPiece + middleBonus
-                       - min(Math.abs(3 - field.x), Math.abs(4 - field.x));
+                       - min(Math.abs(3 - piece.x), Math.abs(4 - piece.x));
         }
         if (gameState == isEndgame) {
-            returnValue += closeBonus - closestPiece(field);
+            returnValue += closeBonus - closestPiece(piece);
         }
 
-        if (!field.getPieceOnField().isCrowned
-                && ((remoteNXT.checkersBoard.checkAllegiance(field, true)
-                        && field.y == 7)
-                || (remoteNXT.checkersBoard.checkAllegiance(field, false)
-                        && field.y == 0))) {
+        if (!piece.isCrowned
+                && ((remoteNXT.checkersBoard.checkAllegiance(piece, true)
+                        && piece.y == 7)
+                || (remoteNXT.checkersBoard.checkAllegiance(piece, false)
+                        && piece.y == 0))) {
             if (gameState == isMidgame) {
                 returnValue += backlineBonus / 2;
             }
             returnValue += backlineBonus / 2;
         }
-        if (field.getPieceOnField().isCrowned) {
+        if (piece.isCrowned) {
             returnValue += kingBonus;
         }
         return returnValue;
     }
 
-    private int closestPiece(Field field) {
+    private int closestPiece(Piece piece) {
         boolean found = false;
         int distance = 0;
         while (!found && distance < 8) {
@@ -244,10 +249,10 @@ public class MI {
             for (int i = -distance; i < 1 + distance; i++) {
                 for (int j = -distance; j < 1 + distance; j++) {
                     if (remoteNXT.checkersBoard.
-                            checkBounds(field.x + i, field.y + j)) {
+                            checkBounds(piece.x + i, piece.y + j)) {
                         if (remoteNXT.checkersBoard.checkAllegiance(
                                 remoteNXT.checkersBoard.
-                                myBoard[field.x + i][field.y + j], true)) {
+                                myBoard[piece.x + i][piece.y + j], true)) {
                             found = true;
                             i = (int) inf;
                             j = (int) inf;
@@ -296,9 +301,15 @@ public class MI {
                 Field to = move.moves.get(i + 1);
 
                 if (Math.abs(from.x - to.x) == 2) {
-                    move.takenPieces.add(remoteNXT.checkersBoard.myBoard
+                    Piece takenPiece = remoteNXT.checkersBoard.myBoard
                             [(from.x + to.x) / 2]
-                            [(from.y + to.y) / 2].getPieceOnField());
+                            [(from.y + to.y) / 2].getPieceOnField();
+                    if (remoteNXT.checkersBoard.checkAllegiance(takenPiece, true)) {
+                        oppPieces.remove(takenPiece);
+                    } else {
+                        ownPieces.remove(takenPiece);
+                    }
+                    move.takenPieces.add(takenPiece);
                     remoteNXT.checkersBoard.myBoard
                             [(from.x + to.x) / 2]
                             [(from.y + to.y) / 2].setPieceOnField(null);
@@ -351,6 +362,11 @@ public class MI {
 
             for (int i = 0; i < stop; i++) {
                 Piece tempPiece = temp.takenPieces.get(i);
+                if (remoteNXT.checkersBoard.checkAllegiance(tempPiece, true)) {
+                    oppPieces.add(tempPiece);
+                } else {
+                    ownPieces.add(tempPiece);
+                }
                 remoteNXT.checkersBoard.myBoard
                     [tempPiece.x][tempPiece.y].setPieceOnField(tempPiece);
             }
