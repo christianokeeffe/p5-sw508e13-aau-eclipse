@@ -231,7 +231,7 @@ public class Analyze {
         }
 
         for (int i = 0; i < returnList.size(); i++) {
-            returnList.get(i).add(0,input);                                         /// <---                            HERE CHANGE
+            returnList.get(i).add(0, input);
         }
         return returnList;
     }
@@ -244,25 +244,13 @@ public class Analyze {
         checkersBoard.resetVisited();
         for (int i = 0; i < jumpList.size(); i++) {
             List<Field> tempList = jumpList.get(i);
-            //int stop = jumpList.get(i).size();
-            //for (int j = 0; j < stop; j++) {
-                //tempList.push(jumpList.get(i).pop());    // <-----                                  HERE CHANGE
-               // }
-            
-            //Field desField = tempList.peek();  // <-----                                  HERE CHANGE
-            Field desField = tempList.get(tempList.size()-1);
+            Field desField = tempList.get(tempList.size() - 1);
             if (!checkersBoard.isFieldEmptyOnBoard(desField.x, desField.y)) {
                 checkersBoard.movePieceInRepresentation(field, desField, false);
                 int stopj = tempList.size() - 1;
                 for (int j = 0; j < stopj; j++) {
-                    //Field tempfield = tempList.pop();                                 // <-----                                  HERE CHANGE
-                    //Field tempfield2 = tempList.peek();                             // <-----                                  HERE CHANGE
-                    
-                    Field tempfield = tempList.get(j);          // <-----                                  HERE CHANGE
-                    Field tempfield2 = tempList.get(j+1);         // <-----                                  HERE CHANGE
-                    //tempList.remove(tempList.size()-1);                             // <-----                                  HERE CHANGE
-                    
-                    
+                    Field tempfield = tempList.get(j);
+                    Field tempfield2 = tempList.get(j + 1);
                     Field takenField = checkersBoard.myBoard
                             [(tempfield.x + tempfield2.x) / 2]
                                     [(tempfield.y + tempfield2.y) / 2];
