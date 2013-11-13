@@ -322,11 +322,11 @@ public class MI {
     }
 
     public final void revertMove() throws NoKingLeft, IOException {
-        
+
         if (simulatedMoves.size() != 0) {
-            Move temp = simulatedMoves.get(simulatedMoves.size()-1);
-            simulatedMoves.remove(simulatedMoves.size()-1);
-            
+            Move temp = simulatedMoves.get(simulatedMoves.size() - 1);
+            simulatedMoves.remove(simulatedMoves.size() - 1);
+
             int stop = temp.moves.size() - 1;
             //Stack<Field> tempMoves = new Stack<Field>();
             Field tempMove = null;
