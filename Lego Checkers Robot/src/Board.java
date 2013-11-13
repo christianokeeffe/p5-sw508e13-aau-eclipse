@@ -215,10 +215,9 @@ public class Board {
         movePieceInRepresentation(fromField,
                 myBoard[toFieldX][toFieldY], isSimulated);
     }
-
+    //latex start movePieceInRepresentation
     public final void movePieceInRepresentation(Field fromField,
             Field toField, boolean isSimulated) throws NoKingLeft, IOException {
-        //latex start movePiece
         toField.setPieceOnField(fromField.getPieceOnField());
         fromField.emptyThisField();
         if (checkBounds(toField.x, toField.y)) {
@@ -313,8 +312,8 @@ public class Board {
 
     //Checks jumps
     //latex start jumpDirection
-    public final Field checkJumpDirection(Field field, int difx,
-            int dify, boolean checkForOpponent, boolean isCrowned) {
+    public final Field checkJumpDirection(Field field, int difx, int dify,
+            boolean checkForOpponent, boolean isCrowned) {
         if (((checkForOpponent && dify == -1)
                 || (!checkForOpponent && dify == 1)) && !isCrowned) {
             return null;
