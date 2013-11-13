@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
@@ -320,17 +319,6 @@ public class MI {
         for (int i = 0; i < stop; i++) {
             revertMove();
         }
-    }
-
-    private Stack<Field> flipStack(Stack<Field> inputMoves) {
-        Stack<Field> tmpMove = new Stack<Field>();
-        int stop = inputMoves.size();
-
-        for (int i = 0; i < stop; i++) {
-            tmpMove.push(inputMoves.pop());
-        }
-
-        return tmpMove;
     }
 
     public final void revertMove() throws NoKingLeft, IOException {
