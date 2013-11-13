@@ -2,18 +2,27 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
 import lejos.nxt.Sound;
 import custom.Exceptions.NoKingLeft;
+import lejos.util.Stopwatch;
 
 
 public class MI {
     public RemoteNXTFunctions remoteNXT;
     private final double inf = 100000.0;
-
+    public Stopwatch sW = new Stopwatch();
     private List<Move> simulatedMoves = new ArrayList<Move>();
     MI(RemoteNXTFunctions inputRemoteNXT) {
         remoteNXT = inputRemoteNXT;
     }
+    public int totalTimeForPossibleMoves = 0;
+    public int numberOftimesforPossibleMoves = 0;
+    
+    public int totalTimeForEvaluation = 0;
+    public int numberOftimesforEvaluation = 0;
 
     /* ------------------------------------------------------------------  *
     /* MI brain starts */
@@ -80,6 +89,18 @@ public class MI {
                 bestMove = move;
             }
         }
+        LCD.clear();
+        LCD.drawString("E TT: " + totalTimeForEvaluation, 0, 0);
+        LCD.drawString("E N: " + numberOftimesforEvaluation, 0, 1);
+        LCD.refresh();
+        Button.ENTER.waitForAnyPress();
+        
+        LCD.clear();
+        LCD.drawString("P TT: " + totalTimeForPossibleMoves, 0, 0);
+        LCD.drawString("P N: " + numberOftimesforPossibleMoves, 0, 1);
+        LCD.refresh();
+        Button.ENTER.waitForAnyPress();
+        
         return bestMove;
     }
 
@@ -132,6 +153,7 @@ public class MI {
     private final int midgameEnd = 7;
 
     private double evaluation(int turn) {
+        sW.reset();
         List<Field> ownPieces = new ArrayList<Field>();
         List<Field> oppPieces = new ArrayList<Field>();
         double valueOfBoard = 0;
@@ -180,7 +202,8 @@ public class MI {
 
         valueOfBoard +=  pieceDifferenceFactor
                 * ((ownPieces.size() / oppPieces.size()) - 1);
-
+        totalTimeForEvaluation += sW.elapsed();
+        numberOftimesforEvaluation++;
         return valueOfBoard;
     }
 
@@ -364,6 +387,7 @@ public class MI {
     //-1 = human, 1 = robot
     private List<Move> possibleMoves(int moveForSide) throws
                     InterruptedException, IOException, NoKingLeft {
+        sW.reset();
         List<Move> jumpMovements = new ArrayList<Move>();
         List<Move> movements = new ArrayList<Move>();
         remoteNXT.checkersBoard.updateMoveables();
@@ -419,7 +443,9 @@ public class MI {
             }
         }
         return movements;
-          */
+         */
+        numberOftimesforPossibleMoves ++;
+        totalTimeForPossibleMoves = sW.elapsed();
         if (jumpMovements.size() != 0) {
             return jumpMovements;
         } else {
