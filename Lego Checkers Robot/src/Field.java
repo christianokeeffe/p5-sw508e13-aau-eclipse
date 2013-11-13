@@ -28,7 +28,7 @@ public class Field {
 
     //A field is empty, if no piece is assigned to it.
     public final boolean isEmpty() {
-        return !(pieceOnField != null);
+        return (pieceOnField == null);
     }
 
     //Returns true if there is a piece on the field,
