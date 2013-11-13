@@ -354,16 +354,16 @@ public class Analyze {
         LCD.drawInt(red, 0, 1);
         LCD.drawInt(green, 0, 2);
         LCD.drawInt(blue, 0, 3);
-        if (red > 230  && green < 130 && blue < 130) {
+        if (red > 230 && red < 290 && green < 120 && green > 60 && blue < 140 && blue > 60) {
             LCD.drawChar('r', 0, 0); LCD.refresh();
             return 'r';
-        } else if (red > 250 && green > 250 && blue > 250) {
+        } else if (red > 240 && red < 277 && green > 240 && green < 280 && blue > 230 && blue < 270) {
             LCD.drawChar('w', 0, 0); LCD.refresh();
             return 'w';
-        } else if (red < 210 && green > 210  && blue < 210) {
+        } else if (red < 230 && red > 170 && green > 210 && green < 290 && blue < 230 && blue > 170) {
             LCD.drawChar('g', 0, 0); LCD.refresh();
             return 'g';
-        } else if (red < 160 && green < 220 && blue > 210) {
+        } else if (red < 170 && red > 120 && green < 240 && green > 190 && blue > 220 && blue < 270) {
             LCD.drawChar('b', 0, 0); LCD.refresh();
             return 'b';
         } else {
