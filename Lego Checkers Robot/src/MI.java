@@ -20,7 +20,6 @@ public class MI {
     }
     public int totalTimeForPossibleMoves = 0;
     public int numberOftimesforPossibleMoves = 0;
-    
     public int totalTimeForEvaluation = 0;
     public int numberOftimesforEvaluation = 0;
 
@@ -60,9 +59,9 @@ public class MI {
     public final Move lookForBestMove() throws NoKingLeft, IOException,
                                          InterruptedException {
         List<Move> posMoves = possibleMovesForRobot();
-
-        Move bestMove = new Move();
-        double price = -inf, tempPrice;
+        List<Move> bestMoves = new ArrayList<Move>();
+        double price = -inf;
+        double tempPrice;
 
         if (posMoves.size() == 1) {
             return posMoves.get(0);
@@ -74,34 +73,27 @@ public class MI {
 
             tempPrice =  -negaMax(numberofmovelook, -1, -inf, -price);
             revertMove();
-            
-            
-            
-            /*LCD.clear();
-            LCD.drawString("P:  "+ price, 0, 0);
-            LCD.drawString("TP: "+ tempPrice, 0, 1);
-            LCD.drawString("From X: " + move.moves.peek().x, 0, 3);
-            LCD.drawString("From Y: " + move.moves.peek().y, 0, 4);
-            LCD.refresh();
-            Button.ENTER.waitForAnyPress();*/
+
             if (tempPrice > price) {
                 price = tempPrice;
-                bestMove = move;
+                bestMoves.clear();
+                bestMoves.add(move);
+            } else if (tempPrice == price) {
+                bestMoves.add(move);
             }
         }
         LCD.clear();
         LCD.drawString("E TT: " + totalTimeForEvaluation, 0, 0);
         LCD.drawString("E N: " + numberOftimesforEvaluation, 0, 1);
         LCD.refresh();
-        Button.ENTER.waitForAnyPress();
-        
+        Button.waitForAnyPress();
         LCD.clear();
         LCD.drawString("P TT: " + totalTimeForPossibleMoves, 0, 0);
         LCD.drawString("P N: " + numberOftimesforPossibleMoves, 0, 1);
         LCD.refresh();
-        Button.ENTER.waitForAnyPress();
-        
-        return bestMove;
+        Button.waitForAnyPress();
+
+        return bestMoves.get((int) (Math.random() * (bestMoves.size() - 1)));
     }
 
 
@@ -248,7 +240,8 @@ public class MI {
             distance += 1;
             for (int i = -distance; i < 1 + distance; i++) {
                 for (int j = -distance; j < 1 + distance; j++) {
-                    if(remoteNXT.checkersBoard.checkBounds(field.x + i, field.y + j)) {
+                    if (remoteNXT.checkersBoard.
+                            checkBounds(field.x + i, field.y + j)) {
                         if (remoteNXT.checkersBoard.checkAllegiance(
                                 remoteNXT.checkersBoard.
                                 myBoard[field.x + i][field.y + j], true)) {
