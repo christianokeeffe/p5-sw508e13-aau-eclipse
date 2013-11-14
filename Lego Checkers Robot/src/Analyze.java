@@ -462,22 +462,22 @@ public class Analyze {
     }
 
     private boolean isOnDoubleCorners(Piece piece) {
-        if ((piece.x == 0 && piece.y == 1) || (piece.x == 1 && piece.y == 0)
-                || (piece.x == 7 && piece.y == 6)
-                || (piece.x == 6 && piece.y == 7)) {
+        if ((piece.getX() == 0 && piece.getY() == 1) || (piece.getX() == 1 && piece.getY() == 0)
+                || (piece.getX() == 7 && piece.getY() == 6)
+                || (piece.getX() == 6 && piece.getY() == 7)) {
             return true;
         }
         return false;
     }
 
     private boolean isNearDoubleCorners(Piece piece) {
-        if ((piece.x == 1 && piece.y == 2) || (piece.x == 2 && piece.y == 1)
-                || (piece.x == 6 && piece.y == 5)
-                || (piece.x == 5 && piece.y == 6)
-                || (piece.x == 2 && piece.y == 3)
-                || (piece.x == 3 && piece.y == 2)
-                || (piece.x == 4 && piece.y == 5)
-                || (piece.x == 5 && piece.y == 4)) {
+        if ((piece.getX() == 1 && piece.getY() == 2) || (piece.getX() == 2 && piece.getY() == 1)
+                || (piece.getX() == 6 && piece.getY() == 5)
+                || (piece.getX() == 5 && piece.getY() == 6)
+                || (piece.getX() == 2 && piece.getY() == 3)
+                || (piece.getX() == 3 && piece.getY() == 2)
+                || (piece.getX() == 4 && piece.getY() == 5)
+                || (piece.getX() == 5 && piece.getY() == 4)) {
             return true;
         }
         return false;
