@@ -131,11 +131,11 @@ public class MI {
 
         OUTERMOST: for (Move move : moves) {
             simulateMove(move);
-            double newScore = -negaMax(depth - 1, -turn, -beta, -alpha);
+            double newPrice = -negaMax(depth - 1, -turn, -beta, -alpha);
             revertMove();
 
-            bestValue = max(bestValue, newScore);
-            alpha = max(alpha, newScore);
+            bestValue = max(bestValue, newPrice);
+            alpha = max(alpha, newPrice);
             if (alpha >= beta) {
                 break OUTERMOST;
             }
