@@ -1,9 +1,6 @@
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import lejos.nxt.Button;
-import lejos.nxt.LCD;
 import custom.Exceptions.NoKingLeft;
 
 public class Board {

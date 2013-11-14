@@ -2,9 +2,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import lejos.nxt.Button;
-import lejos.nxt.LCD;
 import custom.Exceptions.NoKingLeft;
 
 //This is a test class to emulate a MI, not suppose to be part of the release
@@ -59,7 +56,7 @@ public class FakeMI {
             }
         }
     }*/
-    
+
   //-1 = human, 1 = robot
     private List<Move> possibleMoves(int moveForSide) throws
                     InterruptedException, IOException, NoKingLeft {
@@ -119,7 +116,7 @@ public class FakeMI {
         }
         return movements;
          */
-        
+
         if (jumpMovements.size() != 0) {
             return jumpMovements;
         } else {
@@ -130,7 +127,7 @@ public class FakeMI {
     public final boolean decideMovement()
             throws IOException, NoKingLeft, InterruptedException {
         List<Move> moves = possibleMoves(globalY);
-        
+
         if (!nxt.checkersBoard.analyzeFunctions.checkForGameHasEnded(!vHUMAN)) {
             if (!moves.isEmpty()) {
                 nxt.doMove(moves.get(numberGen.nextInt(moves.size())));
