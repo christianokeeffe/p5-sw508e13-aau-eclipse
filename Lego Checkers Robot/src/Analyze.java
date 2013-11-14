@@ -7,7 +7,6 @@ import lejos.robotics.Color;
 import custom.Exceptions.IllegalMove;
 import custom.Exceptions.NoKingLeft;
 
-
 public class Analyze {
     private Board checkersBoard;
 
@@ -17,73 +16,25 @@ public class Analyze {
     private final int analyzeRunsBeforeReset = 10;
     private RemoteNXTFunctions remoteFunctions;
     private Field trashField = new Field(3, -6);
+    private boolean pieceFound;
+    private boolean mustJump;
+
     public Analyze(Board input, RemoteNXTFunctions remoteInput) {
         checkersBoard = input;
         remoteFunctions = remoteInput;
-        }
+    }
+
     //Analyzes the current board setup
+    //latex start analyseBoard
     public final boolean analyzeBoard() throws InterruptedException,
     IOException, NoKingLeft, IllegalMove {
         if (!checkForGameHasEnded(true)) {
-            totalAnalyzeRuns += 1;
-
-            if (totalAnalyzeRuns > analyzeRunsBeforeReset) {
-                totalAnalyzeRuns = 0;
-                remoteFunctions.resetMotors();
-                }
-
-            //Find the pieces that are currently movable
-            checkersBoard.updateMoveables();
+            checkMotorCalibration();
 
             List<Field> moveableList = new ArrayList<Field>();
-
-            for (Field[] f : checkersBoard.myBoard) {
-                for (Field field : f) {
-                    if (!field.isEmpty()) {
-                        if (field.getPieceOnField().isMoveable
-                            && checkersBoard.checkAllegiance(field, true)) {
-                            moveableList.add(field);
-                        }
-                    }
-                }
-            }
-
-            checkersBoard.sortListOfFields(moveableList);
-            boolean foundOne = false;
-            boolean mustJump = false;
-            if (moveableList.size() != 0) {
-                mustJump = moveableList.get(0).getPieceOnField().canJump;
-                }
-
-            OUTERMOST: for (Field field : moveableList) {
-                if (checkersBoard.isFieldEmptyOnBoard(field.x, field.y)) {
-                    if (mustJump && !field.getPieceOnField().canJump) {
-                        throw new custom.Exceptions.IllegalMove();
-                    }
-
-                    if (this.trackMovement(field)) {
-                        foundOne = true;
-                        //Break the loop
-                        break OUTERMOST;
-                    }
-
-                }
-            }
-
-            if (!foundOne) {
-                if (analyzeBoardRepeatNumber < 3) {
-                    analyzeBoardRepeatNumber++;
-                    analyzeBoard();
-                    analyzeBoardRepeatNumber = 0;
-                } else if (analyzeBoardRepeatNumber < 6) {
-                    remoteFunctions.resetMotors();
-                    analyzeBoardRepeatNumber++;
-                    analyzeBoard();
-                    analyzeBoardRepeatNumber = 0;
-                } else {
-                    checkersBoard.findMissingPiece();
-                }
-            }
+            moveableList = makeListOfMoveables(moveableList);
+            pieceFound = checkMovement(moveableList);
+            countDownToPanic();
 
             //Find the pieces that are currently movable
             checkersBoard.updateMoveables();
@@ -94,23 +45,90 @@ public class Analyze {
         }
         return false;
     }
+    //latex end
 
-    //Try to find the piece which has been moved
+    private void checkMotorCalibration() {
+        totalAnalyzeRuns += 1;
+
+        if (totalAnalyzeRuns > analyzeRunsBeforeReset) {
+            totalAnalyzeRuns = 0;
+            remoteFunctions.resetMotors();
+        }
+    }
+
+    private List<Field> makeListOfMoveables(List<Field> moveableList) {
+        //Find the pieces that are currently movable
+        checkersBoard.updateMoveables();
+        for (Field[] f : checkersBoard.myBoard) {
+            for (Field field : f) {
+                if (!field.isEmpty()) {
+                    if (field.getPieceOnField().isMoveable
+                            && checkersBoard.checkAllegiance(field, true)) {
+                        moveableList.add(field);
+                    }
+                }
+            }
+        }
+        checkersBoard.sortListOfFields(moveableList);
+        pieceFound = false;
+        mustJump = false;
+        if (moveableList.size() != 0) {
+            mustJump = moveableList.get(0).getPieceOnField().canJump;
+        }
+        return moveableList;
+    }
+    //latex start checkMovement
+    private boolean checkMovement(List<Field> moveableList)
+            throws IllegalMove, InterruptedException, IOException, NoKingLeft {
+        for (Field field : moveableList) {
+            if (checkersBoard.isFieldEmptyOnBoard(field.x, field.y)) {
+                if (mustJump && !field.getPieceOnField().canJump) {
+                    throw new custom.Exceptions.IllegalMove();
+                }
+                if (this.trackMovement(field)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    //latex end
+    //latex start countDownToPanic
+    private void countDownToPanic()
+            throws InterruptedException, IOException, NoKingLeft, IllegalMove {
+        if (!pieceFound) {
+            if (analyzeBoardRepeatNumber < 3) {
+                analyzeBoardRepeatNumber++;
+                analyzeBoard();
+                analyzeBoardRepeatNumber = 0;
+            } else if (analyzeBoardRepeatNumber < 6) {
+                remoteFunctions.resetMotors();
+                analyzeBoardRepeatNumber++;
+                analyzeBoard();
+                analyzeBoardRepeatNumber = 0;
+            } else {
+                checkersBoard.findMissingPiece();
+            }
+        }
+    }
+    //latex end
+
+    //Try to find the piece that have been moved
     private boolean trackMovement(Field field) throws IllegalMove,
     InterruptedException, IOException, NoKingLeft {
-        boolean pieceFound = false;
+        boolean foundPiece = false;
         if (field.getPieceOnField().canJump) {
             if (findJumpPiece(field)) {
-                pieceFound = true;
+                foundPiece = true;
             }
-            if (!pieceFound) {
+            if (!foundPiece) {
                 throw new custom.Exceptions.IllegalMove();
             }
         } else if (checkMove(field, -1)) {
-            pieceFound = true;
+            foundPiece = true;
         }
 
-        return pieceFound;
+        return foundPiece;
     }
 
     //Determine simple move
@@ -120,30 +138,29 @@ public class Analyze {
         if (checkersBoard.checkBounds(field.x, field.y)) {
             //Check the first direction
             if (checkersBoard.checkMoveDirection(field, 1, directY)) {
-                if (checkIfOthersHasMove(checkersBoard.myBoard
-                                       [field.x + 1][field.y + directY], field))
-                {
+                if (validateMove(checkersBoard.
+                        myBoard[field.x + 1][field.y + directY], field)) {
                     checkersBoard.movePieceInRepresentation(field,
                             field.x + 1, field.y + directY, false);
                     return true;
                 } else {
                     return false;
                 }
-            //Second direction
+                //Second direction
             } else if (checkersBoard.checkMoveDirection(field, -1, directY)) {
-                if (checkIfOthersHasMove(checkersBoard.myBoard[field.x - 1]
-                        [field.y + directY], field)) {
+                if (validateMove(checkersBoard.
+                        myBoard[field.x - 1][field.y + directY], field)) {
                     checkersBoard.movePieceInRepresentation(field,
                             field.x - 1, field.y + directY, false);
                     return true;
                 } else {
                     return false;
                 }
-            //If king, also check backwards
+                //If king, also check backwards
             } else if (field.getPieceOnField().isCrowned) {
                 if (checkersBoard.checkMoveDirection(field, 1, -directY)) {
-                    if (checkIfOthersHasMove(checkersBoard.myBoard[field.x + 1]
-                            [field.y - directY], field)) {
+                    if (validateMove(checkersBoard.
+                            myBoard[field.x + 1][field.y - directY], field)) {
                         checkersBoard.movePieceInRepresentation(field,
                                 field.x + 1, field.y - directY, false);
                         return true;
@@ -152,8 +169,8 @@ public class Analyze {
                     }
                 } else if (checkersBoard.checkMoveDirection(
                         field, -1, -directY)) {
-                    if (checkIfOthersHasMove(checkersBoard.myBoard[field.x - 1]
-                            [field.y - directY], field)) {
+                    if (validateMove(checkersBoard.
+                            myBoard[field.x - 1][field.y - directY], field)) {
                         checkersBoard.movePieceInRepresentation(field,
                                 field.x - 1, field.y - directY, false);
                         return true;
@@ -166,7 +183,8 @@ public class Analyze {
         return false;
     }
 
-    private boolean checkIfOthersHasMove(Field field, Field fromField) throws
+    //Checks if it could have been another piece that moved
+    private boolean validateMove(Field field, Field fromField) throws
     InterruptedException, IOException {
 
         List<Field> checkArray = new ArrayList<Field>();
@@ -185,7 +203,7 @@ public class Analyze {
         boolean returnValue = true;
         for (int i = 0; i < checkArray.size(); i++) {
             if (!(checkArray.get(i).x == fromField.x
-                  && checkArray.get(i).y == fromField.y)) {
+                    && checkArray.get(i).y == fromField.y)) {
                 returnValue = checkersBoard.verifyOpPieceIsOnField(
                         checkArray.get(i));
             }
@@ -237,7 +255,7 @@ public class Analyze {
     }
 
     private boolean findJumpPiece(Field field) throws
-        InterruptedException, IOException, NoKingLeft {
+    InterruptedException, IOException, NoKingLeft {
         List<List<Field>> jumpList = new ArrayList<List<Field>>();
         jumpList = jumpSequence(field, false,
                 field.getPieceOnField().isCrowned);
