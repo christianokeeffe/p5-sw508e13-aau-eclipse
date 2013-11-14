@@ -415,11 +415,11 @@ public class Board {
     }
 
     //Check if a given piece is the robots or the opponents
-    /*public final boolean checkAllegiance(Field input, boolean checkForOpponent)
+   /*public final boolean checkAllegiance(Field input, boolean checkForOpponent)
     {
         if (checkBounds(input.x, input.y)) {
                 if ((input.isPieceOfColor(myPeasentColor)
-                        || input.isPieceOfColor(myKingColor))&& !checkForOpponent) {
+                    || input.isPieceOfColor(myKingColor))&& !checkForOpponent) {
                      return true;
                  }
                  if ((input.isPieceOfColor(opponentPeasentColor)
@@ -427,16 +427,16 @@ public class Board {
                          && checkForOpponent) {
                      return true;
                  }
-                 return false;            }
-        
+                 return false;
+                 }
         return false;
     }*/
     public final boolean checkAllegiance(Field input, boolean checkForOpponent)
     {
         if (checkBounds(input.x, input.y)) {
-            if (!input.isEmpty())
-            {
-                return checkAllegiance(input.getPieceOnField(), checkForOpponent);
+            if (!input.isEmpty()) {
+                return checkAllegiance(input.getPieceOnField(),
+                        checkForOpponent);
             }
         }
         return false;
