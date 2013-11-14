@@ -1,10 +1,10 @@
 import java.io.IOException;
 
-import custom.Exceptions.IllegalMove;
+//import custom.Exceptions.IllegalMove;
 import custom.Exceptions.NoKingLeft;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
-import lejos.util.Stopwatch;
+//import lejos.util.Stopwatch;
 
 public final class SW508E13 {
 
@@ -15,13 +15,13 @@ public final class SW508E13 {
     public static void main(String[] args)
             throws IOException, NoKingLeft, InterruptedException {
         RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
-        Stopwatch sW = new Stopwatch();
+        //Stopwatch sW = new Stopwatch();
         MI mi = new MI(checkTopFunc);
 
         Move bestMove;
         /*if (checkTopFunc.checkersBoard.myPeasentColor == 'r') {
             bestMove = mi.lookForBestMove();
-       
+
             checkTopFunc.doMove(bestMove);
             checkTopFunc.resetAfterMove();
             mi.remoteNXT.checkersBoard.informer.playYourTurn();
