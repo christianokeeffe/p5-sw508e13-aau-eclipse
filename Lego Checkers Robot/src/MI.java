@@ -121,6 +121,7 @@ public class MI {
 
     public final double negaMax(int depth, int turn, double alpha, double beta)
             throws NoKingLeft, IOException, InterruptedException {
+      //latex start negaMax
         if (depth == 0
                 || remoteNXT.checkersBoard.analyzeFunctions.
                 gameHasEnded(-1 == turn) != 0) {
@@ -146,6 +147,7 @@ public class MI {
                 break OUTERMOST;
             }
         }
+        //latex end
         return bestValue;
     }
     /* how much the AI/MI looks forward */
