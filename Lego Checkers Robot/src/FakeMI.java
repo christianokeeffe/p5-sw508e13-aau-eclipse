@@ -2,7 +2,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Stack;
 
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
@@ -13,14 +12,10 @@ public class FakeMI {
     Random numberGen;
     int globalY;
     boolean vHUMAN;
-    List<Field> jumpList;
-    List<Field> moveList;
     RemoteNXTFunctions nxt;
 
     FakeMI(RemoteNXTFunctions inputNXT, boolean versusHuman) {
         numberGen = new Random();
-        jumpList = new ArrayList<Field>();
-        moveList = new ArrayList<Field>();
 
         nxt = inputNXT;
 
@@ -31,11 +26,9 @@ public class FakeMI {
             globalY = -1;
             vHUMAN = false;
         }
-
-        updateList();
     }
 
-    public final void updateList() {
+   /* public final void updateList() {
         moveList.clear();
         jumpList.clear();
         for (Field[] arrayField : nxt.checkersBoard.myBoard) {
@@ -65,31 +58,92 @@ public class FakeMI {
                 }
             }
         }
+    }*/
+    
+  //-1 = human, 1 = robot
+    private List<Move> possibleMoves(int moveForSide) throws
+                    InterruptedException, IOException, NoKingLeft {
+        List<Move> jumpMovements = new ArrayList<Move>();
+        List<Move> movements = new ArrayList<Move>();
+        nxt.checkersBoard.updateMoveables();
+        for (Field[] f : nxt.checkersBoard.myBoard) {
+            for (Field field : f) {
+                if (!field.isEmpty()) {
+                    if (field.getPieceOnField().isMoveable
+                            && nxt.checkersBoard.
+                            checkAllegiance(field, moveForSide == -1)) {
+                        //Jumps
+                        if (field.getPieceOnField().canJump) {
+                            List<List<Field>> listOfMoves =
+                                    nxt.checkersBoard.
+                                    analyzeFunctions.jumpSequence(
+                                            field, moveForSide == 1,
+                                            field.getPieceOnField().isCrowned);
+
+                            for (List<Field> stackOfFields : listOfMoves) {
+                                if (stackOfFields.size() >= 2) {
+                                    jumpMovements.add(new Move(stackOfFields,
+                                            field.getPieceOnField().isCrowned));
+                                }
+                            }
+                        } else {  // Moves
+                            List<Field> possibleMoves =
+                                    nxt.checkersBoard.
+                                    checkMoveable(field, moveForSide);
+                            //Simple moves
+                            if (!possibleMoves.isEmpty()) {
+                                for (Field posField : possibleMoves) {
+                                    Move movement = new Move(field, posField,
+                                            field.getPieceOnField().isCrowned);
+                                    movements.add(movement);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        /*
+        remoteNXT.checkersBoard.sortListOfMoves(movements);
+        boolean mustJump = false;
+        if (movements.size() != 0) {
+            mustJump = movements.get(0).isJump();
+            if (mustJump) {
+                for (int i = 0; movements.size() > i; i++) {
+                    if (!movements.get(i).isJump()) {
+                        movements.remove(i);
+                        i--;
+                    }
+                }
+            }
+        }
+        return movements;
+         */
+        
+        if (jumpMovements.size() != 0) {
+            return jumpMovements;
+        } else {
+            return movements;
+        }
     }
 
     public final boolean decideMovement()
             throws IOException, NoKingLeft, InterruptedException {
-        updateList();
+        List<Move> moves = possibleMoves(globalY);
+        
         if (!nxt.checkersBoard.analyzeFunctions.checkForGameHasEnded(!vHUMAN)) {
-            if (!jumpList.isEmpty()) {
-                int jtemp = numberGen.nextInt(jumpList.size());
-                calculateJump(jumpList.get(jtemp));
+            if (!moves.isEmpty()) {
+                nxt.doMove(moves.get(numberGen.nextInt(moves.size())));
                 nxt.checkersBoard.updateMoveables();
             } else {
-                if (!moveList.isEmpty()) {
-                    int mtemp = numberGen.nextInt(moveList.size());
-                    move(moveList.get(mtemp));
-                    nxt.checkersBoard.updateMoveables();
-                } else {
-                    nxt.checkersBoard.informer.nothingPossible();
-                }
+                nxt.checkersBoard.informer.nothingPossible();
             }
             return true;
         }
         return false;
     }
 
-    private void callMove(Field from, Field to) {
+   /* private void callMove(Field from, Field to) {
         try {
             nxt.doMove(new Move(from, to, from.getPieceOnField().isCrowned));
         } catch (IOException e) {
@@ -97,9 +151,9 @@ public class FakeMI {
         } catch (NoKingLeft e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
-    private void move(Field f) {
+   /* private void move(Field f) {
         if (!f.getPieceOnField().isCrowned) {
             if (!nxt.checkersBoard.fieldOccupied(f.x + 1, f.y + globalY)
                && !nxt.checkersBoard.fieldOccupied(f.x - 1, f.y + globalY)) {
@@ -155,9 +209,9 @@ public class FakeMI {
                 callMove(f, nxt.checkersBoard.myBoard[f.x - 1][f.y - globalY]);
             }
         }
-    }
+    }*/
 
-    private void calculateJump(Field f)
+    /*private void calculateJump(Field f)
             throws IOException, NoKingLeft, InterruptedException {
         List<List<Field>> jumpPath = new ArrayList<List<Field>>();
         if (f.getPieceOnField() != null) {
@@ -178,5 +232,5 @@ public class FakeMI {
                 Button.ENTER.waitForPress();
             }
         }
-    }
+    }*/
 }

@@ -39,6 +39,7 @@ public class RemoteNXTFunctions {
     private NXTMotor electromagnet;
     private NXTRegulatedMotor motorZ;
     private NXTRegulatedMotor motorX;
+    private Field humanTrashField = new Field(1, 10);
 
     private TouchSensor bigRedButton;
 
@@ -143,6 +144,8 @@ public class RemoteNXTFunctions {
                 }
                 movePiece(field, checkersBoard.trashPlace[l][h]);
             }
+        } else {
+            movePiece(field, humanTrashField);
         }
     }
     //latex start NXTDoMove

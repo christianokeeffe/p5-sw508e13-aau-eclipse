@@ -19,15 +19,12 @@ public final class SW508E13 {
         MI mi = new MI(checkTopFunc);
 
         Move bestMove;
-        if (checkTopFunc.checkersBoard.myPeasentColor == 'r') {
-            sW.reset();
+        /*if (checkTopFunc.checkersBoard.myPeasentColor == 'r') {
             bestMove = mi.lookForBestMove();
-            LCD.clear();
-            LCD.drawString("Total T: " + sW.elapsed(), 0, 0);
-            LCD.refresh();
-            Button.waitForAnyPress();
+       
             checkTopFunc.doMove(bestMove);
             checkTopFunc.resetAfterMove();
+            mi.remoteNXT.checkersBoard.informer.playYourTurn();
         }
         while (!Button.ESCAPE.isDown()) {
             checkTopFunc.waitForRedButton();
@@ -36,10 +33,10 @@ public final class SW508E13 {
                 {
                     sW.reset();
                     bestMove = mi.lookForBestMove();
-                    LCD.clear();
-                    LCD.drawString("Total T: " + sW.elapsed(), 0, 0);
-                    LCD.refresh();
-                    Button.waitForAnyPress();
+                    //LCD.clear();
+                    //LCD.drawString("Total T: " + sW.elapsed(), 0, 0);
+                    //LCD.refresh();
+                    //Button.waitForAnyPress();
                     if (bestMove != null) {
                         mi.remoteNXT.doMove(bestMove);
                     }
@@ -54,8 +51,8 @@ public final class SW508E13 {
             } catch (IllegalMove e) {
                 mi.remoteNXT.checkersBoard.informer.illeagalMove();
             }
-        }
-        /*FakeMI fm2 = new FakeMI(checkTopFunc, false);
+        }*/
+        FakeMI fm2 = new FakeMI(checkTopFunc, false);
         if (checkTopFunc.checkersBoard.myPeasentColor == 'r') {
             bestMove = mi.lookForBestMove();
             checkTopFunc.doMove(bestMove);
@@ -66,6 +63,7 @@ public final class SW508E13 {
             LCD.drawString("human", 0, 0);
             LCD.refresh();
             endGame = fm2.decideMovement();
+            checkTopFunc.checkersBoard.updateMoveables();
             LCD.clear();
             LCD.drawString("robot", 0, 0);
             LCD.refresh();
@@ -74,7 +72,8 @@ public final class SW508E13 {
 
             if (bestMove != null) {
                 checkTopFunc.doMove(bestMove);
+                checkTopFunc.checkersBoard.updateMoveables();
             }
-        }*/
+        }
     }
 }

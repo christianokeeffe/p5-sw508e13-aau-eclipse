@@ -144,11 +144,11 @@ public class MI {
         return bestValue;
     }
     /* how much the AI/MI looks forward */
-    private int numberofmovelook        = 2;
+    private int numberofmovelook = 2;
 
     /* how glad the MI/AI are for the result of the game */
     private double gameIsWon = inf / 2;
-    private final int gameIsDraw = 20;
+    private final int gameIsDraw = 50;
 
     private final int pieceDifferenceFactor = 4;
 

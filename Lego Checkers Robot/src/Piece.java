@@ -15,7 +15,7 @@ public class Piece {
     private final int middleBonus = 3;
     private final int closeBonus = 4;
     private final int backlineBonus = 7;
-    private final int kingBonus = 8;
+    private final int kingBonus = 15;
 
     public Piece(Board input) {
         checkersBoard = input;
@@ -65,11 +65,10 @@ public class Piece {
     private void updatePrice(int gameState) {
         if (isOnBoard()) {
             calculatedGameState = gameState;
-            int returnValue = 0;
-
+            int returnValue = valueOfPiece;
             if (gameState == isMidgame) {
-                returnValue += valueOfPiece + middleBonus
-                           - min(Math.abs(3 - x), Math.abs(4 - x));
+                returnValue += middleBonus
+                        - min(Math.abs(3 - x), Math.abs(4 - x));
             }
             if (gameState == isEndgame) {
                 returnValue += closeBonus - closestPiece();
