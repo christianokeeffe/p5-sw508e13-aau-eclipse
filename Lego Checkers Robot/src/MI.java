@@ -1,9 +1,6 @@
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import lejos.nxt.Button;
-import lejos.nxt.LCD;
 import lejos.nxt.Sound;
 import custom.Exceptions.NoKingLeft;
 import lejos.util.Stopwatch;
@@ -100,7 +97,8 @@ public class MI {
                 bestMoves.add(move);
             }
         }
-        /*LCD.clear();
+        /*
+        LCD.clear();
         LCD.drawString("E TT: " + totalTimeForEvaluation, 0, 0);
         LCD.drawString("E N: " + numberOftimesforEvaluation, 0, 1);
         LCD.refresh();
@@ -108,11 +106,6 @@ public class MI {
         LCD.clear();
         LCD.drawString("P TT: " + totalTimeForPossibleMoves, 0, 0);
         LCD.drawString("P N: " + numberOftimesforPossibleMoves, 0, 1);
-        LCD.refresh();
-        Button.waitForAnyPress();
-        int number = (int) (Math.random() * (bestMoves.size() - 1));
-        LCD.clear();
-        LCD.drawInt(number, 0, 0);
         LCD.refresh();
         Button.waitForAnyPress();*/
         return bestMoves.get((int) (Math.random() * (bestMoves.size() - 1)));
@@ -157,12 +150,7 @@ public class MI {
     private double gameIsWon = inf / 2;
     private final int gameIsDraw = 20;
 
-    private final int valueOfPiece = 10;
-    private final int middleBonus = 3;
-    private final int closeBonus = 4;
-    private final int backlineBonus = 7;
     private final int pieceDifferenceFactor = 4;
-    private final int kingBonus = 8;
 
     private final int isMidgame = 1;
     private final int isEndgame = 2;
@@ -175,10 +163,10 @@ public class MI {
         int state = gameState();
 
         for (int i = 0; i < ownPieces.size(); i++) {
-            valueOfBoard += priceForPiece(ownPieces.get(i), state);
+            valueOfBoard += ownPieces.get(i).priceForPiece(state);
         }
         for (int i = 0; i < oppPieces.size(); i++) {
-            valueOfBoard -= priceForPiece(oppPieces.get(i), state);
+            valueOfBoard -= oppPieces.get(i).priceForPiece(state);
         }
 
         boolean isHuman = (turn == -1);
@@ -216,63 +204,6 @@ public class MI {
         return isEndgame;
     }
 
-    private double priceForPiece(Piece piece, int gameState) {
-        int returnValue = 0;
-
-        if (gameState == isMidgame) {
-            returnValue += valueOfPiece + middleBonus
-                       - min(Math.abs(3 - piece.x), Math.abs(4 - piece.x));
-        }
-        if (gameState == isEndgame) {
-            returnValue += closeBonus - closestPiece(piece);
-        }
-
-        if (!piece.isCrowned
-                && ((remoteNXT.checkersBoard.checkAllegiance(piece, true)
-                        && piece.y == 7)
-                || (remoteNXT.checkersBoard.checkAllegiance(piece, false)
-                        && piece.y == 0))) {
-            if (gameState == isMidgame) {
-                returnValue += backlineBonus / 2;
-            }
-            returnValue += backlineBonus / 2;
-        }
-        if (piece.isCrowned) {
-            returnValue += kingBonus;
-        }
-        return returnValue;
-    }
-
-    private int closestPiece(Piece piece) {
-        boolean found = false;
-        int distance = 0;
-        while (!found && distance < 8) {
-            distance += 1;
-            for (int i = -distance; i < 1 + distance; i++) {
-                for (int j = -distance; j < 1 + distance; j++) {
-                    if (remoteNXT.checkersBoard.
-                            checkBounds(piece.x + i, piece.y + j)) {
-                        if (remoteNXT.checkersBoard.checkAllegiance(
-                                remoteNXT.checkersBoard.
-                                myBoard[piece.x + i][piece.y + j], true)) {
-                            found = true;
-                            i = (int) inf;
-                            j = (int) inf;
-                        }
-                    }
-                }
-            }
-        }
-        return distance;
-    }
-
-    private int min(int x, int y) {
-        if (x < y) {
-            return x;
-        }
-        return y;
-    }
-
     private double max(double x, double y) {
         if (x < y) {
             return y;
@@ -306,7 +237,8 @@ public class MI {
                     Piece takenPiece = remoteNXT.checkersBoard.myBoard
                             [(from.x + to.x) / 2]
                             [(from.y + to.y) / 2].getPieceOnField();
-                    if (remoteNXT.checkersBoard.checkAllegiance(takenPiece, true)) {
+                    if (remoteNXT.checkersBoard.
+                            checkAllegiance(takenPiece, true)) {
                         oppPieces.remove(takenPiece);
                     } else {
                         ownPieces.remove(takenPiece);
@@ -370,7 +302,8 @@ public class MI {
                     ownPieces.add(tempPiece);
                 }
                 remoteNXT.checkersBoard.myBoard
-                    [tempPiece.x][tempPiece.y].setPieceOnField(tempPiece);
+                    [tempPiece.getX()][tempPiece.getY()].
+                    setPieceOnField(tempPiece);
             }
         }
     }

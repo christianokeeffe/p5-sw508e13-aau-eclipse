@@ -39,7 +39,7 @@ public class Board {
                     temp.allowedField = true;
                     Piece pieceOnBoard = null;
                     if (y < 3) {
-                        pieceOnBoard = new Piece();
+                        pieceOnBoard = new Piece(this);
                         pieceOnBoard.color = myPeasentColor;
 
                         //Every piece on the front line of each player
@@ -51,7 +51,7 @@ public class Board {
                     //latex end
 
                     if (y > 4) {
-                        pieceOnBoard = new Piece();
+                        pieceOnBoard = new Piece(this);
                         pieceOnBoard.color = opponentPeasentColor;
                         if (y == 5) {
                             pieceOnBoard.isMoveable = true;
@@ -72,7 +72,7 @@ public class Board {
             Field temp = new Field();
             temp.x = i;
             temp.y = -2;
-            Piece tempPiece = new Piece();
+            Piece tempPiece = new Piece(this);
             tempPiece.color = opponentKingColor;
             tempPiece.isCrowned = true;
             temp.setPieceOnField(tempPiece);
@@ -150,7 +150,7 @@ public class Board {
         if (inputField.getPieceOnField().canJump
                 && !inputField.getPieceOnField().isCrowned
                 && inputField.getPieceOnField().color == opponentPeasentColor
-                && inputField.getPieceOnField().y == 2) {
+                && inputField.getPieceOnField().getY() == 2) {
             return true;
         } else if (inputField.getPieceOnField().canJump
                 && !fieldToCompare.getPieceOnField().canJump) {
@@ -407,7 +407,7 @@ public class Board {
         if (color == ' ') {
             return null;
         } else {
-            Piece temp = new Piece();
+            Piece temp = new Piece(this);
             temp.color = color;
             temp.isCrowned = (color == 'g' || color == 'b');
             return temp;

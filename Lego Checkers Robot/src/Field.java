@@ -17,8 +17,7 @@ public class Field {
     public final void setPieceOnField(Piece inputPiece) {
         pieceOnField = inputPiece;
         if (!isEmpty()) {
-            pieceOnField.x = x;
-            pieceOnField.y = y;
+            pieceOnField.setXY(x, y);
         }
     }
 
