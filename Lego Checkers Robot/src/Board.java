@@ -253,7 +253,7 @@ public class Board {
         }
     }
 
-    //Check if a piece can move and is jumpeable
+    //Check if a piece can move and is jumpable
     //latex start checkPiece
     private void checkPiece(Field field, int dify, boolean checkForOpponent) {
         field.getPieceOnField().canJump = checkJump(field,
@@ -339,18 +339,18 @@ public class Board {
                 checkForOpponent, isCrowned) == null);
     }
 
-    //Updates the moveable property on each piece
+    //Updates the movable property on each piece
     public final void updateMoveables() {
         resetVisited();
         for (Field[] f : myBoard) {
             for (Field field : f) {
                 if (field.allowedField) {
                     if (field.getPieceOnField() != null) {
-                        //Check moveables for robot
+                        //Check movable for robot
                         if (checkAllegiance(field, false)) {
                             checkPiece(field, 1, true);
 
-                        //Check moveable for human
+                        //Check movable for human
                         } else if (checkAllegiance(field, true)) {
                             checkPiece(field, -1, false);
                         }
