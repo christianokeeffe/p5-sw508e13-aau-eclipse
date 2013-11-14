@@ -7,7 +7,7 @@ public class Move {
     public List<Piece> takenPieces = new ArrayList<Piece>();
     public boolean wasKingBefore = false;
 
-    Move(Field movefrom, Field moveto, boolean wasKing) {
+    public Move(Field movefrom, Field moveto, boolean wasKing) {
         List<Field> moveToList = new ArrayList<Field>();
         moveToList.add(movefrom);
         moveToList.add(moveto);
@@ -15,12 +15,12 @@ public class Move {
         this.wasKingBefore = wasKing;
     }
 
-    Move(List<Field> moveToList, boolean wasKing) {
+    public Move(List<Field> moveToList, boolean wasKing) {
         this.moves = moveToList;
         this.wasKingBefore = wasKing;
     }
 
-    Move() {
+    public Move() {
         List<Field> moveToList = new ArrayList<Field>();
         this.moves = moveToList;
     }
