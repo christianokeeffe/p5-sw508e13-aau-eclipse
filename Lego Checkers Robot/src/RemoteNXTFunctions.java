@@ -145,7 +145,7 @@ public class RemoteNXTFunctions {
             }
         }
     }
-
+    //latex start NXTDoMove
     public final void doMove(Move move) throws IOException, NoKingLeft {
         List<Field> takenPieces = new ArrayList<Field>();
 
@@ -162,6 +162,7 @@ public class RemoteNXTFunctions {
             trashPieceOnField(takenPieces.get(i));
         }
     }
+    //latex end
 
     private Field movePieceOverField(Field fromField, Field toField)
             throws IOException, NoKingLeft {
