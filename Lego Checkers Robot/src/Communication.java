@@ -3,10 +3,21 @@ import lejos.nxt.Sound;
 
 
 public class Communication {
+    RemoteNXTFunctions nxt;
+    
+    Communication(RemoteNXTFunctions inputNxt) {
+        nxt = inputNxt;
+    }
+    
     public final void playYourTurn() {
         Sound.twoBeeps();
+        nxt.bottomNXT.C.setPower(100);
         /*File soundFile = new File("yourturn.wav");
         Sound.playSample(soundFile, 100); // 100 ... volume*/
+    }
+    
+    public final void robotTurn() {
+        nxt.bottomNXT.C.setPower(100);
     }
 
     public final void illeagalMove() {

@@ -28,6 +28,7 @@ public final class SW508E13 {
         }
         while (!Button.ESCAPE.isDown()) {
             checkTopFunc.waitForRedButton();
+            mi.remoteNXT.checkersBoard.informer.robotTurn();
             try {
                 if (mi.remoteNXT.checkersBoard.analyzeFunctions.analyzeBoard())
                 {

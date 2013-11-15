@@ -127,21 +127,18 @@ public class MI {
             moves = possibleMovesForHuman();
         }
 
-        double bestValue = -inf;
-
-        OUTERMOST: for (Move move : moves) {
+        for (Move move : moves) {
             simulateMove(move);
             double newPrice = -negaMax(depth - 1, -turn, -beta, -alpha);
             revertMove();
 
-            bestValue = max(bestValue, newPrice);
             alpha = max(alpha, newPrice);
             if (alpha >= beta) {
-                break OUTERMOST;
+                return alpha;
             }
         }
         //latex end
-        return bestValue;
+        return alpha;
     }
     /* how much the AI/MI looks forward */
     private int numberofmovelook = 2;
