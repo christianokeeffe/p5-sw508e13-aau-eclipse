@@ -69,7 +69,7 @@ public class MI {
 
     public final Move lookForBestMove() throws NoKingLeft, IOException,
                                          InterruptedException {
-        List<Move> posMoves = possibleMovesForRobot();
+        List<Move> posMoves = possibleMoves(1);
         List<Move> bestMoves = new ArrayList<Move>();
         double price = -inf;
         double tempPrice;
@@ -121,11 +121,7 @@ public class MI {
             return turn * evaluation(turn);
         }
         List<Move> moves;
-        if (turn == 1) {
-            moves = possibleMovesForRobot();
-        } else {
-            moves = possibleMovesForHuman();
-        }
+        moves = possibleMoves(turn);
 
         for (Move move : moves) {
             simulateMove(move);
@@ -211,15 +207,6 @@ public class MI {
 
     /* MI brain stops */
     /* ---------------------------------------------------------------------  */
-    private List<Move> possibleMovesForHuman() throws InterruptedException,
-                                                      IOException, NoKingLeft {
-        return possibleMoves(-1);
-    }
-
-    private List<Move> possibleMovesForRobot() throws InterruptedException,
-                                                      IOException, NoKingLeft {
-        return possibleMoves(1);
-    }
 
     public final void simulateMove(Move move) throws NoKingLeft, IOException {
         if (move.moves.size() >= 2) {
