@@ -24,6 +24,11 @@ public class Color {
             red = 160;
             green = 190;
             blue = 250;
+        } else
+        {
+            red = 0;
+            green = 0;
+            blue = 0;
         }
     }
 
