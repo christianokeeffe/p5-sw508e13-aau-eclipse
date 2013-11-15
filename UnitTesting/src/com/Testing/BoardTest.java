@@ -86,12 +86,12 @@ public class BoardTest extends FunktionForTesting {
 				if(f.getPieceOnField() != null){
 					if(change){
 						if(f.getPieceOnField().color == 'r'){
-							test.myBoard[f.x][f.y].getPieceOnField().color = 'w';
+						    checkersBoard.myBoard[f.x][f.y].getPieceOnField().color = 'w';
 						}
 					}
 					else{
 						if(f.getPieceOnField().color == 'w'){
-							test.myBoard[f.x][f.y].getPieceOnField().color = 'r';
+						    checkersBoard.myBoard[f.x][f.y].getPieceOnField().color = 'r';
 						}
 					}
 				}
@@ -101,46 +101,34 @@ public class BoardTest extends FunktionForTesting {
 	
 	//Used to empty the entire board
 	private void emptyBoard(){
-		for(Field[] af : test.myBoard){
+		for(Field[] af : checkersBoard.myBoard){
 			for(Field f : af){
 				f.emptyThisField();
 			}
 		}
 	}
-	
-	
-	
-	//produces a field
-	private Field produceField(int x, int y){
-		Field temp = new Field();
-		temp.x = x;
-		temp.y = y;
-		temp.allowedField = true;
-		
-		return temp;
-	}
 
 	@Test
 	public void testMovePiece() throws NoKingLeft, IOException, custom.Exceptions.NoKingLeft {
-		Piece temp = test.myBoard[2][5].getPieceOnField();
+		Piece temp = checkersBoard.myBoard[2][5].getPieceOnField();
 		
 		//test if the representation is updated probably
-		test.movePieceInRepresentation(test.myBoard[2][5], test.myBoard[3][2], false);
+		checkersBoard.movePieceInRepresentation(checkersBoard.myBoard[2][5], checkersBoard.myBoard[3][2], false);
 
-		assertEquals(temp, test.myBoard[3][2].getPieceOnField());
-		assertNull(test.myBoard[2][5].getPieceOnField());
+		assertEquals(temp, checkersBoard.myBoard[3][2].getPieceOnField());
+		assertNull(checkersBoard.myBoard[2][5].getPieceOnField());
 		
-		test.movePieceInRepresentation(test.myBoard[1][2], produceField(8,8), false);
+		checkersBoard.movePieceInRepresentation(checkersBoard.myBoard[1][2], produceField(8,8), false);
 		
-		assertNull(test.myBoard[1][2].getPieceOnField());
+		assertNull(checkersBoard.myBoard[1][2].getPieceOnField());
 	}
 
 	@Test
 	public void testFieldOccupied() {
 		//test to see whether this function return is occupied if the field has a piece or if it is outside the board
-		assertTrue(test.fieldOccupied(1, 0));
-		assertFalse(test.fieldOccupied(2, 3));
-		assertTrue(test.fieldOccupied(9, 9));
+		assertTrue(checkersBoard.fieldOccupied(1, 0));
+		assertFalse(checkersBoard.fieldOccupied(2, 3));
+		assertTrue(checkersBoard.fieldOccupied(9, 9));
 	}
 	
 	//function to produce a list of fields which are used for testing check moveable function
@@ -149,14 +137,14 @@ public class BoardTest extends FunktionForTesting {
 		
 		if(field.y +direction <= 7 && field.y +direction >= 0){
 			if(field.x == 0){
-				result.add(test.myBoard[field.x+1][field.y+direction]);
+				result.add(checkersBoard.myBoard[field.x+1][field.y+direction]);
 			}
 			else if(field.x == 7){
-				result.add(test.myBoard[field.x-1][field.y+direction]);
+				result.add(checkersBoard.myBoard[field.x-1][field.y+direction]);
 			}
 			else{
-				result.add(test.myBoard[field.x-1][field.y+direction]);
-				result.add(test.myBoard[field.x+1][field.y+direction]);
+				result.add(checkersBoard.myBoard[field.x-1][field.y+direction]);
+				result.add(checkersBoard.myBoard[field.x+1][field.y+direction]);
 			}
 		}
 		
@@ -166,25 +154,25 @@ public class BoardTest extends FunktionForTesting {
 	@Test
 	public void testCheckMoveable() throws InterruptedException, IOException {
 		//test whether this function results lists corresponding the to the valid moves
-		List<Field> tempList = produceList(test.myBoard[2][5],-1);
+		List<Field> tempList = produceList(checkersBoard.myBoard[2][5],-1);
 		
-		assertEquals(test.checkMoveable(test.myBoard[2][5], -1),tempList);
+		assertEquals(checkersBoard.checkMoveable(checkersBoard.myBoard[2][5], -1),tempList);
 		
-		test.myBoard[2][5].getPieceOnField().isCrowned = true;
+		checkersBoard.myBoard[2][5].getPieceOnField().isCrowned = true;
 		
-		assertEquals(test.checkMoveable(test.myBoard[2][5], -1),tempList);
+		assertEquals(checkersBoard.checkMoveable(checkersBoard.myBoard[2][5], -1),tempList);
 		
-		tempList = produceList(test.myBoard[0][5],-1);
+		tempList = produceList(checkersBoard.myBoard[0][5],-1);
 		
-		assertEquals(test.checkMoveable(test.myBoard[0][5], -1),tempList);
+		assertEquals(checkersBoard.checkMoveable(checkersBoard.myBoard[0][5], -1),tempList);
 		
-		tempList = produceList(test.myBoard[7][2],1);
+		tempList = produceList(checkersBoard.myBoard[7][2],1);
 		
-		assertEquals(test.checkMoveable(test.myBoard[7][2], 1),tempList);
+		assertEquals(checkersBoard.checkMoveable(checkersBoard.myBoard[7][2], 1),tempList);
 		
-		test.myBoard[7][2].getPieceOnField().isCrowned = true;
+		checkersBoard.myBoard[7][2].getPieceOnField().isCrowned = true;
 		
-		assertEquals(test.checkMoveable(test.myBoard[7][2], 1),tempList);
+		assertEquals(checkersBoard.checkMoveable(checkersBoard.myBoard[7][2], 1),tempList);
 		
 		resetBoard();
 	}
@@ -192,17 +180,17 @@ public class BoardTest extends FunktionForTesting {
 	@Test
 	public void testCheckJumpDirection() throws InterruptedException, IOException {
 		//test if this function returns the fields allowed for a piece to jump too
-		test.myBoard[3][4].setPieceOnField(testfunctions.producePiece(0,0,'r',false));
+	    checkersBoard.myBoard[3][4].setPieceOnField(producePiece(0,0,'r',false));
 		
-		assertEquals(test.checkJumpDirection(test.myBoard[4][5], -1, -1, true, false), test.myBoard[2][3]);
-		assertNull(test.checkJumpDirection(test.myBoard[4][5], 1, -1, true, false));
+		assertEquals(checkersBoard.checkJumpDirection(checkersBoard.myBoard[4][5], -1, -1, true, false), checkersBoard.myBoard[2][3]);
+		assertNull(checkersBoard.checkJumpDirection(checkersBoard.myBoard[4][5], 1, -1, true, false));
 		
-		test.myBoard[3][4].getPieceOnField().isCrowned = true;
-		test.myBoard[4][3].setPieceOnField(testfunctions.producePiece(4, 3,'w',false));
-		test.myBoard[5][2].emptyThisField();
+		checkersBoard.myBoard[3][4].getPieceOnField().isCrowned = true;
+		checkersBoard.myBoard[4][3].setPieceOnField(producePiece(4, 3,'w',false));
+		checkersBoard.myBoard[5][2].emptyThisField();
 		
-		assertEquals(test.checkJumpDirection(test.myBoard[3][4], 1, -1, true, true), test.myBoard[5][2]);
-		assertNull(test.checkJumpDirection(test.myBoard[3][4], -1, -1, true, true));
+		assertEquals(checkersBoard.checkJumpDirection(checkersBoard.myBoard[3][4], 1, -1, true, true), checkersBoard.myBoard[5][2]);
+		assertNull(checkersBoard.checkJumpDirection(checkersBoard.myBoard[3][4], -1, -1, true, true));
 		
 		resetBoard();
 	}
@@ -210,18 +198,18 @@ public class BoardTest extends FunktionForTesting {
 	@Test
 	public void testCheckAllegiance() {
 		//Test for humans pieces
-		assertTrue(test.checkAllegiance(test.myBoard[4][5], true));
-		assertFalse(test.checkAllegiance(test.myBoard[4][5], false));
+		assertTrue(checkersBoard.checkAllegiance(checkersBoard.myBoard[4][5], true));
+		assertFalse(checkersBoard.checkAllegiance(checkersBoard.myBoard[4][5], false));
 		
 		//Test for robots pieces
-		assertTrue(test.checkAllegiance(test.myBoard[2][1], false));
-		assertFalse(test.checkAllegiance(test.myBoard[2][1], true));
+		assertTrue(checkersBoard.checkAllegiance(checkersBoard.myBoard[2][1], false));
+		assertFalse(checkersBoard.checkAllegiance(checkersBoard.myBoard[2][1], true));
 		
 		Field checkField = produceField(9,9);
 		
 		//Test for out for bounds
-		assertFalse(test.checkAllegiance(checkField,true));
-		assertFalse(test.checkAllegiance(checkField,false));
+		assertFalse(checkersBoard.checkAllegiance(checkField,true));
+		assertFalse(checkersBoard.checkAllegiance(checkField,false));
 	}
 
 }

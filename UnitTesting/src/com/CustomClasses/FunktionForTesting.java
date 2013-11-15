@@ -38,7 +38,7 @@ public class FunktionForTesting {
         return temp;
     }
     
-    private void resetBoard() throws InterruptedException, IOException{
+    protected void resetBoard() throws InterruptedException, IOException{
         checkersBoard = new Board(remote);
     }
 
