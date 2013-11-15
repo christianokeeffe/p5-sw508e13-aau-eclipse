@@ -9,7 +9,7 @@ import com.OriginalFiles.RemoteNXTFunctions;
 
 public class FunktionForTesting {
     protected RemoteNXTFunctions remote;
-    protected Board checkersBoard; 
+    protected Board checkersBoard;
     public FunktionForTesting() throws InterruptedException, IOException {
         remote = new RemoteNXTFunctions();
         checkersBoard = new Board(remote);
@@ -27,7 +27,15 @@ public class FunktionForTesting {
 
         return temp;
     }
-    
+    //Used to empty the entire board
+    public final void emptyBoard() {
+        for (Field[] aF : checkersBoard.myBoard) {
+            for (Field f : aF) {
+                f.emptyThisField();
+            }
+        }
+
+    }
     //produces a field
     protected Field produceField(int x, int y){
         Field temp = new Field();

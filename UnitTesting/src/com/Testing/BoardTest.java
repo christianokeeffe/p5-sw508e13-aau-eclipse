@@ -97,15 +97,6 @@ public class BoardTest extends FunktionForTesting {
 				}
 			}
 		}
-	}	
-	
-	//Used to empty the entire board
-	private void emptyBoard(){
-		for(Field[] af : checkersBoard.myBoard){
-			for(Field f : af){
-				f.emptyThisField();
-			}
-		}
 	}
 
 	@Test
