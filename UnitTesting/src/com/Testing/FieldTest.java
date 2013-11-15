@@ -2,6 +2,8 @@ package com.Testing;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+
 import org.junit.Test;
 
 import com.CustomClasses.FunktionForTesting;
@@ -9,6 +11,11 @@ import com.OriginalFiles.Field;
 import com.OriginalFiles.Piece;
 
 public class FieldTest extends FunktionForTesting{
+    public FieldTest() throws InterruptedException, IOException {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
     Field testField;
     @Test
     public void testField() {
@@ -35,7 +42,7 @@ public class FieldTest extends FunktionForTesting{
         assertTrue(field.allowedField);
 
         assertNull(field.getPieceOnField());
-        field.setPieceOnField(new Piece());
+        field.setPieceOnField(producePiece(x, y, color, upgrade));
         assertNotNull(field.getPieceOnField());
 
         assertFalse(field.visited);
@@ -47,7 +54,7 @@ public class FieldTest extends FunktionForTesting{
     public void testSetPieceOnField() {
         testField = new Field();
         assertNull(testField.getPieceOnField());
-        testField.setPieceOnField(new Piece());
+        testField.setPieceOnField(new Piece(checkersBoard));
         testFieldsPieceEqPiece(testField, false);
 
         testField.setPieceOnField(producePiece(1, 2, 'r', true));
