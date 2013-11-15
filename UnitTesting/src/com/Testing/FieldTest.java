@@ -63,8 +63,8 @@ public class FieldTest extends FunktionForTesting{
     private void testFieldsPieceEqPiece(Field PieceField, boolean testForTrue){
         Piece tempPiece = PieceField.getPieceOnField();
 
-        assertEquals(PieceField.x, tempPiece.x);
-        assertEquals(PieceField.y, tempPiece.y);
+        assertEquals(PieceField.x, tempPiece.getX());
+        assertEquals(PieceField.y, tempPiece.getY());
 
         if (testForTrue) {
             assertTrue(tempPiece.isCrowned);
