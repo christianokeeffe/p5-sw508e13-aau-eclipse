@@ -155,8 +155,8 @@ public class BoardTest extends FunktionForTesting {
 		//test if this function returns the fields allowed for a piece to jump too
 	    checkersBoard.myBoard[3][4].setPieceOnField(producePiece(0,0,'r',false));
 		
-		assertEquals(checkersBoard.checkJumpDirection(checkersBoard.myBoard[4][5], -1, -1, true, false), checkersBoard.myBoard[2][3]);
-		assertNull(checkersBoard.checkJumpDirection(checkersBoard.myBoard[4][5], 1, -1, true, false));
+		assertEquals(checkersBoard.checkJumpDirection(checkersBoard.myBoard[4][5], -1, -1, false, false), checkersBoard.myBoard[2][3]);
+		assertNull(checkersBoard.checkJumpDirection(checkersBoard.myBoard[4][5], 1, -1, false, false));
 		
 		checkersBoard.myBoard[3][4].getPieceOnField().isCrowned = true;
 		checkersBoard.myBoard[4][3].setPieceOnField(producePiece(4, 3,'w',false));

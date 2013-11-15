@@ -36,11 +36,11 @@ public class RemoteNXTFunctions {
 
     public final Color getColorOnField(int x, int y) {
         Color output = new Color();
-        if(checkersBoard == null)
+        if(x == 0 && y == 1)
         {
-            output.setColor('w');
-        } else if (x == 2 && y == 5) {
             output.setColor('r');
+        } else if (x == 2 && y == 5) {
+            output.setColor(' ');
         } else if (x == 1 && y == 4) {
             output.setColor('w');
         } else if (checkersBoard.myBoard[x][y].getPieceOnField() != null) {
