@@ -1,0 +1,2199 @@
+<?xml version="1.0" encoding="UTF-8"?><TestSessionContainer xmlns="http://www.codecover.org/xml/testsession-container" Date="1384527338378" TestSessionContainerId="ce594407-18f7-4852-881c-f76e63e57743" version="1.0">
+<SrcFileList>
+<SrcFile Content="package com.Testing;&#10;&#10;import static org.junit.Assert.*;&#10;&#10;import java.io.IOException;&#10;import java.util.ArrayList;&#10;import java.util.List;&#10;&#10;import org.junit.Test;&#10;&#10;import com.CustomClasses.FunktionForTesting;&#10;import com.OriginalFiles.Field;&#10;import com.OriginalFiles.Move;&#10;&#10;public class MoveTest extends FunktionForTesting {&#10;&#10;    public MoveTest() throws InterruptedException, IOException {&#10;        super();&#10;        // TODO Auto-generated constructor stub&#10;    }&#10;&#10;    @Test&#10;    public final void testMoveFieldFieldBoolean() {&#10;        Field fromField = new Field(5, 4);&#10;        Field toField = new Field(6, 5);&#10;&#10;        Move myMove = new Move(fromField, toField, false);&#10;&#10;        assertFalse(myMove.wasKingBefore);&#10;        assertEquals(myMove.moves.get(0), fromField);&#10;        assertEquals(myMove.moves.get(1), toField);&#10;        assertEquals(myMove.takenPieces.size(), 0);&#10;        assertFalse(myMove.isJump());&#10;    }&#10;&#10;    @Test&#10;    public final void testMoveListOfFieldBoolean() {&#10;        List&lt;Field&gt; listOfFields = new ArrayList&lt;Field&gt;();&#10;&#10;        Field fromField = new Field(1, 0);&#10;        Field toField = new Field(2, 1);&#10;&#10;        listOfFields.add(fromField);&#10;        listOfFields.add(toField);&#10;&#10;        Move myMove = new Move(listOfFields, false);&#10;&#10;        assertFalse(myMove.wasKingBefore);&#10;        assertEquals(myMove.moves, listOfFields);&#10;        assertFalse(myMove.isJump());&#10;&#10;       assertEquals(myMove.takenPieces.size(), 0);&#10;    }&#10;&#10;    @Test&#10;    public final void testMove() {&#10;        Move myMove = new Move();&#10;&#10;        assertEquals(myMove.moves.size(), 0);&#10;        assertFalse(myMove.wasKingBefore);&#10;        assertFalse(myMove.isJump());&#10;    }&#10;&#10;    @Test&#10;    public final void testIsJump() {&#10;        Field fromField = new Field(5, 4);&#10;        Field toField = new Field(6, 5);&#10;&#10;        Move myMove = new Move(fromField, toField, false);&#10;&#10;        assertFalse(myMove.isJump());&#10;&#10;        fromField = new Field(5, 4);&#10;        toField = new Field(7, 6);&#10;&#10;        myMove = new Move(fromField, toField, false);&#10;&#10;        assertTrue(myMove.isJump());&#10;    }&#10;&#10;    @Test&#10;    public final void testAddStep() {&#10;        Field fromField = new Field(3, 4);&#10;        Field toField = new Field(4, 5);&#10;&#10;        Move myMove = new Move(fromField, toField, false);&#10;&#10;        assertEquals(myMove.moves.size(), 2);&#10;&#10;        Field newStep = new Field(5, 6);&#10;&#10;        myMove.addStep(newStep);&#10;&#10;        assertEquals(myMove.moves.size(), 3);&#10;    }&#10;}&#10;" Filename="MoveTest.java" Intrnl_Id="1"/>
+<SrcFile Content="package com.Testing;&#13;&#10;&#13;&#10;import static org.junit.Assert.*;&#13;&#10;&#13;&#10;import java.io.IOException;&#13;&#10;&#13;&#10;import org.junit.Test;&#13;&#10;&#13;&#10;import com.CustomClasses.FunktionForTesting;&#13;&#10;import com.OriginalFiles.Field;&#13;&#10;import com.OriginalFiles.Piece;&#13;&#10;&#13;&#10;public class FieldTest extends FunktionForTesting{&#13;&#10;    public FieldTest() throws InterruptedException, IOException {&#13;&#10;        super();&#13;&#10;        // TODO Auto-generated constructor stub&#13;&#10;    }&#13;&#10;&#13;&#10;    Field testField;&#13;&#10;    @Test&#13;&#10;    public void testField() {&#13;&#10;        testField = new Field();&#13;&#10;        testConstructor(testField, 0, 0);&#13;&#10;    }&#13;&#10;&#13;&#10;    @Test&#13;&#10;    public void testFieldIntInt() {&#13;&#10;        testField = new Field(1, 2);&#13;&#10;        testConstructor(testField, 1, 2);&#13;&#10;    }&#13;&#10;&#13;&#10;    private void testConstructor(Field field, int x, int y){&#13;&#10;        assertEquals(x, field.x);&#13;&#10;        assertEquals(y, field.y);&#13;&#10;        field.x = 2;&#13;&#10;        field.y = 1;&#13;&#10;        assertEquals(2, field.x);&#13;&#10;        assertEquals(1, field.y);&#13;&#10;&#13;&#10;        assertFalse(field.allowedField);&#13;&#10;        field.allowedField = true;&#13;&#10;        assertTrue(field.allowedField);&#13;&#10;&#13;&#10;        assertNull(field.getPieceOnField());&#13;&#10;        field.setPieceOnField(producePiece(x, y, 'w', false));&#13;&#10;        assertNotNull(field.getPieceOnField());&#13;&#10;&#13;&#10;        assertFalse(field.visited);&#13;&#10;        field.visited = true;&#13;&#10;        assertTrue(field.visited);&#13;&#10;    }&#13;&#10;&#13;&#10;    @Test&#13;&#10;    public void testSetPieceOnField() {&#13;&#10;        testField = new Field();&#13;&#10;        assertNull(testField.getPieceOnField());&#13;&#10;        testField.setPieceOnField(new Piece(checkersBoard));&#13;&#10;        testFieldsPieceEqPiece(testField, false);&#13;&#10;&#13;&#10;        testField.setPieceOnField(producePiece(1, 2, 'r', true));&#13;&#10;&#13;&#10;        testFieldsPieceEqPiece(testField, true);&#13;&#10;&#13;&#10;        testField.x = 1;&#13;&#10;        testField.y = 2;&#13;&#10;        testField.setPieceOnField(producePiece(1, 2, 'r', true));&#13;&#10;        testFieldsPieceEqPiece(testField, true);&#13;&#10;    }&#13;&#10;&#13;&#10;    private void testFieldsPieceEqPiece(Field PieceField, boolean testForTrue){&#13;&#10;        Piece tempPiece = PieceField.getPieceOnField();&#13;&#10;&#13;&#10;        assertEquals(PieceField.x, tempPiece.getX());&#13;&#10;        assertEquals(PieceField.y, tempPiece.getY());&#13;&#10;&#13;&#10;        if (testForTrue) {&#13;&#10;            assertTrue(tempPiece.isCrowned);&#13;&#10;            assertTrue(tempPiece.isMoveable);&#13;&#10;            assertTrue(tempPiece.canJump);&#13;&#10;        } else {&#13;&#10;            assertFalse(tempPiece.isCrowned);&#13;&#10;            assertFalse(tempPiece.isMoveable);&#13;&#10;            assertFalse(tempPiece.canJump);&#13;&#10;        }&#13;&#10;    }&#13;&#10;&#13;&#10;    @Test&#13;&#10;    public void testGetPieceOnField() {&#13;&#10;        testField = new Field();&#13;&#10;        assertNull(testField.getPieceOnField());&#13;&#10;        testField.setPieceOnField(producePiece(1, 2, 'r', true));&#13;&#10;        testFieldsPieceEqPiece(testField, true);&#13;&#10;    }&#13;&#10;&#13;&#10;    @Test&#13;&#10;    public void testIsEmpty() {&#13;&#10;        testField = new Field();&#13;&#10;        assertTrue(testField.isEmpty());&#13;&#10;&#13;&#10;        testField.setPieceOnField(producePiece(0, 0, 'r', false));&#13;&#10;        assertFalse(testField.isEmpty());&#13;&#10;&#13;&#10;        testField.emptyThisField();&#13;&#10;        assertTrue(testField.isEmpty());&#13;&#10;    }&#13;&#10;&#13;&#10;    @Test&#13;&#10;    public void testIsPieceOfColor() {&#13;&#10;        testField = new Field();&#13;&#10;        testField.setPieceOnField(producePiece(0, 0, 'r', false));&#13;&#10;        assertTrue(testField.isPieceOfColor('r'));&#13;&#10;        assertFalse(testField.isPieceOfColor('w'));&#13;&#10;&#13;&#10;        testField.getPieceOnField().color = 'g';&#13;&#10;        assertFalse(testField.isPieceOfColor('b'));&#13;&#10;        assertTrue(testField.isPieceOfColor('g'));&#13;&#10;    }&#13;&#10;&#13;&#10;    @Test&#13;&#10;    public void testEmptyThisField() {&#13;&#10;        testField = new Field();&#13;&#10;        assertNull(testField.getPieceOnField());&#13;&#10;&#13;&#10;        testField.setPieceOnField(producePiece(0, 0, 'r', false));&#13;&#10;        assertNotNull(testField.getPieceOnField());&#13;&#10;&#13;&#10;        testField.emptyThisField();&#13;&#10;        assertNull(testField.getPieceOnField());&#13;&#10;    }&#13;&#10;&#13;&#10;}&#13;&#10;" Filename="FieldTest.java" Intrnl_Id="2"/>
+<SrcFile Content="package com.Testing;&#13;&#10;&#13;&#10;import static org.junit.Assert.*;&#13;&#10;&#13;&#10;import java.io.IOException;&#13;&#10;import java.util.ArrayList;&#13;&#10;import java.util.List;&#13;&#10;&#13;&#10;import org.junit.Test;&#13;&#10;&#13;&#10;&#13;&#10;import com.CustomClasses.FunktionForTesting;&#13;&#10;//Remember that myBoard in board should be public and all properties in Piece should also be public&#13;&#10;import com.OriginalFiles.*;&#13;&#10;&#13;&#10;import custom.Exceptions.IllegalMove;&#13;&#10;import custom.Exceptions.NoKingLeft;&#13;&#10;&#13;&#10;public class BoardTest extends FunktionForTesting {&#13;&#10;&#9;&#13;&#10;&#9;public BoardTest () throws InterruptedException, IOException&#13;&#10;&#9;{&#13;&#10;&#9;    super();&#13;&#10;&#9;}&#13;&#10;&#9;&#13;&#10;&#9;@Test&#13;&#10;&#9;//test for the Board class' constructor&#13;&#10;&#9;public void testBoard(){&#13;&#10;&#9;&#9;for(int x = 0; x &lt; 8; x++){&#13;&#10;&#9;&#9;&#9;for(int y = 0; y &lt; 8; y++){&#13;&#10;&#9;&#9;&#9;&#9;Field temp = checkersBoard.myBoard[x][y];&#13;&#10;&#9;&#9;&#9;&#9;if((x+y)%2 == 1)&#13;&#10;&#9;&#9;&#9;&#9;{&#13;&#10;&#9;&#9;&#9;&#9;&#9;assertTrue(temp.x == x);&#13;&#10;&#9;&#9;&#9;&#9;&#9;assertTrue(temp.y == y);&#13;&#10;&#9;&#9;&#9;&#9;&#9;assertTrue(temp.allowedField);&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#13;&#10;&#9;&#9;&#9;&#9;&#9;//test if the robots piece is piece and have the right values&#13;&#10;&#9;&#9;&#9;&#9;&#9;if(y &lt; 3)&#13;&#10;&#9;&#9;&#9;&#9;&#9;{&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;assertNotNull(temp.getPieceOnField());&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;assertTrue(temp.getPieceOnField().getX() == x);&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;assertTrue(temp.getPieceOnField().getY() == y);&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;assertEquals('r',temp.getPieceOnField().color);&#13;&#10;&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;if(y == 2)&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;{&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;&#9;//test if the robots first row is movable and not kings&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;&#9;assertTrue(temp.getPieceOnField().isMoveable);&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;&#9;assertFalse(temp.getPieceOnField().isCrowned);&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;}&#13;&#10;&#9;&#9;&#9;&#9;&#9;}&#13;&#10;&#13;&#10;&#9;&#9;&#9;&#9;&#9;//Same procedure for the human players pieces&#13;&#10;&#9;&#9;&#9;&#9;&#9;if(y &gt; 4)&#13;&#10;&#9;&#9;&#9;&#9;&#9;{&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;assertNotNull(temp.getPieceOnField());&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;assertTrue(temp.getPieceOnField().getX() == x);&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;assertTrue(temp.getPieceOnField().getY() == y);&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;assertEquals('w',temp.getPieceOnField().color);&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;if(y==5)&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;{&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;&#9;assertTrue(temp.getPieceOnField().isMoveable);&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;&#9;assertFalse(temp.getPieceOnField().isCrowned);&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;}&#13;&#10;&#9;&#9;&#9;&#9;&#9;}&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#13;&#10;&#9;&#9;&#9;&#9;&#9;if(y &gt;= 3 &amp;&amp; y &lt;= 4){&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;assertNull(temp.getPieceOnField());&#13;&#10;&#9;&#9;&#9;&#9;&#9;}&#13;&#10;&#9;&#9;&#9;&#9;}&#13;&#10;&#9;&#9;&#9;&#9;else&#13;&#10;&#9;&#9;&#9;&#9;{&#13;&#10;&#9;&#9;&#9;&#9;&#9;//test if the all the white fields are not allowed to move on&#13;&#10;&#9;&#9;&#9;&#9;&#9;assertFalse(temp.allowedField);&#13;&#10;&#9;&#9;&#9;&#9;}&#13;&#10;&#9;&#9;&#9;}&#13;&#10;&#9;&#9;}&#13;&#10;&#9;}&#13;&#10;&#9;&#13;&#10;&#9;&#13;&#10;&#13;&#10;&#9;@Test&#13;&#10;&#9;public void testMovePiece() throws NoKingLeft, IOException, custom.Exceptions.NoKingLeft {&#13;&#10;&#9;&#9;Piece temp = checkersBoard.myBoard[2][5].getPieceOnField();&#13;&#10;&#9;&#9;&#13;&#10;&#9;&#9;//test if the representation is updated probably&#13;&#10;&#9;&#9;checkersBoard.movePieceInRepresentation(checkersBoard.myBoard[2][5], checkersBoard.myBoard[3][2], false);&#13;&#10;&#13;&#10;&#9;&#9;assertEquals(temp, checkersBoard.myBoard[3][2].getPieceOnField());&#13;&#10;&#9;&#9;assertNull(checkersBoard.myBoard[2][5].getPieceOnField());&#13;&#10;&#9;&#9;&#13;&#10;&#9;&#9;checkersBoard.movePieceInRepresentation(checkersBoard.myBoard[1][2], produceField(8,8), false);&#13;&#10;&#9;&#9;&#13;&#10;&#9;&#9;assertNull(checkersBoard.myBoard[1][2].getPieceOnField());&#13;&#10;&#9;}&#13;&#10;&#13;&#10;&#9;@Test&#13;&#10;&#9;public void testFieldOccupied() {&#13;&#10;&#9;&#9;//test to see whether this function return is occupied if the field has a piece or if it is outside the board&#13;&#10;&#9;&#9;assertTrue(checkersBoard.fieldOccupied(1, 0));&#13;&#10;&#9;&#9;assertFalse(checkersBoard.fieldOccupied(2, 3));&#13;&#10;&#9;&#9;assertTrue(checkersBoard.fieldOccupied(9, 9));&#13;&#10;&#9;}&#13;&#10;&#9;&#13;&#10;&#9;//function to produce a list of fields which are used for testing check moveable function&#13;&#10;&#9;private List&lt;Field&gt; produceList(Field field, int direction){&#13;&#10;&#9;&#9;List&lt;Field&gt; result = new ArrayList&lt;Field&gt;();&#13;&#10;&#9;&#9;&#13;&#10;&#9;&#9;if(field.y +direction &lt;= 7 &amp;&amp; field.y +direction &gt;= 0){&#13;&#10;&#9;&#9;&#9;if(field.x == 0){&#13;&#10;&#9;&#9;&#9;&#9;result.add(checkersBoard.myBoard[field.x+1][field.y+direction]);&#13;&#10;&#9;&#9;&#9;}&#13;&#10;&#9;&#9;&#9;else if(field.x == 7){&#13;&#10;&#9;&#9;&#9;&#9;result.add(checkersBoard.myBoard[field.x-1][field.y+direction]);&#13;&#10;&#9;&#9;&#9;}&#13;&#10;&#9;&#9;&#9;else{&#13;&#10;&#9;&#9;&#9;&#9;result.add(checkersBoard.myBoard[field.x-1][field.y+direction]);&#13;&#10;&#9;&#9;&#9;&#9;result.add(checkersBoard.myBoard[field.x+1][field.y+direction]);&#13;&#10;&#9;&#9;&#9;}&#13;&#10;&#9;&#9;}&#13;&#10;&#9;&#9;&#13;&#10;&#9;&#9;return result;&#13;&#10;&#9;}&#9;&#13;&#10;&#9;&#13;&#10;&#9;@Test&#13;&#10;&#9;public void testCheckMoveable() throws InterruptedException, IOException {&#13;&#10;&#9;&#9;//test whether this function results lists corresponding the to the valid moves&#13;&#10;&#9;&#9;List&lt;Field&gt; tempList = produceList(checkersBoard.myBoard[2][5],-1);&#13;&#10;&#9;&#9;&#13;&#10;&#9;&#9;assertEquals(checkersBoard.checkMoveable(checkersBoard.myBoard[2][5], -1),tempList);&#13;&#10;&#9;&#9;&#13;&#10;&#9;&#9;checkersBoard.myBoard[2][5].getPieceOnField().isCrowned = true;&#13;&#10;&#9;&#9;&#13;&#10;&#9;&#9;assertEquals(checkersBoard.checkMoveable(checkersBoard.myBoard[2][5], -1),tempList);&#13;&#10;&#9;&#9;&#13;&#10;&#9;&#9;tempList = produceList(checkersBoard.myBoard[0][5],-1);&#13;&#10;&#9;&#9;&#13;&#10;&#9;&#9;assertEquals(checkersBoard.checkMoveable(checkersBoard.myBoard[0][5], -1),tempList);&#13;&#10;&#9;&#9;&#13;&#10;&#9;&#9;tempList = produceList(checkersBoard.myBoard[7][2],1);&#13;&#10;&#9;&#9;&#13;&#10;&#9;&#9;assertEquals(checkersBoard.checkMoveable(checkersBoard.myBoard[7][2], 1),tempList);&#13;&#10;&#9;&#9;&#13;&#10;&#9;&#9;checkersBoard.myBoard[7][2].getPieceOnField().isCrowned = true;&#13;&#10;&#9;&#9;&#13;&#10;&#9;&#9;assertEquals(checkersBoard.checkMoveable(checkersBoard.myBoard[7][2], 1),tempList);&#13;&#10;&#9;&#9;&#13;&#10;&#9;&#9;resetBoard();&#13;&#10;&#9;}&#13;&#10;&#9;&#13;&#10;&#9;@Test&#13;&#10;&#9;public void testCheckJumpDirection() throws InterruptedException, IOException {&#13;&#10;&#9;&#9;//test if this function returns the fields allowed for a piece to jump too&#13;&#10;&#9;    checkersBoard.myBoard[3][4].setPieceOnField(producePiece(0,0,'r',false));&#13;&#10;&#9;&#9;&#13;&#10;&#9;&#9;assertEquals(checkersBoard.checkJumpDirection(checkersBoard.myBoard[4][5], -1, -1, false, false), checkersBoard.myBoard[2][3]);&#13;&#10;&#9;&#9;assertNull(checkersBoard.checkJumpDirection(checkersBoard.myBoard[4][5], 1, -1, false, false));&#13;&#10;&#9;&#9;&#13;&#10;&#9;&#9;checkersBoard.myBoard[3][4].getPieceOnField().isCrowned = true;&#13;&#10;&#9;&#9;checkersBoard.myBoard[4][3].setPieceOnField(producePiece(4, 3,'w',false));&#13;&#10;&#9;&#9;checkersBoard.myBoard[5][2].emptyThisField();&#13;&#10;&#9;&#9;&#13;&#10;&#9;&#9;assertEquals(checkersBoard.checkJumpDirection(checkersBoard.myBoard[3][4], 1, -1, true, true), checkersBoard.myBoard[5][2]);&#13;&#10;&#9;&#9;assertNull(checkersBoard.checkJumpDirection(checkersBoard.myBoard[3][4], -1, -1, true, true));&#13;&#10;&#9;&#9;&#13;&#10;&#9;&#9;resetBoard();&#13;&#10;&#9;}&#13;&#10;&#13;&#10;&#9;@Test&#13;&#10;&#9;public void testCheckAllegiance() {&#13;&#10;&#9;&#9;//Test for humans pieces&#13;&#10;&#9;&#9;assertTrue(checkersBoard.checkAllegiance(checkersBoard.myBoard[4][5], true));&#13;&#10;&#9;&#9;assertFalse(checkersBoard.checkAllegiance(checkersBoard.myBoard[4][5], false));&#13;&#10;&#9;&#9;&#13;&#10;&#9;&#9;//Test for robots pieces&#13;&#10;&#9;&#9;assertTrue(checkersBoard.checkAllegiance(checkersBoard.myBoard[2][1], false));&#13;&#10;&#9;&#9;assertFalse(checkersBoard.checkAllegiance(checkersBoard.myBoard[2][1], true));&#13;&#10;&#9;&#9;&#13;&#10;&#9;&#9;Field checkField = produceField(9,9);&#13;&#10;&#9;&#9;&#13;&#10;&#9;&#9;//Test for out for bounds&#13;&#10;&#9;&#9;assertFalse(checkersBoard.checkAllegiance(checkField,true));&#13;&#10;&#9;&#9;assertFalse(checkersBoard.checkAllegiance(checkField,false));&#13;&#10;&#9;}&#13;&#10;&#13;&#10;}&#13;&#10;" Filename="BoardTest.java" Intrnl_Id="3"/>
+<SrcFile Content="package com.Testing;&#13;&#10;&#13;&#10;import static org.junit.Assert.*;&#13;&#10;import java.io.IOException;&#13;&#10;import org.junit.Test;&#13;&#10;import com.CustomClasses.FunktionForTesting;&#13;&#10;import custom.Exceptions.IllegalMove;&#13;&#10;import custom.Exceptions.NoKingLeft;&#13;&#10;&#13;&#10;public class AnalyzeTest extends FunktionForTesting {&#13;&#10;    com.OriginalFiles.Analyze analyzeForTest;&#13;&#10;    public AnalyzeTest() throws InterruptedException, IOException {&#13;&#10;        super();&#13;&#10;        analyzeForTest = checkersBoard.analyzeFunctions;&#13;&#10;        // TODO Auto-generated constructor stub&#13;&#10;    }&#13;&#10;&#13;&#10;    @Test&#13;&#10;    public final void testGameHasEnded() throws InterruptedException, IOException {&#13;&#10;        //test if the game is not ended with start positioning&#13;&#10;        assertEquals(0, analyzeForTest.gameHasEnded(true));&#13;&#10;        assertEquals(0, analyzeForTest.gameHasEnded(false));&#13;&#10;&#13;&#10;        constructWinCase(true);&#13;&#10;        //test if the game registers that the human have won independent of whos turn it is&#13;&#10;        assertEquals(1, analyzeForTest.gameHasEnded(true));&#13;&#10;        assertEquals(1, analyzeForTest.gameHasEnded(false));&#13;&#10;        &#13;&#10;        constructWinCase(false);&#13;&#10;        //test if the game registers that the robot have won independent of whos turn it is&#13;&#10;        assertEquals(2, analyzeForTest.gameHasEnded(true));&#13;&#10;        assertEquals(2, analyzeForTest.gameHasEnded(false));&#13;&#10;        &#13;&#10;        emptyBoard();&#13;&#10;        &#13;&#10;        //test if the game ended when it is a draw when it is humans turn&#13;&#10;        //test if the game is not ended when it is the robots turn&#13;&#10;        checkersBoard.myBoard[4][5].setPieceOnField(producePiece(4, 5, 'b', true));&#13;&#10;        checkersBoard.myBoard[6][7].setPieceOnField(producePiece(4, 5, 'g', true));&#13;&#10;        &#13;&#10;        assertEquals(3, analyzeForTest.gameHasEnded(true));&#13;&#10;        assertNotEquals(3, analyzeForTest.gameHasEnded(false));&#13;&#10;        &#13;&#10;        emptyBoard();&#13;&#10;        &#13;&#10;        //test if the game ended when it is a draw when it is robots turn&#13;&#10;        //test if the game is not ended when it is the human turn&#13;&#10;        checkersBoard.myBoard[1][0].setPieceOnField(producePiece(4, 5, 'b',true));&#13;&#10;        checkersBoard.myBoard[1][2].setPieceOnField(producePiece(4, 5, 'g',true));&#13;&#10;        &#13;&#10;        assertEquals(3, analyzeForTest.gameHasEnded(false));&#13;&#10;        assertNotEquals(3, analyzeForTest.gameHasEnded(true));&#13;&#10;        &#13;&#10;        resetBoard();&#13;&#10;    }&#13;&#10;&#13;&#10;    &#13;&#10;&#13;&#10;    &#13;&#10;&#13;&#10;    @Test&#13;&#10;    public final void testCheckForGameHasEnded() throws InterruptedException, IOException {&#13;&#10;        &#13;&#10;        //test if the games ends in the different scenarios&#13;&#10;        assertFalse(analyzeForTest.checkForGameHasEnded(true));&#13;&#10;        assertFalse(analyzeForTest.checkForGameHasEnded(false));&#13;&#10;        &#13;&#10;        constructWinCase(true);&#13;&#10;        &#13;&#10;        assertTrue(analyzeForTest.checkForGameHasEnded(true));&#13;&#10;        assertTrue(analyzeForTest.checkForGameHasEnded(false));&#13;&#10;        &#13;&#10;        constructWinCase(false);&#13;&#10;        &#13;&#10;        assertTrue(analyzeForTest.checkForGameHasEnded(true));&#13;&#10;        assertTrue(analyzeForTest.checkForGameHasEnded(false));&#13;&#10;        &#13;&#10;        emptyBoard();&#13;&#10;        &#13;&#10;        //draw case if humans turn&#13;&#10;        checkersBoard.myBoard[4][5].setPieceOnField(producePiece(4, 5, 'b',true));&#13;&#10;        checkersBoard.myBoard[6][7].setPieceOnField(producePiece(6, 7, 'g',true));&#13;&#10;        &#13;&#10;        assertTrue(analyzeForTest.checkForGameHasEnded(true));&#13;&#10;        assertFalse(analyzeForTest.checkForGameHasEnded(false));&#13;&#10;        &#13;&#10;        emptyBoard();&#13;&#10;        &#13;&#10;        //draw case if robots turn&#13;&#10;        checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'b',true));&#13;&#10;        checkersBoard.myBoard[1][2].setPieceOnField(producePiece(1, 2, 'g',true));&#13;&#10;        &#13;&#10;        assertTrue(analyzeForTest.checkForGameHasEnded(false));&#13;&#10;        assertFalse(analyzeForTest.checkForGameHasEnded(true));&#13;&#10;        &#13;&#10;        resetBoard();&#13;&#10;    }&#13;&#10;    &#13;&#10;    @Test&#13;&#10;    public final void testAnalyzeBoard() throws InterruptedException, IOException, NoKingLeft, IllegalMove, custom.Exceptions.NoKingLeft, custom.Exceptions.IllegalMove{&#13;&#10;        boolean testException = false;&#13;&#10;        &#13;&#10;        //test if analyzeboard works when moving a piece&#13;&#10;        assertTrue(analyzeForTest.analyzeBoard());&#13;&#10;        &#13;&#10;        //production of an illegal move&#13;&#10;        checkersBoard.myBoard[3][4].setPieceOnField(producePiece(4, 5, 'r',false));&#13;&#10;        checkersBoard.myBoard[2][5].setPieceOnField(producePiece(4, 5, 'w',true));&#13;&#10;        &#13;&#10;        //test that analyzeBoard finds and reports the illegal move&#13;&#10;        try {&#13;&#10;            analyzeForTest.analyzeBoard();&#13;&#10;        }&#13;&#10;        catch (IllegalMove e) {&#13;&#10;            testException = true;&#13;&#10;        }&#13;&#10;        &#13;&#10;        assertTrue(testException);&#13;&#10;        &#13;&#10;        resetBoard();&#13;&#10;    }&#13;&#10;    &#13;&#10;    &#13;&#10;    //Test not that valid for the real GetColor function&#13;&#10;    @Test&#13;&#10;    public final void testGetColor() throws IOException {&#13;&#10;        assertEquals(checkersBoard.myBoard[1][0].getPieceOnField().color, analyzeForTest.getColor(1, 0));&#13;&#10;        assertEquals(' ', analyzeForTest.getColor(0, 3));&#13;&#10;        assertEquals('w', analyzeForTest.getColor(1,4));&#13;&#10;    }&#13;&#10;}&#13;&#10;" Filename="AnalyzeTest.java" Intrnl_Id="4"/>
+</SrcFileList>
+<CritList>
+<CritListEntry Name="org.codecover.model.utils.criteria.LoopCoverage" PluginName="org.codecover"/>
+<CritListEntry Name="org.codecover.model.utils.criteria.BranchCoverage" PluginName="org.codecover"/>
+<CritListEntry Name="org.codecover.model.utils.criteria.ConditionCoverage" PluginName="org.codecover"/>
+<CritListEntry Name="org.codecover.model.utils.criteria.SynchronizedStatementCoverage" PluginName="org.codecover"/>
+<CritListEntry Name="org.codecover.model.utils.criteria.QMOCoverage" PluginName="org.codecover"/>
+<CritListEntry Name="org.codecover.model.utils.criteria.StatementCoverage" PluginName="org.codecover"/>
+</CritList>
+<BoolOpList>
+<BoolOp Arity="2" Intrnl_Id="5" Name="conditional and (&amp;&amp;)">
+<BoolAssgnmntBoolMapList>
+<MapEntry BoolAssgnmnt="10" Value="false"/>
+<MapEntry BoolAssgnmnt="02" Value="false"/>
+<MapEntry BoolAssgnmnt="11" Value="true"/>
+</BoolAssgnmntBoolMapList>
+</BoolOp>
+</BoolOpList>
+<HierarchyLvlTypeList>
+<HierarchyLvlType EnglishName="package" IntrnlName="package" Intrnl_Id="6"/>
+<HierarchyLvlType EnglishName="class" IntrnlName="class" Intrnl_Id="7"/>
+<HierarchyLvlType EnglishName="method" IntrnlName="method" Intrnl_Id="8"/>
+<HierarchyLvlType EnglishName="default package" IntrnlName="default package" Intrnl_Id="9"/>
+</HierarchyLvlTypeList>
+<MASTRoot>
+<HierarchyLvl HierarchyLvlId="53" HierarchyLvlTypeId="9" Intrnl_Id="10" Name="default package">
+<Header/>
+<LocList/>
+<HierarchyLvl HierarchyLvlId="52" HierarchyLvlTypeId="6" Intrnl_Id="11" Name="com">
+<Header/>
+<LocList/>
+<HierarchyLvl HierarchyLvlId="51" HierarchyLvlTypeId="6" Intrnl_Id="12" Name="Testing">
+<Header/>
+<LocList/>
+<HierarchyLvl HierarchyLvlId="24" HierarchyLvlTypeId="7" Intrnl_Id="13" Name="MoveTest">
+<Header>
+<Loc EndOffset="318" SrcFileId="1" StartOffset="270"/>
+</Header>
+<LocList>
+<Loc EndOffset="2423" SrcFileId="1" StartOffset="270"/>
+</LocList>
+<HierarchyLvl HierarchyLvlId="18" HierarchyLvlTypeId="8" Intrnl_Id="14" Name="MoveTest">
+<Header>
+<Loc EndOffset="384" SrcFileId="1" StartOffset="326"/>
+</Header>
+<LocList>
+<Loc EndOffset="457" SrcFileId="1" StartOffset="326"/>
+</LocList>
+<StmntSeq Intrnl_Id="15">
+<LocList>
+<Loc EndOffset="403" SrcFileId="1" StartOffset="395"/>
+</LocList>
+<BasicStmnt CovItemId="S1" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="16">
+<LocList>
+<Loc EndOffset="403" SrcFileId="1" StartOffset="395"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="19" HierarchyLvlTypeId="8" Intrnl_Id="17" Name="testMoveFieldFieldBoolean">
+<Header>
+<Loc EndOffset="518" SrcFileId="1" StartOffset="463"/>
+</Header>
+<LocList>
+<Loc EndOffset="910" SrcFileId="1" StartOffset="463"/>
+</LocList>
+<StmntSeq Intrnl_Id="18">
+<LocList>
+<Loc EndOffset="563" SrcFileId="1" StartOffset="529"/>
+<Loc EndOffset="604" SrcFileId="1" StartOffset="572"/>
+<Loc EndOffset="664" SrcFileId="1" StartOffset="614"/>
+<Loc EndOffset="708" SrcFileId="1" StartOffset="674"/>
+<Loc EndOffset="762" SrcFileId="1" StartOffset="717"/>
+<Loc EndOffset="814" SrcFileId="1" StartOffset="771"/>
+<Loc EndOffset="866" SrcFileId="1" StartOffset="823"/>
+<Loc EndOffset="904" SrcFileId="1" StartOffset="875"/>
+</LocList>
+<BasicStmnt CovItemId="S2" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="19">
+<LocList>
+<Loc EndOffset="563" SrcFileId="1" StartOffset="529"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S3" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="20">
+<LocList>
+<Loc EndOffset="604" SrcFileId="1" StartOffset="572"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S4" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="21">
+<LocList>
+<Loc EndOffset="664" SrcFileId="1" StartOffset="614"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S5" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="22">
+<LocList>
+<Loc EndOffset="708" SrcFileId="1" StartOffset="674"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S6" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="23">
+<LocList>
+<Loc EndOffset="762" SrcFileId="1" StartOffset="717"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S7" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="24">
+<LocList>
+<Loc EndOffset="814" SrcFileId="1" StartOffset="771"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S8" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="25">
+<LocList>
+<Loc EndOffset="866" SrcFileId="1" StartOffset="823"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S9" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="26">
+<LocList>
+<Loc EndOffset="904" SrcFileId="1" StartOffset="875"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="20" HierarchyLvlTypeId="8" Intrnl_Id="27" Name="testMoveListOfFieldBoolean">
+<Header>
+<Loc EndOffset="972" SrcFileId="1" StartOffset="916"/>
+</Header>
+<LocList>
+<Loc EndOffset="1435" SrcFileId="1" StartOffset="916"/>
+</LocList>
+<StmntSeq Intrnl_Id="28">
+<LocList>
+<Loc EndOffset="1033" SrcFileId="1" StartOffset="983"/>
+<Loc EndOffset="1077" SrcFileId="1" StartOffset="1043"/>
+<Loc EndOffset="1118" SrcFileId="1" StartOffset="1086"/>
+<Loc EndOffset="1156" SrcFileId="1" StartOffset="1128"/>
+<Loc EndOffset="1191" SrcFileId="1" StartOffset="1165"/>
+<Loc EndOffset="1245" SrcFileId="1" StartOffset="1201"/>
+<Loc EndOffset="1289" SrcFileId="1" StartOffset="1255"/>
+<Loc EndOffset="1339" SrcFileId="1" StartOffset="1298"/>
+<Loc EndOffset="1377" SrcFileId="1" StartOffset="1348"/>
+<Loc EndOffset="1429" SrcFileId="1" StartOffset="1386"/>
+</LocList>
+<BasicStmnt CovItemId="S10" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="29">
+<LocList>
+<Loc EndOffset="1033" SrcFileId="1" StartOffset="983"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S11" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="30">
+<LocList>
+<Loc EndOffset="1077" SrcFileId="1" StartOffset="1043"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S12" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="31">
+<LocList>
+<Loc EndOffset="1118" SrcFileId="1" StartOffset="1086"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S13" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="32">
+<LocList>
+<Loc EndOffset="1156" SrcFileId="1" StartOffset="1128"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S14" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="33">
+<LocList>
+<Loc EndOffset="1191" SrcFileId="1" StartOffset="1165"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S15" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="34">
+<LocList>
+<Loc EndOffset="1245" SrcFileId="1" StartOffset="1201"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S16" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="35">
+<LocList>
+<Loc EndOffset="1289" SrcFileId="1" StartOffset="1255"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S17" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="36">
+<LocList>
+<Loc EndOffset="1339" SrcFileId="1" StartOffset="1298"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S18" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="37">
+<LocList>
+<Loc EndOffset="1377" SrcFileId="1" StartOffset="1348"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S19" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="38">
+<LocList>
+<Loc EndOffset="1429" SrcFileId="1" StartOffset="1386"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="21" HierarchyLvlTypeId="8" Intrnl_Id="39" Name="testMove">
+<Header>
+<Loc EndOffset="1479" SrcFileId="1" StartOffset="1441"/>
+</Header>
+<LocList>
+<Loc EndOffset="1649" SrcFileId="1" StartOffset="1441"/>
+</LocList>
+<StmntSeq Intrnl_Id="40">
+<LocList>
+<Loc EndOffset="1515" SrcFileId="1" StartOffset="1490"/>
+<Loc EndOffset="1562" SrcFileId="1" StartOffset="1525"/>
+<Loc EndOffset="1605" SrcFileId="1" StartOffset="1571"/>
+<Loc EndOffset="1643" SrcFileId="1" StartOffset="1614"/>
+</LocList>
+<BasicStmnt CovItemId="S20" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="41">
+<LocList>
+<Loc EndOffset="1515" SrcFileId="1" StartOffset="1490"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S21" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="42">
+<LocList>
+<Loc EndOffset="1562" SrcFileId="1" StartOffset="1525"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S22" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="43">
+<LocList>
+<Loc EndOffset="1605" SrcFileId="1" StartOffset="1571"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S23" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="44">
+<LocList>
+<Loc EndOffset="1643" SrcFileId="1" StartOffset="1614"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="22" HierarchyLvlTypeId="8" Intrnl_Id="45" Name="testIsJump">
+<Header>
+<Loc EndOffset="1695" SrcFileId="1" StartOffset="1655"/>
+</Header>
+<LocList>
+<Loc EndOffset="2052" SrcFileId="1" StartOffset="1655"/>
+</LocList>
+<StmntSeq Intrnl_Id="46">
+<LocList>
+<Loc EndOffset="1740" SrcFileId="1" StartOffset="1706"/>
+<Loc EndOffset="1781" SrcFileId="1" StartOffset="1749"/>
+<Loc EndOffset="1841" SrcFileId="1" StartOffset="1791"/>
+<Loc EndOffset="1880" SrcFileId="1" StartOffset="1851"/>
+<Loc EndOffset="1918" SrcFileId="1" StartOffset="1890"/>
+<Loc EndOffset="1953" SrcFileId="1" StartOffset="1927"/>
+<Loc EndOffset="2008" SrcFileId="1" StartOffset="1963"/>
+<Loc EndOffset="2046" SrcFileId="1" StartOffset="2018"/>
+</LocList>
+<BasicStmnt CovItemId="S24" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="47">
+<LocList>
+<Loc EndOffset="1740" SrcFileId="1" StartOffset="1706"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S25" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="48">
+<LocList>
+<Loc EndOffset="1781" SrcFileId="1" StartOffset="1749"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S26" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="49">
+<LocList>
+<Loc EndOffset="1841" SrcFileId="1" StartOffset="1791"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S27" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="50">
+<LocList>
+<Loc EndOffset="1880" SrcFileId="1" StartOffset="1851"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S28" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="51">
+<LocList>
+<Loc EndOffset="1918" SrcFileId="1" StartOffset="1890"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S29" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="52">
+<LocList>
+<Loc EndOffset="1953" SrcFileId="1" StartOffset="1927"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S30" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="53">
+<LocList>
+<Loc EndOffset="2008" SrcFileId="1" StartOffset="1963"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S31" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="54">
+<LocList>
+<Loc EndOffset="2046" SrcFileId="1" StartOffset="2018"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="23" HierarchyLvlTypeId="8" Intrnl_Id="55" Name="testAddStep">
+<Header>
+<Loc EndOffset="2099" SrcFileId="1" StartOffset="2058"/>
+</Header>
+<LocList>
+<Loc EndOffset="2421" SrcFileId="1" StartOffset="2058"/>
+</LocList>
+<StmntSeq Intrnl_Id="56">
+<LocList>
+<Loc EndOffset="2144" SrcFileId="1" StartOffset="2110"/>
+<Loc EndOffset="2185" SrcFileId="1" StartOffset="2153"/>
+<Loc EndOffset="2245" SrcFileId="1" StartOffset="2195"/>
+<Loc EndOffset="2292" SrcFileId="1" StartOffset="2255"/>
+<Loc EndOffset="2334" SrcFileId="1" StartOffset="2302"/>
+<Loc EndOffset="2368" SrcFileId="1" StartOffset="2344"/>
+<Loc EndOffset="2415" SrcFileId="1" StartOffset="2378"/>
+</LocList>
+<BasicStmnt CovItemId="S32" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="57">
+<LocList>
+<Loc EndOffset="2144" SrcFileId="1" StartOffset="2110"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S33" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="58">
+<LocList>
+<Loc EndOffset="2185" SrcFileId="1" StartOffset="2153"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S34" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="59">
+<LocList>
+<Loc EndOffset="2245" SrcFileId="1" StartOffset="2195"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S35" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="60">
+<LocList>
+<Loc EndOffset="2292" SrcFileId="1" StartOffset="2255"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S36" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="61">
+<LocList>
+<Loc EndOffset="2334" SrcFileId="1" StartOffset="2302"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S37" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="62">
+<LocList>
+<Loc EndOffset="2368" SrcFileId="1" StartOffset="2344"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S38" CovItemPrefix="com.Testing.MoveTest.java" Intrnl_Id="63">
+<LocList>
+<Loc EndOffset="2415" SrcFileId="1" StartOffset="2378"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="35" HierarchyLvlTypeId="7" Intrnl_Id="64" Name="FieldTest">
+<Header>
+<Loc EndOffset="281" SrcFileId="2" StartOffset="232"/>
+</Header>
+<LocList>
+<Loc EndOffset="3869" SrcFileId="2" StartOffset="232"/>
+</LocList>
+<HierarchyLvl HierarchyLvlId="25" HierarchyLvlTypeId="8" Intrnl_Id="65" Name="FieldTest">
+<Header>
+<Loc EndOffset="347" SrcFileId="2" StartOffset="288"/>
+</Header>
+<LocList>
+<Loc EndOffset="423" SrcFileId="2" StartOffset="288"/>
+</LocList>
+<StmntSeq Intrnl_Id="66">
+<LocList>
+<Loc EndOffset="367" SrcFileId="2" StartOffset="359"/>
+</LocList>
+<BasicStmnt CovItemId="S1" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="67">
+<LocList>
+<Loc EndOffset="367" SrcFileId="2" StartOffset="359"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="26" HierarchyLvlTypeId="8" Intrnl_Id="68" Name="testField">
+<Header>
+<Loc EndOffset="487" SrcFileId="2" StartOffset="453"/>
+</Header>
+<LocList>
+<Loc EndOffset="573" SrcFileId="2" StartOffset="453"/>
+</LocList>
+<StmntSeq Intrnl_Id="69">
+<LocList>
+<Loc EndOffset="523" SrcFileId="2" StartOffset="499"/>
+<Loc EndOffset="566" SrcFileId="2" StartOffset="533"/>
+</LocList>
+<BasicStmnt CovItemId="S2" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="70">
+<LocList>
+<Loc EndOffset="523" SrcFileId="2" StartOffset="499"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S3" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="71">
+<LocList>
+<Loc EndOffset="566" SrcFileId="2" StartOffset="533"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="27" HierarchyLvlTypeId="8" Intrnl_Id="72" Name="testFieldIntInt">
+<Header>
+<Loc EndOffset="621" SrcFileId="2" StartOffset="581"/>
+</Header>
+<LocList>
+<Loc EndOffset="711" SrcFileId="2" StartOffset="581"/>
+</LocList>
+<StmntSeq Intrnl_Id="73">
+<LocList>
+<Loc EndOffset="661" SrcFileId="2" StartOffset="633"/>
+<Loc EndOffset="704" SrcFileId="2" StartOffset="671"/>
+</LocList>
+<BasicStmnt CovItemId="S4" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="74">
+<LocList>
+<Loc EndOffset="661" SrcFileId="2" StartOffset="633"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S5" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="75">
+<LocList>
+<Loc EndOffset="704" SrcFileId="2" StartOffset="671"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="28" HierarchyLvlTypeId="8" Intrnl_Id="76" Name="testConstructor">
+<Header>
+<Loc EndOffset="774" SrcFileId="2" StartOffset="719"/>
+</Header>
+<LocList>
+<Loc EndOffset="1354" SrcFileId="2" StartOffset="719"/>
+</LocList>
+<StmntSeq Intrnl_Id="77">
+<LocList>
+<Loc EndOffset="810" SrcFileId="2" StartOffset="785"/>
+<Loc EndOffset="845" SrcFileId="2" StartOffset="820"/>
+<Loc EndOffset="867" SrcFileId="2" StartOffset="855"/>
+<Loc EndOffset="889" SrcFileId="2" StartOffset="877"/>
+<Loc EndOffset="924" SrcFileId="2" StartOffset="899"/>
+<Loc EndOffset="959" SrcFileId="2" StartOffset="934"/>
+<Loc EndOffset="1003" SrcFileId="2" StartOffset="971"/>
+<Loc EndOffset="1039" SrcFileId="2" StartOffset="1013"/>
+<Loc EndOffset="1080" SrcFileId="2" StartOffset="1049"/>
+<Loc EndOffset="1128" SrcFileId="2" StartOffset="1092"/>
+<Loc EndOffset="1192" SrcFileId="2" StartOffset="1138"/>
+<Loc EndOffset="1241" SrcFileId="2" StartOffset="1202"/>
+<Loc EndOffset="1280" SrcFileId="2" StartOffset="1253"/>
+<Loc EndOffset="1311" SrcFileId="2" StartOffset="1290"/>
+<Loc EndOffset="1347" SrcFileId="2" StartOffset="1321"/>
+</LocList>
+<BasicStmnt CovItemId="S6" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="78">
+<LocList>
+<Loc EndOffset="810" SrcFileId="2" StartOffset="785"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S7" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="79">
+<LocList>
+<Loc EndOffset="845" SrcFileId="2" StartOffset="820"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S8" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="80">
+<LocList>
+<Loc EndOffset="867" SrcFileId="2" StartOffset="855"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S9" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="81">
+<LocList>
+<Loc EndOffset="889" SrcFileId="2" StartOffset="877"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S10" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="82">
+<LocList>
+<Loc EndOffset="924" SrcFileId="2" StartOffset="899"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S11" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="83">
+<LocList>
+<Loc EndOffset="959" SrcFileId="2" StartOffset="934"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S12" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="84">
+<LocList>
+<Loc EndOffset="1003" SrcFileId="2" StartOffset="971"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S13" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="85">
+<LocList>
+<Loc EndOffset="1039" SrcFileId="2" StartOffset="1013"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S14" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="86">
+<LocList>
+<Loc EndOffset="1080" SrcFileId="2" StartOffset="1049"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S15" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="87">
+<LocList>
+<Loc EndOffset="1128" SrcFileId="2" StartOffset="1092"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S16" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="88">
+<LocList>
+<Loc EndOffset="1192" SrcFileId="2" StartOffset="1138"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S17" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="89">
+<LocList>
+<Loc EndOffset="1241" SrcFileId="2" StartOffset="1202"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S18" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="90">
+<LocList>
+<Loc EndOffset="1280" SrcFileId="2" StartOffset="1253"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S19" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="91">
+<LocList>
+<Loc EndOffset="1311" SrcFileId="2" StartOffset="1290"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S20" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="92">
+<LocList>
+<Loc EndOffset="1347" SrcFileId="2" StartOffset="1321"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="29" HierarchyLvlTypeId="8" Intrnl_Id="93" Name="testSetPieceOnField">
+<Header>
+<Loc EndOffset="1406" SrcFileId="2" StartOffset="1362"/>
+</Header>
+<LocList>
+<Loc EndOffset="1904" SrcFileId="2" StartOffset="1362"/>
+</LocList>
+<StmntSeq Intrnl_Id="94">
+<LocList>
+<Loc EndOffset="1442" SrcFileId="2" StartOffset="1418"/>
+<Loc EndOffset="1492" SrcFileId="2" StartOffset="1452"/>
+<Loc EndOffset="1554" SrcFileId="2" StartOffset="1502"/>
+<Loc EndOffset="1605" SrcFileId="2" StartOffset="1564"/>
+<Loc EndOffset="1674" SrcFileId="2" StartOffset="1617"/>
+<Loc EndOffset="1726" SrcFileId="2" StartOffset="1686"/>
+<Loc EndOffset="1754" SrcFileId="2" StartOffset="1738"/>
+<Loc EndOffset="1780" SrcFileId="2" StartOffset="1764"/>
+<Loc EndOffset="1847" SrcFileId="2" StartOffset="1790"/>
+<Loc EndOffset="1897" SrcFileId="2" StartOffset="1857"/>
+</LocList>
+<BasicStmnt CovItemId="S21" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="95">
+<LocList>
+<Loc EndOffset="1442" SrcFileId="2" StartOffset="1418"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S22" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="96">
+<LocList>
+<Loc EndOffset="1492" SrcFileId="2" StartOffset="1452"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S23" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="97">
+<LocList>
+<Loc EndOffset="1554" SrcFileId="2" StartOffset="1502"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S24" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="98">
+<LocList>
+<Loc EndOffset="1605" SrcFileId="2" StartOffset="1564"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S25" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="99">
+<LocList>
+<Loc EndOffset="1674" SrcFileId="2" StartOffset="1617"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S26" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="100">
+<LocList>
+<Loc EndOffset="1726" SrcFileId="2" StartOffset="1686"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S27" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="101">
+<LocList>
+<Loc EndOffset="1754" SrcFileId="2" StartOffset="1738"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S28" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="102">
+<LocList>
+<Loc EndOffset="1780" SrcFileId="2" StartOffset="1764"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S29" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="103">
+<LocList>
+<Loc EndOffset="1847" SrcFileId="2" StartOffset="1790"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S30" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="104">
+<LocList>
+<Loc EndOffset="1897" SrcFileId="2" StartOffset="1857"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="30" HierarchyLvlTypeId="8" Intrnl_Id="105" Name="testFieldsPieceEqPiece">
+<Header>
+<Loc EndOffset="1986" SrcFileId="2" StartOffset="1912"/>
+</Header>
+<LocList>
+<Loc EndOffset="2499" SrcFileId="2" StartOffset="1912"/>
+</LocList>
+<StmntSeq Intrnl_Id="106">
+<LocList>
+<Loc EndOffset="2044" SrcFileId="2" StartOffset="1997"/>
+<Loc EndOffset="2101" SrcFileId="2" StartOffset="2056"/>
+<Loc EndOffset="2156" SrcFileId="2" StartOffset="2111"/>
+<Loc EndOffset="2492" SrcFileId="2" StartOffset="2168"/>
+</LocList>
+<BasicStmnt CovItemId="S31" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="107">
+<LocList>
+<Loc EndOffset="2044" SrcFileId="2" StartOffset="1997"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S32" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="108">
+<LocList>
+<Loc EndOffset="2101" SrcFileId="2" StartOffset="2056"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S33" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="109">
+<LocList>
+<Loc EndOffset="2156" SrcFileId="2" StartOffset="2111"/>
+</LocList>
+</BasicStmnt>
+<CondStmnt CovItemId="S34" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="110">
+<Branch CovItemId="B1" CovItemPrefix="com.Testing.FieldTest.java" Implct="false" Intrnl_Id="111">
+<Cond/>
+<LocList>
+<Loc EndOffset="2334" SrcFileId="2" StartOffset="2185"/>
+</LocList>
+<StmntSeq Intrnl_Id="112">
+<LocList>
+<Loc EndOffset="2232" SrcFileId="2" StartOffset="2200"/>
+<Loc EndOffset="2279" SrcFileId="2" StartOffset="2246"/>
+<Loc EndOffset="2323" SrcFileId="2" StartOffset="2293"/>
+</LocList>
+<BasicStmnt CovItemId="S35" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="113">
+<LocList>
+<Loc EndOffset="2232" SrcFileId="2" StartOffset="2200"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S36" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="114">
+<LocList>
+<Loc EndOffset="2279" SrcFileId="2" StartOffset="2246"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S37" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="115">
+<LocList>
+<Loc EndOffset="2323" SrcFileId="2" StartOffset="2293"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B2" CovItemPrefix="com.Testing.FieldTest.java" Implct="false" Intrnl_Id="116">
+<Cond>
+<Loc EndOffset="2339" SrcFileId="2" StartOffset="2335"/>
+</Cond>
+<LocList>
+<Loc EndOffset="2492" SrcFileId="2" StartOffset="2340"/>
+</LocList>
+<StmntSeq Intrnl_Id="117">
+<LocList>
+<Loc EndOffset="2388" SrcFileId="2" StartOffset="2355"/>
+<Loc EndOffset="2436" SrcFileId="2" StartOffset="2402"/>
+<Loc EndOffset="2481" SrcFileId="2" StartOffset="2450"/>
+</LocList>
+<BasicStmnt CovItemId="S38" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="118">
+<LocList>
+<Loc EndOffset="2388" SrcFileId="2" StartOffset="2355"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S39" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="119">
+<LocList>
+<Loc EndOffset="2436" SrcFileId="2" StartOffset="2402"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S40" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="120">
+<LocList>
+<Loc EndOffset="2481" SrcFileId="2" StartOffset="2450"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="2170" SrcFileId="2" StartOffset="2168"/>
+<LocList>
+<Loc EndOffset="2492" SrcFileId="2" StartOffset="2168"/>
+</LocList>
+<RootTerm CovItemId="C1" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="121">
+<BasicBoolTerm Intrnl_Id="122">
+<LocList>
+<Loc EndOffset="2183" SrcFileId="2" StartOffset="2172"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="31" HierarchyLvlTypeId="8" Intrnl_Id="123" Name="testGetPieceOnField">
+<Header>
+<Loc EndOffset="2551" SrcFileId="2" StartOffset="2507"/>
+</Header>
+<LocList>
+<Loc EndOffset="2761" SrcFileId="2" StartOffset="2507"/>
+</LocList>
+<StmntSeq Intrnl_Id="124">
+<LocList>
+<Loc EndOffset="2587" SrcFileId="2" StartOffset="2563"/>
+<Loc EndOffset="2637" SrcFileId="2" StartOffset="2597"/>
+<Loc EndOffset="2704" SrcFileId="2" StartOffset="2647"/>
+<Loc EndOffset="2754" SrcFileId="2" StartOffset="2714"/>
+</LocList>
+<BasicStmnt CovItemId="S41" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="125">
+<LocList>
+<Loc EndOffset="2587" SrcFileId="2" StartOffset="2563"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S42" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="126">
+<LocList>
+<Loc EndOffset="2637" SrcFileId="2" StartOffset="2597"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S43" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="127">
+<LocList>
+<Loc EndOffset="2704" SrcFileId="2" StartOffset="2647"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S44" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="128">
+<LocList>
+<Loc EndOffset="2754" SrcFileId="2" StartOffset="2714"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="32" HierarchyLvlTypeId="8" Intrnl_Id="129" Name="testIsEmpty">
+<Header>
+<Loc EndOffset="2805" SrcFileId="2" StartOffset="2769"/>
+</Header>
+<LocList>
+<Loc EndOffset="3084" SrcFileId="2" StartOffset="2769"/>
+</LocList>
+<StmntSeq Intrnl_Id="130">
+<LocList>
+<Loc EndOffset="2841" SrcFileId="2" StartOffset="2817"/>
+<Loc EndOffset="2883" SrcFileId="2" StartOffset="2851"/>
+<Loc EndOffset="2953" SrcFileId="2" StartOffset="2895"/>
+<Loc EndOffset="2996" SrcFileId="2" StartOffset="2963"/>
+<Loc EndOffset="3035" SrcFileId="2" StartOffset="3008"/>
+<Loc EndOffset="3077" SrcFileId="2" StartOffset="3045"/>
+</LocList>
+<BasicStmnt CovItemId="S45" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="131">
+<LocList>
+<Loc EndOffset="2841" SrcFileId="2" StartOffset="2817"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S46" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="132">
+<LocList>
+<Loc EndOffset="2883" SrcFileId="2" StartOffset="2851"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S47" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="133">
+<LocList>
+<Loc EndOffset="2953" SrcFileId="2" StartOffset="2895"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S48" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="134">
+<LocList>
+<Loc EndOffset="2996" SrcFileId="2" StartOffset="2963"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S49" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="135">
+<LocList>
+<Loc EndOffset="3035" SrcFileId="2" StartOffset="3008"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S50" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="136">
+<LocList>
+<Loc EndOffset="3077" SrcFileId="2" StartOffset="3045"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="33" HierarchyLvlTypeId="8" Intrnl_Id="137" Name="testIsPieceOfColor">
+<Header>
+<Loc EndOffset="3135" SrcFileId="2" StartOffset="3092"/>
+</Header>
+<LocList>
+<Loc EndOffset="3508" SrcFileId="2" StartOffset="3092"/>
+</LocList>
+<StmntSeq Intrnl_Id="138">
+<LocList>
+<Loc EndOffset="3171" SrcFileId="2" StartOffset="3147"/>
+<Loc EndOffset="3239" SrcFileId="2" StartOffset="3181"/>
+<Loc EndOffset="3291" SrcFileId="2" StartOffset="3249"/>
+<Loc EndOffset="3344" SrcFileId="2" StartOffset="3301"/>
+<Loc EndOffset="3396" SrcFileId="2" StartOffset="3356"/>
+<Loc EndOffset="3449" SrcFileId="2" StartOffset="3406"/>
+<Loc EndOffset="3501" SrcFileId="2" StartOffset="3459"/>
+</LocList>
+<BasicStmnt CovItemId="S51" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="139">
+<LocList>
+<Loc EndOffset="3171" SrcFileId="2" StartOffset="3147"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S52" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="140">
+<LocList>
+<Loc EndOffset="3239" SrcFileId="2" StartOffset="3181"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S53" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="141">
+<LocList>
+<Loc EndOffset="3291" SrcFileId="2" StartOffset="3249"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S54" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="142">
+<LocList>
+<Loc EndOffset="3344" SrcFileId="2" StartOffset="3301"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S55" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="143">
+<LocList>
+<Loc EndOffset="3396" SrcFileId="2" StartOffset="3356"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S56" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="144">
+<LocList>
+<Loc EndOffset="3449" SrcFileId="2" StartOffset="3406"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S57" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="145">
+<LocList>
+<Loc EndOffset="3501" SrcFileId="2" StartOffset="3459"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="34" HierarchyLvlTypeId="8" Intrnl_Id="146" Name="testEmptyThisField">
+<Header>
+<Loc EndOffset="3559" SrcFileId="2" StartOffset="3516"/>
+</Header>
+<LocList>
+<Loc EndOffset="3864" SrcFileId="2" StartOffset="3516"/>
+</LocList>
+<StmntSeq Intrnl_Id="147">
+<LocList>
+<Loc EndOffset="3595" SrcFileId="2" StartOffset="3571"/>
+<Loc EndOffset="3645" SrcFileId="2" StartOffset="3605"/>
+<Loc EndOffset="3715" SrcFileId="2" StartOffset="3657"/>
+<Loc EndOffset="3768" SrcFileId="2" StartOffset="3725"/>
+<Loc EndOffset="3807" SrcFileId="2" StartOffset="3780"/>
+<Loc EndOffset="3857" SrcFileId="2" StartOffset="3817"/>
+</LocList>
+<BasicStmnt CovItemId="S58" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="148">
+<LocList>
+<Loc EndOffset="3595" SrcFileId="2" StartOffset="3571"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S59" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="149">
+<LocList>
+<Loc EndOffset="3645" SrcFileId="2" StartOffset="3605"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S60" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="150">
+<LocList>
+<Loc EndOffset="3715" SrcFileId="2" StartOffset="3657"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S61" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="151">
+<LocList>
+<Loc EndOffset="3768" SrcFileId="2" StartOffset="3725"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S62" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="152">
+<LocList>
+<Loc EndOffset="3807" SrcFileId="2" StartOffset="3780"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S63" CovItemPrefix="com.Testing.FieldTest.java" Intrnl_Id="153">
+<LocList>
+<Loc EndOffset="3857" SrcFileId="2" StartOffset="3817"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="44" HierarchyLvlTypeId="7" Intrnl_Id="154" Name="BoardTest">
+<Header>
+<Loc EndOffset="479" SrcFileId="3" StartOffset="430"/>
+</Header>
+<LocList>
+<Loc EndOffset="6303" SrcFileId="3" StartOffset="430"/>
+</LocList>
+<HierarchyLvl HierarchyLvlId="36" HierarchyLvlTypeId="8" Intrnl_Id="155" Name="BoardTest">
+<Header>
+<Loc EndOffset="547" SrcFileId="3" StartOffset="487"/>
+</Header>
+<LocList>
+<Loc EndOffset="570" SrcFileId="3" StartOffset="487"/>
+</LocList>
+<StmntSeq Intrnl_Id="156">
+<LocList>
+<Loc EndOffset="566" SrcFileId="3" StartOffset="558"/>
+</LocList>
+<BasicStmnt CovItemId="S1" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="157">
+<LocList>
+<Loc EndOffset="566" SrcFileId="3" StartOffset="558"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="37" HierarchyLvlTypeId="8" Intrnl_Id="158" Name="testBoard">
+<Header>
+<Loc EndOffset="649" SrcFileId="3" StartOffset="576"/>
+</Header>
+<LocList>
+<Loc EndOffset="2105" SrcFileId="3" StartOffset="576"/>
+</LocList>
+<StmntSeq Intrnl_Id="159">
+<LocList>
+<Loc EndOffset="2101" SrcFileId="3" StartOffset="654"/>
+</LocList>
+<LoopStmnt CovItemId="S2" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="160" MltplExecId="L1-2" MltplExecPrefix="com.Testing.BoardTest.java" NvrExecId="L1-0" NvrExecPrefix="com.Testing.BoardTest.java" OnceExecutedId="L1-1" OnceExecutedPrefix="com.Testing.BoardTest.java" OptBodyExec="true">
+<StmntSeq Intrnl_Id="161">
+<LocList>
+<Loc EndOffset="2096" SrcFileId="3" StartOffset="686"/>
+</LocList>
+<LoopStmnt CovItemId="S3" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="162" MltplExecId="L2-2" MltplExecPrefix="com.Testing.BoardTest.java" NvrExecId="L2-0" NvrExecPrefix="com.Testing.BoardTest.java" OnceExecutedId="L2-1" OnceExecutedPrefix="com.Testing.BoardTest.java" OptBodyExec="true">
+<StmntSeq Intrnl_Id="163">
+<LocList>
+<Loc EndOffset="760" SrcFileId="3" StartOffset="719"/>
+<Loc EndOffset="2090" SrcFileId="3" StartOffset="766"/>
+</LocList>
+<BasicStmnt CovItemId="S4" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="164">
+<LocList>
+<Loc EndOffset="760" SrcFileId="3" StartOffset="719"/>
+</LocList>
+</BasicStmnt>
+<CondStmnt CovItemId="S5" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="165">
+<Branch CovItemId="B1" CovItemPrefix="com.Testing.BoardTest.java" Implct="false" Intrnl_Id="166">
+<Cond/>
+<LocList>
+<Loc EndOffset="1960" SrcFileId="3" StartOffset="788"/>
+</LocList>
+<StmntSeq Intrnl_Id="167">
+<LocList>
+<Loc EndOffset="820" SrcFileId="3" StartOffset="796"/>
+<Loc EndOffset="851" SrcFileId="3" StartOffset="827"/>
+<Loc EndOffset="888" SrcFileId="3" StartOffset="858"/>
+<Loc EndOffset="1418" SrcFileId="3" StartOffset="970"/>
+<Loc EndOffset="1867" SrcFileId="3" StartOffset="1479"/>
+<Loc EndOffset="1953" SrcFileId="3" StartOffset="1881"/>
+</LocList>
+<BasicStmnt CovItemId="S6" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="168">
+<LocList>
+<Loc EndOffset="820" SrcFileId="3" StartOffset="796"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S7" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="169">
+<LocList>
+<Loc EndOffset="851" SrcFileId="3" StartOffset="827"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S8" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="170">
+<LocList>
+<Loc EndOffset="888" SrcFileId="3" StartOffset="858"/>
+</LocList>
+</BasicStmnt>
+<CondStmnt CovItemId="S9" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="171">
+<Branch CovItemId="B3" CovItemPrefix="com.Testing.BoardTest.java" Implct="false" Intrnl_Id="172">
+<Cond/>
+<LocList>
+<Loc EndOffset="1418" SrcFileId="3" StartOffset="986"/>
+</LocList>
+<StmntSeq Intrnl_Id="173">
+<LocList>
+<Loc EndOffset="1033" SrcFileId="3" StartOffset="995"/>
+<Loc EndOffset="1088" SrcFileId="3" StartOffset="1041"/>
+<Loc EndOffset="1143" SrcFileId="3" StartOffset="1096"/>
+<Loc EndOffset="1198" SrcFileId="3" StartOffset="1151"/>
+<Loc EndOffset="1410" SrcFileId="3" StartOffset="1208"/>
+</LocList>
+<BasicStmnt CovItemId="S10" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="174">
+<LocList>
+<Loc EndOffset="1033" SrcFileId="3" StartOffset="995"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S11" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="175">
+<LocList>
+<Loc EndOffset="1088" SrcFileId="3" StartOffset="1041"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S12" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="176">
+<LocList>
+<Loc EndOffset="1143" SrcFileId="3" StartOffset="1096"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S13" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="177">
+<LocList>
+<Loc EndOffset="1198" SrcFileId="3" StartOffset="1151"/>
+</LocList>
+</BasicStmnt>
+<CondStmnt CovItemId="S14" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="178">
+<Branch CovItemId="B5" CovItemPrefix="com.Testing.BoardTest.java" Implct="false" Intrnl_Id="179">
+<Cond/>
+<LocList>
+<Loc EndOffset="1410" SrcFileId="3" StartOffset="1226"/>
+</LocList>
+<StmntSeq Intrnl_Id="180">
+<LocList>
+<Loc EndOffset="1346" SrcFileId="3" StartOffset="1300"/>
+<Loc EndOffset="1401" SrcFileId="3" StartOffset="1355"/>
+</LocList>
+<BasicStmnt CovItemId="S15" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="181">
+<LocList>
+<Loc EndOffset="1346" SrcFileId="3" StartOffset="1300"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S16" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="182">
+<LocList>
+<Loc EndOffset="1401" SrcFileId="3" StartOffset="1355"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B6" CovItemPrefix="com.Testing.BoardTest.java" Implct="true" Intrnl_Id="183">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="184">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="1210" SrcFileId="3" StartOffset="1208"/>
+<LocList>
+<Loc EndOffset="1410" SrcFileId="3" StartOffset="1208"/>
+</LocList>
+<RootTerm CovItemId="C5" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="185">
+<BasicBoolTerm Intrnl_Id="186">
+<LocList>
+<Loc EndOffset="1217" SrcFileId="3" StartOffset="1211"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B4" CovItemPrefix="com.Testing.BoardTest.java" Implct="true" Intrnl_Id="187">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="188">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="972" SrcFileId="3" StartOffset="970"/>
+<LocList>
+<Loc EndOffset="1418" SrcFileId="3" StartOffset="970"/>
+</LocList>
+<RootTerm CovItemId="C4" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="189">
+<BasicBoolTerm Intrnl_Id="190">
+<LocList>
+<Loc EndOffset="978" SrcFileId="3" StartOffset="973"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+<CondStmnt CovItemId="S17" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="191">
+<Branch CovItemId="B7" CovItemPrefix="com.Testing.BoardTest.java" Implct="false" Intrnl_Id="192">
+<Cond/>
+<LocList>
+<Loc EndOffset="1867" SrcFileId="3" StartOffset="1495"/>
+</LocList>
+<StmntSeq Intrnl_Id="193">
+<LocList>
+<Loc EndOffset="1542" SrcFileId="3" StartOffset="1504"/>
+<Loc EndOffset="1597" SrcFileId="3" StartOffset="1550"/>
+<Loc EndOffset="1652" SrcFileId="3" StartOffset="1605"/>
+<Loc EndOffset="1707" SrcFileId="3" StartOffset="1660"/>
+<Loc EndOffset="1859" SrcFileId="3" StartOffset="1723"/>
+</LocList>
+<BasicStmnt CovItemId="S18" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="194">
+<LocList>
+<Loc EndOffset="1542" SrcFileId="3" StartOffset="1504"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S19" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="195">
+<LocList>
+<Loc EndOffset="1597" SrcFileId="3" StartOffset="1550"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S20" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="196">
+<LocList>
+<Loc EndOffset="1652" SrcFileId="3" StartOffset="1605"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S21" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="197">
+<LocList>
+<Loc EndOffset="1707" SrcFileId="3" StartOffset="1660"/>
+</LocList>
+</BasicStmnt>
+<CondStmnt CovItemId="S22" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="198">
+<Branch CovItemId="B9" CovItemPrefix="com.Testing.BoardTest.java" Implct="false" Intrnl_Id="199">
+<Cond/>
+<LocList>
+<Loc EndOffset="1859" SrcFileId="3" StartOffset="1739"/>
+</LocList>
+<StmntSeq Intrnl_Id="200">
+<LocList>
+<Loc EndOffset="1795" SrcFileId="3" StartOffset="1749"/>
+<Loc EndOffset="1850" SrcFileId="3" StartOffset="1804"/>
+</LocList>
+<BasicStmnt CovItemId="S23" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="201">
+<LocList>
+<Loc EndOffset="1795" SrcFileId="3" StartOffset="1749"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S24" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="202">
+<LocList>
+<Loc EndOffset="1850" SrcFileId="3" StartOffset="1804"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B10" CovItemPrefix="com.Testing.BoardTest.java" Implct="true" Intrnl_Id="203">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="204">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="1725" SrcFileId="3" StartOffset="1723"/>
+<LocList>
+<Loc EndOffset="1859" SrcFileId="3" StartOffset="1723"/>
+</LocList>
+<RootTerm CovItemId="C7" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="205">
+<BasicBoolTerm Intrnl_Id="206">
+<LocList>
+<Loc EndOffset="1730" SrcFileId="3" StartOffset="1726"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B8" CovItemPrefix="com.Testing.BoardTest.java" Implct="true" Intrnl_Id="207">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="208">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="1481" SrcFileId="3" StartOffset="1479"/>
+<LocList>
+<Loc EndOffset="1867" SrcFileId="3" StartOffset="1479"/>
+</LocList>
+<RootTerm CovItemId="C6" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="209">
+<BasicBoolTerm Intrnl_Id="210">
+<LocList>
+<Loc EndOffset="1487" SrcFileId="3" StartOffset="1482"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+<CondStmnt CovItemId="S25" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="211">
+<Branch CovItemId="B11" CovItemPrefix="com.Testing.BoardTest.java" Implct="false" Intrnl_Id="212">
+<Cond/>
+<LocList>
+<Loc EndOffset="1953" SrcFileId="3" StartOffset="1901"/>
+</LocList>
+<StmntSeq Intrnl_Id="213">
+<LocList>
+<Loc EndOffset="1945" SrcFileId="3" StartOffset="1910"/>
+</LocList>
+<BasicStmnt CovItemId="S26" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="214">
+<LocList>
+<Loc EndOffset="1945" SrcFileId="3" StartOffset="1910"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B12" CovItemPrefix="com.Testing.BoardTest.java" Implct="true" Intrnl_Id="215">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="216">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="1883" SrcFileId="3" StartOffset="1881"/>
+<LocList>
+<Loc EndOffset="1953" SrcFileId="3" StartOffset="1881"/>
+</LocList>
+<RootTerm CovItemId="C8" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="217">
+<OpTerm BooleanOpId="5" Intrnl_Id="218">
+<BasicBoolTerm Intrnl_Id="219">
+<LocList>
+<Loc EndOffset="1890" SrcFileId="3" StartOffset="1884"/>
+</LocList>
+</BasicBoolTerm>
+<BasicBoolTerm Intrnl_Id="220">
+<LocList>
+<Loc EndOffset="1900" SrcFileId="3" StartOffset="1894"/>
+</LocList>
+</BasicBoolTerm>
+<LocList>
+<Loc EndOffset="1893" SrcFileId="3" StartOffset="1891"/>
+</LocList>
+</OpTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B2" CovItemPrefix="com.Testing.BoardTest.java" Implct="false" Intrnl_Id="221">
+<Cond>
+<Loc EndOffset="1970" SrcFileId="3" StartOffset="1966"/>
+</Cond>
+<LocList>
+<Loc EndOffset="2090" SrcFileId="3" StartOffset="1976"/>
+</LocList>
+<StmntSeq Intrnl_Id="222">
+<LocList>
+<Loc EndOffset="2083" SrcFileId="3" StartOffset="2052"/>
+</LocList>
+<BasicStmnt CovItemId="S27" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="223">
+<LocList>
+<Loc EndOffset="2083" SrcFileId="3" StartOffset="2052"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="768" SrcFileId="3" StartOffset="766"/>
+<LocList>
+<Loc EndOffset="2090" SrcFileId="3" StartOffset="766"/>
+</LocList>
+<RootTerm CovItemId="C3" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="224">
+<BasicBoolTerm Intrnl_Id="225">
+<LocList>
+<Loc EndOffset="781" SrcFileId="3" StartOffset="769"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+<Keyword EndOffset="689" SrcFileId="3" StartOffset="686"/>
+<LocList>
+<Loc EndOffset="2096" SrcFileId="3" StartOffset="686"/>
+</LocList>
+<RootTerm CovItemId="C2" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="226">
+<BasicBoolTerm Intrnl_Id="227">
+<LocList>
+<Loc EndOffset="706" SrcFileId="3" StartOffset="701"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</LoopStmnt>
+</StmntSeq>
+<Keyword EndOffset="657" SrcFileId="3" StartOffset="654"/>
+<LocList>
+<Loc EndOffset="2101" SrcFileId="3" StartOffset="654"/>
+</LocList>
+<RootTerm CovItemId="C1" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="228">
+<BasicBoolTerm Intrnl_Id="229">
+<LocList>
+<Loc EndOffset="674" SrcFileId="3" StartOffset="669"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</LoopStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="38" HierarchyLvlTypeId="8" Intrnl_Id="230" Name="testMovePiece">
+<Header>
+<Loc EndOffset="2212" SrcFileId="3" StartOffset="2116"/>
+</Header>
+<LocList>
+<Loc EndOffset="2749" SrcFileId="3" StartOffset="2116"/>
+</LocList>
+<StmntSeq Intrnl_Id="231">
+<LocList>
+<Loc EndOffset="2277" SrcFileId="3" StartOffset="2218"/>
+<Loc EndOffset="2442" SrcFileId="3" StartOffset="2337"/>
+<Loc EndOffset="2514" SrcFileId="3" StartOffset="2448"/>
+<Loc EndOffset="2576" SrcFileId="3" StartOffset="2518"/>
+<Loc EndOffset="2679" SrcFileId="3" StartOffset="2584"/>
+<Loc EndOffset="2745" SrcFileId="3" StartOffset="2687"/>
+</LocList>
+<BasicStmnt CovItemId="S28" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="232">
+<LocList>
+<Loc EndOffset="2277" SrcFileId="3" StartOffset="2218"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S29" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="233">
+<LocList>
+<Loc EndOffset="2442" SrcFileId="3" StartOffset="2337"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S30" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="234">
+<LocList>
+<Loc EndOffset="2514" SrcFileId="3" StartOffset="2448"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S31" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="235">
+<LocList>
+<Loc EndOffset="2576" SrcFileId="3" StartOffset="2518"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S32" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="236">
+<LocList>
+<Loc EndOffset="2679" SrcFileId="3" StartOffset="2584"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S33" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="237">
+<LocList>
+<Loc EndOffset="2745" SrcFileId="3" StartOffset="2687"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="39" HierarchyLvlTypeId="8" Intrnl_Id="238" Name="testFieldOccupied">
+<Header>
+<Loc EndOffset="2793" SrcFileId="3" StartOffset="2754"/>
+</Header>
+<LocList>
+<Loc EndOffset="3063" SrcFileId="3" StartOffset="2754"/>
+</LocList>
+<StmntSeq Intrnl_Id="239">
+<LocList>
+<Loc EndOffset="2958" SrcFileId="3" StartOffset="2912"/>
+<Loc EndOffset="3009" SrcFileId="3" StartOffset="2962"/>
+<Loc EndOffset="3059" SrcFileId="3" StartOffset="3013"/>
+</LocList>
+<BasicStmnt CovItemId="S34" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="240">
+<LocList>
+<Loc EndOffset="2958" SrcFileId="3" StartOffset="2912"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S35" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="241">
+<LocList>
+<Loc EndOffset="3009" SrcFileId="3" StartOffset="2962"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S36" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="242">
+<LocList>
+<Loc EndOffset="3059" SrcFileId="3" StartOffset="3013"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="40" HierarchyLvlTypeId="8" Intrnl_Id="243" Name="produceList">
+<Header>
+<Loc EndOffset="3220" SrcFileId="3" StartOffset="3161"/>
+</Header>
+<LocList>
+<Loc EndOffset="3720" SrcFileId="3" StartOffset="3161"/>
+</LocList>
+<StmntSeq Intrnl_Id="244">
+<LocList>
+<Loc EndOffset="3269" SrcFileId="3" StartOffset="3225"/>
+<Loc EndOffset="3694" SrcFileId="3" StartOffset="3277"/>
+<Loc EndOffset="3716" SrcFileId="3" StartOffset="3702"/>
+</LocList>
+<BasicStmnt CovItemId="S37" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="245">
+<LocList>
+<Loc EndOffset="3269" SrcFileId="3" StartOffset="3225"/>
+</LocList>
+</BasicStmnt>
+<CondStmnt CovItemId="S38" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="246">
+<Branch CovItemId="B13" CovItemPrefix="com.Testing.BoardTest.java" Implct="false" Intrnl_Id="247">
+<Cond/>
+<LocList>
+<Loc EndOffset="3694" SrcFileId="3" StartOffset="3331"/>
+</LocList>
+<StmntSeq Intrnl_Id="248">
+<LocList>
+<Loc EndOffset="3689" SrcFileId="3" StartOffset="3337"/>
+</LocList>
+<CondStmnt CovItemId="S39" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="249">
+<Branch CovItemId="B15" CovItemPrefix="com.Testing.BoardTest.java" Implct="false" Intrnl_Id="250">
+<Cond/>
+<LocList>
+<Loc EndOffset="3430" SrcFileId="3" StartOffset="3353"/>
+</LocList>
+<StmntSeq Intrnl_Id="251">
+<LocList>
+<Loc EndOffset="3424" SrcFileId="3" StartOffset="3360"/>
+</LocList>
+<BasicStmnt CovItemId="S40" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="252">
+<LocList>
+<Loc EndOffset="3424" SrcFileId="3" StartOffset="3360"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B16" CovItemPrefix="com.Testing.BoardTest.java" Implct="false" Intrnl_Id="253">
+<Cond>
+<Loc EndOffset="3439" SrcFileId="3" StartOffset="3435"/>
+</Cond>
+<LocList>
+<Loc EndOffset="3689" SrcFileId="3" StartOffset="3440"/>
+</LocList>
+<StmntSeq Intrnl_Id="254">
+<LocList>
+<Loc EndOffset="3689" SrcFileId="3" StartOffset="3440"/>
+</LocList>
+<CondStmnt CovItemId="S41" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="255">
+<Branch CovItemId="B17" CovItemPrefix="com.Testing.BoardTest.java" Implct="false" Intrnl_Id="256">
+<Cond/>
+<LocList>
+<Loc EndOffset="3533" SrcFileId="3" StartOffset="3456"/>
+</LocList>
+<StmntSeq Intrnl_Id="257">
+<LocList>
+<Loc EndOffset="3527" SrcFileId="3" StartOffset="3463"/>
+</LocList>
+<BasicStmnt CovItemId="S42" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="258">
+<LocList>
+<Loc EndOffset="3527" SrcFileId="3" StartOffset="3463"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B18" CovItemPrefix="com.Testing.BoardTest.java" Implct="false" Intrnl_Id="259">
+<Cond>
+<Loc EndOffset="3542" SrcFileId="3" StartOffset="3538"/>
+</Cond>
+<LocList>
+<Loc EndOffset="3689" SrcFileId="3" StartOffset="3542"/>
+</LocList>
+<StmntSeq Intrnl_Id="260">
+<LocList>
+<Loc EndOffset="3613" SrcFileId="3" StartOffset="3549"/>
+<Loc EndOffset="3683" SrcFileId="3" StartOffset="3619"/>
+</LocList>
+<BasicStmnt CovItemId="S43" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="261">
+<LocList>
+<Loc EndOffset="3613" SrcFileId="3" StartOffset="3549"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S44" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="262">
+<LocList>
+<Loc EndOffset="3683" SrcFileId="3" StartOffset="3619"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="3442" SrcFileId="3" StartOffset="3440"/>
+<LocList>
+<Loc EndOffset="3689" SrcFileId="3" StartOffset="3440"/>
+</LocList>
+<RootTerm CovItemId="C11" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="263">
+<BasicBoolTerm Intrnl_Id="264">
+<LocList>
+<Loc EndOffset="3455" SrcFileId="3" StartOffset="3443"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="3339" SrcFileId="3" StartOffset="3337"/>
+<LocList>
+<Loc EndOffset="3689" SrcFileId="3" StartOffset="3337"/>
+</LocList>
+<RootTerm CovItemId="C10" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="265">
+<BasicBoolTerm Intrnl_Id="266">
+<LocList>
+<Loc EndOffset="3352" SrcFileId="3" StartOffset="3340"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B14" CovItemPrefix="com.Testing.BoardTest.java" Implct="true" Intrnl_Id="267">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="268">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="3279" SrcFileId="3" StartOffset="3277"/>
+<LocList>
+<Loc EndOffset="3694" SrcFileId="3" StartOffset="3277"/>
+</LocList>
+<RootTerm CovItemId="C9" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="269">
+<OpTerm BooleanOpId="5" Intrnl_Id="270">
+<BasicBoolTerm Intrnl_Id="271">
+<LocList>
+<Loc EndOffset="3303" SrcFileId="3" StartOffset="3280"/>
+</LocList>
+</BasicBoolTerm>
+<BasicBoolTerm Intrnl_Id="272">
+<LocList>
+<Loc EndOffset="3330" SrcFileId="3" StartOffset="3307"/>
+</LocList>
+</BasicBoolTerm>
+<LocList>
+<Loc EndOffset="3306" SrcFileId="3" StartOffset="3304"/>
+</LocList>
+</OpTerm>
+</RootTerm>
+</CondStmnt>
+<BasicStmnt CovItemId="S45" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="273">
+<LocList>
+<Loc EndOffset="3716" SrcFileId="3" StartOffset="3702"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="41" HierarchyLvlTypeId="8" Intrnl_Id="274" Name="testCheckMoveable">
+<Header>
+<Loc EndOffset="3807" SrcFileId="3" StartOffset="3727"/>
+</Header>
+<LocList>
+<Loc EndOffset="4713" SrcFileId="3" StartOffset="3727"/>
+</LocList>
+<StmntSeq Intrnl_Id="275">
+<LocList>
+<Loc EndOffset="3963" SrcFileId="3" StartOffset="3896"/>
+<Loc EndOffset="4055" SrcFileId="3" StartOffset="3971"/>
+<Loc EndOffset="4126" SrcFileId="3" StartOffset="4063"/>
+<Loc EndOffset="4218" SrcFileId="3" StartOffset="4134"/>
+<Loc EndOffset="4281" SrcFileId="3" StartOffset="4226"/>
+<Loc EndOffset="4373" SrcFileId="3" StartOffset="4289"/>
+<Loc EndOffset="4435" SrcFileId="3" StartOffset="4381"/>
+<Loc EndOffset="4526" SrcFileId="3" StartOffset="4443"/>
+<Loc EndOffset="4597" SrcFileId="3" StartOffset="4534"/>
+<Loc EndOffset="4688" SrcFileId="3" StartOffset="4605"/>
+<Loc EndOffset="4709" SrcFileId="3" StartOffset="4696"/>
+</LocList>
+<BasicStmnt CovItemId="S46" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="276">
+<LocList>
+<Loc EndOffset="3963" SrcFileId="3" StartOffset="3896"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S47" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="277">
+<LocList>
+<Loc EndOffset="4055" SrcFileId="3" StartOffset="3971"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S48" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="278">
+<LocList>
+<Loc EndOffset="4126" SrcFileId="3" StartOffset="4063"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S49" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="279">
+<LocList>
+<Loc EndOffset="4218" SrcFileId="3" StartOffset="4134"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S50" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="280">
+<LocList>
+<Loc EndOffset="4281" SrcFileId="3" StartOffset="4226"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S51" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="281">
+<LocList>
+<Loc EndOffset="4373" SrcFileId="3" StartOffset="4289"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S52" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="282">
+<LocList>
+<Loc EndOffset="4435" SrcFileId="3" StartOffset="4381"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S53" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="283">
+<LocList>
+<Loc EndOffset="4526" SrcFileId="3" StartOffset="4443"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S54" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="284">
+<LocList>
+<Loc EndOffset="4597" SrcFileId="3" StartOffset="4534"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S55" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="285">
+<LocList>
+<Loc EndOffset="4688" SrcFileId="3" StartOffset="4605"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S56" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="286">
+<LocList>
+<Loc EndOffset="4709" SrcFileId="3" StartOffset="4696"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="42" HierarchyLvlTypeId="8" Intrnl_Id="287" Name="testCheckJumpDirection">
+<Header>
+<Loc EndOffset="4804" SrcFileId="3" StartOffset="4719"/>
+</Header>
+<LocList>
+<Loc EndOffset="5651" SrcFileId="3" StartOffset="4719"/>
+</LocList>
+<StmntSeq Intrnl_Id="288">
+<LocList>
+<Loc EndOffset="4964" SrcFileId="3" StartOffset="4891"/>
+<Loc EndOffset="5099" SrcFileId="3" StartOffset="4972"/>
+<Loc EndOffset="5198" SrcFileId="3" StartOffset="5103"/>
+<Loc EndOffset="5269" SrcFileId="3" StartOffset="5206"/>
+<Loc EndOffset="5347" SrcFileId="3" StartOffset="5273"/>
+<Loc EndOffset="5396" SrcFileId="3" StartOffset="5351"/>
+<Loc EndOffset="5528" SrcFileId="3" StartOffset="5404"/>
+<Loc EndOffset="5626" SrcFileId="3" StartOffset="5532"/>
+<Loc EndOffset="5647" SrcFileId="3" StartOffset="5634"/>
+</LocList>
+<BasicStmnt CovItemId="S57" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="289">
+<LocList>
+<Loc EndOffset="4964" SrcFileId="3" StartOffset="4891"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S58" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="290">
+<LocList>
+<Loc EndOffset="5099" SrcFileId="3" StartOffset="4972"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S59" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="291">
+<LocList>
+<Loc EndOffset="5198" SrcFileId="3" StartOffset="5103"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S60" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="292">
+<LocList>
+<Loc EndOffset="5269" SrcFileId="3" StartOffset="5206"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S61" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="293">
+<LocList>
+<Loc EndOffset="5347" SrcFileId="3" StartOffset="5273"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S62" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="294">
+<LocList>
+<Loc EndOffset="5396" SrcFileId="3" StartOffset="5351"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S63" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="295">
+<LocList>
+<Loc EndOffset="5528" SrcFileId="3" StartOffset="5404"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S64" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="296">
+<LocList>
+<Loc EndOffset="5626" SrcFileId="3" StartOffset="5532"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S65" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="297">
+<LocList>
+<Loc EndOffset="5647" SrcFileId="3" StartOffset="5634"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="43" HierarchyLvlTypeId="8" Intrnl_Id="298" Name="testCheckAllegiance">
+<Header>
+<Loc EndOffset="5697" SrcFileId="3" StartOffset="5656"/>
+</Header>
+<LocList>
+<Loc EndOffset="6298" SrcFileId="3" StartOffset="5656"/>
+</LocList>
+<StmntSeq Intrnl_Id="299">
+<LocList>
+<Loc EndOffset="5808" SrcFileId="3" StartOffset="5731"/>
+<Loc EndOffset="5891" SrcFileId="3" StartOffset="5812"/>
+<Loc EndOffset="6005" SrcFileId="3" StartOffset="5927"/>
+<Loc EndOffset="6087" SrcFileId="3" StartOffset="6009"/>
+<Loc EndOffset="6132" SrcFileId="3" StartOffset="6095"/>
+<Loc EndOffset="6229" SrcFileId="3" StartOffset="6169"/>
+<Loc EndOffset="6294" SrcFileId="3" StartOffset="6233"/>
+</LocList>
+<BasicStmnt CovItemId="S66" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="300">
+<LocList>
+<Loc EndOffset="5808" SrcFileId="3" StartOffset="5731"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S67" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="301">
+<LocList>
+<Loc EndOffset="5891" SrcFileId="3" StartOffset="5812"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S68" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="302">
+<LocList>
+<Loc EndOffset="6005" SrcFileId="3" StartOffset="5927"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S69" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="303">
+<LocList>
+<Loc EndOffset="6087" SrcFileId="3" StartOffset="6009"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S70" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="304">
+<LocList>
+<Loc EndOffset="6132" SrcFileId="3" StartOffset="6095"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S71" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="305">
+<LocList>
+<Loc EndOffset="6229" SrcFileId="3" StartOffset="6169"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S72" CovItemPrefix="com.Testing.BoardTest.java" Intrnl_Id="306">
+<LocList>
+<Loc EndOffset="6294" SrcFileId="3" StartOffset="6233"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="50" HierarchyLvlTypeId="7" Intrnl_Id="307" Name="AnalyzeTest">
+<Header>
+<Loc EndOffset="288" SrcFileId="4" StartOffset="237"/>
+</Header>
+<LocList>
+<Loc EndOffset="5113" SrcFileId="4" StartOffset="237"/>
+</LocList>
+<HierarchyLvl HierarchyLvlId="45" HierarchyLvlTypeId="8" Intrnl_Id="308" Name="AnalyzeTest">
+<Header>
+<Loc EndOffset="404" SrcFileId="4" StartOffset="343"/>
+</Header>
+<LocList>
+<Loc EndOffset="538" SrcFileId="4" StartOffset="343"/>
+</LocList>
+<StmntSeq Intrnl_Id="309">
+<LocList>
+<Loc EndOffset="424" SrcFileId="4" StartOffset="416"/>
+<Loc EndOffset="482" SrcFileId="4" StartOffset="434"/>
+</LocList>
+<BasicStmnt CovItemId="S1" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="310">
+<LocList>
+<Loc EndOffset="424" SrcFileId="4" StartOffset="416"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S2" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="311">
+<LocList>
+<Loc EndOffset="482" SrcFileId="4" StartOffset="434"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="46" HierarchyLvlTypeId="8" Intrnl_Id="312" Name="testGameHasEnded">
+<Header>
+<Loc EndOffset="634" SrcFileId="4" StartOffset="546"/>
+</Header>
+<LocList>
+<Loc EndOffset="2355" SrcFileId="4" StartOffset="546"/>
+</LocList>
+<StmntSeq Intrnl_Id="313">
+<LocList>
+<Loc EndOffset="761" SrcFileId="4" StartOffset="710"/>
+<Loc EndOffset="823" SrcFileId="4" StartOffset="771"/>
+<Loc EndOffset="858" SrcFileId="4" StartOffset="835"/>
+<Loc EndOffset="1012" SrcFileId="4" StartOffset="961"/>
+<Loc EndOffset="1074" SrcFileId="4" StartOffset="1022"/>
+<Loc EndOffset="1118" SrcFileId="4" StartOffset="1094"/>
+<Loc EndOffset="1272" SrcFileId="4" StartOffset="1221"/>
+<Loc EndOffset="1334" SrcFileId="4" StartOffset="1282"/>
+<Loc EndOffset="1367" SrcFileId="4" StartOffset="1354"/>
+<Loc EndOffset="1605" SrcFileId="4" StartOffset="1530"/>
+<Loc EndOffset="1690" SrcFileId="4" StartOffset="1615"/>
+<Loc EndOffset="1761" SrcFileId="4" StartOffset="1710"/>
+<Loc EndOffset="1826" SrcFileId="4" StartOffset="1771"/>
+<Loc EndOffset="1859" SrcFileId="4" StartOffset="1846"/>
+<Loc EndOffset="2095" SrcFileId="4" StartOffset="2021"/>
+<Loc EndOffset="2179" SrcFileId="4" StartOffset="2105"/>
+<Loc EndOffset="2251" SrcFileId="4" StartOffset="2199"/>
+<Loc EndOffset="2315" SrcFileId="4" StartOffset="2261"/>
+<Loc EndOffset="2348" SrcFileId="4" StartOffset="2335"/>
+</LocList>
+<BasicStmnt CovItemId="S3" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="314">
+<LocList>
+<Loc EndOffset="761" SrcFileId="4" StartOffset="710"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S4" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="315">
+<LocList>
+<Loc EndOffset="823" SrcFileId="4" StartOffset="771"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S5" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="316">
+<LocList>
+<Loc EndOffset="858" SrcFileId="4" StartOffset="835"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S6" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="317">
+<LocList>
+<Loc EndOffset="1012" SrcFileId="4" StartOffset="961"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S7" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="318">
+<LocList>
+<Loc EndOffset="1074" SrcFileId="4" StartOffset="1022"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S8" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="319">
+<LocList>
+<Loc EndOffset="1118" SrcFileId="4" StartOffset="1094"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S9" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="320">
+<LocList>
+<Loc EndOffset="1272" SrcFileId="4" StartOffset="1221"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S10" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="321">
+<LocList>
+<Loc EndOffset="1334" SrcFileId="4" StartOffset="1282"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S11" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="322">
+<LocList>
+<Loc EndOffset="1367" SrcFileId="4" StartOffset="1354"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S12" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="323">
+<LocList>
+<Loc EndOffset="1605" SrcFileId="4" StartOffset="1530"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S13" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="324">
+<LocList>
+<Loc EndOffset="1690" SrcFileId="4" StartOffset="1615"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S14" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="325">
+<LocList>
+<Loc EndOffset="1761" SrcFileId="4" StartOffset="1710"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S15" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="326">
+<LocList>
+<Loc EndOffset="1826" SrcFileId="4" StartOffset="1771"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S16" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="327">
+<LocList>
+<Loc EndOffset="1859" SrcFileId="4" StartOffset="1846"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S17" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="328">
+<LocList>
+<Loc EndOffset="2095" SrcFileId="4" StartOffset="2021"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S18" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="329">
+<LocList>
+<Loc EndOffset="2179" SrcFileId="4" StartOffset="2105"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S19" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="330">
+<LocList>
+<Loc EndOffset="2251" SrcFileId="4" StartOffset="2199"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S20" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="331">
+<LocList>
+<Loc EndOffset="2315" SrcFileId="4" StartOffset="2261"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S21" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="332">
+<LocList>
+<Loc EndOffset="2348" SrcFileId="4" StartOffset="2335"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="47" HierarchyLvlTypeId="8" Intrnl_Id="333" Name="testCheckForGameHasEnded">
+<Header>
+<Loc EndOffset="2475" SrcFileId="4" StartOffset="2379"/>
+</Header>
+<LocList>
+<Loc EndOffset="3858" SrcFileId="4" StartOffset="2379"/>
+</LocList>
+<StmntSeq Intrnl_Id="334">
+<LocList>
+<Loc EndOffset="2613" SrcFileId="4" StartOffset="2558"/>
+<Loc EndOffset="2679" SrcFileId="4" StartOffset="2623"/>
+<Loc EndOffset="2722" SrcFileId="4" StartOffset="2699"/>
+<Loc EndOffset="2796" SrcFileId="4" StartOffset="2742"/>
+<Loc EndOffset="2861" SrcFileId="4" StartOffset="2806"/>
+<Loc EndOffset="2905" SrcFileId="4" StartOffset="2881"/>
+<Loc EndOffset="2979" SrcFileId="4" StartOffset="2925"/>
+<Loc EndOffset="3044" SrcFileId="4" StartOffset="2989"/>
+<Loc EndOffset="3077" SrcFileId="4" StartOffset="3064"/>
+<Loc EndOffset="3207" SrcFileId="4" StartOffset="3133"/>
+<Loc EndOffset="3291" SrcFileId="4" StartOffset="3217"/>
+<Loc EndOffset="3365" SrcFileId="4" StartOffset="3311"/>
+<Loc EndOffset="3431" SrcFileId="4" StartOffset="3375"/>
+<Loc EndOffset="3464" SrcFileId="4" StartOffset="3451"/>
+<Loc EndOffset="3594" SrcFileId="4" StartOffset="3520"/>
+<Loc EndOffset="3678" SrcFileId="4" StartOffset="3604"/>
+<Loc EndOffset="3753" SrcFileId="4" StartOffset="3698"/>
+<Loc EndOffset="3818" SrcFileId="4" StartOffset="3763"/>
+<Loc EndOffset="3851" SrcFileId="4" StartOffset="3838"/>
+</LocList>
+<BasicStmnt CovItemId="S22" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="335">
+<LocList>
+<Loc EndOffset="2613" SrcFileId="4" StartOffset="2558"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S23" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="336">
+<LocList>
+<Loc EndOffset="2679" SrcFileId="4" StartOffset="2623"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S24" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="337">
+<LocList>
+<Loc EndOffset="2722" SrcFileId="4" StartOffset="2699"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S25" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="338">
+<LocList>
+<Loc EndOffset="2796" SrcFileId="4" StartOffset="2742"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S26" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="339">
+<LocList>
+<Loc EndOffset="2861" SrcFileId="4" StartOffset="2806"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S27" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="340">
+<LocList>
+<Loc EndOffset="2905" SrcFileId="4" StartOffset="2881"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S28" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="341">
+<LocList>
+<Loc EndOffset="2979" SrcFileId="4" StartOffset="2925"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S29" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="342">
+<LocList>
+<Loc EndOffset="3044" SrcFileId="4" StartOffset="2989"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S30" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="343">
+<LocList>
+<Loc EndOffset="3077" SrcFileId="4" StartOffset="3064"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S31" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="344">
+<LocList>
+<Loc EndOffset="3207" SrcFileId="4" StartOffset="3133"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S32" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="345">
+<LocList>
+<Loc EndOffset="3291" SrcFileId="4" StartOffset="3217"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S33" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="346">
+<LocList>
+<Loc EndOffset="3365" SrcFileId="4" StartOffset="3311"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S34" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="347">
+<LocList>
+<Loc EndOffset="3431" SrcFileId="4" StartOffset="3375"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S35" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="348">
+<LocList>
+<Loc EndOffset="3464" SrcFileId="4" StartOffset="3451"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S36" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="349">
+<LocList>
+<Loc EndOffset="3594" SrcFileId="4" StartOffset="3520"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S37" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="350">
+<LocList>
+<Loc EndOffset="3678" SrcFileId="4" StartOffset="3604"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S38" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="351">
+<LocList>
+<Loc EndOffset="3753" SrcFileId="4" StartOffset="3698"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S39" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="352">
+<LocList>
+<Loc EndOffset="3818" SrcFileId="4" StartOffset="3763"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S40" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="353">
+<LocList>
+<Loc EndOffset="3851" SrcFileId="4" StartOffset="3838"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="48" HierarchyLvlTypeId="8" Intrnl_Id="354" Name="testAnalyzeBoard">
+<Header>
+<Loc EndOffset="4044" SrcFileId="4" StartOffset="3870"/>
+</Header>
+<LocList>
+<Loc EndOffset="4739" SrcFileId="4" StartOffset="3870"/>
+</LocList>
+<StmntSeq Intrnl_Id="355">
+<LocList>
+<Loc EndOffset="4085" SrcFileId="4" StartOffset="4055"/>
+<Loc EndOffset="4205" SrcFileId="4" StartOffset="4163"/>
+<Loc EndOffset="4341" SrcFileId="4" StartOffset="4266"/>
+<Loc EndOffset="4425" SrcFileId="4" StartOffset="4351"/>
+<Loc EndOffset="4563" SrcFileId="4" StartOffset="4533"/>
+<Loc EndOffset="4653" SrcFileId="4" StartOffset="4514"/>
+<Loc EndOffset="4699" SrcFileId="4" StartOffset="4673"/>
+<Loc EndOffset="4732" SrcFileId="4" StartOffset="4719"/>
+</LocList>
+<BasicStmnt CovItemId="S41" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="356">
+<LocList>
+<Loc EndOffset="4085" SrcFileId="4" StartOffset="4055"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S42" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="357">
+<LocList>
+<Loc EndOffset="4205" SrcFileId="4" StartOffset="4163"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S43" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="358">
+<LocList>
+<Loc EndOffset="4341" SrcFileId="4" StartOffset="4266"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S44" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="359">
+<LocList>
+<Loc EndOffset="4425" SrcFileId="4" StartOffset="4351"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S46" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="360">
+<LocList>
+<Loc EndOffset="4563" SrcFileId="4" StartOffset="4533"/>
+</LocList>
+</BasicStmnt>
+<CondStmnt CovItemId="S45" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="361">
+<Branch CovItemId="B1" CovItemPrefix="com.Testing.AnalyzeTest.java" Implct="true" Intrnl_Id="362">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="363">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B2" CovItemPrefix="com.Testing.AnalyzeTest.java" Implct="false" Intrnl_Id="364">
+<Cond>
+<Loc EndOffset="4605" SrcFileId="4" StartOffset="4584"/>
+</Cond>
+<LocList>
+<Loc EndOffset="4653" SrcFileId="4" StartOffset="4606"/>
+</LocList>
+<StmntSeq Intrnl_Id="365">
+<LocList>
+<Loc EndOffset="4642" SrcFileId="4" StartOffset="4621"/>
+</LocList>
+<BasicStmnt CovItemId="S47" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="366">
+<LocList>
+<Loc EndOffset="4642" SrcFileId="4" StartOffset="4621"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="4517" SrcFileId="4" StartOffset="4514"/>
+<LocList>
+<Loc EndOffset="4653" SrcFileId="4" StartOffset="4514"/>
+</LocList>
+</CondStmnt>
+<BasicStmnt CovItemId="S48" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="367">
+<LocList>
+<Loc EndOffset="4699" SrcFileId="4" StartOffset="4673"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S49" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="368">
+<LocList>
+<Loc EndOffset="4732" SrcFileId="4" StartOffset="4719"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="49" HierarchyLvlTypeId="8" Intrnl_Id="369" Name="testGetColor">
+<Header>
+<Loc EndOffset="4877" SrcFileId="4" StartOffset="4815"/>
+</Header>
+<LocList>
+<Loc EndOffset="5110" SrcFileId="4" StartOffset="4815"/>
+</LocList>
+<StmntSeq Intrnl_Id="370">
+<LocList>
+<Loc EndOffset="4986" SrcFileId="4" StartOffset="4889"/>
+<Loc EndOffset="5045" SrcFileId="4" StartOffset="4996"/>
+<Loc EndOffset="5103" SrcFileId="4" StartOffset="5055"/>
+</LocList>
+<BasicStmnt CovItemId="S50" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="371">
+<LocList>
+<Loc EndOffset="4986" SrcFileId="4" StartOffset="4889"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S51" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="372">
+<LocList>
+<Loc EndOffset="5045" SrcFileId="4" StartOffset="4996"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S52" CovItemPrefix="com.Testing.AnalyzeTest.java" Intrnl_Id="373">
+<LocList>
+<Loc EndOffset="5103" SrcFileId="4" StartOffset="5055"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+</HierarchyLvl>
+</HierarchyLvl>
+</HierarchyLvl>
+</HierarchyLvl>
+</MASTRoot>
+<TestSession Comment="" Date="1384527478223" Name="15-11-2013 15:57:58">
+<TestCase Comment="" Date="1384527478163" Name="com.Testing.AnalyzeTest:testGetColor">
+<CovList>
+<CovPrefix CovItemPrefix="com.Testing.AnalyzeTest.java">
+<Cov CovItemId="S50" Value="1"/>
+<Cov CovItemId="S51" Value="1"/>
+<Cov CovItemId="S52" Value="1"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList/>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<TestCase Comment="" Date="1384527478170" Name="com.Testing.AnalyzeTest:testCheckForGameHasEnded">
+<CovList>
+<CovPrefix CovItemPrefix="com.Testing.AnalyzeTest.java">
+<Cov CovItemId="S22" Value="1"/>
+<Cov CovItemId="S23" Value="1"/>
+<Cov CovItemId="S24" Value="1"/>
+<Cov CovItemId="S25" Value="1"/>
+<Cov CovItemId="S26" Value="1"/>
+<Cov CovItemId="S27" Value="1"/>
+<Cov CovItemId="S28" Value="1"/>
+<Cov CovItemId="S29" Value="1"/>
+<Cov CovItemId="S30" Value="1"/>
+<Cov CovItemId="S31" Value="1"/>
+<Cov CovItemId="S32" Value="1"/>
+<Cov CovItemId="S33" Value="1"/>
+<Cov CovItemId="S34" Value="1"/>
+<Cov CovItemId="S35" Value="1"/>
+<Cov CovItemId="S36" Value="1"/>
+<Cov CovItemId="S37" Value="1"/>
+<Cov CovItemId="S38" Value="1"/>
+<Cov CovItemId="S39" Value="1"/>
+<Cov CovItemId="S40" Value="1"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList/>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<TestCase Comment="" Date="1384527478172" Name="com.Testing.AnalyzeTest:testAnalyzeBoard">
+<CovList>
+<CovPrefix CovItemPrefix="com.Testing.AnalyzeTest.java">
+<Cov CovItemId="B2" Value="1"/>
+<Cov CovItemId="S41" Value="1"/>
+<Cov CovItemId="S42" Value="1"/>
+<Cov CovItemId="S43" Value="1"/>
+<Cov CovItemId="S44" Value="1"/>
+<Cov CovItemId="S45" Value="1"/>
+<Cov CovItemId="S46" Value="1"/>
+<Cov CovItemId="S47" Value="1"/>
+<Cov CovItemId="S48" Value="1"/>
+<Cov CovItemId="S49" Value="1"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList/>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<TestCase Comment="" Date="1384527478173" Name="com.Testing.AnalyzeTest:testGameHasEnded">
+<CovList>
+<CovPrefix CovItemPrefix="com.Testing.AnalyzeTest.java">
+<Cov CovItemId="S10" Value="1"/>
+<Cov CovItemId="S11" Value="1"/>
+<Cov CovItemId="S12" Value="1"/>
+<Cov CovItemId="S13" Value="1"/>
+<Cov CovItemId="S14" Value="1"/>
+<Cov CovItemId="S15" Value="1"/>
+<Cov CovItemId="S16" Value="1"/>
+<Cov CovItemId="S17" Value="1"/>
+<Cov CovItemId="S18" Value="1"/>
+<Cov CovItemId="S19" Value="1"/>
+<Cov CovItemId="S20" Value="1"/>
+<Cov CovItemId="S21" Value="1"/>
+<Cov CovItemId="S3" Value="1"/>
+<Cov CovItemId="S4" Value="1"/>
+<Cov CovItemId="S5" Value="1"/>
+<Cov CovItemId="S6" Value="1"/>
+<Cov CovItemId="S7" Value="1"/>
+<Cov CovItemId="S8" Value="1"/>
+<Cov CovItemId="S9" Value="1"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList/>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<MetaDataList/>
+</TestSession>
+</TestSessionContainer>
