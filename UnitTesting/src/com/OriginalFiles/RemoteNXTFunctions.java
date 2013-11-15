@@ -1,9 +1,15 @@
 package com.OriginalFiles;
 
+
 import java.awt.Color;
+import java.io.IOException;
 
 public class RemoteNXTFunctions {
+    public Board checkersBoard;
 
+    public RemoteNXTFunctions() throws InterruptedException, IOException {
+    checkersBoard = new Board(this);
+    }
     public void resetMotors() {
         // TODO Auto-generated method stub
         
@@ -29,9 +35,22 @@ public class RemoteNXTFunctions {
         
     }
 
-    public Color getColorOnField(int x, int y) {
-        // TODO Auto-generated method stub
-        return null;
+    public final char getColorOnField(int x, int y) {
+        if (x == 2 && y == 5) {
+            return ' ';
+        }
+        if (x == 1 && y == 4) {
+            return 'w';
+        }
+        if (x == 4 && y == 3) {
+            return ' ';
+        }
+
+        if (checkersBoard.myBoard[x][y].getPieceOnField() != null) {
+            return checkersBoard.myBoard[x][y].getPieceOnField().color;
+        } else {
+            return ' ';
+        }
     }
 
 }
