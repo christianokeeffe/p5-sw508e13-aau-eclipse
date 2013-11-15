@@ -54,10 +54,7 @@ public class AnalyzeTest extends FunktionForTesting {
         resetBoard();
     }
 
-    private void emptyBoard() {
-        // TODO Auto-generated method stub
-        
-    }
+    
 
     private void constructWinCase(boolean b) {
         // TODO Auto-generated method stub
@@ -85,7 +82,7 @@ public class AnalyzeTest extends FunktionForTesting {
         
         //draw case if humans turn
         checkersBoard.myBoard[4][5].setPieceOnField(producePiece(4, 5, 'b',true));
-        checkersBoard.myBoard[6][7].setPieceOnField(producePiece(4, 5, 'g',true));
+        checkersBoard.myBoard[6][7].setPieceOnField(producePiece(6, 7, 'g',true));
         
         assertTrue(analyzeForTest.checkForGameHasEnded(true));
         assertFalse(analyzeForTest.checkForGameHasEnded(false));
@@ -93,8 +90,8 @@ public class AnalyzeTest extends FunktionForTesting {
         emptyBoard();
         
         //draw case if robots turn
-        checkersBoard.myBoard[1][0].setPieceOnField(producePiece(4, 5, 'b',true));
-        checkersBoard.myBoard[1][2].setPieceOnField(producePiece(4, 5, 'g',true));
+        checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'b',true));
+        checkersBoard.myBoard[1][2].setPieceOnField(producePiece(1, 2, 'g',true));
         
         assertTrue(analyzeForTest.checkForGameHasEnded(false));
         assertFalse(analyzeForTest.checkForGameHasEnded(true));
