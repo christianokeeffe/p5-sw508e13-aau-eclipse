@@ -56,10 +56,7 @@ public class AnalyzeTest extends FunktionForTesting {
 
     
 
-    private void constructWinCase(boolean b) {
-        // TODO Auto-generated method stub
-        
-    }
+    
 
     @Test
     public final void testCheckForGameHasEnded() throws InterruptedException, IOException {

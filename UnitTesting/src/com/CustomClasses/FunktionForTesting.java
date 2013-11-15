@@ -36,6 +36,25 @@ public class FunktionForTesting {
         }
 
     }
+    //Method used to construct a win scenario for either of the players
+    protected void constructWinCase(boolean b) {
+        for (Field[] aF : checkersBoard.myBoard) {
+            for (Field f : aF) {
+                if (f.getPieceOnField() != null) {
+                    if (b) {
+                        if (f.getPieceOnField().color == 'r') {
+                            checkersBoard.myBoard[f.x][f.y].getPieceOnField().color = 'w';
+                        }
+                    } else {
+                        if (f.getPieceOnField().color == 'w') {
+                            checkersBoard.myBoard[f.x][f.y].getPieceOnField().color = 'r';
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     //produces a field
     protected Field produceField(int x, int y){
         Field temp = new Field();
