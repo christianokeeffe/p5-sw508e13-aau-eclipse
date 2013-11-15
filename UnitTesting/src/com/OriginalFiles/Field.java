@@ -18,8 +18,7 @@ public class Field {
     public final void setPieceOnField(Piece inputPiece) {
         pieceOnField = inputPiece;
         if (!isEmpty()) {
-            pieceOnField.x = x;
-            pieceOnField.y = y;
+            pieceOnField.setXY(x, y);
         }
     }
 
@@ -29,7 +28,7 @@ public class Field {
 
     //A field is empty, if no piece is assigned to it.
     public final boolean isEmpty() {
-        return !(pieceOnField != null);
+        return (pieceOnField == null);
     }
 
     //Returns true if there is a piece on the field,
@@ -42,7 +41,7 @@ public class Field {
         }
     }
 
-    //Empty the field, by de-assigning the piece of the field.
+    //Empty the field, by un-assigning the piece of the field.
     public final void emptyThisField() {
         pieceOnField = null;
     }

@@ -1,3 +1,5 @@
+package com.OriginalFiles;
+
 public class Piece {
     private int x = -1, y = -1;
     public char color;

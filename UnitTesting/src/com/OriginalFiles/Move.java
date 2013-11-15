@@ -1,4 +1,5 @@
 package com.OriginalFiles;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class Move {
         this.wasKingBefore = wasKing;
     }
 
-   public Move() {
+    public Move() {
         List<Field> moveToList = new ArrayList<Field>();
         this.moves = moveToList;
     }
