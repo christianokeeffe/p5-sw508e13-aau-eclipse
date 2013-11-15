@@ -12,13 +12,13 @@ public class Board {
     public Field[][] trashPlace = new Field[8][2];
     public Analyze analyzeFunctions;
 
-    public Communication informer;
+    public Communication informer= new Communication(null);
 
     char myPeasentColor, myKingColor, opponentPeasentColor, opponentKingColor;
 
     public Board(RemoteNXTFunctions remoteFunc)
             throws InterruptedException, IOException {
-        informer = new Communication(remoteFunc);
+        //informer = new Communication(remoteFunc);
         analyzeFunctions = new Analyze(this, remoteFunc);
         analyzeFunctions.findMyColors();
         findOpponentColors();

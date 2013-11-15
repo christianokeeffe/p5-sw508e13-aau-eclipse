@@ -7,7 +7,7 @@ public class RemoteNXTFunctions {
     public Board checkersBoard;
 
     public RemoteNXTFunctions() throws InterruptedException, IOException {
-    checkersBoard = new Board(this);
+        checkersBoard = new Board(this);
     }
     public void resetMotors() {
         // TODO Auto-generated method stub
@@ -38,16 +38,14 @@ public class RemoteNXTFunctions {
         Color output = new Color();
         if (x == 2 && y == 5) {
             output.setColor('r');
-        }
-        if (x == 1 && y == 4) {
+        } else if (x == 1 && y == 4) {
             output.setColor('w');
-        }
-
-        if (checkersBoard.myBoard[x][y].getPieceOnField() != null) {
+        } else if (checkersBoard.myBoard[x][y].getPieceOnField() != null) {
            output.setColor(checkersBoard.myBoard[x][y].getPieceOnField().color);
         } else {
             output.setColor(' ');
         }
+
         return output;
     }
 

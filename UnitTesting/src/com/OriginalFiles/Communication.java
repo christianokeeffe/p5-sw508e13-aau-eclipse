@@ -1,62 +1,29 @@
 package com.OriginalFiles;
 
 public class Communication {
-    RemoteNXTFunctions nxt;
 
-    Communication(RemoteNXTFunctions inputNxt) {
-        nxt = inputNxt;
+    public Communication(RemoteNXTFunctions remoteFunc) {
+        // TODO Auto-generated constructor stub
     }
 
-    public final void playYourTurn() {
-        /*Sound.twoBeeps();
-        nxt.bottomNXT.C.setPower(100);
-        /*File soundFile = new File("yourturn.wav");
-        Sound.playSample(soundFile, 100); // 100 ... volume*/
+    public void myKingNotPlaced() {
+        // TODO Auto-generated method stub
+        
     }
 
-    public final void robotTurn() {
-        /*nxt.bottomNXT.C.setPower(100);*/
+    public void humanWon() {
+        // TODO Auto-generated method stub
+        
     }
 
-    public final void illeagalMove() {
-        /*Sound.buzz();
-        LCD.clear();
-        LCD.drawString("Illegal move", 0, 0);
-        LCD.refresh();*/
+    public void robotWon() {
+        // TODO Auto-generated method stub
+        
     }
 
-    public final void humanWon() {
-        /*Sound.beepSequenceUp();
-        LCD.clear();
-        LCD.drawString("You won!", 0, 0);
-        LCD.refresh();*/
+    public void draw() {
+        // TODO Auto-generated method stub
+        
     }
 
-    public final void robotWon() {
-        /*Sound.beepSequence();
-        LCD.clear();
-        LCD.drawString("You lost!", 0, 0);
-        LCD.refresh();*/
-    }
-
-    public final void draw() {
-        /*Sound.beep();
-        LCD.clear();
-        LCD.drawString("You got draw!", 0, 0);
-        LCD.refresh();*/
-    }
-
-    public final void myKingNotPlaced() {
-        /*Sound.buzz();
-        LCD.clear();
-        LCD.drawString("Place my king", 0, 0);
-        LCD.refresh();*/
-    }
-
-    public final void nothingPossible() {
-        /*Sound.buzz();
-        LCD.clear();
-        LCD.drawString("No possible movement", 0, 0);
-        LCD.refresh();*/
-    }
 }
