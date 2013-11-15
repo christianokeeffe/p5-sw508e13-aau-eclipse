@@ -1,106 +1,121 @@
 package com.Testing;
 
 import static org.junit.Assert.*;
-
 import java.io.IOException;
-
 import org.junit.Test;
-
+import com.CustomClasses.FunktionForTesting;
 import custom.Exceptions.IllegalMove;
 import custom.Exceptions.NoKingLeft;
 
-public class AnalyzeTest {
+public class AnalyzeTest extends FunktionForTesting {
+    com.OriginalFiles.Analyze analyzeForTest;
+    public AnalyzeTest() throws InterruptedException, IOException {
+        super();
+        analyzeForTest = checkersBoard.analyzeFunctions;
+        // TODO Auto-generated constructor stub
+    }
+
     @Test
-    public void testGameIsEnded() throws InterruptedException, IOException {
+    public final void testGameHasEnded() throws InterruptedException, IOException {
         //test if the game is not ended with start positioning
-        assertEquals(0, test.gameIsEnded(true));
-        assertEquals(0, test.gameIsEnded(false));
+        assertEquals(0, analyzeForTest.gameHasEnded(true));
+        assertEquals(0, analyzeForTest.gameHasEnded(false));
 
         constructWinCase(true);
         //test if the game registers that the human have won independent of whos turn it is
-        assertEquals(1, test.gameIsEnded(true));
-        assertEquals(1, test.gameIsEnded(false));
+        assertEquals(1, analyzeForTest.gameHasEnded(true));
+        assertEquals(1, analyzeForTest.gameHasEnded(false));
         
         constructWinCase(false);
         //test if the game registers that the robot have won independent of whos turn it is
-        assertEquals(2, test.gameIsEnded(true));
-        assertEquals(2, test.gameIsEnded(false));
+        assertEquals(2, analyzeForTest.gameHasEnded(true));
+        assertEquals(2, analyzeForTest.gameHasEnded(false));
         
         emptyBoard();
         
         //test if the game ended when it is a draw when it is humans turn
         //test if the game is not ended when it is the robots turn
-        test.myBoard[4][5].setPieceOnField(producePiece('b',true));
-        test.myBoard[6][7].setPieceOnField(producePiece('g',true));
+        checkersBoard.myBoard[4][5].setPieceOnField(producePiece(4, 5, 'b', true));
+        checkersBoard.myBoard[6][7].setPieceOnField(producePiece(4, 5, 'g', true));
         
-        assertEquals(3, test.gameIsEnded(true));
-        assertNotEquals(3, test.gameIsEnded(false));
+        assertEquals(3, analyzeForTest.gameHasEnded(true));
+        assertNotEquals(3, analyzeForTest.gameHasEnded(false));
         
         emptyBoard();
         
         //test if the game ended when it is a draw when it is robots turn
         //test if the game is not ended when it is the human turn
-        test.myBoard[1][0].setPieceOnField(producePiece('b',true));
-        test.myBoard[1][2].setPieceOnField(producePiece('g',true));
+        checkersBoard.myBoard[1][0].setPieceOnField(producePiece(4, 5, 'b',true));
+        checkersBoard.myBoard[1][2].setPieceOnField(producePiece(4, 5, 'g',true));
         
-        assertEquals(3, test.gameIsEnded(false));
-        assertNotEquals(3, test.gameIsEnded(true));
+        assertEquals(3, analyzeForTest.gameHasEnded(false));
+        assertNotEquals(3, analyzeForTest.gameHasEnded(true));
         
         resetBoard();
     }
 
+    private void emptyBoard() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    private void constructWinCase(boolean b) {
+        // TODO Auto-generated method stub
+        
+    }
+
     @Test
-    public void testCheckForGameHasEnded() throws InterruptedException, IOException {
+    public final void testCheckForGameHasEnded() throws InterruptedException, IOException {
         
         //test if the games ends in the different scenarios
-        assertFalse(test.checkForGameHasEnded(true));
-        assertFalse(test.checkForGameHasEnded(false));
+        assertFalse(analyzeForTest.checkForGameHasEnded(true));
+        assertFalse(analyzeForTest.checkForGameHasEnded(false));
         
         constructWinCase(true);
         
-        assertTrue(test.checkForGameHasEnded(true));
-        assertTrue(test.checkForGameHasEnded(false));
+        assertTrue(analyzeForTest.checkForGameHasEnded(true));
+        assertTrue(analyzeForTest.checkForGameHasEnded(false));
         
         constructWinCase(false);
         
-        assertTrue(test.checkForGameHasEnded(true));
-        assertTrue(test.checkForGameHasEnded(false));
+        assertTrue(analyzeForTest.checkForGameHasEnded(true));
+        assertTrue(analyzeForTest.checkForGameHasEnded(false));
         
         emptyBoard();
         
         //draw case if humans turn
-        test.myBoard[4][5].setPieceOnField(producePiece('b',true));
-        test.myBoard[6][7].setPieceOnField(producePiece('g',true));
+        checkersBoard.myBoard[4][5].setPieceOnField(producePiece(4, 5, 'b',true));
+        checkersBoard.myBoard[6][7].setPieceOnField(producePiece(4, 5, 'g',true));
         
-        assertTrue(test.checkForGameHasEnded(true));
-        assertFalse(test.checkForGameHasEnded(false));
+        assertTrue(analyzeForTest.checkForGameHasEnded(true));
+        assertFalse(analyzeForTest.checkForGameHasEnded(false));
         
         emptyBoard();
         
         //draw case if robots turn
-        test.myBoard[1][0].setPieceOnField(producePiece('b',true));
-        test.myBoard[1][2].setPieceOnField(producePiece('g',true));
+        checkersBoard.myBoard[1][0].setPieceOnField(producePiece(4, 5, 'b',true));
+        checkersBoard.myBoard[1][2].setPieceOnField(producePiece(4, 5, 'g',true));
         
-        assertTrue(test.checkForGameHasEnded(false));
-        assertFalse(test.checkForGameHasEnded(true));
+        assertTrue(analyzeForTest.checkForGameHasEnded(false));
+        assertFalse(analyzeForTest.checkForGameHasEnded(true));
         
         resetBoard();
     }
     
     @Test
-    public void testAnalyzeBoard() throws InterruptedException, IOException, NoKingLeft, IllegalMove{
+    public final void testAnalyzeBoard() throws InterruptedException, IOException, NoKingLeft, IllegalMove, custom.Exceptions.NoKingLeft, custom.Exceptions.IllegalMove{
         boolean testException = false;
         
         //test if analyzeboard works when moving a piece
-        assertTrue(test.analyzeBoard());
+        assertTrue(analyzeForTest.analyzeBoard());
         
         //production of an illegal move
-        test.myBoard[3][4].setPieceOnField(producePiece('r',false));
-        test.myBoard[2][5].setPieceOnField(producePiece('w',true));
+        checkersBoard.myBoard[3][4].setPieceOnField(producePiece(4, 5, 'r',false));
+        checkersBoard.myBoard[2][5].setPieceOnField(producePiece(4, 5, 'w',true));
         
         //test that analyzeBoard finds and reports the illegal move
         try {
-            test.analyzeBoard();
+            analyzeForTest.analyzeBoard();
         }
         catch (IllegalMove e) {
             testException = true;
@@ -111,11 +126,12 @@ public class AnalyzeTest {
         resetBoard();
     }
     
-    @Test
+    
     //Test not that valid for the real GetColor function
-    public void testGetColor() throws IOException {
-        assertEquals(test.myBoard[1][0].getPieceOnField().color, getColor(1, 0));
-        assertEquals(' ',getColor(0, 3));
-        assertEquals('w',getColor(1,4));
+    @Test
+    public final void testGetColor() throws IOException {
+        assertEquals(checkersBoard.myBoard[1][0].getPieceOnField().color, analyzeForTest.getColor(1, 0));
+        assertEquals(' ', analyzeForTest.getColor(0, 3));
+        assertEquals('w', analyzeForTest.getColor(1,4));
     }
 }
