@@ -352,7 +352,7 @@ public class Analyze {
 
     //Returns the color on the given position
     public final char getColor(int x, int y) throws IOException {
-        Color colorResult = remoteFunctions.getColorOnField(x, y);
+        com.CustomClasses.Color colorResult = remoteFunctions.getColorOnField(x, y);
 
         int red = colorResult.getRed();
         int green = colorResult.getGreen();
