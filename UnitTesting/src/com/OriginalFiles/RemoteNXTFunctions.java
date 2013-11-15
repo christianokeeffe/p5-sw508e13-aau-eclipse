@@ -1,7 +1,6 @@
 package com.OriginalFiles;
 
-
-import java.awt.Color;
+import com.CustomClasses.Color;
 import java.io.IOException;
 
 public class RemoteNXTFunctions {
@@ -27,30 +26,29 @@ public class RemoteNXTFunctions {
 
     public void waitForRedButton() {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void initColorSensor() {
         // TODO Auto-generated method stub
-        
+
     }
 
-    public final char getColorOnField(int x, int y) {
+    public final Color getColorOnField(int x, int y) {
+        Color output = new Color();
         if (x == 2 && y == 5) {
-            return ' ';
+            output.setColor('r');
         }
         if (x == 1 && y == 4) {
-            return 'w';
-        }
-        if (x == 4 && y == 3) {
-            return ' ';
+            output.setColor('w');
         }
 
         if (checkersBoard.myBoard[x][y].getPieceOnField() != null) {
-            return checkersBoard.myBoard[x][y].getPieceOnField().color;
+           output.setColor(checkersBoard.myBoard[x][y].getPieceOnField().color);
         } else {
-            return ' ';
+            output.setColor(' ');
         }
+        return output;
     }
 
 }
