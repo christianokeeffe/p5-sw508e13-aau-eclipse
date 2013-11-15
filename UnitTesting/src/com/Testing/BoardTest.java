@@ -79,25 +79,7 @@ public class BoardTest extends FunktionForTesting {
 		}
 	}
 	
-	//Method used to construct a win scenario for either of the players
-	private void constructWinCase(boolean change){
-		for(Field[] i : checkersBoard.myBoard){
-			for(Field f : i){
-				if(f.getPieceOnField() != null){
-					if(change){
-						if(f.getPieceOnField().color == 'r'){
-						    checkersBoard.myBoard[f.x][f.y].getPieceOnField().color = 'w';
-						}
-					}
-					else{
-						if(f.getPieceOnField().color == 'w'){
-						    checkersBoard.myBoard[f.x][f.y].getPieceOnField().color = 'r';
-						}
-					}
-				}
-			}
-		}
-	}
+	
 
 	@Test
 	public void testMovePiece() throws NoKingLeft, IOException, custom.Exceptions.NoKingLeft {

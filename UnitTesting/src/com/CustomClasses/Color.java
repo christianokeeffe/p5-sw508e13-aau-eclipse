@@ -15,7 +15,7 @@ public class Color {
         } else if (input == 'r') {
             red = 255;
             green = 65;
-            blue = 0;
+            blue = 65;
         } else if (input == 'g') {
             red = 200;
             green = 250;
