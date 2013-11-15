@@ -42,7 +42,7 @@ public class FieldTest extends FunktionForTesting{
         assertTrue(field.allowedField);
 
         assertNull(field.getPieceOnField());
-        field.setPieceOnField(producePiece(x, y, color, upgrade));
+        field.setPieceOnField(producePiece(x, y, 'w', false));
         assertNotNull(field.getPieceOnField());
 
         assertFalse(field.visited);
