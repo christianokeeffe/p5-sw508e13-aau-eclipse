@@ -6,8 +6,8 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import customExceptions.IllegalMove;
-import customExceptions.NoKingLeft;
+import custom.Exceptions.IllegalMove;
+import custom.Exceptions.NoKingLeft;
 
 public class AnalyzeTest {
     @Test
