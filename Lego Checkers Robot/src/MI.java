@@ -83,7 +83,6 @@ public class MI {
         }
 
         for (Move move : posMoves) {
-            revertAllMoves();
             simulateMove(move);
 
             tempPrice =  -negaMax(numberofmovelook, -1, -inf, -price);
@@ -211,8 +210,6 @@ public class MI {
     public final void simulateMove(Move move) throws NoKingLeft, IOException {
         if (move.moves.size() >= 2) {
             int stop = move.moves.size() - 1;
-
-
             for (int i = 0; i < stop; i++) {
                 Field from = move.moves.get(i);
                 Field to = move.moves.get(i + 1);
