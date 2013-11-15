@@ -93,5 +93,4 @@ public class MoveTest extends FunktionForTesting {
 
         assertEquals(myMove.moves.size(), 3);
     }
-
 }

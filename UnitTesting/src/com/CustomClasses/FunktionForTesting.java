@@ -12,7 +12,7 @@ public class FunktionForTesting {
     protected Board checkersBoard;
     public FunktionForTesting() throws InterruptedException, IOException {
         remote = new RemoteNXTFunctions();
-        checkersBoard = new Board(remote);
+        checkersBoard = remote.checkersBoard;
     }
     //function for creating a piece
     protected Piece producePiece(int x, int y, char color, boolean upgrade){

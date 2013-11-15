@@ -338,6 +338,7 @@ public class Analyze {
 
     //Sets the colors of the pieces of the robot
     public final void findMyColors() throws InterruptedException, IOException {
+        char test = getColor(0, 1);
         checkersBoard.myPeasentColor = getColor(0, 1);
         if (checkersBoard.myPeasentColor == 'r') {
             checkersBoard.myKingColor = 'b';
@@ -360,7 +361,7 @@ public class Analyze {
         if (red > 230 && red < 290 && green < 130 && green > 60
                 && blue < 140 && blue > 60) {
             return 'r';
-        } else if (red > 230 && red < 285 && green > 235 && green < 285
+         } else if (red > 230 && red < 285 && green > 235 && green < 285
                 && blue > 230 && blue < 280) {
             return 'w';
         } else if (red < 230 && red > 170 && green > 210 && green < 290
