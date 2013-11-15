@@ -13,8 +13,8 @@ import com.CustomClasses.FunktionForTesting;
 //Remember that myBoard in board should be public and all properties in Piece should also be public
 import com.OriginalFiles.*;
 
-import customExceptions.IllegalMove;
-import customExceptions.NoKingLeft;
+import custom.Exceptions.IllegalMove;
+import custom.Exceptions.NoKingLeft;
 
 public class BoardTest extends FunktionForTesting {
 	
