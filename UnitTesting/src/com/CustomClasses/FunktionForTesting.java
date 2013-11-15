@@ -8,14 +8,14 @@ import com.OriginalFiles.Piece;
 import com.OriginalFiles.RemoteNXTFunctions;
 
 public class FunktionForTesting {
-    RemoteNXTFunctions remote;
-    Board checkersBoard; 
+    protected RemoteNXTFunctions remote;
+    protected Board checkersBoard; 
     public FunktionForTesting() throws InterruptedException, IOException {
         remote = new RemoteNXTFunctions();
         checkersBoard = new Board(remote);
     }
     //function for creating a piece
-    public Piece producePiece(int x, int y, char color, boolean upgrade){
+    protected Piece producePiece(int x, int y, char color, boolean upgrade){
         Piece temp = new Piece(checkersBoard);
         temp.color = color;
         temp.setXY(x, y);
@@ -29,13 +29,17 @@ public class FunktionForTesting {
     }
     
     //produces a field
-    public Field produceField(int x, int y){
+    protected Field produceField(int x, int y){
         Field temp = new Field();
         temp.x = x;
         temp.y = y;
         temp.allowedField = true;
         
         return temp;
+    }
+    
+    private void resetBoard() throws InterruptedException, IOException{
+        checkersBoard = new Board(remote);
     }
 
 }

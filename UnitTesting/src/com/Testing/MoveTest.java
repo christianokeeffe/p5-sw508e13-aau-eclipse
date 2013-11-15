@@ -2,15 +2,22 @@ package com.Testing;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
 
+import com.CustomClasses.FunktionForTesting;
 import com.OriginalFiles.Field;
 import com.OriginalFiles.Move;
 
-public class MoveTest {
+public class MoveTest extends FunktionForTesting {
+
+    public MoveTest() throws InterruptedException, IOException {
+        super();
+        // TODO Auto-generated constructor stub
+    }
 
     @Test
     public final void testMoveFieldFieldBoolean() {

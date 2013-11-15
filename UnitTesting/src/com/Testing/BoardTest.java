@@ -16,14 +16,11 @@ import com.OriginalFiles.*;
 import customExceptions.IllegalMove;
 import customExceptions.NoKingLeft;
 
-public class BoardTest {
-    FunktionForTesting testfunctions = new FunktionForTesting();
-    RemoteNXTFunctions remoteNXT = new RemoteNXTFunctions();
-	Board test;
+public class BoardTest extends FunktionForTesting {
 	
 	public BoardTest () throws InterruptedException, IOException
 	{
-	    test = new Board(remoteNXT);
+	    super();
 	}
 	
 	@Test
@@ -31,7 +28,7 @@ public class BoardTest {
 	public void testBoard(){
 		for(int x = 0; x < 8; x++){
 			for(int y = 0; y < 8; y++){
-				Field temp = test.myBoard[x][y];
+				Field temp = checkersBoard.myBoard[x][y];
 				if((x+y)%2 == 1)
 				{
 					assertTrue(temp.x == x);
@@ -82,13 +79,9 @@ public class BoardTest {
 		}
 	}
 	
-	private void resetBoard() throws InterruptedException, IOException{
-		test = new Board(remoteNXT);
-	}
-	
 	//Method used to construct a win scenario for either of the players
 	private void constructWinCase(boolean change){
-		for(Field[] i : test.myBoard){
+		for(Field[] i : checkersBoard.myBoard){
 			for(Field f : i){
 				if(f.getPieceOnField() != null){
 					if(change){
