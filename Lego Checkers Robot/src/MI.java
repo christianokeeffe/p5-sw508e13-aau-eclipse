@@ -5,13 +5,12 @@ import lejos.nxt.Sound;
 import custom.Exceptions.NoKingLeft;
 import lejos.util.Stopwatch;
 
-
 public class MI {
     public RemoteNXTFunctions remoteNXT;
     private final double inf = 100000.0;
     public Stopwatch sW = new Stopwatch();
     private List<Move> simulatedMoves = new ArrayList<Move>();
-    MI(RemoteNXTFunctions inputRemoteNXT) {
+    public MI(RemoteNXTFunctions inputRemoteNXT) {
         remoteNXT = inputRemoteNXT;
 
         for (Field[] f: remoteNXT.checkersBoard.myBoard) {
@@ -122,18 +121,20 @@ public class MI {
         List<Move> moves;
         moves = possibleMoves(turn);
 
+        double bestValue = -inf;
         for (Move move : moves) {
             simulateMove(move);
             double newPrice = -negaMax(depth - 1, -turn, -beta, -alpha);
             revertMove();
-
+            
+            bestValue = max(bestValue, newPrice);
             alpha = max(alpha, newPrice);
             if (alpha >= beta) {
-                return alpha;
+                break;
             }
         }
         //latex end
-        return alpha;
+        return bestValue;
     }
     /* how much the AI/MI looks forward */
     private int numberofmovelook = 2;
