@@ -1,9 +1,13 @@
 package com.Testing;
 
 import static org.junit.Assert.*;
+
 import java.io.IOException;
+
 import org.junit.Test;
+
 import com.CustomClasses.FunktionForTesting;
+
 import custom.Exceptions.IllegalMove;
 import custom.Exceptions.NoKingLeft;
 
@@ -135,5 +139,47 @@ public class AnalyzeTest extends FunktionForTesting {
         assertEquals(checkersBoard.myBoard[1][0].getPieceOnField().color, checkersBoard.analyzeFunctions.getColor(1, 0));
         assertEquals(' ', checkersBoard.analyzeFunctions.getColor(0, 3));
         assertEquals('w', checkersBoard.analyzeFunctions.getColor(1,4));
+    }
+    
+    // test for to see if checkMotorCalibration will work ???
+    @Test
+    public final void testCheckMotorCalibration() throws InterruptedException, IOException, NoKingLeft, IllegalMove {
+        resetBoard();
+        for (int i=0; i <=10; i++) {
+            checkersBoard.analyzeFunctions.analyzeBoard();
+        }
+        
+    }
+    
+ // test for to see if 
+    @Test
+    public final void testCheckMovement() throws InterruptedException, IOException, NoKingLeft, IllegalMove {
+        emptyBoard();
+        boolean testException = false;
+        checkersBoard.myBoard[2][5].setPieceOnField(producePiece(2, 5, 'w',true));
+        checkersBoard.myBoard[0][5].setPieceOnField(producePiece(0, 5, 'w',false));
+        checkersBoard.myBoard[3][4].setPieceOnField(producePiece(3, 4, 'r',true));
+        
+        
+        try {
+            remote.analyzeTestVariable = 1;
+            checkersBoard.analyzeFunctions.analyzeBoard();
+        }
+        catch (IllegalMove e) {
+            testException = true;
+        }
+        remote.analyzeTestVariable = 0;
+        assertTrue(testException);
+        testException = false;
+        
+        try {
+            remote.analyzeTestVariable = 2;
+            checkersBoard.analyzeFunctions.analyzeBoard();
+        }
+        catch (IllegalMove e) {
+            testException = true;
+        }
+        remote.analyzeTestVariable = 0;
+        assertTrue(!testException);
     }
 }
