@@ -141,14 +141,22 @@ public class AnalyzeTest extends FunktionForTesting {
         assertEquals('w', checkersBoard.analyzeFunctions.getColor(1,4));
     }
     
-    // test for to see if checkMotorCalibration will work ???
+    // test for to see if checkMotorCalibration will work ??? 
     @Test
     public final void testCheckMotorCalibration() throws InterruptedException, IOException, NoKingLeft, IllegalMove {
-        resetBoard();
-        for (int i=0; i <=10; i++) {
+        emptyBoard();
+        checkersBoard.myBoard[2][5].setPieceOnField(producePiece(2, 5, 'w',true));
+        boolean testException = false;
+        try {
+            remote.analyzeTestVariable = 3;
             checkersBoard.analyzeFunctions.analyzeBoard();
         }
-        
+        catch (IllegalMove e) {
+            testException = true;
+        }
+        remote.analyzeTestVariable = 0;
+        assertTrue(testException);
+        resetBoard();
     }
     
  // test for to see if 
@@ -181,5 +189,6 @@ public class AnalyzeTest extends FunktionForTesting {
         }
         remote.analyzeTestVariable = 0;
         assertTrue(!testException);
+        resetBoard();
     }
 }
