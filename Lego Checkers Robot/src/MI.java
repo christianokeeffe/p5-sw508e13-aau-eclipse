@@ -111,7 +111,7 @@ public class MI {
     }
 
 
-    private final double negaMax(int depth, int turn, double alpha, double beta)
+    private double negaMax(int depth, int turn, double alpha, double beta)
             throws NoKingLeft, IOException, InterruptedException {
       //latex start negaMax
         if (depth == 0
@@ -207,7 +207,7 @@ public class MI {
     /* MI brain stops */
     /* ---------------------------------------------------------------------  */
 
-    private final void simulateMove(Move move) throws NoKingLeft, IOException {
+    private void simulateMove(Move move) throws NoKingLeft, IOException {
         if (move.moves.size() >= 2) {
             int stop = move.moves.size() - 1;
             for (int i = 0; i < stop; i++) {
@@ -243,7 +243,7 @@ public class MI {
         }
     }
 
-    private final void revertMove() throws NoKingLeft, IOException {
+    private void revertMove() throws NoKingLeft, IOException {
 
         if (simulatedMoves.size() != 0) {
             Move temp = simulatedMoves.get(simulatedMoves.size() - 1);
