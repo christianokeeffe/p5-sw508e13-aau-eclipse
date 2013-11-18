@@ -67,6 +67,7 @@ public class FunktionForTesting {
     
     protected void resetBoard() throws InterruptedException, IOException{
         checkersBoard = new Board(remote);
+        remote.checkersBoard = checkersBoard;
     }
 
 }
