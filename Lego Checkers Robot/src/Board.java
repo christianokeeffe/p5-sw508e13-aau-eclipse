@@ -139,11 +139,11 @@ public class Board {
                     && !fieldToCompare.getPieceOnField().isCrowned) {
                 return false;
             } else {
-                if (weight(inputField, compX, compY)
-                    > weight(fieldToCompare, compX, compY)) {
+                if (distance(inputField, compX, compY)
+                    > distance(fieldToCompare, compX, compY)) {
                     return false;
-                } else if (weight(inputField, compX, compY)
-                           < weight(fieldToCompare, compX, compY)) {
+                } else if (distance(inputField, compX, compY)
+                           < distance(fieldToCompare, compX, compY)) {
                     return true;
                 } else {
                     return (inputField.y < fieldToCompare.y);
@@ -152,7 +152,7 @@ public class Board {
         }
     }
 
-    private int weight(Field inputField, int x, int y) {
+    private int distance(Field inputField, int x, int y) {
         return Math.abs(inputField.x - x) + Math.abs(inputField.y - y);
     }
 
