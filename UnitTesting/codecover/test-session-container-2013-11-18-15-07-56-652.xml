@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><TestSessionContainer xmlns="http://www.codecover.org/xml/testsession-container" Date="1384781418003" TestSessionContainerId="655e976a-dddb-4d95-80bc-45915621237f" version="1.0">
+<?xml version="1.0" encoding="UTF-8"?><TestSessionContainer xmlns="http://www.codecover.org/xml/testsession-container" Date="1384783676624" TestSessionContainerId="e6f9dfb1-4369-461d-b351-613bcea952fa" version="1.0">
 <SrcFileList>
 <SrcFile Content="package com.Testing;&#10;&#10;import static org.junit.Assert.*;&#10;&#10;import java.io.IOException;&#10;import java.util.ArrayList;&#10;import java.util.List;&#10;&#10;import org.junit.Test;&#10;&#10;import com.CustomClasses.FunktionForTesting;&#10;import com.OriginalFiles.Field;&#10;import com.OriginalFiles.Move;&#10;&#10;public class MoveTest extends FunktionForTesting {&#10;&#10;    public MoveTest() throws InterruptedException, IOException {&#10;        super();&#10;        // TODO Auto-generated constructor stub&#10;    }&#10;&#10;    @Test&#10;    public final void testMoveFieldFieldBoolean() {&#10;        Field fromField = new Field(5, 4);&#10;        Field toField = new Field(6, 5);&#10;&#10;        Move myMove = new Move(fromField, toField, false);&#10;&#10;        assertFalse(myMove.wasKingBefore);&#10;        assertEquals(myMove.moves.get(0), fromField);&#10;        assertEquals(myMove.moves.get(1), toField);&#10;        assertEquals(myMove.takenPieces.size(), 0);&#10;        assertFalse(myMove.isJump());&#10;    }&#10;&#10;    @Test&#10;    public final void testMoveListOfFieldBoolean() {&#10;        List&lt;Field&gt; listOfFields = new ArrayList&lt;Field&gt;();&#10;&#10;        Field fromField = new Field(1, 0);&#10;        Field toField = new Field(2, 1);&#10;&#10;        listOfFields.add(fromField);&#10;        listOfFields.add(toField);&#10;&#10;        Move myMove = new Move(listOfFields, false);&#10;&#10;        assertFalse(myMove.wasKingBefore);&#10;        assertEquals(myMove.moves, listOfFields);&#10;        assertFalse(myMove.isJump());&#10;&#10;       assertEquals(myMove.takenPieces.size(), 0);&#10;    }&#10;&#10;    @Test&#10;    public final void testMove() {&#10;        Move myMove = new Move();&#10;&#10;        assertEquals(myMove.moves.size(), 0);&#10;        assertFalse(myMove.wasKingBefore);&#10;        assertFalse(myMove.isJump());&#10;    }&#10;&#10;    @Test&#10;    public final void testIsJump() {&#10;        Field fromField = new Field(5, 4);&#10;        Field toField = new Field(6, 5);&#10;&#10;        Move myMove = new Move(fromField, toField, false);&#10;&#10;        assertFalse(myMove.isJump());&#10;&#10;        fromField = new Field(5, 4);&#10;        toField = new Field(7, 6);&#10;&#10;        myMove = new Move(fromField, toField, false);&#10;&#10;        assertTrue(myMove.isJump());&#10;    }&#10;&#10;    @Test&#10;    public final void testAddStep() {&#10;        Field fromField = new Field(3, 4);&#10;        Field toField = new Field(4, 5);&#10;&#10;        Move myMove = new Move(fromField, toField, false);&#10;&#10;        assertEquals(myMove.moves.size(), 2);&#10;&#10;        Field newStep = new Field(5, 6);&#10;&#10;        myMove.addStep(newStep);&#10;&#10;        assertEquals(myMove.moves.size(), 3);&#10;    }&#10;}&#10;" Filename="MoveTest.java" Intrnl_Id="1"/>
 <SrcFile Content="package com.Testing;&#13;&#10;&#13;&#10;import static org.junit.Assert.*;&#13;&#10;&#13;&#10;import java.io.IOException;&#13;&#10;&#13;&#10;import org.junit.Test;&#13;&#10;&#13;&#10;import com.CustomClasses.FunktionForTesting;&#13;&#10;import com.OriginalFiles.Field;&#13;&#10;import com.OriginalFiles.Piece;&#13;&#10;&#13;&#10;public class FieldTest extends FunktionForTesting{&#13;&#10;    public FieldTest() throws InterruptedException, IOException {&#13;&#10;        super();&#13;&#10;        // TODO Auto-generated constructor stub&#13;&#10;    }&#13;&#10;&#13;&#10;    Field testField;&#13;&#10;    @Test&#13;&#10;    public void testField() {&#13;&#10;        testField = new Field();&#13;&#10;        testConstructor(testField, 0, 0);&#13;&#10;    }&#13;&#10;&#13;&#10;    @Test&#13;&#10;    public void testFieldIntInt() {&#13;&#10;        testField = new Field(1, 2);&#13;&#10;        testConstructor(testField, 1, 2);&#13;&#10;    }&#13;&#10;&#13;&#10;    private void testConstructor(Field field, int x, int y){&#13;&#10;        assertEquals(x, field.x);&#13;&#10;        assertEquals(y, field.y);&#13;&#10;        field.x = 2;&#13;&#10;        field.y = 1;&#13;&#10;        assertEquals(2, field.x);&#13;&#10;        assertEquals(1, field.y);&#13;&#10;&#13;&#10;        assertFalse(field.allowedField);&#13;&#10;        field.allowedField = true;&#13;&#10;        assertTrue(field.allowedField);&#13;&#10;&#13;&#10;        assertNull(field.getPieceOnField());&#13;&#10;        field.setPieceOnField(producePiece(x, y, 'w', false));&#13;&#10;        assertNotNull(field.getPieceOnField());&#13;&#10;&#13;&#10;        assertFalse(field.visited);&#13;&#10;        field.visited = true;&#13;&#10;        assertTrue(field.visited);&#13;&#10;    }&#13;&#10;&#13;&#10;    @Test&#13;&#10;    public void testSetPieceOnField() {&#13;&#10;        testField = new Field();&#13;&#10;        assertNull(testField.getPieceOnField());&#13;&#10;        testField.setPieceOnField(new Piece(checkersBoard));&#13;&#10;        testFieldsPieceEqPiece(testField, false);&#13;&#10;&#13;&#10;        testField.setPieceOnField(producePiece(1, 2, 'r', true));&#13;&#10;&#13;&#10;        testFieldsPieceEqPiece(testField, true);&#13;&#10;&#13;&#10;        testField.x = 1;&#13;&#10;        testField.y = 2;&#13;&#10;        testField.setPieceOnField(producePiece(1, 2, 'r', true));&#13;&#10;        testFieldsPieceEqPiece(testField, true);&#13;&#10;    }&#13;&#10;&#13;&#10;    private void testFieldsPieceEqPiece(Field PieceField, boolean testForTrue){&#13;&#10;        Piece tempPiece = PieceField.getPieceOnField();&#13;&#10;&#13;&#10;        assertEquals(PieceField.x, tempPiece.getX());&#13;&#10;        assertEquals(PieceField.y, tempPiece.getY());&#13;&#10;&#13;&#10;        if (testForTrue) {&#13;&#10;            assertTrue(tempPiece.isCrowned);&#13;&#10;            assertTrue(tempPiece.isMoveable);&#13;&#10;            assertTrue(tempPiece.canJump);&#13;&#10;        } else {&#13;&#10;            assertFalse(tempPiece.isCrowned);&#13;&#10;            assertFalse(tempPiece.isMoveable);&#13;&#10;            assertFalse(tempPiece.canJump);&#13;&#10;        }&#13;&#10;    }&#13;&#10;&#13;&#10;    @Test&#13;&#10;    public void testGetPieceOnField() {&#13;&#10;        testField = new Field();&#13;&#10;        assertNull(testField.getPieceOnField());&#13;&#10;        testField.setPieceOnField(producePiece(1, 2, 'r', true));&#13;&#10;        testFieldsPieceEqPiece(testField, true);&#13;&#10;    }&#13;&#10;&#13;&#10;    @Test&#13;&#10;    public void testIsEmpty() {&#13;&#10;        testField = new Field();&#13;&#10;        assertTrue(testField.isEmpty());&#13;&#10;&#13;&#10;        testField.setPieceOnField(producePiece(0, 0, 'r', false));&#13;&#10;        assertFalse(testField.isEmpty());&#13;&#10;&#13;&#10;        testField.emptyThisField();&#13;&#10;        assertTrue(testField.isEmpty());&#13;&#10;    }&#13;&#10;&#13;&#10;    @Test&#13;&#10;    public void testIsPieceOfColor() {&#13;&#10;        testField = new Field();&#13;&#10;        testField.setPieceOnField(producePiece(0, 0, 'r', false));&#13;&#10;        assertTrue(testField.isPieceOfColor('r'));&#13;&#10;        assertFalse(testField.isPieceOfColor('w'));&#13;&#10;&#13;&#10;        testField.getPieceOnField().color = 'g';&#13;&#10;        assertFalse(testField.isPieceOfColor('b'));&#13;&#10;        assertTrue(testField.isPieceOfColor('g'));&#13;&#10;    }&#13;&#10;&#13;&#10;    @Test&#13;&#10;    public void testEmptyThisField() {&#13;&#10;        testField = new Field();&#13;&#10;        assertNull(testField.getPieceOnField());&#13;&#10;&#13;&#10;        testField.setPieceOnField(producePiece(0, 0, 'r', false));&#13;&#10;        assertNotNull(testField.getPieceOnField());&#13;&#10;&#13;&#10;        testField.emptyThisField();&#13;&#10;        assertNull(testField.getPieceOnField());&#13;&#10;    }&#13;&#10;&#13;&#10;}&#13;&#10;" Filename="FieldTest.java" Intrnl_Id="2"/>
@@ -49,23 +49,23 @@
 <HierarchyLvlType EnglishName="default package" IntrnlName="default package" Intrnl_Id="18"/>
 </HierarchyLvlTypeList>
 <MASTRoot>
-<HierarchyLvl HierarchyLvlId="6820" HierarchyLvlTypeId="18" Intrnl_Id="19" Name="default package">
+<HierarchyLvl HierarchyLvlId="9176" HierarchyLvlTypeId="18" Intrnl_Id="19" Name="default package">
 <Header/>
 <LocList/>
-<HierarchyLvl HierarchyLvlId="6819" HierarchyLvlTypeId="15" Intrnl_Id="20" Name="com">
+<HierarchyLvl HierarchyLvlId="9175" HierarchyLvlTypeId="15" Intrnl_Id="20" Name="com">
 <Header/>
 <LocList/>
-<HierarchyLvl HierarchyLvlId="6817" HierarchyLvlTypeId="15" Intrnl_Id="21" Name="Testing">
+<HierarchyLvl HierarchyLvlId="9173" HierarchyLvlTypeId="15" Intrnl_Id="21" Name="Testing">
 <Header/>
 <LocList/>
-<HierarchyLvl HierarchyLvlId="6703" HierarchyLvlTypeId="16" Intrnl_Id="22" Name="MoveTest">
+<HierarchyLvl HierarchyLvlId="9059" HierarchyLvlTypeId="16" Intrnl_Id="22" Name="MoveTest">
 <Header>
 <Loc EndOffset="318" SrcFileId="1" StartOffset="270"/>
 </Header>
 <LocList>
 <Loc EndOffset="2423" SrcFileId="1" StartOffset="270"/>
 </LocList>
-<HierarchyLvl HierarchyLvlId="6697" HierarchyLvlTypeId="17" Intrnl_Id="23" Name="MoveTest">
+<HierarchyLvl HierarchyLvlId="9053" HierarchyLvlTypeId="17" Intrnl_Id="23" Name="MoveTest">
 <Header>
 <Loc EndOffset="384" SrcFileId="1" StartOffset="326"/>
 </Header>
@@ -83,7 +83,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6698" HierarchyLvlTypeId="17" Intrnl_Id="26" Name="testMoveFieldFieldBoolean">
+<HierarchyLvl HierarchyLvlId="9054" HierarchyLvlTypeId="17" Intrnl_Id="26" Name="testMoveFieldFieldBoolean">
 <Header>
 <Loc EndOffset="518" SrcFileId="1" StartOffset="463"/>
 </Header>
@@ -143,7 +143,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6699" HierarchyLvlTypeId="17" Intrnl_Id="36" Name="testMoveListOfFieldBoolean">
+<HierarchyLvl HierarchyLvlId="9055" HierarchyLvlTypeId="17" Intrnl_Id="36" Name="testMoveListOfFieldBoolean">
 <Header>
 <Loc EndOffset="972" SrcFileId="1" StartOffset="916"/>
 </Header>
@@ -215,7 +215,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6700" HierarchyLvlTypeId="17" Intrnl_Id="48" Name="testMove">
+<HierarchyLvl HierarchyLvlId="9056" HierarchyLvlTypeId="17" Intrnl_Id="48" Name="testMove">
 <Header>
 <Loc EndOffset="1479" SrcFileId="1" StartOffset="1441"/>
 </Header>
@@ -251,7 +251,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6701" HierarchyLvlTypeId="17" Intrnl_Id="54" Name="testIsJump">
+<HierarchyLvl HierarchyLvlId="9057" HierarchyLvlTypeId="17" Intrnl_Id="54" Name="testIsJump">
 <Header>
 <Loc EndOffset="1695" SrcFileId="1" StartOffset="1655"/>
 </Header>
@@ -311,7 +311,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6702" HierarchyLvlTypeId="17" Intrnl_Id="64" Name="testAddStep">
+<HierarchyLvl HierarchyLvlId="9058" HierarchyLvlTypeId="17" Intrnl_Id="64" Name="testAddStep">
 <Header>
 <Loc EndOffset="2099" SrcFileId="1" StartOffset="2058"/>
 </Header>
@@ -366,14 +366,14 @@
 </StmntSeq>
 </HierarchyLvl>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6714" HierarchyLvlTypeId="16" Intrnl_Id="73" Name="FieldTest">
+<HierarchyLvl HierarchyLvlId="9070" HierarchyLvlTypeId="16" Intrnl_Id="73" Name="FieldTest">
 <Header>
 <Loc EndOffset="281" SrcFileId="2" StartOffset="232"/>
 </Header>
 <LocList>
 <Loc EndOffset="3869" SrcFileId="2" StartOffset="232"/>
 </LocList>
-<HierarchyLvl HierarchyLvlId="6704" HierarchyLvlTypeId="17" Intrnl_Id="74" Name="FieldTest">
+<HierarchyLvl HierarchyLvlId="9060" HierarchyLvlTypeId="17" Intrnl_Id="74" Name="FieldTest">
 <Header>
 <Loc EndOffset="347" SrcFileId="2" StartOffset="288"/>
 </Header>
@@ -391,7 +391,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6705" HierarchyLvlTypeId="17" Intrnl_Id="77" Name="testField">
+<HierarchyLvl HierarchyLvlId="9061" HierarchyLvlTypeId="17" Intrnl_Id="77" Name="testField">
 <Header>
 <Loc EndOffset="487" SrcFileId="2" StartOffset="453"/>
 </Header>
@@ -415,7 +415,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6706" HierarchyLvlTypeId="17" Intrnl_Id="81" Name="testFieldIntInt">
+<HierarchyLvl HierarchyLvlId="9062" HierarchyLvlTypeId="17" Intrnl_Id="81" Name="testFieldIntInt">
 <Header>
 <Loc EndOffset="621" SrcFileId="2" StartOffset="581"/>
 </Header>
@@ -439,7 +439,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6707" HierarchyLvlTypeId="17" Intrnl_Id="85" Name="testConstructor">
+<HierarchyLvl HierarchyLvlId="9063" HierarchyLvlTypeId="17" Intrnl_Id="85" Name="testConstructor">
 <Header>
 <Loc EndOffset="774" SrcFileId="2" StartOffset="719"/>
 </Header>
@@ -541,7 +541,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6708" HierarchyLvlTypeId="17" Intrnl_Id="102" Name="testSetPieceOnField">
+<HierarchyLvl HierarchyLvlId="9064" HierarchyLvlTypeId="17" Intrnl_Id="102" Name="testSetPieceOnField">
 <Header>
 <Loc EndOffset="1406" SrcFileId="2" StartOffset="1362"/>
 </Header>
@@ -613,7 +613,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6709" HierarchyLvlTypeId="17" Intrnl_Id="114" Name="testFieldsPieceEqPiece">
+<HierarchyLvl HierarchyLvlId="9065" HierarchyLvlTypeId="17" Intrnl_Id="114" Name="testFieldsPieceEqPiece">
 <Header>
 <Loc EndOffset="1986" SrcFileId="2" StartOffset="1912"/>
 </Header>
@@ -715,7 +715,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6710" HierarchyLvlTypeId="17" Intrnl_Id="132" Name="testGetPieceOnField">
+<HierarchyLvl HierarchyLvlId="9066" HierarchyLvlTypeId="17" Intrnl_Id="132" Name="testGetPieceOnField">
 <Header>
 <Loc EndOffset="2551" SrcFileId="2" StartOffset="2507"/>
 </Header>
@@ -751,7 +751,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6711" HierarchyLvlTypeId="17" Intrnl_Id="138" Name="testIsEmpty">
+<HierarchyLvl HierarchyLvlId="9067" HierarchyLvlTypeId="17" Intrnl_Id="138" Name="testIsEmpty">
 <Header>
 <Loc EndOffset="2805" SrcFileId="2" StartOffset="2769"/>
 </Header>
@@ -799,7 +799,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6712" HierarchyLvlTypeId="17" Intrnl_Id="146" Name="testIsPieceOfColor">
+<HierarchyLvl HierarchyLvlId="9068" HierarchyLvlTypeId="17" Intrnl_Id="146" Name="testIsPieceOfColor">
 <Header>
 <Loc EndOffset="3135" SrcFileId="2" StartOffset="3092"/>
 </Header>
@@ -853,7 +853,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6713" HierarchyLvlTypeId="17" Intrnl_Id="155" Name="testEmptyThisField">
+<HierarchyLvl HierarchyLvlId="9069" HierarchyLvlTypeId="17" Intrnl_Id="155" Name="testEmptyThisField">
 <Header>
 <Loc EndOffset="3559" SrcFileId="2" StartOffset="3516"/>
 </Header>
@@ -902,14 +902,14 @@
 </StmntSeq>
 </HierarchyLvl>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6723" HierarchyLvlTypeId="16" Intrnl_Id="163" Name="BoardTest">
+<HierarchyLvl HierarchyLvlId="9079" HierarchyLvlTypeId="16" Intrnl_Id="163" Name="BoardTest">
 <Header>
 <Loc EndOffset="479" SrcFileId="3" StartOffset="430"/>
 </Header>
 <LocList>
 <Loc EndOffset="6303" SrcFileId="3" StartOffset="430"/>
 </LocList>
-<HierarchyLvl HierarchyLvlId="6715" HierarchyLvlTypeId="17" Intrnl_Id="164" Name="BoardTest">
+<HierarchyLvl HierarchyLvlId="9071" HierarchyLvlTypeId="17" Intrnl_Id="164" Name="BoardTest">
 <Header>
 <Loc EndOffset="547" SrcFileId="3" StartOffset="487"/>
 </Header>
@@ -927,7 +927,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6716" HierarchyLvlTypeId="17" Intrnl_Id="167" Name="testBoard">
+<HierarchyLvl HierarchyLvlId="9072" HierarchyLvlTypeId="17" Intrnl_Id="167" Name="testBoard">
 <Header>
 <Loc EndOffset="649" SrcFileId="3" StartOffset="576"/>
 </Header>
@@ -1284,7 +1284,7 @@
 </LoopStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6717" HierarchyLvlTypeId="17" Intrnl_Id="239" Name="testMovePiece">
+<HierarchyLvl HierarchyLvlId="9073" HierarchyLvlTypeId="17" Intrnl_Id="239" Name="testMovePiece">
 <Header>
 <Loc EndOffset="2212" SrcFileId="3" StartOffset="2116"/>
 </Header>
@@ -1332,7 +1332,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6718" HierarchyLvlTypeId="17" Intrnl_Id="247" Name="testFieldOccupied">
+<HierarchyLvl HierarchyLvlId="9074" HierarchyLvlTypeId="17" Intrnl_Id="247" Name="testFieldOccupied">
 <Header>
 <Loc EndOffset="2793" SrcFileId="3" StartOffset="2754"/>
 </Header>
@@ -1362,7 +1362,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6719" HierarchyLvlTypeId="17" Intrnl_Id="252" Name="produceList">
+<HierarchyLvl HierarchyLvlId="9075" HierarchyLvlTypeId="17" Intrnl_Id="252" Name="produceList">
 <Header>
 <Loc EndOffset="3220" SrcFileId="3" StartOffset="3161"/>
 </Header>
@@ -1523,7 +1523,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6720" HierarchyLvlTypeId="17" Intrnl_Id="283" Name="testCheckMoveable">
+<HierarchyLvl HierarchyLvlId="9076" HierarchyLvlTypeId="17" Intrnl_Id="283" Name="testCheckMoveable">
 <Header>
 <Loc EndOffset="3807" SrcFileId="3" StartOffset="3727"/>
 </Header>
@@ -1601,7 +1601,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6721" HierarchyLvlTypeId="17" Intrnl_Id="296" Name="testCheckJumpDirection">
+<HierarchyLvl HierarchyLvlId="9077" HierarchyLvlTypeId="17" Intrnl_Id="296" Name="testCheckJumpDirection">
 <Header>
 <Loc EndOffset="4804" SrcFileId="3" StartOffset="4719"/>
 </Header>
@@ -1667,7 +1667,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6722" HierarchyLvlTypeId="17" Intrnl_Id="307" Name="testCheckAllegiance">
+<HierarchyLvl HierarchyLvlId="9078" HierarchyLvlTypeId="17" Intrnl_Id="307" Name="testCheckAllegiance">
 <Header>
 <Loc EndOffset="5697" SrcFileId="3" StartOffset="5656"/>
 </Header>
@@ -1722,14 +1722,14 @@
 </StmntSeq>
 </HierarchyLvl>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6729" HierarchyLvlTypeId="16" Intrnl_Id="316" Name="AnalyzeTest">
+<HierarchyLvl HierarchyLvlId="9085" HierarchyLvlTypeId="16" Intrnl_Id="316" Name="AnalyzeTest">
 <Header>
 <Loc EndOffset="288" SrcFileId="4" StartOffset="237"/>
 </Header>
 <LocList>
 <Loc EndOffset="5943" SrcFileId="4" StartOffset="237"/>
 </LocList>
-<HierarchyLvl HierarchyLvlId="6724" HierarchyLvlTypeId="17" Intrnl_Id="317" Name="AnalyzeTest">
+<HierarchyLvl HierarchyLvlId="9080" HierarchyLvlTypeId="17" Intrnl_Id="317" Name="AnalyzeTest">
 <Header>
 <Loc EndOffset="363" SrcFileId="4" StartOffset="302"/>
 </Header>
@@ -1747,7 +1747,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6725" HierarchyLvlTypeId="17" Intrnl_Id="320" Name="testGameHasEnded">
+<HierarchyLvl HierarchyLvlId="9081" HierarchyLvlTypeId="17" Intrnl_Id="320" Name="testGameHasEnded">
 <Header>
 <Loc EndOffset="560" SrcFileId="4" StartOffset="447"/>
 </Header>
@@ -1873,7 +1873,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6726" HierarchyLvlTypeId="17" Intrnl_Id="341" Name="testCheckForGameHasEnded">
+<HierarchyLvl HierarchyLvlId="9082" HierarchyLvlTypeId="17" Intrnl_Id="341" Name="testCheckForGameHasEnded">
 <Header>
 <Loc EndOffset="2561" SrcFileId="4" StartOffset="2465"/>
 </Header>
@@ -1999,7 +1999,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6727" HierarchyLvlTypeId="17" Intrnl_Id="362" Name="testAnalyzeBoard">
+<HierarchyLvl HierarchyLvlId="9083" HierarchyLvlTypeId="17" Intrnl_Id="362" Name="testAnalyzeBoard">
 <Header>
 <Loc EndOffset="4290" SrcFileId="4" StartOffset="4116"/>
 </Header>
@@ -2115,7 +2115,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6728" HierarchyLvlTypeId="17" Intrnl_Id="382" Name="testGetColor">
+<HierarchyLvl HierarchyLvlId="9084" HierarchyLvlTypeId="17" Intrnl_Id="382" Name="testGetColor">
 <Header>
 <Loc EndOffset="5659" SrcFileId="4" StartOffset="5597"/>
 </Header>
@@ -2147,17 +2147,17 @@
 </HierarchyLvl>
 </HierarchyLvl>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6818" HierarchyLvlTypeId="15" Intrnl_Id="387" Name="OriginalFiles">
+<HierarchyLvl HierarchyLvlId="9174" HierarchyLvlTypeId="15" Intrnl_Id="387" Name="OriginalFiles">
 <Header/>
 <LocList/>
-<HierarchyLvl HierarchyLvlId="6737" HierarchyLvlTypeId="16" Intrnl_Id="388" Name="RemoteNXTFunctions">
+<HierarchyLvl HierarchyLvlId="9093" HierarchyLvlTypeId="16" Intrnl_Id="388" Name="RemoteNXTFunctions">
 <Header>
 <Loc EndOffset="125" SrcFileId="5" StartOffset="94"/>
 </Header>
 <LocList>
 <Loc EndOffset="1361" SrcFileId="5" StartOffset="94"/>
 </LocList>
-<HierarchyLvl HierarchyLvlId="6730" HierarchyLvlTypeId="17" Intrnl_Id="389" Name="RemoteNXTFunctions">
+<HierarchyLvl HierarchyLvlId="9086" HierarchyLvlTypeId="17" Intrnl_Id="389" Name="RemoteNXTFunctions">
 <Header>
 <Loc EndOffset="236" SrcFileId="5" StartOffset="168"/>
 </Header>
@@ -2175,7 +2175,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6731" HierarchyLvlTypeId="17" Intrnl_Id="392" Name="resetMotors">
+<HierarchyLvl HierarchyLvlId="9087" HierarchyLvlTypeId="17" Intrnl_Id="392" Name="resetMotors">
 <Header>
 <Loc EndOffset="318" SrcFileId="5" StartOffset="293"/>
 </Header>
@@ -2183,7 +2183,7 @@
 <Loc EndOffset="381" SrcFileId="5" StartOffset="293"/>
 </LocList>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6732" HierarchyLvlTypeId="17" Intrnl_Id="393" Name="trashPieceOnField">
+<HierarchyLvl HierarchyLvlId="9088" HierarchyLvlTypeId="17" Intrnl_Id="393" Name="trashPieceOnField">
 <Header>
 <Loc EndOffset="431" SrcFileId="5" StartOffset="389"/>
 </Header>
@@ -2191,7 +2191,7 @@
 <Loc EndOffset="494" SrcFileId="5" StartOffset="389"/>
 </LocList>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6733" HierarchyLvlTypeId="17" Intrnl_Id="394" Name="doMove">
+<HierarchyLvl HierarchyLvlId="9089" HierarchyLvlTypeId="17" Intrnl_Id="394" Name="doMove">
 <Header>
 <Loc EndOffset="531" SrcFileId="5" StartOffset="502"/>
 </Header>
@@ -2199,7 +2199,7 @@
 <Loc EndOffset="594" SrcFileId="5" StartOffset="502"/>
 </LocList>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6734" HierarchyLvlTypeId="17" Intrnl_Id="395" Name="waitForRedButton">
+<HierarchyLvl HierarchyLvlId="9090" HierarchyLvlTypeId="17" Intrnl_Id="395" Name="waitForRedButton">
 <Header>
 <Loc EndOffset="632" SrcFileId="5" StartOffset="602"/>
 </Header>
@@ -2207,7 +2207,7 @@
 <Loc EndOffset="687" SrcFileId="5" StartOffset="602"/>
 </LocList>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6735" HierarchyLvlTypeId="17" Intrnl_Id="396" Name="initColorSensor">
+<HierarchyLvl HierarchyLvlId="9091" HierarchyLvlTypeId="17" Intrnl_Id="396" Name="initColorSensor">
 <Header>
 <Loc EndOffset="724" SrcFileId="5" StartOffset="695"/>
 </Header>
@@ -2215,7 +2215,7 @@
 <Loc EndOffset="779" SrcFileId="5" StartOffset="695"/>
 </LocList>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6736" HierarchyLvlTypeId="17" Intrnl_Id="397" Name="getColorOnField">
+<HierarchyLvl HierarchyLvlId="9092" HierarchyLvlTypeId="17" Intrnl_Id="397" Name="getColorOnField">
 <Header>
 <Loc EndOffset="835" SrcFileId="5" StartOffset="787"/>
 </Header>
@@ -2444,7 +2444,7 @@
 </StmntSeq>
 </HierarchyLvl>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6748" HierarchyLvlTypeId="16" Intrnl_Id="440" Name="Piece">
+<HierarchyLvl HierarchyLvlId="9104" HierarchyLvlTypeId="16" Intrnl_Id="440" Name="Piece">
 <Header>
 <Loc EndOffset="48" SrcFileId="6" StartOffset="30"/>
 </Header>
@@ -2533,7 +2533,7 @@
 </LocList>
 </BasicStmnt>
 </StmntSeq>
-<HierarchyLvl HierarchyLvlId="6738" HierarchyLvlTypeId="17" Intrnl_Id="455" Name="Piece">
+<HierarchyLvl HierarchyLvlId="9094" HierarchyLvlTypeId="17" Intrnl_Id="455" Name="Piece">
 <Header>
 <Loc EndOffset="650" SrcFileId="6" StartOffset="625"/>
 </Header>
@@ -2551,7 +2551,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6739" HierarchyLvlTypeId="17" Intrnl_Id="458" Name="getY">
+<HierarchyLvl HierarchyLvlId="9095" HierarchyLvlTypeId="17" Intrnl_Id="458" Name="getY">
 <Header>
 <Loc EndOffset="722" SrcFileId="6" StartOffset="699"/>
 </Header>
@@ -2569,7 +2569,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6740" HierarchyLvlTypeId="17" Intrnl_Id="461" Name="getX">
+<HierarchyLvl HierarchyLvlId="9096" HierarchyLvlTypeId="17" Intrnl_Id="461" Name="getX">
 <Header>
 <Loc EndOffset="781" SrcFileId="6" StartOffset="758"/>
 </Header>
@@ -2587,7 +2587,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6741" HierarchyLvlTypeId="17" Intrnl_Id="464" Name="setXY">
+<HierarchyLvl HierarchyLvlId="9097" HierarchyLvlTypeId="17" Intrnl_Id="464" Name="setXY">
 <Header>
 <Loc EndOffset="864" SrcFileId="6" StartOffset="817"/>
 </Header>
@@ -2617,7 +2617,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6742" HierarchyLvlTypeId="17" Intrnl_Id="469" Name="isOnBoard">
+<HierarchyLvl HierarchyLvlId="9098" HierarchyLvlTypeId="17" Intrnl_Id="469" Name="isOnBoard">
 <Header>
 <Loc EndOffset="981" SrcFileId="6" StartOffset="954"/>
 </Header>
@@ -2683,7 +2683,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6743" HierarchyLvlTypeId="17" Intrnl_Id="481" Name="priceForPiece">
+<HierarchyLvl HierarchyLvlId="9099" HierarchyLvlTypeId="17" Intrnl_Id="481" Name="priceForPiece">
 <Header>
 <Loc EndOffset="1207" SrcFileId="6" StartOffset="1159"/>
 </Header>
@@ -2748,7 +2748,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6744" HierarchyLvlTypeId="17" Intrnl_Id="494" Name="min">
+<HierarchyLvl HierarchyLvlId="9100" HierarchyLvlTypeId="17" Intrnl_Id="494" Name="min">
 <Header>
 <Loc EndOffset="1410" SrcFileId="6" StartOffset="1381"/>
 </Header>
@@ -2803,7 +2803,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6745" HierarchyLvlTypeId="17" Intrnl_Id="505" Name="updatePriceMidgame">
+<HierarchyLvl HierarchyLvlId="9101" HierarchyLvlTypeId="17" Intrnl_Id="505" Name="updatePriceMidgame">
 <Header>
 <Loc EndOffset="1535" SrcFileId="6" StartOffset="1502"/>
 </Header>
@@ -2821,7 +2821,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6746" HierarchyLvlTypeId="17" Intrnl_Id="508" Name="updatePrice">
+<HierarchyLvl HierarchyLvlId="9102" HierarchyLvlTypeId="17" Intrnl_Id="508" Name="updatePrice">
 <Header>
 <Loc EndOffset="1624" SrcFileId="6" StartOffset="1585"/>
 </Header>
@@ -3112,7 +3112,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6747" HierarchyLvlTypeId="17" Intrnl_Id="569" Name="closestPiece">
+<HierarchyLvl HierarchyLvlId="9103" HierarchyLvlTypeId="17" Intrnl_Id="569" Name="closestPiece">
 <Header>
 <Loc EndOffset="2650" SrcFileId="6" StartOffset="2624"/>
 </Header>
@@ -3292,7 +3292,7 @@
 </StmntSeq>
 </HierarchyLvl>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6754" HierarchyLvlTypeId="16" Intrnl_Id="606" Name="Move">
+<HierarchyLvl HierarchyLvlId="9110" HierarchyLvlTypeId="16" Intrnl_Id="606" Name="Move">
 <Header>
 <Loc EndOffset="102" SrcFileId="7" StartOffset="85"/>
 </Header>
@@ -3315,7 +3315,7 @@
 </LocList>
 </BasicStmnt>
 </StmntSeq>
-<HierarchyLvl HierarchyLvlId="6749" HierarchyLvlTypeId="17" Intrnl_Id="610" Name="Move">
+<HierarchyLvl HierarchyLvlId="9105" HierarchyLvlTypeId="17" Intrnl_Id="610" Name="Move">
 <Header>
 <Loc EndOffset="336" SrcFileId="7" StartOffset="278"/>
 </Header>
@@ -3357,7 +3357,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6750" HierarchyLvlTypeId="17" Intrnl_Id="617" Name="Move">
+<HierarchyLvl HierarchyLvlId="9106" HierarchyLvlTypeId="17" Intrnl_Id="617" Name="Move">
 <Header>
 <Loc EndOffset="604" SrcFileId="7" StartOffset="552"/>
 </Header>
@@ -3381,7 +3381,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6751" HierarchyLvlTypeId="17" Intrnl_Id="621" Name="Move">
+<HierarchyLvl HierarchyLvlId="9107" HierarchyLvlTypeId="17" Intrnl_Id="621" Name="Move">
 <Header>
 <Loc EndOffset="707" SrcFileId="7" StartOffset="694"/>
 </Header>
@@ -3405,7 +3405,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6752" HierarchyLvlTypeId="17" Intrnl_Id="625" Name="isJump">
+<HierarchyLvl HierarchyLvlId="9108" HierarchyLvlTypeId="17" Intrnl_Id="625" Name="isJump">
 <Header>
 <Loc EndOffset="845" SrcFileId="7" StartOffset="816"/>
 </Header>
@@ -3477,7 +3477,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6753" HierarchyLvlTypeId="17" Intrnl_Id="638" Name="addStep">
+<HierarchyLvl HierarchyLvlId="9109" HierarchyLvlTypeId="17" Intrnl_Id="638" Name="addStep">
 <Header>
 <Loc EndOffset="1152" SrcFileId="7" StartOffset="1115"/>
 </Header>
@@ -3496,7 +3496,7 @@
 </StmntSeq>
 </HierarchyLvl>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6762" HierarchyLvlTypeId="16" Intrnl_Id="641" Name="Field">
+<HierarchyLvl HierarchyLvlId="9118" HierarchyLvlTypeId="16" Intrnl_Id="641" Name="Field">
 <Header>
 <Loc EndOffset="48" SrcFileId="8" StartOffset="30"/>
 </Header>
@@ -3519,7 +3519,7 @@
 </LocList>
 </BasicStmnt>
 </StmntSeq>
-<HierarchyLvl HierarchyLvlId="6755" HierarchyLvlTypeId="17" Intrnl_Id="645" Name="Field">
+<HierarchyLvl HierarchyLvlId="9111" HierarchyLvlTypeId="17" Intrnl_Id="645" Name="Field">
 <Header>
 <Loc EndOffset="300" SrcFileId="8" StartOffset="286"/>
 </Header>
@@ -3527,7 +3527,7 @@
 <Loc EndOffset="304" SrcFileId="8" StartOffset="286"/>
 </LocList>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6756" HierarchyLvlTypeId="17" Intrnl_Id="646" Name="Field">
+<HierarchyLvl HierarchyLvlId="9112" HierarchyLvlTypeId="17" Intrnl_Id="646" Name="Field">
 <Header>
 <Loc EndOffset="347" SrcFileId="8" StartOffset="311"/>
 </Header>
@@ -3551,7 +3551,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6757" HierarchyLvlTypeId="17" Intrnl_Id="650" Name="setPieceOnField">
+<HierarchyLvl HierarchyLvlId="9113" HierarchyLvlTypeId="17" Intrnl_Id="650" Name="setPieceOnField">
 <Header>
 <Loc EndOffset="589" SrcFileId="8" StartOffset="538"/>
 </Header>
@@ -3611,7 +3611,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6758" HierarchyLvlTypeId="17" Intrnl_Id="662" Name="getPieceOnField">
+<HierarchyLvl HierarchyLvlId="9114" HierarchyLvlTypeId="17" Intrnl_Id="662" Name="getPieceOnField">
 <Header>
 <Loc EndOffset="755" SrcFileId="8" StartOffset="719"/>
 </Header>
@@ -3629,7 +3629,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6759" HierarchyLvlTypeId="17" Intrnl_Id="665" Name="isEmpty">
+<HierarchyLvl HierarchyLvlId="9115" HierarchyLvlTypeId="17" Intrnl_Id="665" Name="isEmpty">
 <Header>
 <Loc EndOffset="888" SrcFileId="8" StartOffset="858"/>
 </Header>
@@ -3647,7 +3647,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6760" HierarchyLvlTypeId="17" Intrnl_Id="668" Name="isPieceOfColor">
+<HierarchyLvl HierarchyLvlId="9116" HierarchyLvlTypeId="17" Intrnl_Id="668" Name="isPieceOfColor">
 <Header>
 <Loc EndOffset="1090" SrcFileId="8" StartOffset="1043"/>
 </Header>
@@ -3707,7 +3707,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6761" HierarchyLvlTypeId="17" Intrnl_Id="679" Name="emptyThisField">
+<HierarchyLvl HierarchyLvlId="9117" HierarchyLvlTypeId="17" Intrnl_Id="679" Name="emptyThisField">
 <Header>
 <Loc EndOffset="1338" SrcFileId="8" StartOffset="1304"/>
 </Header>
@@ -3726,14 +3726,14 @@
 </StmntSeq>
 </HierarchyLvl>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6768" HierarchyLvlTypeId="16" Intrnl_Id="682" Name="Communication">
+<HierarchyLvl HierarchyLvlId="9124" HierarchyLvlTypeId="16" Intrnl_Id="682" Name="Communication">
 <Header>
 <Loc EndOffset="56" SrcFileId="9" StartOffset="30"/>
 </Header>
 <LocList>
 <Loc EndOffset="555" SrcFileId="9" StartOffset="30"/>
 </LocList>
-<HierarchyLvl HierarchyLvlId="6763" HierarchyLvlTypeId="17" Intrnl_Id="683" Name="Communication">
+<HierarchyLvl HierarchyLvlId="9119" HierarchyLvlTypeId="17" Intrnl_Id="683" Name="Communication">
 <Header>
 <Loc EndOffset="117" SrcFileId="9" StartOffset="66"/>
 </Header>
@@ -3741,7 +3741,7 @@
 <Loc EndOffset="175" SrcFileId="9" StartOffset="66"/>
 </LocList>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6764" HierarchyLvlTypeId="17" Intrnl_Id="684" Name="myKingNotPlaced">
+<HierarchyLvl HierarchyLvlId="9120" HierarchyLvlTypeId="17" Intrnl_Id="684" Name="myKingNotPlaced">
 <Header>
 <Loc EndOffset="212" SrcFileId="9" StartOffset="183"/>
 </Header>
@@ -3749,7 +3749,7 @@
 <Loc EndOffset="275" SrcFileId="9" StartOffset="183"/>
 </LocList>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6765" HierarchyLvlTypeId="17" Intrnl_Id="685" Name="humanWon">
+<HierarchyLvl HierarchyLvlId="9121" HierarchyLvlTypeId="17" Intrnl_Id="685" Name="humanWon">
 <Header>
 <Loc EndOffset="305" SrcFileId="9" StartOffset="283"/>
 </Header>
@@ -3757,7 +3757,7 @@
 <Loc EndOffset="368" SrcFileId="9" StartOffset="283"/>
 </LocList>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6766" HierarchyLvlTypeId="17" Intrnl_Id="686" Name="robotWon">
+<HierarchyLvl HierarchyLvlId="9122" HierarchyLvlTypeId="17" Intrnl_Id="686" Name="robotWon">
 <Header>
 <Loc EndOffset="398" SrcFileId="9" StartOffset="376"/>
 </Header>
@@ -3765,7 +3765,7 @@
 <Loc EndOffset="461" SrcFileId="9" StartOffset="376"/>
 </LocList>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6767" HierarchyLvlTypeId="17" Intrnl_Id="687" Name="draw">
+<HierarchyLvl HierarchyLvlId="9123" HierarchyLvlTypeId="17" Intrnl_Id="687" Name="draw">
 <Header>
 <Loc EndOffset="487" SrcFileId="9" StartOffset="469"/>
 </Header>
@@ -3774,7 +3774,7 @@
 </LocList>
 </HierarchyLvl>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6795" HierarchyLvlTypeId="16" Intrnl_Id="688" Name="Board">
+<HierarchyLvl HierarchyLvlId="9151" HierarchyLvlTypeId="16" Intrnl_Id="688" Name="Board">
 <Header>
 <Loc EndOffset="170" SrcFileId="10" StartOffset="152"/>
 </Header>
@@ -3803,7 +3803,7 @@
 </LocList>
 </BasicStmnt>
 </StmntSeq>
-<HierarchyLvl HierarchyLvlId="6769" HierarchyLvlTypeId="17" Intrnl_Id="693" Name="Board">
+<HierarchyLvl HierarchyLvlId="9125" HierarchyLvlTypeId="17" Intrnl_Id="693" Name="Board">
 <Header>
 <Loc EndOffset="584" SrcFileId="10" StartOffset="487"/>
 </Header>
@@ -4245,7 +4245,7 @@
 </LoopStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6770" HierarchyLvlTypeId="17" Intrnl_Id="780" Name="resetVisited">
+<HierarchyLvl HierarchyLvlId="9126" HierarchyLvlTypeId="17" Intrnl_Id="780" Name="resetVisited">
 <Header>
 <Loc EndOffset="3025" SrcFileId="10" StartOffset="2993"/>
 </Header>
@@ -4285,7 +4285,7 @@
 </LoopStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6771" HierarchyLvlTypeId="17" Intrnl_Id="787" Name="sortListOfFields">
+<HierarchyLvl HierarchyLvlId="9127" HierarchyLvlTypeId="17" Intrnl_Id="787" Name="sortListOfFields">
 <Header>
 <Loc EndOffset="3311" SrcFileId="10" StartOffset="3251"/>
 </Header>
@@ -4435,7 +4435,7 @@
 </LoopStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6772" HierarchyLvlTypeId="17" Intrnl_Id="816" Name="sortListOfMoves">
+<HierarchyLvl HierarchyLvlId="9128" HierarchyLvlTypeId="17" Intrnl_Id="816" Name="sortListOfMoves">
 <Header>
 <Loc EndOffset="4206" SrcFileId="10" StartOffset="4149"/>
 </Header>
@@ -4579,7 +4579,7 @@
 </LoopStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6773" HierarchyLvlTypeId="17" Intrnl_Id="844" Name="isGreater">
+<HierarchyLvl HierarchyLvlId="9129" HierarchyLvlTypeId="17" Intrnl_Id="844" Name="isGreater">
 <Header>
 <Loc EndOffset="5449" SrcFileId="10" StartOffset="5344"/>
 </Header>
@@ -5006,7 +5006,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6774" HierarchyLvlTypeId="17" Intrnl_Id="926" Name="weight">
+<HierarchyLvl HierarchyLvlId="9130" HierarchyLvlTypeId="17" Intrnl_Id="926" Name="weight">
 <Header>
 <Loc EndOffset="6952" SrcFileId="10" StartOffset="6902"/>
 </Header>
@@ -5024,7 +5024,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6775" HierarchyLvlTypeId="17" Intrnl_Id="929" Name="verifyOpPieceIsOnField">
+<HierarchyLvl HierarchyLvlId="9131" HierarchyLvlTypeId="17" Intrnl_Id="929" Name="verifyOpPieceIsOnField">
 <Header>
 <Loc EndOffset="7144" SrcFileId="10" StartOffset="7042"/>
 </Header>
@@ -5110,7 +5110,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6776" HierarchyLvlTypeId="17" Intrnl_Id="947" Name="peasentIsOnEndRow">
+<HierarchyLvl HierarchyLvlId="9132" HierarchyLvlTypeId="17" Intrnl_Id="947" Name="peasentIsOnEndRow">
 <Header>
 <Loc EndOffset="7426" SrcFileId="10" StartOffset="7375"/>
 </Header>
@@ -5264,7 +5264,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6777" HierarchyLvlTypeId="17" Intrnl_Id="978" Name="movePieceInRepresentation">
+<HierarchyLvl HierarchyLvlId="9133" HierarchyLvlTypeId="17" Intrnl_Id="978" Name="movePieceInRepresentation">
 <Header>
 <Loc EndOffset="8012" SrcFileId="10" StartOffset="7859"/>
 </Header>
@@ -5282,7 +5282,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6778" HierarchyLvlTypeId="17" Intrnl_Id="981" Name="movePieceInRepresentation">
+<HierarchyLvl HierarchyLvlId="9134" HierarchyLvlTypeId="17" Intrnl_Id="981" Name="movePieceInRepresentation">
 <Header>
 <Loc EndOffset="8318" SrcFileId="10" StartOffset="8178"/>
 </Header>
@@ -5343,7 +5343,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6779" HierarchyLvlTypeId="17" Intrnl_Id="993" Name="checkMoveDirection">
+<HierarchyLvl HierarchyLvlId="9135" HierarchyLvlTypeId="17" Intrnl_Id="993" Name="checkMoveDirection">
 <Header>
 <Loc EndOffset="8784" SrcFileId="10" StartOffset="8652"/>
 </Header>
@@ -5361,7 +5361,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6780" HierarchyLvlTypeId="17" Intrnl_Id="996" Name="isFieldEmptyOnBoard">
+<HierarchyLvl HierarchyLvlId="9136" HierarchyLvlTypeId="17" Intrnl_Id="996" Name="isFieldEmptyOnBoard">
 <Header>
 <Loc EndOffset="9061" SrcFileId="10" StartOffset="8953"/>
 </Header>
@@ -5427,7 +5427,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6781" HierarchyLvlTypeId="17" Intrnl_Id="1008" Name="fieldOccupied">
+<HierarchyLvl HierarchyLvlId="9137" HierarchyLvlTypeId="17" Intrnl_Id="1008" Name="fieldOccupied">
 <Header>
 <Loc EndOffset="9311" SrcFileId="10" StartOffset="9263"/>
 </Header>
@@ -5487,7 +5487,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6782" HierarchyLvlTypeId="17" Intrnl_Id="1019" Name="checkPiece">
+<HierarchyLvl HierarchyLvlId="9138" HierarchyLvlTypeId="17" Intrnl_Id="1019" Name="checkPiece">
 <Header>
 <Loc EndOffset="9614" SrcFileId="10" StartOffset="9542"/>
 </Header>
@@ -5553,7 +5553,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6783" HierarchyLvlTypeId="17" Intrnl_Id="1031" Name="checkMoveableBoolean">
+<HierarchyLvl HierarchyLvlId="9139" HierarchyLvlTypeId="17" Intrnl_Id="1031" Name="checkMoveableBoolean">
 <Header>
 <Loc EndOffset="10078" SrcFileId="10" StartOffset="10020"/>
 </Header>
@@ -5571,7 +5571,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6784" HierarchyLvlTypeId="17" Intrnl_Id="1034" Name="checkMoveable">
+<HierarchyLvl HierarchyLvlId="9140" HierarchyLvlTypeId="17" Intrnl_Id="1034" Name="checkMoveable">
 <Header>
 <Loc EndOffset="10251" SrcFileId="10" StartOffset="10191"/>
 </Header>
@@ -5794,7 +5794,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6785" HierarchyLvlTypeId="17" Intrnl_Id="1081" Name="checkJump">
+<HierarchyLvl HierarchyLvlId="9141" HierarchyLvlTypeId="17" Intrnl_Id="1081" Name="checkJump">
 <Header>
 <Loc EndOffset="11253" SrcFileId="10" StartOffset="11157"/>
 </Header>
@@ -5812,7 +5812,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6786" HierarchyLvlTypeId="17" Intrnl_Id="1084" Name="checkJumpDirection">
+<HierarchyLvl HierarchyLvlId="9142" HierarchyLvlTypeId="17" Intrnl_Id="1084" Name="checkJumpDirection">
 <Header>
 <Loc EndOffset="11923" SrcFileId="10" StartOffset="11795"/>
 </Header>
@@ -6036,7 +6036,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6787" HierarchyLvlTypeId="17" Intrnl_Id="1131" Name="checkJumpDirectionBoolean">
+<HierarchyLvl HierarchyLvlId="9143" HierarchyLvlTypeId="17" Intrnl_Id="1131" Name="checkJumpDirectionBoolean">
 <Header>
 <Loc EndOffset="12768" SrcFileId="10" StartOffset="12636"/>
 </Header>
@@ -6054,7 +6054,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6788" HierarchyLvlTypeId="17" Intrnl_Id="1134" Name="updateMoveables">
+<HierarchyLvl HierarchyLvlId="9144" HierarchyLvlTypeId="17" Intrnl_Id="1134" Name="updateMoveables">
 <Header>
 <Loc EndOffset="12982" SrcFileId="10" StartOffset="12947"/>
 </Header>
@@ -6241,7 +6241,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6789" HierarchyLvlTypeId="17" Intrnl_Id="1172" Name="findOpponentColors">
+<HierarchyLvl HierarchyLvlId="9145" HierarchyLvlTypeId="17" Intrnl_Id="1172" Name="findOpponentColors">
 <Header>
 <Loc EndOffset="13755" SrcFileId="10" StartOffset="13722"/>
 </Header>
@@ -6313,7 +6313,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6790" HierarchyLvlTypeId="17" Intrnl_Id="1185" Name="findMissingPiece">
+<HierarchyLvl HierarchyLvlId="9146" HierarchyLvlTypeId="17" Intrnl_Id="1185" Name="findMissingPiece">
 <Header>
 <Loc EndOffset="14136" SrcFileId="10" StartOffset="14046"/>
 </Header>
@@ -6513,7 +6513,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6791" HierarchyLvlTypeId="17" Intrnl_Id="1226" Name="getPiece">
+<HierarchyLvl HierarchyLvlId="9147" HierarchyLvlTypeId="17" Intrnl_Id="1226" Name="getPiece">
 <Header>
 <Loc EndOffset="14988" SrcFileId="10" StartOffset="14933"/>
 </Header>
@@ -6597,7 +6597,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6792" HierarchyLvlTypeId="17" Intrnl_Id="1241" Name="checkAllegiance">
+<HierarchyLvl HierarchyLvlId="9148" HierarchyLvlTypeId="17" Intrnl_Id="1241" Name="checkAllegiance">
 <Header>
 <Loc EndOffset="16099" SrcFileId="10" StartOffset="16024"/>
 </Header>
@@ -6688,7 +6688,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6793" HierarchyLvlTypeId="17" Intrnl_Id="1260" Name="checkAllegiance">
+<HierarchyLvl HierarchyLvlId="9149" HierarchyLvlTypeId="17" Intrnl_Id="1260" Name="checkAllegiance">
 <Header>
 <Loc EndOffset="16437" SrcFileId="10" StartOffset="16362"/>
 </Header>
@@ -6825,7 +6825,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6794" HierarchyLvlTypeId="17" Intrnl_Id="1288" Name="checkBounds">
+<HierarchyLvl HierarchyLvlId="9150" HierarchyLvlTypeId="17" Intrnl_Id="1288" Name="checkBounds">
 <Header>
 <Loc EndOffset="16923" SrcFileId="10" StartOffset="16877"/>
 </Header>
@@ -6844,7 +6844,7 @@
 </StmntSeq>
 </HierarchyLvl>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6816" HierarchyLvlTypeId="16" Intrnl_Id="1291" Name="Analyze">
+<HierarchyLvl HierarchyLvlId="9172" HierarchyLvlTypeId="16" Intrnl_Id="1291" Name="Analyze">
 <Header>
 <Loc EndOffset="237" SrcFileId="11" StartOffset="217"/>
 </Header>
@@ -6879,7 +6879,7 @@
 </LocList>
 </BasicStmnt>
 </StmntSeq>
-<HierarchyLvl HierarchyLvlId="6796" HierarchyLvlTypeId="17" Intrnl_Id="1297" Name="Analyze">
+<HierarchyLvl HierarchyLvlId="9152" HierarchyLvlTypeId="17" Intrnl_Id="1297" Name="Analyze">
 <Header>
 <Loc EndOffset="676" SrcFileId="11" StartOffset="617"/>
 </Header>
@@ -6903,7 +6903,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6797" HierarchyLvlTypeId="17" Intrnl_Id="1301" Name="analyzeBoard">
+<HierarchyLvl HierarchyLvlId="9153" HierarchyLvlTypeId="17" Intrnl_Id="1301" Name="analyzeBoard">
 <Header>
 <Loc EndOffset="943" SrcFileId="11" StartOffset="837"/>
 </Header>
@@ -7041,7 +7041,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6798" HierarchyLvlTypeId="17" Intrnl_Id="1328" Name="checkMotorCalibration">
+<HierarchyLvl HierarchyLvlId="9154" HierarchyLvlTypeId="17" Intrnl_Id="1328" Name="checkMotorCalibration">
 <Header>
 <Loc EndOffset="1586" SrcFileId="11" StartOffset="1550"/>
 </Header>
@@ -7102,7 +7102,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6799" HierarchyLvlTypeId="17" Intrnl_Id="1340" Name="makeListOfMoveables">
+<HierarchyLvl HierarchyLvlId="9155" HierarchyLvlTypeId="17" Intrnl_Id="1340" Name="makeListOfMoveables">
 <Header>
 <Loc EndOffset="1850" SrcFileId="11" StartOffset="1785"/>
 </Header>
@@ -7286,7 +7286,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6800" HierarchyLvlTypeId="17" Intrnl_Id="1377" Name="checkMovement">
+<HierarchyLvl HierarchyLvlId="9156" HierarchyLvlTypeId="17" Intrnl_Id="1377" Name="checkMovement">
 <Header>
 <Loc EndOffset="2777" SrcFileId="11" StartOffset="2643"/>
 </Header>
@@ -7435,7 +7435,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6801" HierarchyLvlTypeId="17" Intrnl_Id="1408" Name="countDownToPanic">
+<HierarchyLvl HierarchyLvlId="9157" HierarchyLvlTypeId="17" Intrnl_Id="1408" Name="countDownToPanic">
 <Header>
 <Loc EndOffset="3375" SrcFileId="11" StartOffset="3265"/>
 </Header>
@@ -7603,7 +7603,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6802" HierarchyLvlTypeId="17" Intrnl_Id="1440" Name="trackMovement">
+<HierarchyLvl HierarchyLvlId="9158" HierarchyLvlTypeId="17" Intrnl_Id="1440" Name="trackMovement">
 <Header>
 <Loc EndOffset="4102" SrcFileId="11" StartOffset="3989"/>
 </Header>
@@ -7779,7 +7779,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6803" HierarchyLvlTypeId="17" Intrnl_Id="1476" Name="checkMove">
+<HierarchyLvl HierarchyLvlId="9159" HierarchyLvlTypeId="17" Intrnl_Id="1476" Name="checkMove">
 <Header>
 <Loc EndOffset="4658" SrcFileId="11" StartOffset="4549"/>
 </Header>
@@ -8214,7 +8214,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6804" HierarchyLvlTypeId="17" Intrnl_Id="1561" Name="validateMove">
+<HierarchyLvl HierarchyLvlId="9160" HierarchyLvlTypeId="17" Intrnl_Id="1561" Name="validateMove">
 <Header>
 <Loc EndOffset="7113" SrcFileId="11" StartOffset="7009"/>
 </Header>
@@ -8504,7 +8504,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6805" HierarchyLvlTypeId="17" Intrnl_Id="1622" Name="jumpSequence">
+<HierarchyLvl HierarchyLvlId="9161" HierarchyLvlTypeId="17" Intrnl_Id="1622" Name="jumpSequence">
 <Header>
 <Loc EndOffset="8461" SrcFileId="11" StartOffset="8281"/>
 </Header>
@@ -8767,7 +8767,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6806" HierarchyLvlTypeId="17" Intrnl_Id="1676" Name="findJumpPiece">
+<HierarchyLvl HierarchyLvlId="9162" HierarchyLvlTypeId="17" Intrnl_Id="1676" Name="findJumpPiece">
 <Header>
 <Loc EndOffset="10000" SrcFileId="11" StartOffset="9900"/>
 </Header>
@@ -8929,7 +8929,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6807" HierarchyLvlTypeId="17" Intrnl_Id="1707" Name="checkForUpgradeKing">
+<HierarchyLvl HierarchyLvlId="9163" HierarchyLvlTypeId="17" Intrnl_Id="1707" Name="checkForUpgradeKing">
 <Header>
 <Loc EndOffset="11308" SrcFileId="11" StartOffset="11193"/>
 </Header>
@@ -9242,7 +9242,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6808" HierarchyLvlTypeId="17" Intrnl_Id="1770" Name="checkRobotPieceReplaced">
+<HierarchyLvl HierarchyLvlId="9164" HierarchyLvlTypeId="17" Intrnl_Id="1770" Name="checkRobotPieceReplaced">
 <Header>
 <Loc EndOffset="12919" SrcFileId="11" StartOffset="12857"/>
 </Header>
@@ -9369,7 +9369,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6809" HierarchyLvlTypeId="17" Intrnl_Id="1795" Name="findMyColors">
+<HierarchyLvl HierarchyLvlId="9165" HierarchyLvlTypeId="17" Intrnl_Id="1795" Name="findMyColors">
 <Header>
 <Loc EndOffset="13575" SrcFileId="11" StartOffset="13502"/>
 </Header>
@@ -9495,7 +9495,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6810" HierarchyLvlTypeId="17" Intrnl_Id="1818" Name="getColor">
+<HierarchyLvl HierarchyLvlId="9166" HierarchyLvlTypeId="17" Intrnl_Id="1818" Name="getColor">
 <Header>
 <Loc EndOffset="14144" SrcFileId="11" StartOffset="14085"/>
 </Header>
@@ -9905,7 +9905,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6811" HierarchyLvlTypeId="17" Intrnl_Id="1897" Name="checkForGameHasEnded">
+<HierarchyLvl HierarchyLvlId="9167" HierarchyLvlTypeId="17" Intrnl_Id="1897" Name="checkForGameHasEnded">
 <Header>
 <Loc EndOffset="15071" SrcFileId="11" StartOffset="15008"/>
 </Header>
@@ -10032,7 +10032,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6812" HierarchyLvlTypeId="17" Intrnl_Id="1918" Name="gameHasEnded">
+<HierarchyLvl HierarchyLvlId="9168" HierarchyLvlTypeId="17" Intrnl_Id="1918" Name="gameHasEnded">
 <Header>
 <Loc EndOffset="15664" SrcFileId="11" StartOffset="15616"/>
 </Header>
@@ -10657,7 +10657,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6813" HierarchyLvlTypeId="17" Intrnl_Id="2048" Name="hasTheMove">
+<HierarchyLvl HierarchyLvlId="9169" HierarchyLvlTypeId="17" Intrnl_Id="2048" Name="hasTheMove">
 <Header>
 <Loc EndOffset="17815" SrcFileId="11" StartOffset="17769"/>
 </Header>
@@ -10844,7 +10844,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6814" HierarchyLvlTypeId="17" Intrnl_Id="2087" Name="isOnDoubleCorners">
+<HierarchyLvl HierarchyLvlId="9170" HierarchyLvlTypeId="17" Intrnl_Id="2087" Name="isOnDoubleCorners">
 <Header>
 <Loc EndOffset="18345" SrcFileId="11" StartOffset="18299"/>
 </Header>
@@ -10969,7 +10969,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="6815" HierarchyLvlTypeId="17" Intrnl_Id="2112" Name="isNearDoubleCorners">
+<HierarchyLvl HierarchyLvlId="9171" HierarchyLvlTypeId="17" Intrnl_Id="2112" Name="isNearDoubleCorners">
 <Header>
 <Loc EndOffset="18710" SrcFileId="11" StartOffset="18662"/>
 </Header>
@@ -11179,4 +11179,1028 @@
 </HierarchyLvl>
 </HierarchyLvl>
 </MASTRoot>
+<TestSession Comment="" Date="1384783703593" Name="18-11-2013 15:08:23">
+<TestCase Comment="" Date="1384783703570" Name="com.Testing.PieceTest:testGetSetXY">
+<CovList>
+<CovPrefix CovItemPrefix="com.OriginalFiles.Board.java">
+<Cov CovItemId="B88" Value="2"/>
+<Cov CovItemId="B90" Value="2"/>
+<Cov CovItemId="S177" Value="2"/>
+<Cov CovItemId="S179" Value="2"/>
+<Cov CovItemId="S181" Value="2"/>
+<Cov CovItemId="S182" Value="1"/>
+</CovPrefix>
+<CovPrefix CovItemPrefix="com.OriginalFiles.Piece.java">
+<Cov CovItemId="B1" Value="1"/>
+<Cov CovItemId="B12" Value="1"/>
+<Cov CovItemId="B14" Value="1"/>
+<Cov CovItemId="B18" Value="1"/>
+<Cov CovItemId="B6" Value="1"/>
+<Cov CovItemId="B7" Value="1"/>
+<Cov CovItemId="B9" Value="1"/>
+<Cov CovItemId="S15" Value="1"/>
+<Cov CovItemId="S16" Value="1"/>
+<Cov CovItemId="S17" Value="1"/>
+<Cov CovItemId="S18" Value="1"/>
+<Cov CovItemId="S19" Value="1"/>
+<Cov CovItemId="S20" Value="1"/>
+<Cov CovItemId="S21" Value="1"/>
+<Cov CovItemId="S27" Value="1"/>
+<Cov CovItemId="S29" Value="1"/>
+<Cov CovItemId="S30" Value="1"/>
+<Cov CovItemId="S31" Value="1"/>
+<Cov CovItemId="S32" Value="1"/>
+<Cov CovItemId="S33" Value="1"/>
+<Cov CovItemId="S34" Value="1"/>
+<Cov CovItemId="S35" Value="1"/>
+<Cov CovItemId="S36" Value="1"/>
+<Cov CovItemId="S38" Value="1"/>
+<Cov CovItemId="S42" Value="1"/>
+<Cov CovItemId="S44" Value="1"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.Board.java">
+<AssgnmntListEntry Length="3" RootTermCovItemId="C56">
+<MapEntry BoolAssgnmnt="002" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="3" RootTermCovItemId="C57">
+<MapEntry BoolAssgnmnt="002" Value="2"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.Piece.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C3">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C4">
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C5">
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C6">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="5" RootTermCovItemId="C7">
+<MapEntry BoolAssgnmnt="00202" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C9">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+</AssgnmntList>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<TestCase Comment="" Date="1384783703574" Name="com.Testing.PieceTest:testIsOnBoard">
+<CovList>
+<CovPrefix CovItemPrefix="com.OriginalFiles.Board.java">
+<Cov CovItemId="B88" Value="2"/>
+<Cov CovItemId="B90" Value="2"/>
+<Cov CovItemId="S177" Value="2"/>
+<Cov CovItemId="S179" Value="2"/>
+<Cov CovItemId="S181" Value="2"/>
+<Cov CovItemId="S182" Value="2"/>
+</CovPrefix>
+<CovPrefix CovItemPrefix="com.OriginalFiles.Piece.java">
+<Cov CovItemId="B1" Value="1"/>
+<Cov CovItemId="B12" Value="1"/>
+<Cov CovItemId="B14" Value="1"/>
+<Cov CovItemId="B18" Value="1"/>
+<Cov CovItemId="B2" Value="1"/>
+<Cov CovItemId="B4" Value="2"/>
+<Cov CovItemId="B6" Value="1"/>
+<Cov CovItemId="B7" Value="1"/>
+<Cov CovItemId="B8" Value="1"/>
+<Cov CovItemId="B9" Value="1"/>
+<Cov CovItemId="S17" Value="2"/>
+<Cov CovItemId="S18" Value="2"/>
+<Cov CovItemId="S19" Value="2"/>
+<Cov CovItemId="S20" Value="2"/>
+<Cov CovItemId="S21" Value="1"/>
+<Cov CovItemId="S22" Value="1"/>
+<Cov CovItemId="S23" Value="1"/>
+<Cov CovItemId="S24" Value="2"/>
+<Cov CovItemId="S26" Value="2"/>
+<Cov CovItemId="S27" Value="1"/>
+<Cov CovItemId="S29" Value="1"/>
+<Cov CovItemId="S30" Value="2"/>
+<Cov CovItemId="S31" Value="2"/>
+<Cov CovItemId="S32" Value="1"/>
+<Cov CovItemId="S33" Value="1"/>
+<Cov CovItemId="S34" Value="1"/>
+<Cov CovItemId="S35" Value="1"/>
+<Cov CovItemId="S36" Value="1"/>
+<Cov CovItemId="S38" Value="1"/>
+<Cov CovItemId="S42" Value="1"/>
+<Cov CovItemId="S44" Value="1"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.Board.java">
+<AssgnmntListEntry Length="3" RootTermCovItemId="C56">
+<MapEntry BoolAssgnmnt="002" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="3" RootTermCovItemId="C57">
+<MapEntry BoolAssgnmnt="002" Value="2"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.Piece.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C2">
+<MapEntry BoolAssgnmnt="00" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C3">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C4">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C5">
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C6">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="5" RootTermCovItemId="C7">
+<MapEntry BoolAssgnmnt="00202" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C9">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+</AssgnmntList>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<TestCase Comment="" Date="1384783703575" Name="com.Testing.PieceTest:testPriceForPieceValue">
+<CovList>
+<CovPrefix CovItemPrefix="com.OriginalFiles.Board.java">
+<Cov CovItemId="B83" Value="159"/>
+<Cov CovItemId="B85" Value="10"/>
+<Cov CovItemId="B86" Value="149"/>
+<Cov CovItemId="B87" Value="4"/>
+<Cov CovItemId="B88" Value="31"/>
+<Cov CovItemId="B89" Value="14"/>
+<Cov CovItemId="B90" Value="17"/>
+<Cov CovItemId="S173" Value="159"/>
+<Cov CovItemId="S174" Value="159"/>
+<Cov CovItemId="S175" Value="10"/>
+<Cov CovItemId="S176" Value="149"/>
+<Cov CovItemId="S177" Value="35"/>
+<Cov CovItemId="S178" Value="4"/>
+<Cov CovItemId="S179" Value="31"/>
+<Cov CovItemId="S180" Value="14"/>
+<Cov CovItemId="S181" Value="17"/>
+<Cov CovItemId="S182" Value="353"/>
+</CovPrefix>
+<CovPrefix CovItemPrefix="com.OriginalFiles.Field.java">
+<Cov CovItemId="B1" Value="7"/>
+<Cov CovItemId="B2" Value="3"/>
+<Cov CovItemId="S13" Value="192"/>
+<Cov CovItemId="S5" Value="10"/>
+<Cov CovItemId="S6" Value="10"/>
+<Cov CovItemId="S7" Value="7"/>
+<Cov CovItemId="S8" Value="21"/>
+<Cov CovItemId="S9" Value="169"/>
+</CovPrefix>
+<CovPrefix CovItemPrefix="com.OriginalFiles.Piece.java">
+<Cov CovItemId="B1" Value="16"/>
+<Cov CovItemId="B10" Value="5"/>
+<Cov CovItemId="B11" Value="5"/>
+<Cov CovItemId="B12" Value="11"/>
+<Cov CovItemId="B13" Value="1"/>
+<Cov CovItemId="B14" Value="15"/>
+<Cov CovItemId="B15" Value="1"/>
+<Cov CovItemId="B17" Value="3"/>
+<Cov CovItemId="B18" Value="13"/>
+<Cov CovItemId="B19" Value="159"/>
+<Cov CovItemId="B20" Value="19"/>
+<Cov CovItemId="B21" Value="5"/>
+<Cov CovItemId="B22" Value="154"/>
+<Cov CovItemId="B3" Value="5"/>
+<Cov CovItemId="B4" Value="2"/>
+<Cov CovItemId="B5" Value="8"/>
+<Cov CovItemId="B6" Value="3"/>
+<Cov CovItemId="B7" Value="16"/>
+<Cov CovItemId="B9" Value="11"/>
+<Cov CovItemId="L1-1" Value="4"/>
+<Cov CovItemId="L1-2" Value="1"/>
+<Cov CovItemId="L2-2" Value="8"/>
+<Cov CovItemId="L3-1" Value="2"/>
+<Cov CovItemId="L3-2" Value="31"/>
+<Cov CovItemId="S1" Value="4"/>
+<Cov CovItemId="S10" Value="4"/>
+<Cov CovItemId="S11" Value="4"/>
+<Cov CovItemId="S12" Value="4"/>
+<Cov CovItemId="S13" Value="4"/>
+<Cov CovItemId="S14" Value="4"/>
+<Cov CovItemId="S17" Value="11"/>
+<Cov CovItemId="S18" Value="11"/>
+<Cov CovItemId="S19" Value="11"/>
+<Cov CovItemId="S2" Value="4"/>
+<Cov CovItemId="S20" Value="16"/>
+<Cov CovItemId="S21" Value="16"/>
+<Cov CovItemId="S24" Value="7"/>
+<Cov CovItemId="S25" Value="5"/>
+<Cov CovItemId="S26" Value="7"/>
+<Cov CovItemId="S27" Value="11"/>
+<Cov CovItemId="S28" Value="8"/>
+<Cov CovItemId="S29" Value="3"/>
+<Cov CovItemId="S3" Value="4"/>
+<Cov CovItemId="S30" Value="11"/>
+<Cov CovItemId="S31" Value="16"/>
+<Cov CovItemId="S32" Value="16"/>
+<Cov CovItemId="S33" Value="16"/>
+<Cov CovItemId="S34" Value="16"/>
+<Cov CovItemId="S35" Value="11"/>
+<Cov CovItemId="S36" Value="16"/>
+<Cov CovItemId="S37" Value="5"/>
+<Cov CovItemId="S38" Value="16"/>
+<Cov CovItemId="S39" Value="1"/>
+<Cov CovItemId="S4" Value="4"/>
+<Cov CovItemId="S40" Value="1"/>
+<Cov CovItemId="S41" Value="1"/>
+<Cov CovItemId="S42" Value="16"/>
+<Cov CovItemId="S43" Value="3"/>
+<Cov CovItemId="S44" Value="16"/>
+<Cov CovItemId="S45" Value="5"/>
+<Cov CovItemId="S46" Value="5"/>
+<Cov CovItemId="S47" Value="5"/>
+<Cov CovItemId="S48" Value="8"/>
+<Cov CovItemId="S49" Value="8"/>
+<Cov CovItemId="S5" Value="4"/>
+<Cov CovItemId="S50" Value="33"/>
+<Cov CovItemId="S51" Value="178"/>
+<Cov CovItemId="S52" Value="159"/>
+<Cov CovItemId="S53" Value="5"/>
+<Cov CovItemId="S54" Value="5"/>
+<Cov CovItemId="S55" Value="5"/>
+<Cov CovItemId="S6" Value="4"/>
+<Cov CovItemId="S7" Value="4"/>
+<Cov CovItemId="S8" Value="4"/>
+<Cov CovItemId="S9" Value="4"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.Board.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C54">
+<MapEntry BoolAssgnmnt="1" Value="159"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C55">
+<MapEntry BoolAssgnmnt="0" Value="10"/>
+<MapEntry BoolAssgnmnt="1" Value="149"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="3" RootTermCovItemId="C56">
+<MapEntry BoolAssgnmnt="002" Value="22"/>
+<MapEntry BoolAssgnmnt="120" Value="4"/>
+<MapEntry BoolAssgnmnt="121" Value="9"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="3" RootTermCovItemId="C57">
+<MapEntry BoolAssgnmnt="002" Value="9"/>
+<MapEntry BoolAssgnmnt="120" Value="8"/>
+<MapEntry BoolAssgnmnt="121" Value="14"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.Field.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="0" Value="7"/>
+<MapEntry BoolAssgnmnt="1" Value="3"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.Piece.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="1" Value="16"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C10">
+<MapEntry BoolAssgnmnt="01" Value="8"/>
+<MapEntry BoolAssgnmnt="12" Value="5"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C11">
+<MapEntry BoolAssgnmnt="0" Value="3"/>
+<MapEntry BoolAssgnmnt="1" Value="33"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C12">
+<MapEntry BoolAssgnmnt="0" Value="28"/>
+<MapEntry BoolAssgnmnt="1" Value="178"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C13">
+<MapEntry BoolAssgnmnt="0" Value="19"/>
+<MapEntry BoolAssgnmnt="1" Value="159"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C14">
+<MapEntry BoolAssgnmnt="0" Value="154"/>
+<MapEntry BoolAssgnmnt="1" Value="5"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C2">
+<MapEntry BoolAssgnmnt="01" Value="2"/>
+<MapEntry BoolAssgnmnt="00" Value="2"/>
+<MapEntry BoolAssgnmnt="12" Value="3"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C3">
+<MapEntry BoolAssgnmnt="0" Value="3"/>
+<MapEntry BoolAssgnmnt="1" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C4">
+<MapEntry BoolAssgnmnt="1" Value="16"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C5">
+<MapEntry BoolAssgnmnt="0" Value="5"/>
+<MapEntry BoolAssgnmnt="1" Value="11"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C6">
+<MapEntry BoolAssgnmnt="0" Value="11"/>
+<MapEntry BoolAssgnmnt="1" Value="5"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="5" RootTermCovItemId="C7">
+<MapEntry BoolAssgnmnt="00210" Value="4"/>
+<MapEntry BoolAssgnmnt="01002" Value="8"/>
+<MapEntry BoolAssgnmnt="12222" Value="3"/>
+<MapEntry BoolAssgnmnt="01122" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C8">
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C9">
+<MapEntry BoolAssgnmnt="0" Value="13"/>
+<MapEntry BoolAssgnmnt="1" Value="3"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+</AssgnmntList>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<TestCase Comment="" Date="1384783703578" Name="com.Testing.PieceTest:testPriceForPiece">
+<CovList>
+<CovPrefix CovItemPrefix="com.OriginalFiles.Board.java">
+<Cov CovItemId="B83" Value="403"/>
+<Cov CovItemId="B86" Value="403"/>
+<Cov CovItemId="B88" Value="8"/>
+<Cov CovItemId="B90" Value="8"/>
+<Cov CovItemId="S173" Value="403"/>
+<Cov CovItemId="S174" Value="403"/>
+<Cov CovItemId="S176" Value="403"/>
+<Cov CovItemId="S177" Value="8"/>
+<Cov CovItemId="S179" Value="8"/>
+<Cov CovItemId="S181" Value="8"/>
+<Cov CovItemId="S182" Value="1375"/>
+</CovPrefix>
+<CovPrefix CovItemPrefix="com.OriginalFiles.Field.java">
+<Cov CovItemId="S13" Value="64"/>
+<Cov CovItemId="S9" Value="403"/>
+</CovPrefix>
+<CovPrefix CovItemPrefix="com.OriginalFiles.Piece.java">
+<Cov CovItemId="B1" Value="4"/>
+<Cov CovItemId="B10" Value="1"/>
+<Cov CovItemId="B11" Value="1"/>
+<Cov CovItemId="B12" Value="3"/>
+<Cov CovItemId="B14" Value="4"/>
+<Cov CovItemId="B18" Value="4"/>
+<Cov CovItemId="B19" Value="403"/>
+<Cov CovItemId="B20" Value="565"/>
+<Cov CovItemId="B22" Value="403"/>
+<Cov CovItemId="B3" Value="1"/>
+<Cov CovItemId="B4" Value="4"/>
+<Cov CovItemId="B6" Value="3"/>
+<Cov CovItemId="B7" Value="4"/>
+<Cov CovItemId="B9" Value="3"/>
+<Cov CovItemId="L1-2" Value="1"/>
+<Cov CovItemId="L2-2" Value="8"/>
+<Cov CovItemId="L3-2" Value="80"/>
+<Cov CovItemId="S1" Value="1"/>
+<Cov CovItemId="S10" Value="1"/>
+<Cov CovItemId="S11" Value="1"/>
+<Cov CovItemId="S12" Value="1"/>
+<Cov CovItemId="S13" Value="1"/>
+<Cov CovItemId="S14" Value="1"/>
+<Cov CovItemId="S17" Value="3"/>
+<Cov CovItemId="S18" Value="3"/>
+<Cov CovItemId="S19" Value="3"/>
+<Cov CovItemId="S2" Value="1"/>
+<Cov CovItemId="S20" Value="4"/>
+<Cov CovItemId="S21" Value="4"/>
+<Cov CovItemId="S24" Value="5"/>
+<Cov CovItemId="S25" Value="1"/>
+<Cov CovItemId="S26" Value="5"/>
+<Cov CovItemId="S27" Value="3"/>
+<Cov CovItemId="S29" Value="3"/>
+<Cov CovItemId="S3" Value="1"/>
+<Cov CovItemId="S30" Value="3"/>
+<Cov CovItemId="S31" Value="4"/>
+<Cov CovItemId="S32" Value="4"/>
+<Cov CovItemId="S33" Value="4"/>
+<Cov CovItemId="S34" Value="4"/>
+<Cov CovItemId="S35" Value="3"/>
+<Cov CovItemId="S36" Value="4"/>
+<Cov CovItemId="S37" Value="1"/>
+<Cov CovItemId="S38" Value="4"/>
+<Cov CovItemId="S4" Value="1"/>
+<Cov CovItemId="S42" Value="4"/>
+<Cov CovItemId="S44" Value="4"/>
+<Cov CovItemId="S45" Value="1"/>
+<Cov CovItemId="S46" Value="1"/>
+<Cov CovItemId="S47" Value="1"/>
+<Cov CovItemId="S48" Value="8"/>
+<Cov CovItemId="S49" Value="8"/>
+<Cov CovItemId="S5" Value="1"/>
+<Cov CovItemId="S50" Value="80"/>
+<Cov CovItemId="S51" Value="968"/>
+<Cov CovItemId="S52" Value="403"/>
+<Cov CovItemId="S55" Value="1"/>
+<Cov CovItemId="S6" Value="1"/>
+<Cov CovItemId="S7" Value="1"/>
+<Cov CovItemId="S8" Value="1"/>
+<Cov CovItemId="S9" Value="1"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.Board.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C54">
+<MapEntry BoolAssgnmnt="1" Value="403"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C55">
+<MapEntry BoolAssgnmnt="1" Value="403"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="3" RootTermCovItemId="C56">
+<MapEntry BoolAssgnmnt="002" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="3" RootTermCovItemId="C57">
+<MapEntry BoolAssgnmnt="002" Value="8"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.Piece.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C10">
+<MapEntry BoolAssgnmnt="01" Value="8"/>
+<MapEntry BoolAssgnmnt="00" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C11">
+<MapEntry BoolAssgnmnt="0" Value="8"/>
+<MapEntry BoolAssgnmnt="1" Value="80"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C12">
+<MapEntry BoolAssgnmnt="0" Value="80"/>
+<MapEntry BoolAssgnmnt="1" Value="968"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C13">
+<MapEntry BoolAssgnmnt="0" Value="565"/>
+<MapEntry BoolAssgnmnt="1" Value="403"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C14">
+<MapEntry BoolAssgnmnt="0" Value="403"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C2">
+<MapEntry BoolAssgnmnt="00" Value="4"/>
+<MapEntry BoolAssgnmnt="12" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C3">
+<MapEntry BoolAssgnmnt="0" Value="3"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C4">
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C5">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+<MapEntry BoolAssgnmnt="1" Value="3"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C6">
+<MapEntry BoolAssgnmnt="0" Value="3"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="5" RootTermCovItemId="C7">
+<MapEntry BoolAssgnmnt="00202" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C9">
+<MapEntry BoolAssgnmnt="0" Value="4"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+</AssgnmntList>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<MetaDataList/>
+</TestSession>
+<TestSession Comment="" Date="1384783799050" Name="18-11-2013 15:09:59">
+<TestCase Comment="" Date="1384783799023" Name="com.Testing.PieceTest:testGetSetXY">
+<CovList>
+<CovPrefix CovItemPrefix="com.OriginalFiles.Board.java">
+<Cov CovItemId="B88" Value="2"/>
+<Cov CovItemId="B90" Value="2"/>
+<Cov CovItemId="S177" Value="2"/>
+<Cov CovItemId="S179" Value="2"/>
+<Cov CovItemId="S181" Value="2"/>
+<Cov CovItemId="S182" Value="1"/>
+</CovPrefix>
+<CovPrefix CovItemPrefix="com.OriginalFiles.Piece.java">
+<Cov CovItemId="B1" Value="1"/>
+<Cov CovItemId="B12" Value="1"/>
+<Cov CovItemId="B14" Value="1"/>
+<Cov CovItemId="B18" Value="1"/>
+<Cov CovItemId="B6" Value="1"/>
+<Cov CovItemId="B7" Value="1"/>
+<Cov CovItemId="B9" Value="1"/>
+<Cov CovItemId="S15" Value="1"/>
+<Cov CovItemId="S16" Value="1"/>
+<Cov CovItemId="S17" Value="1"/>
+<Cov CovItemId="S18" Value="1"/>
+<Cov CovItemId="S19" Value="1"/>
+<Cov CovItemId="S20" Value="1"/>
+<Cov CovItemId="S21" Value="1"/>
+<Cov CovItemId="S27" Value="1"/>
+<Cov CovItemId="S29" Value="1"/>
+<Cov CovItemId="S30" Value="1"/>
+<Cov CovItemId="S31" Value="1"/>
+<Cov CovItemId="S32" Value="1"/>
+<Cov CovItemId="S33" Value="1"/>
+<Cov CovItemId="S34" Value="1"/>
+<Cov CovItemId="S35" Value="1"/>
+<Cov CovItemId="S36" Value="1"/>
+<Cov CovItemId="S38" Value="1"/>
+<Cov CovItemId="S42" Value="1"/>
+<Cov CovItemId="S44" Value="1"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.Board.java">
+<AssgnmntListEntry Length="3" RootTermCovItemId="C56">
+<MapEntry BoolAssgnmnt="002" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="3" RootTermCovItemId="C57">
+<MapEntry BoolAssgnmnt="002" Value="2"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.Piece.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C3">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C4">
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C5">
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C6">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="5" RootTermCovItemId="C7">
+<MapEntry BoolAssgnmnt="00202" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C9">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+</AssgnmntList>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<TestCase Comment="" Date="1384783799027" Name="com.Testing.PieceTest:testIsOnBoard">
+<CovList>
+<CovPrefix CovItemPrefix="com.OriginalFiles.Board.java">
+<Cov CovItemId="B88" Value="2"/>
+<Cov CovItemId="B90" Value="2"/>
+<Cov CovItemId="S177" Value="2"/>
+<Cov CovItemId="S179" Value="2"/>
+<Cov CovItemId="S181" Value="2"/>
+<Cov CovItemId="S182" Value="2"/>
+</CovPrefix>
+<CovPrefix CovItemPrefix="com.OriginalFiles.Piece.java">
+<Cov CovItemId="B1" Value="1"/>
+<Cov CovItemId="B12" Value="1"/>
+<Cov CovItemId="B14" Value="1"/>
+<Cov CovItemId="B18" Value="1"/>
+<Cov CovItemId="B2" Value="1"/>
+<Cov CovItemId="B4" Value="2"/>
+<Cov CovItemId="B6" Value="1"/>
+<Cov CovItemId="B7" Value="1"/>
+<Cov CovItemId="B8" Value="1"/>
+<Cov CovItemId="B9" Value="1"/>
+<Cov CovItemId="S17" Value="2"/>
+<Cov CovItemId="S18" Value="2"/>
+<Cov CovItemId="S19" Value="2"/>
+<Cov CovItemId="S20" Value="2"/>
+<Cov CovItemId="S21" Value="1"/>
+<Cov CovItemId="S22" Value="1"/>
+<Cov CovItemId="S23" Value="1"/>
+<Cov CovItemId="S24" Value="2"/>
+<Cov CovItemId="S26" Value="2"/>
+<Cov CovItemId="S27" Value="1"/>
+<Cov CovItemId="S29" Value="1"/>
+<Cov CovItemId="S30" Value="2"/>
+<Cov CovItemId="S31" Value="2"/>
+<Cov CovItemId="S32" Value="1"/>
+<Cov CovItemId="S33" Value="1"/>
+<Cov CovItemId="S34" Value="1"/>
+<Cov CovItemId="S35" Value="1"/>
+<Cov CovItemId="S36" Value="1"/>
+<Cov CovItemId="S38" Value="1"/>
+<Cov CovItemId="S42" Value="1"/>
+<Cov CovItemId="S44" Value="1"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.Board.java">
+<AssgnmntListEntry Length="3" RootTermCovItemId="C56">
+<MapEntry BoolAssgnmnt="002" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="3" RootTermCovItemId="C57">
+<MapEntry BoolAssgnmnt="002" Value="2"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.Piece.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C2">
+<MapEntry BoolAssgnmnt="00" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C3">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C4">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C5">
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C6">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="5" RootTermCovItemId="C7">
+<MapEntry BoolAssgnmnt="00202" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C9">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+</AssgnmntList>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<TestCase Comment="" Date="1384783799029" Name="com.Testing.PieceTest:testPriceForPieceValue">
+<CovList>
+<CovPrefix CovItemPrefix="com.OriginalFiles.Board.java">
+<Cov CovItemId="B83" Value="856"/>
+<Cov CovItemId="B85" Value="26"/>
+<Cov CovItemId="B86" Value="830"/>
+<Cov CovItemId="B87" Value="9"/>
+<Cov CovItemId="B88" Value="52"/>
+<Cov CovItemId="B89" Value="14"/>
+<Cov CovItemId="B90" Value="38"/>
+<Cov CovItemId="S173" Value="856"/>
+<Cov CovItemId="S174" Value="856"/>
+<Cov CovItemId="S175" Value="26"/>
+<Cov CovItemId="S176" Value="830"/>
+<Cov CovItemId="S177" Value="61"/>
+<Cov CovItemId="S178" Value="9"/>
+<Cov CovItemId="S179" Value="52"/>
+<Cov CovItemId="S180" Value="14"/>
+<Cov CovItemId="S181" Value="38"/>
+<Cov CovItemId="S182" Value="2991"/>
+</CovPrefix>
+<CovPrefix CovItemPrefix="com.OriginalFiles.Field.java">
+<Cov CovItemId="B1" Value="9"/>
+<Cov CovItemId="B2" Value="4"/>
+<Cov CovItemId="S13" Value="256"/>
+<Cov CovItemId="S5" Value="13"/>
+<Cov CovItemId="S6" Value="13"/>
+<Cov CovItemId="S7" Value="9"/>
+<Cov CovItemId="S8" Value="40"/>
+<Cov CovItemId="S9" Value="869"/>
+</CovPrefix>
+<CovPrefix CovItemPrefix="com.OriginalFiles.Piece.java">
+<Cov CovItemId="B1" Value="21"/>
+<Cov CovItemId="B10" Value="7"/>
+<Cov CovItemId="B11" Value="7"/>
+<Cov CovItemId="B12" Value="14"/>
+<Cov CovItemId="B13" Value="3"/>
+<Cov CovItemId="B14" Value="18"/>
+<Cov CovItemId="B15" Value="2"/>
+<Cov CovItemId="B16" Value="1"/>
+<Cov CovItemId="B17" Value="3"/>
+<Cov CovItemId="B18" Value="18"/>
+<Cov CovItemId="B19" Value="856"/>
+<Cov CovItemId="B20" Value="1258"/>
+<Cov CovItemId="B21" Value="5"/>
+<Cov CovItemId="B22" Value="851"/>
+<Cov CovItemId="B3" Value="7"/>
+<Cov CovItemId="B4" Value="2"/>
+<Cov CovItemId="B5" Value="11"/>
+<Cov CovItemId="B6" Value="3"/>
+<Cov CovItemId="B7" Value="21"/>
+<Cov CovItemId="B9" Value="14"/>
+<Cov CovItemId="L1-1" Value="4"/>
+<Cov CovItemId="L1-2" Value="3"/>
+<Cov CovItemId="L2-2" Value="24"/>
+<Cov CovItemId="L3-1" Value="2"/>
+<Cov CovItemId="L3-2" Value="191"/>
+<Cov CovItemId="S1" Value="5"/>
+<Cov CovItemId="S10" Value="5"/>
+<Cov CovItemId="S11" Value="5"/>
+<Cov CovItemId="S12" Value="5"/>
+<Cov CovItemId="S13" Value="5"/>
+<Cov CovItemId="S14" Value="5"/>
+<Cov CovItemId="S17" Value="14"/>
+<Cov CovItemId="S18" Value="14"/>
+<Cov CovItemId="S19" Value="14"/>
+<Cov CovItemId="S2" Value="5"/>
+<Cov CovItemId="S20" Value="21"/>
+<Cov CovItemId="S21" Value="21"/>
+<Cov CovItemId="S24" Value="9"/>
+<Cov CovItemId="S25" Value="7"/>
+<Cov CovItemId="S26" Value="9"/>
+<Cov CovItemId="S27" Value="14"/>
+<Cov CovItemId="S28" Value="11"/>
+<Cov CovItemId="S29" Value="3"/>
+<Cov CovItemId="S3" Value="5"/>
+<Cov CovItemId="S30" Value="14"/>
+<Cov CovItemId="S31" Value="21"/>
+<Cov CovItemId="S32" Value="21"/>
+<Cov CovItemId="S33" Value="21"/>
+<Cov CovItemId="S34" Value="21"/>
+<Cov CovItemId="S35" Value="14"/>
+<Cov CovItemId="S36" Value="21"/>
+<Cov CovItemId="S37" Value="7"/>
+<Cov CovItemId="S38" Value="21"/>
+<Cov CovItemId="S39" Value="3"/>
+<Cov CovItemId="S4" Value="5"/>
+<Cov CovItemId="S40" Value="2"/>
+<Cov CovItemId="S41" Value="3"/>
+<Cov CovItemId="S42" Value="21"/>
+<Cov CovItemId="S43" Value="3"/>
+<Cov CovItemId="S44" Value="21"/>
+<Cov CovItemId="S45" Value="7"/>
+<Cov CovItemId="S46" Value="7"/>
+<Cov CovItemId="S47" Value="7"/>
+<Cov CovItemId="S48" Value="24"/>
+<Cov CovItemId="S49" Value="24"/>
+<Cov CovItemId="S5" Value="5"/>
+<Cov CovItemId="S50" Value="193"/>
+<Cov CovItemId="S51" Value="2114"/>
+<Cov CovItemId="S52" Value="856"/>
+<Cov CovItemId="S53" Value="5"/>
+<Cov CovItemId="S54" Value="5"/>
+<Cov CovItemId="S55" Value="7"/>
+<Cov CovItemId="S6" Value="5"/>
+<Cov CovItemId="S7" Value="5"/>
+<Cov CovItemId="S8" Value="5"/>
+<Cov CovItemId="S9" Value="5"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.Board.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C54">
+<MapEntry BoolAssgnmnt="1" Value="856"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C55">
+<MapEntry BoolAssgnmnt="0" Value="26"/>
+<MapEntry BoolAssgnmnt="1" Value="830"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="3" RootTermCovItemId="C56">
+<MapEntry BoolAssgnmnt="002" Value="22"/>
+<MapEntry BoolAssgnmnt="120" Value="9"/>
+<MapEntry BoolAssgnmnt="121" Value="30"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="3" RootTermCovItemId="C57">
+<MapEntry BoolAssgnmnt="002" Value="30"/>
+<MapEntry BoolAssgnmnt="120" Value="8"/>
+<MapEntry BoolAssgnmnt="121" Value="14"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.Field.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="0" Value="9"/>
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.Piece.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="1" Value="21"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C10">
+<MapEntry BoolAssgnmnt="01" Value="24"/>
+<MapEntry BoolAssgnmnt="00" Value="2"/>
+<MapEntry BoolAssgnmnt="12" Value="5"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C11">
+<MapEntry BoolAssgnmnt="0" Value="19"/>
+<MapEntry BoolAssgnmnt="1" Value="193"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C12">
+<MapEntry BoolAssgnmnt="0" Value="188"/>
+<MapEntry BoolAssgnmnt="1" Value="2114"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C13">
+<MapEntry BoolAssgnmnt="0" Value="1258"/>
+<MapEntry BoolAssgnmnt="1" Value="856"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C14">
+<MapEntry BoolAssgnmnt="0" Value="851"/>
+<MapEntry BoolAssgnmnt="1" Value="5"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C2">
+<MapEntry BoolAssgnmnt="01" Value="2"/>
+<MapEntry BoolAssgnmnt="00" Value="2"/>
+<MapEntry BoolAssgnmnt="12" Value="5"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C3">
+<MapEntry BoolAssgnmnt="0" Value="3"/>
+<MapEntry BoolAssgnmnt="1" Value="11"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C4">
+<MapEntry BoolAssgnmnt="1" Value="21"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C5">
+<MapEntry BoolAssgnmnt="0" Value="7"/>
+<MapEntry BoolAssgnmnt="1" Value="14"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C6">
+<MapEntry BoolAssgnmnt="0" Value="14"/>
+<MapEntry BoolAssgnmnt="1" Value="7"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="5" RootTermCovItemId="C7">
+<MapEntry BoolAssgnmnt="00210" Value="7"/>
+<MapEntry BoolAssgnmnt="00211" Value="2"/>
+<MapEntry BoolAssgnmnt="01002" Value="8"/>
+<MapEntry BoolAssgnmnt="12222" Value="3"/>
+<MapEntry BoolAssgnmnt="01122" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C8">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C9">
+<MapEntry BoolAssgnmnt="0" Value="18"/>
+<MapEntry BoolAssgnmnt="1" Value="3"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+</AssgnmntList>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<TestCase Comment="" Date="1384783799033" Name="com.Testing.PieceTest:testPriceForPiece">
+<CovList>
+<CovPrefix CovItemPrefix="com.OriginalFiles.Board.java">
+<Cov CovItemId="B83" Value="403"/>
+<Cov CovItemId="B86" Value="403"/>
+<Cov CovItemId="B88" Value="8"/>
+<Cov CovItemId="B90" Value="8"/>
+<Cov CovItemId="S173" Value="403"/>
+<Cov CovItemId="S174" Value="403"/>
+<Cov CovItemId="S176" Value="403"/>
+<Cov CovItemId="S177" Value="8"/>
+<Cov CovItemId="S179" Value="8"/>
+<Cov CovItemId="S181" Value="8"/>
+<Cov CovItemId="S182" Value="1375"/>
+</CovPrefix>
+<CovPrefix CovItemPrefix="com.OriginalFiles.Field.java">
+<Cov CovItemId="S13" Value="64"/>
+<Cov CovItemId="S9" Value="403"/>
+</CovPrefix>
+<CovPrefix CovItemPrefix="com.OriginalFiles.Piece.java">
+<Cov CovItemId="B1" Value="4"/>
+<Cov CovItemId="B10" Value="1"/>
+<Cov CovItemId="B11" Value="1"/>
+<Cov CovItemId="B12" Value="3"/>
+<Cov CovItemId="B14" Value="4"/>
+<Cov CovItemId="B18" Value="4"/>
+<Cov CovItemId="B19" Value="403"/>
+<Cov CovItemId="B20" Value="565"/>
+<Cov CovItemId="B22" Value="403"/>
+<Cov CovItemId="B3" Value="1"/>
+<Cov CovItemId="B4" Value="4"/>
+<Cov CovItemId="B6" Value="3"/>
+<Cov CovItemId="B7" Value="4"/>
+<Cov CovItemId="B9" Value="3"/>
+<Cov CovItemId="L1-2" Value="1"/>
+<Cov CovItemId="L2-2" Value="8"/>
+<Cov CovItemId="L3-2" Value="80"/>
+<Cov CovItemId="S1" Value="1"/>
+<Cov CovItemId="S10" Value="1"/>
+<Cov CovItemId="S11" Value="1"/>
+<Cov CovItemId="S12" Value="1"/>
+<Cov CovItemId="S13" Value="1"/>
+<Cov CovItemId="S14" Value="1"/>
+<Cov CovItemId="S17" Value="3"/>
+<Cov CovItemId="S18" Value="3"/>
+<Cov CovItemId="S19" Value="3"/>
+<Cov CovItemId="S2" Value="1"/>
+<Cov CovItemId="S20" Value="4"/>
+<Cov CovItemId="S21" Value="4"/>
+<Cov CovItemId="S24" Value="5"/>
+<Cov CovItemId="S25" Value="1"/>
+<Cov CovItemId="S26" Value="5"/>
+<Cov CovItemId="S27" Value="3"/>
+<Cov CovItemId="S29" Value="3"/>
+<Cov CovItemId="S3" Value="1"/>
+<Cov CovItemId="S30" Value="3"/>
+<Cov CovItemId="S31" Value="4"/>
+<Cov CovItemId="S32" Value="4"/>
+<Cov CovItemId="S33" Value="4"/>
+<Cov CovItemId="S34" Value="4"/>
+<Cov CovItemId="S35" Value="3"/>
+<Cov CovItemId="S36" Value="4"/>
+<Cov CovItemId="S37" Value="1"/>
+<Cov CovItemId="S38" Value="4"/>
+<Cov CovItemId="S4" Value="1"/>
+<Cov CovItemId="S42" Value="4"/>
+<Cov CovItemId="S44" Value="4"/>
+<Cov CovItemId="S45" Value="1"/>
+<Cov CovItemId="S46" Value="1"/>
+<Cov CovItemId="S47" Value="1"/>
+<Cov CovItemId="S48" Value="8"/>
+<Cov CovItemId="S49" Value="8"/>
+<Cov CovItemId="S5" Value="1"/>
+<Cov CovItemId="S50" Value="80"/>
+<Cov CovItemId="S51" Value="968"/>
+<Cov CovItemId="S52" Value="403"/>
+<Cov CovItemId="S55" Value="1"/>
+<Cov CovItemId="S6" Value="1"/>
+<Cov CovItemId="S7" Value="1"/>
+<Cov CovItemId="S8" Value="1"/>
+<Cov CovItemId="S9" Value="1"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.Board.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C54">
+<MapEntry BoolAssgnmnt="1" Value="403"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C55">
+<MapEntry BoolAssgnmnt="1" Value="403"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="3" RootTermCovItemId="C56">
+<MapEntry BoolAssgnmnt="002" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="3" RootTermCovItemId="C57">
+<MapEntry BoolAssgnmnt="002" Value="8"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.Piece.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C10">
+<MapEntry BoolAssgnmnt="01" Value="8"/>
+<MapEntry BoolAssgnmnt="00" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C11">
+<MapEntry BoolAssgnmnt="0" Value="8"/>
+<MapEntry BoolAssgnmnt="1" Value="80"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C12">
+<MapEntry BoolAssgnmnt="0" Value="80"/>
+<MapEntry BoolAssgnmnt="1" Value="968"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C13">
+<MapEntry BoolAssgnmnt="0" Value="565"/>
+<MapEntry BoolAssgnmnt="1" Value="403"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C14">
+<MapEntry BoolAssgnmnt="0" Value="403"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C2">
+<MapEntry BoolAssgnmnt="00" Value="4"/>
+<MapEntry BoolAssgnmnt="12" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C3">
+<MapEntry BoolAssgnmnt="0" Value="3"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C4">
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C5">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+<MapEntry BoolAssgnmnt="1" Value="3"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C6">
+<MapEntry BoolAssgnmnt="0" Value="3"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="5" RootTermCovItemId="C7">
+<MapEntry BoolAssgnmnt="00202" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C9">
+<MapEntry BoolAssgnmnt="0" Value="4"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+</AssgnmntList>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<MetaDataList/>
+</TestSession>
 </TestSessionContainer>

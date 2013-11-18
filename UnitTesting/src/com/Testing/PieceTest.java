@@ -63,5 +63,29 @@ public class PieceTest extends FunktionForTesting{
         checkersBoard.myBoard[7][0].setPieceOnField(null);
         double secondPrice = checkersBoard.myBoard[3][4].getPieceOnField().priceForPiece(isEndgame);
         assertTrue(firstPrice < secondPrice);
+        emptyBoard();
+        checkersBoard.myBoard[3][4].setPieceOnField(producePiece(3, 4, 'w', false));
+        firstPrice = checkersBoard.myBoard[3][4].getPieceOnField().priceForPiece(isEndgame);
+        checkersBoard.myBoard[3][4].getPieceOnField().isCrowned = true;
+        secondPrice = checkersBoard.myBoard[3][4].getPieceOnField().priceForPiece(isEndgame);
+        assertTrue(firstPrice < secondPrice);
+        checkersBoard.myBoard[0][7].setPieceOnField(checkersBoard.myBoard[3][4].getPieceOnField());
+        checkersBoard.myBoard[3][4].setPieceOnField(null);
+        firstPrice = checkersBoard.myBoard[0][7].getPieceOnField().priceForPiece(isEndgame);
+        assertTrue(firstPrice == secondPrice);//No king backline bonus
+        emptyBoard();
+        checkersBoard.myBoard[3][4].setPieceOnField(producePiece(3, 4, 'w', false));
+        firstPrice = checkersBoard.myBoard[3][4].getPieceOnField().priceForPiece(isMidgame);
+        checkersBoard.myBoard[0][7].setPieceOnField(checkersBoard.myBoard[3][4].getPieceOnField());
+        checkersBoard.myBoard[3][4].setPieceOnField(null);
+        secondPrice = checkersBoard.myBoard[0][7].getPieceOnField().priceForPiece(isMidgame);
+        assertTrue(firstPrice < secondPrice);//Backline bonus
+        emptyBoard();
+        checkersBoard.myBoard[3][4].setPieceOnField(producePiece(3, 4, 'r', false));
+        firstPrice = checkersBoard.myBoard[3][4].getPieceOnField().priceForPiece(isEndgame);
+        checkersBoard.myBoard[1][0].setPieceOnField(checkersBoard.myBoard[3][4].getPieceOnField());
+        checkersBoard.myBoard[3][4].setPieceOnField(null);
+        secondPrice = checkersBoard.myBoard[1][0].getPieceOnField().priceForPiece(isEndgame);
+        assertTrue(firstPrice < secondPrice);//Backline bonus
     }
 }
