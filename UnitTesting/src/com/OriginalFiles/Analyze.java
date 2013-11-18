@@ -19,6 +19,9 @@ public class Analyze {
     private Field trashField = new Field(3, -6);
     private boolean pieceFound;
     private boolean mustJump;
+    
+    // for unit test
+    public boolean analyzeTestVariable = false;
 
     public Analyze(Board input, RemoteNXTFunctions remoteInput) {
         checkersBoard = input;
