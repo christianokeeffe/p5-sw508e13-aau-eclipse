@@ -66,8 +66,78 @@ public class FunktionForTesting {
     }
     
     protected void resetBoard() throws InterruptedException, IOException{
-        checkersBoard = new Board(remote);
-        remote.checkersBoard = checkersBoard;
+        emptyBoard();
+        int x, y;
+        
+        //Create the 8 times 8 board
+        for (x = 0; x < 8; x++) {
+            for (y = 0; y < 8; y++) {
+                Field temp = new Field();
+                temp.x = x;
+                temp.y = y;
+
+                //Every second field is an allowed field
+                //latex start ConstructorLoop
+                if ((x + y) % 2 == 1) {
+                    temp.allowedField = true;
+                    Piece pieceOnBoard = null;
+                    if (y < 3) {
+                        pieceOnBoard = new Piece(checkersBoard);
+                        pieceOnBoard.color = checkersBoard.analyzeFunctions.getColor(0, 1);
+
+                        //Every piece on the front line of each player
+                        //is moveable from the start
+                        if (y == 2) {
+                            pieceOnBoard.isMoveable = true;
+                        }
+                    }
+                    //latex end
+
+                    if (y > 4) {
+                        pieceOnBoard = new Piece(checkersBoard);
+                        if(checkersBoard.analyzeFunctions.getColor(0, 1) == 'r') {
+                            pieceOnBoard.color = 'w';
+                        } else {
+                            pieceOnBoard.color = 'r';
+                        }
+                        if (y == 5) {
+                            pieceOnBoard.isMoveable = true;
+                        }
+                    }
+                    temp.setPieceOnField(pieceOnBoard);
+                } else {
+                    temp.allowedField = false;
+                }
+                checkersBoard.myBoard[x][y] = temp;
+            }
+        }
+
+        //Set the location of the human players king pieces
+        //And Trashfield
+        //latex start ConstructorKing
+        for (int i = 0; i < 8; i++) {
+            Field temp = new Field();
+            temp.x = i;
+            temp.y = -2;
+            Piece tempPiece = new Piece(checkersBoard);
+            if(checkersBoard.analyzeFunctions.getColor(0, 1) == 'r') {
+                tempPiece.color = 'g';
+            } else {
+                tempPiece.color = 'b';
+            }
+            tempPiece.isCrowned = true;
+            temp.setPieceOnField(tempPiece);
+            checkersBoard.kingPlace[i] = temp;
+        }
+        //latex end
+        for (int j = 0; j < 2; j++) {
+        for (int i = 0; i < 8; i++) {
+            Field temp = new Field();
+            temp.x = i;
+            temp.y = -3 - j;
+            checkersBoard.trashPlace[i][j] = temp;
+        }
+        }
     }
 
 }
