@@ -21,7 +21,7 @@ public class Analyze {
     private boolean mustJump;
     
     // for unit test
-    public boolean analyzeTestVariable = false;
+    public boolean analyzeTestVariableForMotorCalibration = false;
 
     public Analyze(Board input, RemoteNXTFunctions remoteInput) {
         checkersBoard = input;
@@ -56,6 +56,7 @@ public class Analyze {
 
         if (totalAnalyzeRuns > analyzeRunsBeforeReset) {
             totalAnalyzeRuns = 0;
+            analyzeTestVariableForMotorCalibration= true;
             remoteFunctions.resetMotors();
         }
     }
