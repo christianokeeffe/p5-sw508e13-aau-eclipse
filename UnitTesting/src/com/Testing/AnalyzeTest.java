@@ -147,13 +147,39 @@ public class AnalyzeTest extends FunktionForTesting {
         emptyBoard();
         checkersBoard.myBoard[2][5].setPieceOnField(producePiece(2, 5, 'w',false));
         checkersBoard.myBoard[4][3].setPieceOnField(producePiece(4, 3, 'r',false));
-        checkersBoard.analyzeFunctions.analyzeTestVariableForMotorCalibration = false;
+        
+        remote.analyzeresetMotorsTestVariable = false;
+        for(int i = 0; remote.analyzeresetMotorsTestVariable; i++) {
+            checkersBoard.analyzeFunctions.analyzeBoard();
+        }
+        remote.analyzeresetMotorsTestVariable = false;
+        
+        for(int i = 1 ; i <= 10; i++) {
+            checkersBoard.analyzeFunctions.analyzeBoard();
+        }
+        // see if a Variable in checkMotorCalibration is set to true
+        assertTrue(remote.analyzeresetMotorsTestVariable);
+        resetBoard();
+    }
+    
+    // test for to see if countDownToPanic will work ??? 
+    @Test
+    public final void testCountDownToPanic() throws InterruptedException, IOException, NoKingLeft, IllegalMove {
+        emptyBoard();
+        checkersBoard.myBoard[2][5].setPieceOnField(producePiece(2, 5, 'w',false));
+        checkersBoard.myBoard[4][3].setPieceOnField(producePiece(4, 3, 'r',false));
+        
+        remote.analyzeresetMotorsTestVariable = false;
+        for(int i = 0; remote.analyzeresetMotorsTestVariable; i++) {
+            checkersBoard.analyzeFunctions.analyzeBoard();
+        }
+        remote.analyzeresetMotorsTestVariable = false;
         
         remote.analyzeTestVariable = 3;
         checkersBoard.analyzeFunctions.analyzeBoard();
         remote.analyzeTestVariable = 0;
         // see if a Variable in checkMotorCalibration is set to true
-        assertTrue(checkersBoard.analyzeFunctions.analyzeTestVariableForMotorCalibration);
+        assertTrue(remote.analyzeresetMotorsTestVariable);
         resetBoard();
     }
     
