@@ -6,12 +6,13 @@ import java.io.IOException;
 public class RemoteNXTFunctions {
     public Board checkersBoard;
     public int analyzeTestVariable = 0;
+    public boolean analyzeresetMotorsTestVariable = false;
 
     public RemoteNXTFunctions() throws InterruptedException, IOException {
         checkersBoard = new Board(this);
     }
     public void resetMotors() {
-        // TODO Auto-generated method stub
+        analyzeresetMotorsTestVariable = true;
         
     }
 
