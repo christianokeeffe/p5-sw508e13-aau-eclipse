@@ -134,11 +134,11 @@ public class MI {
             }
             break;
         default:
+            valueOfBoard +=  pieceDifferenceFactor
+            * ((ownPieces.size() / oppPieces.size()) - 1);
             break;
         }
 
-        valueOfBoard +=  pieceDifferenceFactor
-                * ((ownPieces.size() / oppPieces.size()) - 1);
         return valueOfBoard;
     }
 
