@@ -61,17 +61,6 @@ public class MI {
                 bestMoves.add(move);
             }
         }
-        /*
-        LCD.clear();
-        LCD.drawString("E TT: " + totalTimeForEvaluation, 0, 0);
-        LCD.drawString("E N: " + numberOftimesforEvaluation, 0, 1);
-        LCD.refresh();
-        Button.waitForAnyPress();
-        LCD.clear();
-        LCD.drawString("P TT: " + totalTimeForPossibleMoves, 0, 0);
-        LCD.drawString("P N: " + numberOftimesforPossibleMoves, 0, 1);
-        LCD.refresh();
-        Button.waitForAnyPress();*/
         return bestMoves.get((int) (Math.random() * (bestMoves.size() - 1)));
     }
 
@@ -200,13 +189,6 @@ public class MI {
         }
     }
 
-    private void revertAllMoves() throws NoKingLeft, IOException {
-        int stop = simulatedMoves.size();
-        for (int i = 0; i < stop; i++) {
-            revertMove();
-        }
-    }
-
     private void revertMove() throws NoKingLeft, IOException {
 
         if (simulatedMoves.size() != 0) {
@@ -296,22 +278,7 @@ public class MI {
                 }
             }
         }
-        /*
-        remoteNXT.checkersBoard.sortListOfMoves(movements);
-        boolean mustJump = false;
-        if (movements.size() != 0) {
-            mustJump = movements.get(0).isJump();
-            if (mustJump) {
-                for (int i = 0; movements.size() > i; i++) {
-                    if (!movements.get(i).isJump()) {
-                        movements.remove(i);
-                        i--;
-                    }
-                }
-            }
-        }
-        return movements;
-         */
+
         if (jumpMovements.size() != 0) {
             return jumpMovements;
         } else {
