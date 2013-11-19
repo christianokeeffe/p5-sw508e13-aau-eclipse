@@ -156,7 +156,7 @@ public class Board {
         return Math.abs(inputField.x - x) + Math.abs(inputField.y - y);
     }
 
-    public final boolean verifyOpPieceIsOnField(Field field) throws
+    public final boolean verifyCorrectMove(Field field) throws
     InterruptedException, IOException {
         if (checkAllegiance(field, true)) {
             if (field.getPieceOnField().isMoveable) {
@@ -324,7 +324,7 @@ public class Board {
                             checkPiece(field, 1, true);
 
                         //Check movable for human
-                        } else if (checkAllegiance(field, true)) {
+                        } else {
                             checkPiece(field, -1, false);
                         }
                     }
