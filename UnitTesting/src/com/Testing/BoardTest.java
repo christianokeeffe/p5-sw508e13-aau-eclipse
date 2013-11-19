@@ -3,10 +3,22 @@ package com.Testing;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+
+
+
+
+
+
+
+
+
+
+
 
 
 import com.CustomClasses.FunktionForTesting;
@@ -22,6 +34,18 @@ public class BoardTest extends FunktionForTesting {
 	{
 	    super();
 	}
+	@Test
+	public void testNewBoard() throws InterruptedException, IOException {
+	    RemoteNXTFunctions testRemote= new RemoteNXTFunctions();
+	    testRemote.analyzeTestVariable = 4;
+	    Board testboard = new Board(testRemote);
+	    
+	    assertEquals(testboard.myBoard[0][1].getPieceOnField().color, 'w');
+	    assertEquals(testboard.myBoard[0][5].getPieceOnField().color, 'r');
+	    
+	    
+	}
+	
 	
 	@Test
 	//test for the Board class' constructor
@@ -79,7 +103,162 @@ public class BoardTest extends FunktionForTesting {
 		}
 	}
 	
+	@Test
+	 public void testResetVisited() {
+	    checkersBoard.resetVisited();
+	        for (Field[] f : checkersBoard.myBoard) {
+	            for (Field field : f) {
+	                assertTrue(field.visited == false);
+	            }
+	        }
+	    }
+
+    @Test
+	public void testsortListOfFields() {
+	    
+	    List<Field> listToSort = new ArrayList<Field>();
+	    Field tempFirst = new Field();
+	    Field tempSecond = new Field();
+	    Piece tempKing = new Piece(checkersBoard);
+	    Piece tempPeasant = new Piece(checkersBoard);
+	    emptyBoard();
+	    tempFirst.x = 2;
+	    tempFirst.y = 2;
+	    tempSecond.x = 2;
+	    tempSecond.y = 5;
+	    
+	    tempPeasant.color = 'w';
+	    tempPeasant.isMoveable = true;
+	    tempKing.color = 'b';
+	    tempKing.isCrowned = true;
+	    tempKing.canJump = true;
+	    tempKing.isMoveable = true;
+	    
+	    tempFirst.setPieceOnField(tempPeasant);
+	    tempSecond.setPieceOnField(tempKing);
+	        
+	    listToSort.add(tempFirst);
+	    listToSort.add(tempSecond);
+	    
+	    checkersBoard.sortListOfFields(listToSort);
+	    
+	    assertEquals(listToSort.get(0).getPieceOnField().isCrowned, true);
+	    assertEquals(listToSort.get(1).getPieceOnField().isCrowned, false);
+	}
 	
+  
+    @Test
+    public void testIsGreater() {
+        emptyBoard();
+        Field tempInput = new Field();
+        Field tempComp = new Field();
+        Piece tempFirst = new Piece(checkersBoard);
+        Piece tempSecond = new Piece(checkersBoard);
+        tempFirst.color = 'w';
+        tempFirst.canJump = true;
+        tempFirst.isMoveable = true;
+        tempFirst.isCrowned = false;
+        
+        tempSecond.color = 'w';
+        tempSecond.isMoveable = true;
+        tempSecond.canJump = false;
+        tempSecond.isCrowned = false;
+        
+        tempInput.x = 3;
+        tempInput.y = 2;
+        tempInput.setPieceOnField(tempFirst);
+        tempComp.x = 2;
+        tempComp.y = 5;
+        tempComp.setPieceOnField(tempSecond);
+        assertTrue(checkersBoard.isGreater(tempInput, tempComp, 3, 2));
+        tempInput.x = 4;
+        tempInput.y = 1;
+        tempInput.setPieceOnField(tempFirst);
+        assertTrue(checkersBoard.isGreater(tempInput, tempComp, 4, 1));
+        tempFirst.color = 'r';
+        assertTrue(checkersBoard.isGreater(tempInput, tempComp, 4, 1));
+        tempFirst.color = 'b';
+        tempFirst.isCrowned = true;
+        assertTrue(checkersBoard.isGreater(tempInput, tempComp, 4, 1));
+        tempFirst.canJump = false;
+        assertTrue(checkersBoard.isGreater(tempInput, tempComp, 4, 1));
+        tempFirst.isCrowned = false;
+        tempFirst.color = 'w';
+        assertTrue(checkersBoard.isGreater(tempInput, tempComp, 4, 1));
+        tempComp.y = 1;
+        tempComp.setPieceOnField(tempSecond);
+        assertTrue(checkersBoard.isGreater(tempInput, tempComp, 4, 1));
+        tempInput.y = 3;
+        tempInput.setPieceOnField(tempFirst);
+        assertFalse(checkersBoard.isGreater(tempInput, tempComp, 4, 3));
+        tempSecond.isCrowned = true;    
+        assertTrue(checkersBoard.isGreater(tempInput, tempComp, 5, 2));
+        assertFalse(checkersBoard.isGreater(tempInput, tempComp, 3, 2));
+    }
+    
+    @Test
+    public void testverifyCorrectMove() throws InterruptedException, IOException {
+        Field tempF = new Field();
+        Piece tempP = new Piece(checkersBoard);
+        
+        tempF.x = 1;
+        tempF.y = 4;
+        tempP.isMoveable = true;
+        tempP.color = 'w';
+        tempF.setPieceOnField(tempP);
+        
+        assertTrue(checkersBoard.verifyCorrectMove(tempF));
+        tempF.x = 2;
+        tempF.y = 5;
+        assertFalse(checkersBoard.verifyCorrectMove(tempF));
+        tempP.isMoveable = false;
+        assertTrue(checkersBoard.verifyCorrectMove(tempF));
+        tempF.getPieceOnField().color = 'r';
+        assertTrue(checkersBoard.verifyCorrectMove(tempF));  
+    }
+    
+    @Test
+    public void testpeasentIsOnEndRow() {
+        Field tempF = new Field();
+        Piece tempP = new Piece(checkersBoard);
+        
+        tempP.color = 'w';
+        tempP.isCrowned = false;
+        tempF.x = 5;
+        tempF.y = 0;
+        tempF.setPieceOnField(tempP);
+        
+        assertTrue(checkersBoard.peasentIsOnEndRow(tempF));
+        tempP.isCrowned = true;
+        assertFalse(checkersBoard.peasentIsOnEndRow(tempF));
+        tempF.y = 7;
+        assertFalse(checkersBoard.peasentIsOnEndRow(tempF));
+        tempP.isCrowned = false;
+        tempP.color = 'r';
+        assertTrue(checkersBoard.peasentIsOnEndRow(tempF));
+        tempP.isCrowned = true;
+        assertFalse(checkersBoard.peasentIsOnEndRow(tempF));
+        tempF.y = 0;
+        assertFalse(checkersBoard.peasentIsOnEndRow(tempF));
+        tempF.emptyThisField();
+        assertFalse(checkersBoard.peasentIsOnEndRow(tempF));
+        
+    }
+    
+    @Test
+    public void testIsFieldEmptyOnBoard() throws InterruptedException, IOException {
+        Field tempF = new Field();
+
+        tempF.x = 2;
+        tempF.y = 5;
+        
+        assertTrue(checkersBoard.isFieldEmptyOnBoard(tempF.x, tempF.y));
+        tempF.x = 0;
+        tempF.y = 1;
+        assertFalse(checkersBoard.isFieldEmptyOnBoard(tempF.x, tempF.y));
+        tempF.x = -1;
+        assertFalse(checkersBoard.isFieldEmptyOnBoard(tempF.x, tempF.y));
+    }
 
 	@Test
 	public void testMovePiece() throws NoKingLeft, IOException, custom.Exceptions.NoKingLeft {
@@ -103,6 +282,7 @@ public class BoardTest extends FunktionForTesting {
 		assertFalse(checkersBoard.fieldOccupied(2, 3));
 		assertTrue(checkersBoard.fieldOccupied(9, 9));
 	}
+	
 	
 	//function to produce a list of fields which are used for testing check moveable function
 	private List<Field> produceList(Field field, int direction){
@@ -183,6 +363,13 @@ public class BoardTest extends FunktionForTesting {
 		//Test for out for bounds
 		assertFalse(checkersBoard.checkAllegiance(checkField,true));
 		assertFalse(checkersBoard.checkAllegiance(checkField,false));
+	}
+	
+	@Test
+	public void testFindMissingPiece() throws InterruptedException, IOException {
+	    checkersBoard.findMissingPiece();
+	    assertEquals(checkersBoard.myBoard[0][1].getPieceOnField().color, 'r');
+	    assertEquals(checkersBoard.myBoard[1][4].getPieceOnField().color, 'w');
 	}
 
 }
