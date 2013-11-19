@@ -12,7 +12,20 @@ public class MI {
     private List<Move> simulatedMoves = new ArrayList<Move>();
     public MI(RemoteNXTFunctions inputRemoteNXT) {
         remoteNXT = inputRemoteNXT;
+        updatePieceList();
 
+    }
+    public int totalTimeForPossibleMoves = 0;
+    public int numberOftimesforPossibleMoves = 0;
+    public int totalTimeForEvaluation = 0;
+    public int numberOftimesforEvaluation = 0;
+
+    List<Piece> ownPieces = new ArrayList<Piece>();
+    List<Piece> oppPieces = new ArrayList<Piece>();
+
+    private void updatePieceList() {
+        ownPieces.clear();
+        oppPieces.clear();
         for (Field[] f: remoteNXT.checkersBoard.myBoard) {
             for (Field q: f) {
                 if (!q.isEmpty()) {
@@ -25,49 +38,13 @@ public class MI {
             }
         }
     }
-    public int totalTimeForPossibleMoves = 0;
-    public int numberOftimesforPossibleMoves = 0;
-    public int totalTimeForEvaluation = 0;
-    public int numberOftimesforEvaluation = 0;
-
-    List<Piece> ownPieces = new ArrayList<Piece>();
-    List<Piece> oppPieces = new ArrayList<Piece>();
 
     /* ------------------------------------------------------------------  *
     /* MI brain starts */
 
-    ///Test method
-    public final void scanPieces(int side) throws IOException {
-        for (Field[] f:remoteNXT.checkersBoard.myBoard) {
-            for (Field q: f) {
-                if (!q.isEmpty()) {
-                    if (side == 1) {
-                        if (remoteNXT.checkersBoard.checkAllegiance(q, false)
-                                && q.getPieceOnField().isCrowned) {
-                            remoteNXT.getColorOnField(q.x, q.y);
-
-                            if (!q.isEmpty() && q.getPieceOnField().isCrowned) {
-                                Sound.twoBeeps();
-                            }
-                        }
-                    } else {
-                        if (remoteNXT.checkersBoard.checkAllegiance(q, true)
-                                && q.getPieceOnField().isCrowned) {
-                            remoteNXT.getColorOnField(q.x, q.y);
-
-                            if (!q.isEmpty() && q.getPieceOnField().isCrowned) {
-                                Sound.twoBeeps();
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
     public final Move lookForBestMove() throws NoKingLeft, IOException,
                                          InterruptedException {
+        updatePieceList();
         List<Move> posMoves = possibleMoves(1);
         List<Move> bestMoves = new ArrayList<Move>();
         double price = -inf;
@@ -126,7 +103,7 @@ public class MI {
             simulateMove(move);
             double newPrice = -negaMax(depth - 1, -turn, -beta, -alpha);
             revertMove();
-            
+
             bestValue = max(bestValue, newPrice);
             alpha = max(alpha, newPrice);
             if (alpha >= beta) {
