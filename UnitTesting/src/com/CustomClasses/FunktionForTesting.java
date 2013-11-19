@@ -68,6 +68,7 @@ public class FunktionForTesting {
     protected void resetBoard() throws InterruptedException, IOException{
         emptyBoard();
         remote.analyzeTestVariable = 0;
+        remote.analyzeresetMotorsTestVariable = false;
         int x, y;
         
         //Create the 8 times 8 board
