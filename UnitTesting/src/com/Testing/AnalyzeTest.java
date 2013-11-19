@@ -135,10 +135,17 @@ public class AnalyzeTest extends FunktionForTesting {
     
     //Test not that valid for the real GetColor function
     @Test
-    public final void testGetColor() throws IOException {
+    public final void testGetColor() throws IOException, InterruptedException {
         assertEquals(checkersBoard.myBoard[1][0].getPieceOnField().color, checkersBoard.analyzeFunctions.getColor(1, 0));
         assertEquals(' ', checkersBoard.analyzeFunctions.getColor(0, 3));
         assertEquals('w', checkersBoard.analyzeFunctions.getColor(1,4));
+        
+        checkersBoard.myBoard[4][3].setPieceOnField(producePiece(4, 3, 'g',true));
+        checkersBoard.myBoard[5][4].setPieceOnField(producePiece(5, 4, 'b',true));
+        
+        assertEquals('g', checkersBoard.analyzeFunctions.getColor(4, 3));
+        assertEquals('b', checkersBoard.analyzeFunctions.getColor(5,4));
+        resetBoard();
     }
     
     // test for to see if checkMotorCalibration will work ??? 
@@ -170,7 +177,7 @@ public class AnalyzeTest extends FunktionForTesting {
         checkersBoard.myBoard[4][3].setPieceOnField(producePiece(4, 3, 'r',false));
         
         remote.analyzeresetMotorsTestVariable = false;
-        for(int i = 0; remote.analyzeresetMotorsTestVariable; i++) {
+        for( ; remote.analyzeresetMotorsTestVariable; ) {
             checkersBoard.analyzeFunctions.analyzeBoard();
         }
         remote.analyzeresetMotorsTestVariable = false;
@@ -183,7 +190,7 @@ public class AnalyzeTest extends FunktionForTesting {
         resetBoard();
     }
     
- // test for to see if 
+    // test for to see if 
     @Test
     public final void testCheckMovement() throws InterruptedException, IOException, NoKingLeft, IllegalMove {
         emptyBoard();
@@ -191,8 +198,7 @@ public class AnalyzeTest extends FunktionForTesting {
         checkersBoard.myBoard[2][5].setPieceOnField(producePiece(2, 5, 'w',true));
         checkersBoard.myBoard[0][5].setPieceOnField(producePiece(0, 5, 'w',false));
         checkersBoard.myBoard[3][4].setPieceOnField(producePiece(3, 4, 'r',true));
-        
-        
+
         try {
             remote.analyzeTestVariable = 1;
             checkersBoard.analyzeFunctions.analyzeBoard();
@@ -215,4 +221,13 @@ public class AnalyzeTest extends FunktionForTesting {
         assertTrue(!testException);
         resetBoard();
     }
+    
+    //test for checkMove
+    @Test
+    public final void testCheckMove() {
+        emptyBoard();
+        checkersBoard.myBoard[0][5].setPieceOnField(producePiece(0, 5, 'g',true));
+        checkersBoard.myBoard[3][4].setPieceOnField(producePiece(3, 4, 'b',true));
+    }
+    
 }
