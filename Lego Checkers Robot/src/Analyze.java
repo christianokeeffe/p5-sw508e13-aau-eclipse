@@ -204,7 +204,7 @@ public class Analyze {
         for (int i = 0; i < checkArray.size(); i++) {
             if (!(checkArray.get(i).x == fromField.x
                     && checkArray.get(i).y == fromField.y)) {
-                returnValue = checkersBoard.verifyOpPieceIsOnField(
+                returnValue = checkersBoard.verifyCorrectMove(
                         checkArray.get(i));
             }
             if (!returnValue) {
