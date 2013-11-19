@@ -145,17 +145,15 @@ public class AnalyzeTest extends FunktionForTesting {
     @Test
     public final void testCheckMotorCalibration() throws InterruptedException, IOException, NoKingLeft, IllegalMove {
         emptyBoard();
-        checkersBoard.myBoard[2][5].setPieceOnField(producePiece(2, 5, 'w',true));
-        boolean testException = false;
-        try {
-            remote.analyzeTestVariable = 3;
-            checkersBoard.analyzeFunctions.analyzeBoard();
-        }
-        catch (IllegalMove e) {
-            testException = true;
-        }
+        checkersBoard.myBoard[2][5].setPieceOnField(producePiece(2, 5, 'w',false));
+        checkersBoard.myBoard[4][3].setPieceOnField(producePiece(4, 3, 'r',false));
+        checkersBoard.analyzeFunctions.analyzeTestVariableForMotorCalibration = false;
+        
+        remote.analyzeTestVariable = 3;
+        checkersBoard.analyzeFunctions.analyzeBoard();
         remote.analyzeTestVariable = 0;
-        assertTrue(testException);
+        // see if a Variable in checkMotorCalibration is set to true
+        assertTrue(checkersBoard.analyzeFunctions.analyzeTestVariableForMotorCalibration);
         resetBoard();
     }
     
