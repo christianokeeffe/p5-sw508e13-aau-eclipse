@@ -94,6 +94,15 @@ public class RemoteNXTFunctions {
                     output.setColor(' ');
                 }
             }
+            else if (analyzeTestVariable == 4) {
+                if(x == 0 && y == 1) {
+                    output.setColor('w');
+                } else if (checkersBoard.myBoard[x][y].getPieceOnField() != null) {
+                    output.setColor(checkersBoard.myBoard[x][y].getPieceOnField().color);
+                } else {
+                    output.setColor(' ');
+                }
+            }
         }
         
         return output;

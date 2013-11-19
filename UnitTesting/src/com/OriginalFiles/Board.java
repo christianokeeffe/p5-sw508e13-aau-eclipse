@@ -118,30 +118,7 @@ public class Board {
         }
     }
 
-    //Sorts the list of fields to search to minimize robot movement
-        public final void sortListOfMoves(List<Move> listOfMoves) {
-            int x = 0;
-            int y = 0;
-            for (int i = 0; i < listOfMoves.size(); i++) {
-                for (int n = i + 1; n < listOfMoves.size(); n++) {
-                    if (!isGreater(listOfMoves.get(i).moves.get(
-                        listOfMoves.get(i).moves.size() - 1),
-                            listOfMoves.get(n).moves.get(
-                                listOfMoves.get(n).moves.size() - 1), x, y)) {
-                        Move temp1 = listOfMoves.get(i);
-                        Move temp2 = listOfMoves.get(n);
-                        listOfMoves.remove(n);
-                        listOfMoves.remove(i);
-                        listOfMoves.add(i, temp2);
-                        listOfMoves.add(n, temp1);
-                    }
-                }
-                x = listOfMoves.get(i).moves.get(
-                        listOfMoves.get(i).moves.size() - 1).x;
-                y = listOfMoves.get(i).moves.get(
-                        listOfMoves.get(i).moves.size() - 1).y;
-            }
-        }
+   
     //Method to used in sorting the list of places to move the robot
     public final boolean isGreater(Field inputField,
             Field fieldToCompare, int compX, int compY) {
@@ -165,11 +142,11 @@ public class Board {
                     && !fieldToCompare.getPieceOnField().isCrowned) {
                 return false;
             } else {
-                if (weight(inputField, compX, compY)
-                    > weight(fieldToCompare, compX, compY)) {
+                if (distance(inputField, compX, compY)
+                    > distance(fieldToCompare, compX, compY)) {
                     return false;
-                } else if (weight(inputField, compX, compY)
-                           < weight(fieldToCompare, compX, compY)) {
+                } else if (distance(inputField, compX, compY)
+                           < distance(fieldToCompare, compX, compY)) {
                     return true;
                 } else {
                     return (inputField.y < fieldToCompare.y);
@@ -178,11 +155,11 @@ public class Board {
         }
     }
 
-    private int weight(Field inputField, int x, int y) {
+    private int distance(Field inputField, int x, int y) {
         return Math.abs(inputField.x - x) + Math.abs(inputField.y - y);
     }
 
-    public final boolean verifyOpPieceIsOnField(Field field) throws
+    public final boolean verifyCorrectMove(Field field) throws
     InterruptedException, IOException {
         if (checkAllegiance(field, true)) {
             if (field.getPieceOnField().isMoveable) {
@@ -350,7 +327,7 @@ public class Board {
                             checkPiece(field, 1, true);
 
                         //Check movable for human
-                        } else if (checkAllegiance(field, true)) {
+                        } else {
                             checkPiece(field, -1, false);
                         }
                     }
