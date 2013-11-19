@@ -1,24 +1,17 @@
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import lejos.nxt.Sound;
 import custom.Exceptions.NoKingLeft;
-import lejos.util.Stopwatch;
 
 public class MI {
     public RemoteNXTFunctions remoteNXT;
     private final double inf = 100000.0;
-    public Stopwatch sW = new Stopwatch();
     private List<Move> simulatedMoves = new ArrayList<Move>();
     public MI(RemoteNXTFunctions inputRemoteNXT) {
         remoteNXT = inputRemoteNXT;
         updatePieceList();
 
     }
-    public int totalTimeForPossibleMoves = 0;
-    public int numberOftimesforPossibleMoves = 0;
-    public int totalTimeForEvaluation = 0;
-    public int numberOftimesforEvaluation = 0;
 
     List<Piece> ownPieces = new ArrayList<Piece>();
     List<Piece> oppPieces = new ArrayList<Piece>();
@@ -49,10 +42,6 @@ public class MI {
         List<Move> bestMoves = new ArrayList<Move>();
         double price = -inf;
         double tempPrice;
-        totalTimeForPossibleMoves = 0;
-        numberOftimesforPossibleMoves = 0;
-        totalTimeForEvaluation = 0;
-        numberOftimesforEvaluation = 0;
 
         if (posMoves.size() == 1) {
             return posMoves.get(0);
@@ -127,7 +116,6 @@ public class MI {
     private final int midgameEnd = 7;
 
     private double evaluation(int turn) {
-        sW.reset();
         double valueOfBoard = 0;
 
         int state = gameState();
@@ -162,8 +150,6 @@ public class MI {
 
         valueOfBoard +=  pieceDifferenceFactor
                 * ((ownPieces.size() / oppPieces.size()) - 1);
-        totalTimeForEvaluation += sW.elapsed();
-        numberOftimesforEvaluation++;
         return valueOfBoard;
     }
 
@@ -270,7 +256,6 @@ public class MI {
     //-1 = human, 1 = robot
     private List<Move> possibleMoves(int moveForSide) throws
                     InterruptedException, IOException, NoKingLeft {
-        sW.reset();
         List<Move> jumpMovements = new ArrayList<Move>();
         List<Move> movements = new ArrayList<Move>();
         remoteNXT.checkersBoard.updateMoveables();
@@ -327,8 +312,6 @@ public class MI {
         }
         return movements;
          */
-        numberOftimesforPossibleMoves++;
-        totalTimeForPossibleMoves = sW.elapsed();
         if (jumpMovements.size() != 0) {
             return jumpMovements;
         } else {
