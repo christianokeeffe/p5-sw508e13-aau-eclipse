@@ -3,9 +3,7 @@ package com.OriginalFiles;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import custom.Exceptions.NoKingLeft;
-
 
 public class MI {
     public RemoteNXTFunctions remoteNXT;
@@ -13,7 +11,16 @@ public class MI {
     private List<Move> simulatedMoves = new ArrayList<Move>();
     public MI(RemoteNXTFunctions inputRemoteNXT) {
         remoteNXT = inputRemoteNXT;
+        updatePieceList();
 
+    }
+
+    List<Piece> ownPieces = new ArrayList<Piece>();
+    List<Piece> oppPieces = new ArrayList<Piece>();
+
+    private void updatePieceList() {
+        ownPieces.clear();
+        oppPieces.clear();
         for (Field[] f: remoteNXT.checkersBoard.myBoard) {
             for (Field q: f) {
                 if (!q.isEmpty()) {
@@ -27,20 +34,16 @@ public class MI {
         }
     }
 
-
-    List<Piece> ownPieces = new ArrayList<Piece>();
-    List<Piece> oppPieces = new ArrayList<Piece>();
-
     /* ------------------------------------------------------------------  *
-    /* MI starts */
+    /* MI brain starts */
 
     public final Move lookForBestMove() throws NoKingLeft, IOException,
                                          InterruptedException {
+        updatePieceList();
         List<Move> posMoves = possibleMoves(1);
         List<Move> bestMoves = new ArrayList<Move>();
         double price = -inf;
         double tempPrice;
-
 
         if (posMoves.size() == 1) {
             return posMoves.get(0);
@@ -60,17 +63,6 @@ public class MI {
                 bestMoves.add(move);
             }
         }
-        /*
-        LCD.clear();
-        LCD.drawString("E TT: " + totalTimeForEvaluation, 0, 0);
-        LCD.drawString("E N: " + numberOftimesforEvaluation, 0, 1);
-        LCD.refresh();
-        Button.waitForAnyPress();
-        LCD.clear();
-        LCD.drawString("P TT: " + totalTimeForPossibleMoves, 0, 0);
-        LCD.drawString("P N: " + numberOftimesforPossibleMoves, 0, 1);
-        LCD.refresh();
-        Button.waitForAnyPress();*/
         return bestMoves.get((int) (Math.random() * (bestMoves.size() - 1)));
     }
 
@@ -91,7 +83,7 @@ public class MI {
             simulateMove(move);
             double newPrice = -negaMax(depth - 1, -turn, -beta, -alpha);
             revertMove();
-            
+
             bestValue = max(bestValue, newPrice);
             alpha = max(alpha, newPrice);
             if (alpha >= beta) {
@@ -199,13 +191,6 @@ public class MI {
         }
     }
 
-    private void revertAllMoves() throws NoKingLeft, IOException {
-        int stop = simulatedMoves.size();
-        for (int i = 0; i < stop; i++) {
-            revertMove();
-        }
-    }
-
     private void revertMove() throws NoKingLeft, IOException {
 
         if (simulatedMoves.size() != 0) {
@@ -295,22 +280,7 @@ public class MI {
                 }
             }
         }
-        /*
-        remoteNXT.checkersBoard.sortListOfMoves(movements);
-        boolean mustJump = false;
-        if (movements.size() != 0) {
-            mustJump = movements.get(0).isJump();
-            if (mustJump) {
-                for (int i = 0; movements.size() > i; i++) {
-                    if (!movements.get(i).isJump()) {
-                        movements.remove(i);
-                        i--;
-                    }
-                }
-            }
-        }
-        return movements;
-         */
+
         if (jumpMovements.size() != 0) {
             return jumpMovements;
         } else {
