@@ -13,7 +13,6 @@ public class RemoteNXTFunctions {
     }
     public void resetMotors() {
         analyzeresetMotorsTestVariable = true;
-        
     }
 
     public void trashPieceOnField(Field field) {
@@ -54,6 +53,37 @@ public class RemoteNXTFunctions {
             }
         }
         else {
+            // made to reset totalAnalyzeRuns
+            if(analyzeTestVariable == 10) {
+                if(x == 3 && y == 2)
+                {
+                    output.setColor(' ');
+                }
+                else if(x == 4 && y == 1)
+                {
+                    output.setColor('g');
+                } else if (checkersBoard.myBoard[x][y].getPieceOnField() != null) {
+                    output.setColor(checkersBoard.myBoard[x][y].getPieceOnField().color);
+                } else {
+                    output.setColor(' ');
+                }
+            }
+            // made to reset totalAnalyzeRuns
+            if(analyzeTestVariable == 11) {
+                if(x == 3 && y == 2)
+                {
+                    output.setColor('g');
+                }
+                else if(x == 4 && y == 1)
+                {
+                    output.setColor(' ');
+                } else if (checkersBoard.myBoard[x][y].getPieceOnField() != null) {
+                    output.setColor(checkersBoard.myBoard[x][y].getPieceOnField().color);
+                } else {
+                    output.setColor(' ');
+                }
+            }
+
             if(analyzeTestVariable == 1) {
                 if(x == 1 && y == 4)
                 {
@@ -97,6 +127,50 @@ public class RemoteNXTFunctions {
             else if (analyzeTestVariable == 4) {
                 if(x == 0 && y == 1) {
                     output.setColor('w');
+                } else if (checkersBoard.myBoard[x][y].getPieceOnField() != null) {
+                    output.setColor(checkersBoard.myBoard[x][y].getPieceOnField().color);
+                } else {
+                    output.setColor(' ');
+                }
+            }
+            else if (analyzeTestVariable == 5) {
+                if(x == 5 && y == 4) {
+                    output.setColor(' ');
+                } else if(x == 4 && y == 3) {
+                    output.setColor('g');
+                } else if (checkersBoard.myBoard[x][y].getPieceOnField() != null) {
+                    output.setColor(checkersBoard.myBoard[x][y].getPieceOnField().color);
+                } else {
+                    output.setColor(' ');
+                }
+            }
+            else if (analyzeTestVariable == 6) {
+                if(x == 5 && y == 4) {
+                    output.setColor(' ');
+                } else if(x == 6 && y == 3) {
+                    output.setColor('g');
+                } else if (checkersBoard.myBoard[x][y].getPieceOnField() != null) {
+                    output.setColor(checkersBoard.myBoard[x][y].getPieceOnField().color);
+                } else {
+                    output.setColor(' ');
+                }
+            }
+            else if (analyzeTestVariable == 7) {
+                if(x == 5 && y == 4) {
+                    output.setColor(' ');
+                } else if(x == 4 && y == 5) {
+                    output.setColor('g');
+                } else if (checkersBoard.myBoard[x][y].getPieceOnField() != null) {
+                    output.setColor(checkersBoard.myBoard[x][y].getPieceOnField().color);
+                } else {
+                    output.setColor(' ');
+                }
+            }
+            else if (analyzeTestVariable == 8) {
+                if(x == 5 && y == 4) {
+                    output.setColor(' ');
+                } else if(x == 6 && y == 5) {
+                    output.setColor('g');
                 } else if (checkersBoard.myBoard[x][y].getPieceOnField() != null) {
                     output.setColor(checkersBoard.myBoard[x][y].getPieceOnField().color);
                 } else {

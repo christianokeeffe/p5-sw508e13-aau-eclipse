@@ -151,41 +151,68 @@ public class AnalyzeTest extends FunktionForTesting {
     // test for to see if checkMotorCalibration will work ??? 
     @Test
     public final void testCheckMotorCalibration() throws InterruptedException, IOException, NoKingLeft, IllegalMove {
+        resetTotalAnalyzeRuns();
         emptyBoard();
-        checkersBoard.myBoard[2][5].setPieceOnField(producePiece(2, 5, 'w',false));
-        checkersBoard.myBoard[4][3].setPieceOnField(producePiece(4, 3, 'r',false));
-        
-        remote.analyzeresetMotorsTestVariable = false;
-        for(int i = 0; remote.analyzeresetMotorsTestVariable; i++) {
-            checkersBoard.analyzeFunctions.analyzeBoard();
-        }
-        remote.analyzeresetMotorsTestVariable = false;
-        
-        for(int i = 1 ; i <= 10; i++) {
+        checkersBoard.myBoard[3][2].setPieceOnField(producePiece(2, 3, 'g',true));
+        checkersBoard.myBoard[5][4].setPieceOnField(producePiece(5, 4, 'b',true));
+        checkersBoard.myBoard[3][2].getPieceOnField().canJump = false;
+        checkersBoard.myBoard[5][4].getPieceOnField().canJump = false;
+        boolean change = true;
+        // need to run 11 times 10 times for getting totalAnalyzeRuns to 10 and one more for calling motorCalibration
+        for(int i = 0 ; i <= 10; i++) {
+            if(change) {
+                remote.analyzeTestVariable = 10;
+                change = false;
+            }
+            else  {
+                remote.analyzeTestVariable = 11;
+                change = true;
+            }
             checkersBoard.analyzeFunctions.analyzeBoard();
         }
         // see if a Variable in checkMotorCalibration is set to true
         assertTrue(remote.analyzeresetMotorsTestVariable);
+        remote.analyzeTestVariable = 0;
+        resetBoard();
+        // -----------------------------------------------------------------------------------------
+        // now to see if it will call motorCalibration if there only is called 9 times
+        resetTotalAnalyzeRuns();
+        emptyBoard();
+        checkersBoard.myBoard[3][2].setPieceOnField(producePiece(2, 3, 'g',true));
+        checkersBoard.myBoard[5][4].setPieceOnField(producePiece(5, 4, 'b',true));
+        checkersBoard.myBoard[3][2].getPieceOnField().canJump = false;
+        checkersBoard.myBoard[5][4].getPieceOnField().canJump = false;
+        change = true;
+        // need to run 10 times 9 times for getting totalAnalyzeRuns to 9 and one more for calling motorCalibration
+        for(int i = 0 ; i <= 9; i++) {
+            if(change) {
+                remote.analyzeTestVariable = 10;
+                change = false;
+            }
+            else  {
+                remote.analyzeTestVariable = 11;
+                change = true;
+            }
+            checkersBoard.analyzeFunctions.analyzeBoard();
+        }
+        // see if a Variable in checkMotorCalibration is set to true
+        assertTrue(!remote.analyzeresetMotorsTestVariable);
+        remote.analyzeTestVariable = 0;
         resetBoard();
     }
     
     // test for to see if countDownToPanic will work ??? 
     @Test
     public final void testCountDownToPanic() throws InterruptedException, IOException, NoKingLeft, IllegalMove {
+        resetTotalAnalyzeRuns();
         emptyBoard();
         checkersBoard.myBoard[2][5].setPieceOnField(producePiece(2, 5, 'w',false));
         checkersBoard.myBoard[4][3].setPieceOnField(producePiece(4, 3, 'r',false));
         
-        remote.analyzeresetMotorsTestVariable = false;
-        for( ; remote.analyzeresetMotorsTestVariable; ) {
-            checkersBoard.analyzeFunctions.analyzeBoard();
-        }
-        remote.analyzeresetMotorsTestVariable = false;
-        
         remote.analyzeTestVariable = 3;
         checkersBoard.analyzeFunctions.analyzeBoard();
         remote.analyzeTestVariable = 0;
-        // see if a Variable in checkMotorCalibration is set to true
+        // see if the variable in resetMotors is set to true
         assertTrue(remote.analyzeresetMotorsTestVariable);
         resetBoard();
     }
@@ -224,10 +251,35 @@ public class AnalyzeTest extends FunktionForTesting {
     
     //test for checkMove
     @Test
-    public final void testCheckMove() {
-        emptyBoard();
-        checkersBoard.myBoard[0][5].setPieceOnField(producePiece(0, 5, 'g',true));
-        checkersBoard.myBoard[3][4].setPieceOnField(producePiece(3, 4, 'b',true));
+    public final void testCheckMove() throws InterruptedException, IOException, NoKingLeft, IllegalMove {
+        
+        // test the first direction
+        assertTrue(!helpToTestCheckMove(5));
+        
+        // test the Second direction
+        assertTrue(helpToTestCheckMove(6));
+        
+        //If king, also check backwards
+        assertTrue(helpToTestCheckMove(7));
+        
+        //If king, also check backwards 2.
+        assertTrue(helpToTestCheckMove(8));
+        
+        resetBoard();
     }
-    
+    public boolean helpToTestCheckMove(int changeVariable) throws InterruptedException, IOException, NoKingLeft, IllegalMove
+    {
+        resetTotalAnalyzeRuns();
+        emptyBoard();
+        checkersBoard.myBoard[2][3].setPieceOnField(producePiece(2, 3, 'b',true));
+        checkersBoard.myBoard[5][4].setPieceOnField(producePiece(5, 4, 'g',true));
+        checkersBoard.myBoard[2][3].getPieceOnField().canJump = false;
+        checkersBoard.myBoard[5][4].getPieceOnField().canJump = false;        
+
+        remote.analyzeTestVariable = changeVariable;
+        checkersBoard.analyzeFunctions.analyzeBoard();
+        remote.analyzeTestVariable = 0;
+        
+        return !remote.analyzeresetMotorsTestVariable;
+    }
 }
