@@ -20,12 +20,14 @@ public class PieceTest extends FunktionForTesting{
         // TODO Auto-generated constructor stub
     }
 
+    //latex start unittestxy
     @Test
     public final void testGetSetXY() {
         testPiece.setXY(4, 5);
         assertEquals(4, testPiece.getX());
         assertEquals(5, testPiece.getY());
     }
+    //latex end
     
     @Test
     public final void testIsOnBoard() {
