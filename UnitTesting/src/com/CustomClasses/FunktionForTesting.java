@@ -7,6 +7,9 @@ import com.OriginalFiles.Field;
 import com.OriginalFiles.Piece;
 import com.OriginalFiles.RemoteNXTFunctions;
 
+import custom.Exceptions.IllegalMove;
+import custom.Exceptions.NoKingLeft;
+
 public class FunktionForTesting {
     protected RemoteNXTFunctions remote;
     protected Board checkersBoard;
@@ -63,6 +66,30 @@ public class FunktionForTesting {
         temp.allowedField = true;
         
         return temp;
+    }
+    // be careful with this function, call it before doing anything to the board
+    protected void resetTotalAnalyzeRuns() throws InterruptedException, IOException, NoKingLeft, IllegalMove {
+        boolean i = true;
+        emptyBoard();
+        checkersBoard.myBoard[3][2].setPieceOnField(producePiece(2, 3, 'g',true));
+        checkersBoard.myBoard[5][4].setPieceOnField(producePiece(5, 4, 'b',true));
+        checkersBoard.myBoard[3][2].getPieceOnField().canJump = false;
+        checkersBoard.myBoard[5][4].getPieceOnField().canJump = false;
+        
+        remote.analyzeresetMotorsTestVariable = false;
+        for( ; remote.analyzeresetMotorsTestVariable; ) {
+            if(i) {
+                remote.analyzeTestVariable = 10;
+                i = false;
+            }
+            else  {
+                remote.analyzeTestVariable = 11;
+                i = true;
+            }
+            checkersBoard.analyzeFunctions.analyzeBoard();
+        }
+        remote.analyzeresetMotorsTestVariable = false;
+        remote.analyzeTestVariable = 0;
     }
     
     protected void resetBoard() throws InterruptedException, IOException{
