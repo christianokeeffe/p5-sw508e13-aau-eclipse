@@ -100,9 +100,9 @@ public class MI {
 
     private final int pieceDifferenceFactor = 4;
 
-    private final int isMidgame = 1;
+    private final int isMidGame = 1;
     private final int isEndgame = 2;
-    private final int midgameEnd = 7;
+    private final int midGameEnd = 7;
 
     private double evaluation(int turn) {
         double valueOfBoard = 0;
@@ -143,8 +143,8 @@ public class MI {
     }
 
     private int gameState() {
-        if (max(ownPieces.size(), oppPieces.size()) >= midgameEnd) {
-            return isMidgame;
+        if (max(ownPieces.size(), oppPieces.size()) >= midGameEnd) {
+            return isMidGame;
         }
         return isEndgame;
     }
