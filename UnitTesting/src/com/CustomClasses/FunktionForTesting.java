@@ -77,13 +77,13 @@ public class FunktionForTesting {
         checkersBoard.myBoard[5][4].getPieceOnField().canJump = false;
         
         remote.analyzeresetMotorsTestVariable = false;
-        for( ; remote.analyzeresetMotorsTestVariable; ) {
+        for( ; !remote.analyzeresetMotorsTestVariable; ) {
             if(i) {
-                remote.analyzeTestVariable = 10;
+                remote.analyzeTestVariable = 100;
                 i = false;
             }
             else  {
-                remote.analyzeTestVariable = 11;
+                remote.analyzeTestVariable = 101;
                 i = true;
             }
             checkersBoard.analyzeFunctions.analyzeBoard();
