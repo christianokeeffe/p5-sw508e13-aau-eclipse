@@ -7,8 +7,8 @@ public class Piece {
     public boolean isCrowned = false;
     private double currentValue = 0;
     private int calculatedGameState = 0;
-    private final int isMidgame = 1;
-    private final int isEndgame = 2;
+    private final int isMidGame = 1;
+    private final int isEndGame = 2;
     private Board checkersBoard;
 
     private final int valueOfPiece = 10;
