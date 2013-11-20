@@ -45,7 +45,7 @@ public class Piece {
     }
 
     public final double priceForPiece(int gameState) {
-        if (calculatedGameState != gameState || gameState == isEndgame) {
+        if (calculatedGameState != gameState || gameState == isEndGame) {
                 updatePrice(gameState);
         }
         return currentValue;
@@ -59,18 +59,18 @@ public class Piece {
     }
 
     private void updatePriceMidgame() {
-        updatePrice(isMidgame);
+        updatePrice(isMidGame);
     }
 
     private void updatePrice(int gameState) {
         if (isOnBoard()) {
             calculatedGameState = gameState;
             int returnValue = valueOfPiece;
-            if (gameState == isMidgame) {
+            if (gameState == isMidGame) {
                 returnValue += middleBonus
                         - min(Math.abs(3 - x), Math.abs(4 - x));
             }
-            if (gameState == isEndgame) {
+            if (gameState == isEndGame) {
                 returnValue += closeBonus - closestPiece();
             }
 
@@ -79,7 +79,7 @@ public class Piece {
                             && y == 7)
                     || (checkersBoard.checkAllegiance(this, false)
                             && y == 0))) {
-                if (gameState == isMidgame) {
+                if (gameState == isMidGame) {
                     returnValue += backlineBonus / 2;
                 }
                 returnValue += backlineBonus / 2;
