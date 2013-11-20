@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><TestSessionContainer xmlns="http://www.codecover.org/xml/testsession-container" Date="1384941908908" TestSessionContainerId="7a6bdb62-be69-4b76-9378-1349aab70762" version="1.0">
+<?xml version="1.0" encoding="UTF-8"?><TestSessionContainer xmlns="http://www.codecover.org/xml/testsession-container" Date="1384941933359" TestSessionContainerId="6ee8fda4-4b0f-4dc3-9cbe-7e22cb1b0c43" version="1.0">
 <SrcFileList>
 <SrcFile Content="package com.OriginalFiles;&#13;&#10;&#13;&#10;import com.CustomClasses.Color;&#13;&#10;import java.io.IOException;&#13;&#10;&#13;&#10;public class RemoteNXTFunctions {&#13;&#10;    public Board checkersBoard;&#13;&#10;    public int analyzeTestVariable = 0;&#13;&#10;    public boolean analyzeresetMotorsTestVariable = false;&#13;&#10;&#13;&#10;    public RemoteNXTFunctions() throws InterruptedException, IOException {&#13;&#10;        checkersBoard = new Board(this);&#13;&#10;    }&#13;&#10;    public void resetMotors() {&#13;&#10;        analyzeresetMotorsTestVariable = true;&#13;&#10;        &#13;&#10;    }&#13;&#10;&#13;&#10;    public void trashPieceOnField(Field field) {&#13;&#10;        // TODO Auto-generated method stub&#13;&#10;        &#13;&#10;    }&#13;&#10;&#13;&#10;    public void doMove(Move move) {&#13;&#10;        // TODO Auto-generated method stub&#13;&#10;        &#13;&#10;    }&#13;&#10;&#13;&#10;    public void waitForRedButton() {&#13;&#10;        // TODO Auto-generated method stub&#13;&#10;&#13;&#10;    }&#13;&#10;&#13;&#10;    public void initColorSensor() {&#13;&#10;        // TODO Auto-generated method stub&#13;&#10;&#13;&#10;    }&#13;&#10;&#13;&#10;    public final Color getColorOnField(int x, int y) {&#13;&#10;        Color output = new Color();&#13;&#10;        &#13;&#10;        if(analyzeTestVariable == 0) {&#13;&#10;            if(x == 0 &amp;&amp; y == 1)&#13;&#10;            {&#13;&#10;                output.setColor('r');&#13;&#10;            } else if (x == 2 &amp;&amp; y == 5) {&#13;&#10;                output.setColor(' ');&#13;&#10;            } else if (x == 1 &amp;&amp; y == 4) {&#13;&#10;                output.setColor('w');&#13;&#10;            } else if (checkersBoard.myBoard[x][y].getPieceOnField() != null) {&#13;&#10;                output.setColor(checkersBoard.myBoard[x][y].getPieceOnField().color);&#13;&#10;            } else {&#13;&#10;                output.setColor(' ');&#13;&#10;            }&#13;&#10;        }&#13;&#10;        else {&#13;&#10;            if(analyzeTestVariable == 1) {&#13;&#10;                if(x == 1 &amp;&amp; y == 4)&#13;&#10;                {&#13;&#10;                    output.setColor('w');&#13;&#10;                }&#13;&#10;                else if(x == 0 &amp;&amp; y == 5)&#13;&#10;                {&#13;&#10;                    output.setColor(' ');&#13;&#10;                } else if (checkersBoard.myBoard[x][y].getPieceOnField() != null) {&#13;&#10;                    output.setColor(checkersBoard.myBoard[x][y].getPieceOnField().color);&#13;&#10;                } else {&#13;&#10;                    output.setColor(' ');&#13;&#10;                }&#13;&#10;            }&#13;&#10;            else if (analyzeTestVariable == 2) {&#13;&#10;                if(x == 2 &amp;&amp; y == 5)&#13;&#10;                {&#13;&#10;                    output.setColor(' ');&#13;&#10;                }&#13;&#10;                else if(x == 3 &amp;&amp; y == 4) {&#13;&#10;                    output.setColor(' ');&#13;&#10;                }&#13;&#10;                else if(x == 4 &amp;&amp; y == 3)&#13;&#10;                {&#13;&#10;                    output.setColor('w');&#13;&#10;                } else if (checkersBoard.myBoard[x][y].getPieceOnField() != null) {&#13;&#10;                    output.setColor(checkersBoard.myBoard[x][y].getPieceOnField().color);&#13;&#10;                } else {&#13;&#10;                    output.setColor(' ');&#13;&#10;                }&#13;&#10;            }&#13;&#10;            else if (analyzeTestVariable == 3) {&#13;&#10;                if(x == 2 &amp;&amp; y == 3) {&#13;&#10;                    output.setColor(' ');&#13;&#10;                } else if (checkersBoard.myBoard[x][y].getPieceOnField() != null) {&#13;&#10;                    output.setColor(checkersBoard.myBoard[x][y].getPieceOnField().color);&#13;&#10;                } else {&#13;&#10;                    output.setColor(' ');&#13;&#10;                }&#13;&#10;            }&#13;&#10;            else if (analyzeTestVariable == 4) {&#13;&#10;                if(x == 0 &amp;&amp; y == 1) {&#13;&#10;                    output.setColor('w');&#13;&#10;                } else if (checkersBoard.myBoard[x][y].getPieceOnField() != null) {&#13;&#10;                    output.setColor(checkersBoard.myBoard[x][y].getPieceOnField().color);&#13;&#10;                } else {&#13;&#10;                    output.setColor(' ');&#13;&#10;                }&#13;&#10;            }&#13;&#10;        }&#13;&#10;        &#13;&#10;        return output;&#13;&#10;    }&#13;&#10;&#13;&#10;}&#13;&#10;" Filename="RemoteNXTFunctions.java" Intrnl_Id="1"/>
 <SrcFile Content="package com.OriginalFiles;&#13;&#10;&#13;&#10;public class Piece {&#13;&#10;    private int x = -1, y = -1;&#13;&#10;    public char color;&#13;&#10;    public boolean isMoveable = false;&#13;&#10;    public boolean canJump = false;&#13;&#10;    public boolean isCrowned = false;&#13;&#10;    private double currentValue = 0;&#13;&#10;    private int calculatedGameState = 0;&#13;&#10;    private final int isMidgame = 1;&#13;&#10;    private final int isEndgame = 2;&#13;&#10;    private Board checkersBoard;&#13;&#10;&#13;&#10;    private final int valueOfPiece = 10;&#13;&#10;    private final int middleBonus = 3;&#13;&#10;    private final int closeBonus = 4;&#13;&#10;    private final int backlineBonus = 7;&#13;&#10;    private final int kingBonus = 15;&#13;&#10;&#13;&#10;    public Piece(Board input) {&#13;&#10;        checkersBoard = input;&#13;&#10;    }&#13;&#10;&#13;&#10;    public final int getY() {&#13;&#10;        return y;&#13;&#10;    }&#13;&#10;&#13;&#10;    public final int getX() {&#13;&#10;        return x;&#13;&#10;    }&#13;&#10;&#13;&#10;    public final void setXY(int inputX, int inputY) {&#13;&#10;        x = inputX;&#13;&#10;        y = inputY;&#13;&#10;        updatePriceMidgame();&#13;&#10;    }&#13;&#10;&#13;&#10;    private boolean isOnBoard() {&#13;&#10;        if (checkersBoard.checkBounds(x, y)) {&#13;&#10;            return true;&#13;&#10;        } else {&#13;&#10;            currentValue = 0;&#13;&#10;            return false;&#13;&#10;        }&#13;&#10;    }&#13;&#10;&#13;&#10;    public final double priceForPiece(int gameState) {&#13;&#10;        if (calculatedGameState != gameState || gameState == isEndgame) {&#13;&#10;                updatePrice(gameState);&#13;&#10;        }&#13;&#10;        return currentValue;&#13;&#10;    }&#13;&#10;&#13;&#10;    private int min(int a, int b) {&#13;&#10;        if (a &lt; b) {&#13;&#10;            return a;&#13;&#10;        }&#13;&#10;        return b;&#13;&#10;    }&#13;&#10;&#13;&#10;    private void updatePriceMidgame() {&#13;&#10;        updatePrice(isMidgame);&#13;&#10;    }&#13;&#10;&#13;&#10;    private void updatePrice(int gameState) {&#13;&#10;        if (isOnBoard()) {&#13;&#10;            calculatedGameState = gameState;&#13;&#10;            int returnValue = valueOfPiece;&#13;&#10;            if (gameState == isMidgame) {&#13;&#10;                returnValue += middleBonus&#13;&#10;                        - min(Math.abs(3 - x), Math.abs(4 - x));&#13;&#10;            }&#13;&#10;            if (gameState == isEndgame) {&#13;&#10;                returnValue += closeBonus - closestPiece();&#13;&#10;            }&#13;&#10;&#13;&#10;            if (!isCrowned&#13;&#10;                    &amp;&amp; ((checkersBoard.checkAllegiance(this, true)&#13;&#10;                            &amp;&amp; y == 7)&#13;&#10;                    || (checkersBoard.checkAllegiance(this, false)&#13;&#10;                            &amp;&amp; y == 0))) {&#13;&#10;                if (gameState == isMidgame) {&#13;&#10;                    returnValue += backlineBonus / 2;&#13;&#10;                }&#13;&#10;                returnValue += backlineBonus / 2;&#13;&#10;            }&#13;&#10;            if (isCrowned) {&#13;&#10;                returnValue += kingBonus;&#13;&#10;            }&#13;&#10;            currentValue = returnValue;&#13;&#10;        }&#13;&#10;    }&#13;&#10;&#13;&#10;    private int closestPiece() {&#13;&#10;        boolean found = false;&#13;&#10;        int distance = 0;&#13;&#10;        while (!found &amp;&amp; distance &lt; 8) {&#13;&#10;            distance += 1;&#13;&#10;            OUTERMOST: for (int i = -distance; i &lt; 1 + distance; i++) {&#13;&#10;                for (int j = -distance; j &lt; 1 + distance; j++) {&#13;&#10;                    if (checkersBoard.&#13;&#10;                            checkBounds(x + i, y + j)) {&#13;&#10;                        if (checkersBoard.checkAllegiance(&#13;&#10;                                checkersBoard.&#13;&#10;                                myBoard[x + i][y + j], true)) {&#13;&#10;                            found = true;&#13;&#10;                            break OUTERMOST;&#13;&#10;                        }&#13;&#10;                    }&#13;&#10;                }&#13;&#10;            }&#13;&#10;        }&#13;&#10;        return distance;&#13;&#10;    }&#13;&#10;}" Filename="Piece.java" Intrnl_Id="2"/>
@@ -46,16 +46,16 @@
 <HierarchyLvlType EnglishName="default package" IntrnlName="default package" Intrnl_Id="15"/>
 </HierarchyLvlTypeList>
 <MASTRoot>
-<HierarchyLvl HierarchyLvlId="403" HierarchyLvlTypeId="15" Intrnl_Id="16" Name="default package">
+<HierarchyLvl HierarchyLvlId="603" HierarchyLvlTypeId="15" Intrnl_Id="16" Name="default package">
 <Header/>
 <LocList/>
-<HierarchyLvl HierarchyLvlId="402" HierarchyLvlTypeId="12" Intrnl_Id="17" Name="com">
+<HierarchyLvl HierarchyLvlId="602" HierarchyLvlTypeId="12" Intrnl_Id="17" Name="com">
 <Header/>
 <LocList/>
-<HierarchyLvl HierarchyLvlId="401" HierarchyLvlTypeId="12" Intrnl_Id="18" Name="OriginalFiles">
+<HierarchyLvl HierarchyLvlId="601" HierarchyLvlTypeId="12" Intrnl_Id="18" Name="OriginalFiles">
 <Header/>
 <LocList/>
-<HierarchyLvl HierarchyLvlId="311" HierarchyLvlTypeId="13" Intrnl_Id="19" Name="RemoteNXTFunctions">
+<HierarchyLvl HierarchyLvlId="511" HierarchyLvlTypeId="13" Intrnl_Id="19" Name="RemoteNXTFunctions">
 <Header>
 <Loc EndOffset="125" SrcFileId="1" StartOffset="94"/>
 </Header>
@@ -78,7 +78,7 @@
 </LocList>
 </BasicStmnt>
 </StmntSeq>
-<HierarchyLvl HierarchyLvlId="304" HierarchyLvlTypeId="14" Intrnl_Id="23" Name="RemoteNXTFunctions">
+<HierarchyLvl HierarchyLvlId="504" HierarchyLvlTypeId="14" Intrnl_Id="23" Name="RemoteNXTFunctions">
 <Header>
 <Loc EndOffset="337" SrcFileId="1" StartOffset="269"/>
 </Header>
@@ -96,7 +96,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="305" HierarchyLvlTypeId="14" Intrnl_Id="26" Name="resetMotors">
+<HierarchyLvl HierarchyLvlId="505" HierarchyLvlTypeId="14" Intrnl_Id="26" Name="resetMotors">
 <Header>
 <Loc EndOffset="419" SrcFileId="1" StartOffset="394"/>
 </Header>
@@ -114,7 +114,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="306" HierarchyLvlTypeId="14" Intrnl_Id="29" Name="trashPieceOnField">
+<HierarchyLvl HierarchyLvlId="506" HierarchyLvlTypeId="14" Intrnl_Id="29" Name="trashPieceOnField">
 <Header>
 <Loc EndOffset="536" SrcFileId="1" StartOffset="494"/>
 </Header>
@@ -122,7 +122,7 @@
 <Loc EndOffset="599" SrcFileId="1" StartOffset="494"/>
 </LocList>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="307" HierarchyLvlTypeId="14" Intrnl_Id="30" Name="doMove">
+<HierarchyLvl HierarchyLvlId="507" HierarchyLvlTypeId="14" Intrnl_Id="30" Name="doMove">
 <Header>
 <Loc EndOffset="636" SrcFileId="1" StartOffset="607"/>
 </Header>
@@ -130,7 +130,7 @@
 <Loc EndOffset="699" SrcFileId="1" StartOffset="607"/>
 </LocList>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="308" HierarchyLvlTypeId="14" Intrnl_Id="31" Name="waitForRedButton">
+<HierarchyLvl HierarchyLvlId="508" HierarchyLvlTypeId="14" Intrnl_Id="31" Name="waitForRedButton">
 <Header>
 <Loc EndOffset="737" SrcFileId="1" StartOffset="707"/>
 </Header>
@@ -138,7 +138,7 @@
 <Loc EndOffset="792" SrcFileId="1" StartOffset="707"/>
 </LocList>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="309" HierarchyLvlTypeId="14" Intrnl_Id="32" Name="initColorSensor">
+<HierarchyLvl HierarchyLvlId="509" HierarchyLvlTypeId="14" Intrnl_Id="32" Name="initColorSensor">
 <Header>
 <Loc EndOffset="829" SrcFileId="1" StartOffset="800"/>
 </Header>
@@ -146,7 +146,7 @@
 <Loc EndOffset="884" SrcFileId="1" StartOffset="800"/>
 </LocList>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="310" HierarchyLvlTypeId="14" Intrnl_Id="33" Name="getColorOnField">
+<HierarchyLvl HierarchyLvlId="510" HierarchyLvlTypeId="14" Intrnl_Id="33" Name="getColorOnField">
 <Header>
 <Loc EndOffset="940" SrcFileId="1" StartOffset="892"/>
 </Header>
@@ -1106,7 +1106,7 @@
 </StmntSeq>
 </HierarchyLvl>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="322" HierarchyLvlTypeId="13" Intrnl_Id="217" Name="Piece">
+<HierarchyLvl HierarchyLvlId="522" HierarchyLvlTypeId="13" Intrnl_Id="217" Name="Piece">
 <Header>
 <Loc EndOffset="48" SrcFileId="2" StartOffset="30"/>
 </Header>
@@ -1195,7 +1195,7 @@
 </LocList>
 </BasicStmnt>
 </StmntSeq>
-<HierarchyLvl HierarchyLvlId="312" HierarchyLvlTypeId="14" Intrnl_Id="232" Name="Piece">
+<HierarchyLvl HierarchyLvlId="512" HierarchyLvlTypeId="14" Intrnl_Id="232" Name="Piece">
 <Header>
 <Loc EndOffset="650" SrcFileId="2" StartOffset="625"/>
 </Header>
@@ -1213,7 +1213,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="313" HierarchyLvlTypeId="14" Intrnl_Id="235" Name="getY">
+<HierarchyLvl HierarchyLvlId="513" HierarchyLvlTypeId="14" Intrnl_Id="235" Name="getY">
 <Header>
 <Loc EndOffset="722" SrcFileId="2" StartOffset="699"/>
 </Header>
@@ -1231,7 +1231,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="314" HierarchyLvlTypeId="14" Intrnl_Id="238" Name="getX">
+<HierarchyLvl HierarchyLvlId="514" HierarchyLvlTypeId="14" Intrnl_Id="238" Name="getX">
 <Header>
 <Loc EndOffset="781" SrcFileId="2" StartOffset="758"/>
 </Header>
@@ -1249,7 +1249,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="315" HierarchyLvlTypeId="14" Intrnl_Id="241" Name="setXY">
+<HierarchyLvl HierarchyLvlId="515" HierarchyLvlTypeId="14" Intrnl_Id="241" Name="setXY">
 <Header>
 <Loc EndOffset="864" SrcFileId="2" StartOffset="817"/>
 </Header>
@@ -1279,7 +1279,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="316" HierarchyLvlTypeId="14" Intrnl_Id="246" Name="isOnBoard">
+<HierarchyLvl HierarchyLvlId="516" HierarchyLvlTypeId="14" Intrnl_Id="246" Name="isOnBoard">
 <Header>
 <Loc EndOffset="981" SrcFileId="2" StartOffset="954"/>
 </Header>
@@ -1345,7 +1345,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="317" HierarchyLvlTypeId="14" Intrnl_Id="258" Name="priceForPiece">
+<HierarchyLvl HierarchyLvlId="517" HierarchyLvlTypeId="14" Intrnl_Id="258" Name="priceForPiece">
 <Header>
 <Loc EndOffset="1207" SrcFileId="2" StartOffset="1159"/>
 </Header>
@@ -1410,7 +1410,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="318" HierarchyLvlTypeId="14" Intrnl_Id="271" Name="min">
+<HierarchyLvl HierarchyLvlId="518" HierarchyLvlTypeId="14" Intrnl_Id="271" Name="min">
 <Header>
 <Loc EndOffset="1410" SrcFileId="2" StartOffset="1381"/>
 </Header>
@@ -1465,7 +1465,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="319" HierarchyLvlTypeId="14" Intrnl_Id="282" Name="updatePriceMidgame">
+<HierarchyLvl HierarchyLvlId="519" HierarchyLvlTypeId="14" Intrnl_Id="282" Name="updatePriceMidgame">
 <Header>
 <Loc EndOffset="1535" SrcFileId="2" StartOffset="1502"/>
 </Header>
@@ -1483,7 +1483,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="320" HierarchyLvlTypeId="14" Intrnl_Id="285" Name="updatePrice">
+<HierarchyLvl HierarchyLvlId="520" HierarchyLvlTypeId="14" Intrnl_Id="285" Name="updatePrice">
 <Header>
 <Loc EndOffset="1624" SrcFileId="2" StartOffset="1585"/>
 </Header>
@@ -1774,7 +1774,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="321" HierarchyLvlTypeId="14" Intrnl_Id="346" Name="closestPiece">
+<HierarchyLvl HierarchyLvlId="521" HierarchyLvlTypeId="14" Intrnl_Id="346" Name="closestPiece">
 <Header>
 <Loc EndOffset="2650" SrcFileId="2" StartOffset="2624"/>
 </Header>
@@ -1954,7 +1954,7 @@
 </StmntSeq>
 </HierarchyLvl>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="328" HierarchyLvlTypeId="13" Intrnl_Id="383" Name="Move">
+<HierarchyLvl HierarchyLvlId="528" HierarchyLvlTypeId="13" Intrnl_Id="383" Name="Move">
 <Header>
 <Loc EndOffset="102" SrcFileId="3" StartOffset="85"/>
 </Header>
@@ -1977,7 +1977,7 @@
 </LocList>
 </BasicStmnt>
 </StmntSeq>
-<HierarchyLvl HierarchyLvlId="323" HierarchyLvlTypeId="14" Intrnl_Id="387" Name="Move">
+<HierarchyLvl HierarchyLvlId="523" HierarchyLvlTypeId="14" Intrnl_Id="387" Name="Move">
 <Header>
 <Loc EndOffset="336" SrcFileId="3" StartOffset="278"/>
 </Header>
@@ -2019,7 +2019,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="324" HierarchyLvlTypeId="14" Intrnl_Id="394" Name="Move">
+<HierarchyLvl HierarchyLvlId="524" HierarchyLvlTypeId="14" Intrnl_Id="394" Name="Move">
 <Header>
 <Loc EndOffset="604" SrcFileId="3" StartOffset="552"/>
 </Header>
@@ -2043,7 +2043,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="325" HierarchyLvlTypeId="14" Intrnl_Id="398" Name="Move">
+<HierarchyLvl HierarchyLvlId="525" HierarchyLvlTypeId="14" Intrnl_Id="398" Name="Move">
 <Header>
 <Loc EndOffset="707" SrcFileId="3" StartOffset="694"/>
 </Header>
@@ -2067,7 +2067,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="326" HierarchyLvlTypeId="14" Intrnl_Id="402" Name="isJump">
+<HierarchyLvl HierarchyLvlId="526" HierarchyLvlTypeId="14" Intrnl_Id="402" Name="isJump">
 <Header>
 <Loc EndOffset="845" SrcFileId="3" StartOffset="816"/>
 </Header>
@@ -2139,7 +2139,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="327" HierarchyLvlTypeId="14" Intrnl_Id="415" Name="addStep">
+<HierarchyLvl HierarchyLvlId="527" HierarchyLvlTypeId="14" Intrnl_Id="415" Name="addStep">
 <Header>
 <Loc EndOffset="1152" SrcFileId="3" StartOffset="1115"/>
 </Header>
@@ -2158,7 +2158,7 @@
 </StmntSeq>
 </HierarchyLvl>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="339" HierarchyLvlTypeId="13" Intrnl_Id="418" Name="MI">
+<HierarchyLvl HierarchyLvlId="539" HierarchyLvlTypeId="13" Intrnl_Id="418" Name="MI">
 <Header>
 <Loc EndOffset="167" SrcFileId="4" StartOffset="152"/>
 </Header>
@@ -2235,7 +2235,7 @@
 </LocList>
 </BasicStmnt>
 </StmntSeq>
-<HierarchyLvl HierarchyLvlId="329" HierarchyLvlTypeId="14" Intrnl_Id="431" Name="MI">
+<HierarchyLvl HierarchyLvlId="529" HierarchyLvlTypeId="14" Intrnl_Id="431" Name="MI">
 <Header>
 <Loc EndOffset="367" SrcFileId="4" StartOffset="323"/>
 </Header>
@@ -2259,7 +2259,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="330" HierarchyLvlTypeId="14" Intrnl_Id="435" Name="updatePieceList">
+<HierarchyLvl HierarchyLvlId="530" HierarchyLvlTypeId="14" Intrnl_Id="435" Name="updatePieceList">
 <Header>
 <Loc EndOffset="589" SrcFileId="4" StartOffset="559"/>
 </Header>
@@ -2389,7 +2389,7 @@
 </LoopStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="331" HierarchyLvlTypeId="14" Intrnl_Id="460" Name="lookForBestMove">
+<HierarchyLvl HierarchyLvlId="531" HierarchyLvlTypeId="14" Intrnl_Id="460" Name="lookForBestMove">
 <Header>
 <Loc EndOffset="1326" SrcFileId="4" StartOffset="1196"/>
 </Header>
@@ -2588,7 +2588,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="332" HierarchyLvlTypeId="14" Intrnl_Id="498" Name="negaMax">
+<HierarchyLvl HierarchyLvlId="532" HierarchyLvlTypeId="14" Intrnl_Id="498" Name="negaMax">
 <Header>
 <Loc EndOffset="2270" SrcFileId="4" StartOffset="2134"/>
 </Header>
@@ -2743,7 +2743,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="333" HierarchyLvlTypeId="14" Intrnl_Id="528" Name="evaluation">
+<HierarchyLvl HierarchyLvlId="533" HierarchyLvlTypeId="14" Intrnl_Id="528" Name="evaluation">
 <Header>
 <Loc EndOffset="3437" SrcFileId="4" StartOffset="3402"/>
 </Header>
@@ -2930,7 +2930,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="334" HierarchyLvlTypeId="14" Intrnl_Id="561" Name="gameState">
+<HierarchyLvl HierarchyLvlId="534" HierarchyLvlTypeId="14" Intrnl_Id="561" Name="gameState">
 <Header>
 <Loc EndOffset="4386" SrcFileId="4" StartOffset="4363"/>
 </Header>
@@ -2985,7 +2985,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="335" HierarchyLvlTypeId="14" Intrnl_Id="572" Name="max">
+<HierarchyLvl HierarchyLvlId="535" HierarchyLvlTypeId="14" Intrnl_Id="572" Name="max">
 <Header>
 <Loc EndOffset="4580" SrcFileId="4" StartOffset="4542"/>
 </Header>
@@ -3040,7 +3040,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="336" HierarchyLvlTypeId="14" Intrnl_Id="583" Name="simulateMove">
+<HierarchyLvl HierarchyLvlId="536" HierarchyLvlTypeId="14" Intrnl_Id="583" Name="simulateMove">
 <Header>
 <Loc EndOffset="4851" SrcFileId="4" StartOffset="4784"/>
 </Header>
@@ -3228,7 +3228,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="337" HierarchyLvlTypeId="14" Intrnl_Id="620" Name="revertMove">
+<HierarchyLvl HierarchyLvlId="537" HierarchyLvlTypeId="14" Intrnl_Id="620" Name="revertMove">
 <Header>
 <Loc EndOffset="6106" SrcFileId="4" StartOffset="6050"/>
 </Header>
@@ -3576,7 +3576,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="338" HierarchyLvlTypeId="14" Intrnl_Id="690" Name="possibleMoves">
+<HierarchyLvl HierarchyLvlId="538" HierarchyLvlTypeId="14" Intrnl_Id="690" Name="possibleMoves">
 <Header>
 <Loc EndOffset="8182" SrcFileId="4" StartOffset="8059"/>
 </Header>
@@ -3909,7 +3909,7 @@
 </StmntSeq>
 </HierarchyLvl>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="347" HierarchyLvlTypeId="13" Intrnl_Id="756" Name="Field">
+<HierarchyLvl HierarchyLvlId="547" HierarchyLvlTypeId="13" Intrnl_Id="756" Name="Field">
 <Header>
 <Loc EndOffset="48" SrcFileId="5" StartOffset="30"/>
 </Header>
@@ -3932,7 +3932,7 @@
 </LocList>
 </BasicStmnt>
 </StmntSeq>
-<HierarchyLvl HierarchyLvlId="340" HierarchyLvlTypeId="14" Intrnl_Id="760" Name="Field">
+<HierarchyLvl HierarchyLvlId="540" HierarchyLvlTypeId="14" Intrnl_Id="760" Name="Field">
 <Header>
 <Loc EndOffset="300" SrcFileId="5" StartOffset="286"/>
 </Header>
@@ -3940,7 +3940,7 @@
 <Loc EndOffset="304" SrcFileId="5" StartOffset="286"/>
 </LocList>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="341" HierarchyLvlTypeId="14" Intrnl_Id="761" Name="Field">
+<HierarchyLvl HierarchyLvlId="541" HierarchyLvlTypeId="14" Intrnl_Id="761" Name="Field">
 <Header>
 <Loc EndOffset="347" SrcFileId="5" StartOffset="311"/>
 </Header>
@@ -3964,7 +3964,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="342" HierarchyLvlTypeId="14" Intrnl_Id="765" Name="setPieceOnField">
+<HierarchyLvl HierarchyLvlId="542" HierarchyLvlTypeId="14" Intrnl_Id="765" Name="setPieceOnField">
 <Header>
 <Loc EndOffset="589" SrcFileId="5" StartOffset="538"/>
 </Header>
@@ -4024,7 +4024,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="343" HierarchyLvlTypeId="14" Intrnl_Id="777" Name="getPieceOnField">
+<HierarchyLvl HierarchyLvlId="543" HierarchyLvlTypeId="14" Intrnl_Id="777" Name="getPieceOnField">
 <Header>
 <Loc EndOffset="755" SrcFileId="5" StartOffset="719"/>
 </Header>
@@ -4042,7 +4042,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="344" HierarchyLvlTypeId="14" Intrnl_Id="780" Name="isEmpty">
+<HierarchyLvl HierarchyLvlId="544" HierarchyLvlTypeId="14" Intrnl_Id="780" Name="isEmpty">
 <Header>
 <Loc EndOffset="888" SrcFileId="5" StartOffset="858"/>
 </Header>
@@ -4060,7 +4060,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="345" HierarchyLvlTypeId="14" Intrnl_Id="783" Name="isPieceOfColor">
+<HierarchyLvl HierarchyLvlId="545" HierarchyLvlTypeId="14" Intrnl_Id="783" Name="isPieceOfColor">
 <Header>
 <Loc EndOffset="1090" SrcFileId="5" StartOffset="1043"/>
 </Header>
@@ -4120,7 +4120,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="346" HierarchyLvlTypeId="14" Intrnl_Id="794" Name="emptyThisField">
+<HierarchyLvl HierarchyLvlId="546" HierarchyLvlTypeId="14" Intrnl_Id="794" Name="emptyThisField">
 <Header>
 <Loc EndOffset="1338" SrcFileId="5" StartOffset="1304"/>
 </Header>
@@ -4139,14 +4139,14 @@
 </StmntSeq>
 </HierarchyLvl>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="353" HierarchyLvlTypeId="13" Intrnl_Id="797" Name="Communication">
+<HierarchyLvl HierarchyLvlId="553" HierarchyLvlTypeId="13" Intrnl_Id="797" Name="Communication">
 <Header>
 <Loc EndOffset="56" SrcFileId="6" StartOffset="30"/>
 </Header>
 <LocList>
 <Loc EndOffset="555" SrcFileId="6" StartOffset="30"/>
 </LocList>
-<HierarchyLvl HierarchyLvlId="348" HierarchyLvlTypeId="14" Intrnl_Id="798" Name="Communication">
+<HierarchyLvl HierarchyLvlId="548" HierarchyLvlTypeId="14" Intrnl_Id="798" Name="Communication">
 <Header>
 <Loc EndOffset="117" SrcFileId="6" StartOffset="66"/>
 </Header>
@@ -4154,7 +4154,7 @@
 <Loc EndOffset="175" SrcFileId="6" StartOffset="66"/>
 </LocList>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="349" HierarchyLvlTypeId="14" Intrnl_Id="799" Name="myKingNotPlaced">
+<HierarchyLvl HierarchyLvlId="549" HierarchyLvlTypeId="14" Intrnl_Id="799" Name="myKingNotPlaced">
 <Header>
 <Loc EndOffset="212" SrcFileId="6" StartOffset="183"/>
 </Header>
@@ -4162,7 +4162,7 @@
 <Loc EndOffset="275" SrcFileId="6" StartOffset="183"/>
 </LocList>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="350" HierarchyLvlTypeId="14" Intrnl_Id="800" Name="humanWon">
+<HierarchyLvl HierarchyLvlId="550" HierarchyLvlTypeId="14" Intrnl_Id="800" Name="humanWon">
 <Header>
 <Loc EndOffset="305" SrcFileId="6" StartOffset="283"/>
 </Header>
@@ -4170,7 +4170,7 @@
 <Loc EndOffset="368" SrcFileId="6" StartOffset="283"/>
 </LocList>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="351" HierarchyLvlTypeId="14" Intrnl_Id="801" Name="robotWon">
+<HierarchyLvl HierarchyLvlId="551" HierarchyLvlTypeId="14" Intrnl_Id="801" Name="robotWon">
 <Header>
 <Loc EndOffset="398" SrcFileId="6" StartOffset="376"/>
 </Header>
@@ -4178,7 +4178,7 @@
 <Loc EndOffset="461" SrcFileId="6" StartOffset="376"/>
 </LocList>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="352" HierarchyLvlTypeId="14" Intrnl_Id="802" Name="draw">
+<HierarchyLvl HierarchyLvlId="552" HierarchyLvlTypeId="14" Intrnl_Id="802" Name="draw">
 <Header>
 <Loc EndOffset="487" SrcFileId="6" StartOffset="469"/>
 </Header>
@@ -4187,7 +4187,7 @@
 </LocList>
 </HierarchyLvl>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="379" HierarchyLvlTypeId="13" Intrnl_Id="803" Name="Board">
+<HierarchyLvl HierarchyLvlId="579" HierarchyLvlTypeId="13" Intrnl_Id="803" Name="Board">
 <Header>
 <Loc EndOffset="170" SrcFileId="7" StartOffset="152"/>
 </Header>
@@ -4216,7 +4216,7 @@
 </LocList>
 </BasicStmnt>
 </StmntSeq>
-<HierarchyLvl HierarchyLvlId="354" HierarchyLvlTypeId="14" Intrnl_Id="808" Name="Board">
+<HierarchyLvl HierarchyLvlId="554" HierarchyLvlTypeId="14" Intrnl_Id="808" Name="Board">
 <Header>
 <Loc EndOffset="584" SrcFileId="7" StartOffset="487"/>
 </Header>
@@ -4658,7 +4658,7 @@
 </LoopStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="355" HierarchyLvlTypeId="14" Intrnl_Id="895" Name="resetVisited">
+<HierarchyLvl HierarchyLvlId="555" HierarchyLvlTypeId="14" Intrnl_Id="895" Name="resetVisited">
 <Header>
 <Loc EndOffset="3025" SrcFileId="7" StartOffset="2993"/>
 </Header>
@@ -4698,7 +4698,7 @@
 </LoopStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="356" HierarchyLvlTypeId="14" Intrnl_Id="902" Name="sortListOfFields">
+<HierarchyLvl HierarchyLvlId="556" HierarchyLvlTypeId="14" Intrnl_Id="902" Name="sortListOfFields">
 <Header>
 <Loc EndOffset="3311" SrcFileId="7" StartOffset="3251"/>
 </Header>
@@ -4848,7 +4848,7 @@
 </LoopStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="357" HierarchyLvlTypeId="14" Intrnl_Id="931" Name="isGreater">
+<HierarchyLvl HierarchyLvlId="557" HierarchyLvlTypeId="14" Intrnl_Id="931" Name="isGreater">
 <Header>
 <Loc EndOffset="4256" SrcFileId="7" StartOffset="4151"/>
 </Header>
@@ -5275,7 +5275,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="358" HierarchyLvlTypeId="14" Intrnl_Id="1013" Name="distance">
+<HierarchyLvl HierarchyLvlId="558" HierarchyLvlTypeId="14" Intrnl_Id="1013" Name="distance">
 <Header>
 <Loc EndOffset="5769" SrcFileId="7" StartOffset="5717"/>
 </Header>
@@ -5293,7 +5293,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="359" HierarchyLvlTypeId="14" Intrnl_Id="1016" Name="verifyCorrectMove">
+<HierarchyLvl HierarchyLvlId="559" HierarchyLvlTypeId="14" Intrnl_Id="1016" Name="verifyCorrectMove">
 <Header>
 <Loc EndOffset="5956" SrcFileId="7" StartOffset="5859"/>
 </Header>
@@ -5379,7 +5379,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="360" HierarchyLvlTypeId="14" Intrnl_Id="1034" Name="peasentIsOnEndRow">
+<HierarchyLvl HierarchyLvlId="560" HierarchyLvlTypeId="14" Intrnl_Id="1034" Name="peasentIsOnEndRow">
 <Header>
 <Loc EndOffset="6238" SrcFileId="7" StartOffset="6187"/>
 </Header>
@@ -5533,7 +5533,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="361" HierarchyLvlTypeId="14" Intrnl_Id="1065" Name="movePieceInRepresentation">
+<HierarchyLvl HierarchyLvlId="561" HierarchyLvlTypeId="14" Intrnl_Id="1065" Name="movePieceInRepresentation">
 <Header>
 <Loc EndOffset="6824" SrcFileId="7" StartOffset="6671"/>
 </Header>
@@ -5551,7 +5551,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="362" HierarchyLvlTypeId="14" Intrnl_Id="1068" Name="movePieceInRepresentation">
+<HierarchyLvl HierarchyLvlId="562" HierarchyLvlTypeId="14" Intrnl_Id="1068" Name="movePieceInRepresentation">
 <Header>
 <Loc EndOffset="7130" SrcFileId="7" StartOffset="6990"/>
 </Header>
@@ -5612,7 +5612,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="363" HierarchyLvlTypeId="14" Intrnl_Id="1080" Name="checkMoveDirection">
+<HierarchyLvl HierarchyLvlId="563" HierarchyLvlTypeId="14" Intrnl_Id="1080" Name="checkMoveDirection">
 <Header>
 <Loc EndOffset="7596" SrcFileId="7" StartOffset="7464"/>
 </Header>
@@ -5630,7 +5630,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="364" HierarchyLvlTypeId="14" Intrnl_Id="1083" Name="isFieldEmptyOnBoard">
+<HierarchyLvl HierarchyLvlId="564" HierarchyLvlTypeId="14" Intrnl_Id="1083" Name="isFieldEmptyOnBoard">
 <Header>
 <Loc EndOffset="7873" SrcFileId="7" StartOffset="7765"/>
 </Header>
@@ -5696,7 +5696,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="365" HierarchyLvlTypeId="14" Intrnl_Id="1095" Name="fieldOccupied">
+<HierarchyLvl HierarchyLvlId="565" HierarchyLvlTypeId="14" Intrnl_Id="1095" Name="fieldOccupied">
 <Header>
 <Loc EndOffset="8123" SrcFileId="7" StartOffset="8075"/>
 </Header>
@@ -5756,7 +5756,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="366" HierarchyLvlTypeId="14" Intrnl_Id="1106" Name="checkPiece">
+<HierarchyLvl HierarchyLvlId="566" HierarchyLvlTypeId="14" Intrnl_Id="1106" Name="checkPiece">
 <Header>
 <Loc EndOffset="8426" SrcFileId="7" StartOffset="8354"/>
 </Header>
@@ -5822,7 +5822,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="367" HierarchyLvlTypeId="14" Intrnl_Id="1118" Name="checkMoveableBoolean">
+<HierarchyLvl HierarchyLvlId="567" HierarchyLvlTypeId="14" Intrnl_Id="1118" Name="checkMoveableBoolean">
 <Header>
 <Loc EndOffset="8890" SrcFileId="7" StartOffset="8832"/>
 </Header>
@@ -5840,7 +5840,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="368" HierarchyLvlTypeId="14" Intrnl_Id="1121" Name="checkMoveable">
+<HierarchyLvl HierarchyLvlId="568" HierarchyLvlTypeId="14" Intrnl_Id="1121" Name="checkMoveable">
 <Header>
 <Loc EndOffset="9063" SrcFileId="7" StartOffset="9003"/>
 </Header>
@@ -6063,7 +6063,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="369" HierarchyLvlTypeId="14" Intrnl_Id="1168" Name="checkJump">
+<HierarchyLvl HierarchyLvlId="569" HierarchyLvlTypeId="14" Intrnl_Id="1168" Name="checkJump">
 <Header>
 <Loc EndOffset="10065" SrcFileId="7" StartOffset="9969"/>
 </Header>
@@ -6081,7 +6081,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="370" HierarchyLvlTypeId="14" Intrnl_Id="1171" Name="checkJumpDirection">
+<HierarchyLvl HierarchyLvlId="570" HierarchyLvlTypeId="14" Intrnl_Id="1171" Name="checkJumpDirection">
 <Header>
 <Loc EndOffset="10735" SrcFileId="7" StartOffset="10607"/>
 </Header>
@@ -6305,7 +6305,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="371" HierarchyLvlTypeId="14" Intrnl_Id="1218" Name="checkJumpDirectionBoolean">
+<HierarchyLvl HierarchyLvlId="571" HierarchyLvlTypeId="14" Intrnl_Id="1218" Name="checkJumpDirectionBoolean">
 <Header>
 <Loc EndOffset="11580" SrcFileId="7" StartOffset="11448"/>
 </Header>
@@ -6323,7 +6323,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="372" HierarchyLvlTypeId="14" Intrnl_Id="1221" Name="updateMoveables">
+<HierarchyLvl HierarchyLvlId="572" HierarchyLvlTypeId="14" Intrnl_Id="1221" Name="updateMoveables">
 <Header>
 <Loc EndOffset="11794" SrcFileId="7" StartOffset="11759"/>
 </Header>
@@ -6479,7 +6479,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="373" HierarchyLvlTypeId="14" Intrnl_Id="1252" Name="findOpponentColors">
+<HierarchyLvl HierarchyLvlId="573" HierarchyLvlTypeId="14" Intrnl_Id="1252" Name="findOpponentColors">
 <Header>
 <Loc EndOffset="12533" SrcFileId="7" StartOffset="12500"/>
 </Header>
@@ -6551,7 +6551,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="374" HierarchyLvlTypeId="14" Intrnl_Id="1265" Name="findMissingPiece">
+<HierarchyLvl HierarchyLvlId="574" HierarchyLvlTypeId="14" Intrnl_Id="1265" Name="findMissingPiece">
 <Header>
 <Loc EndOffset="12914" SrcFileId="7" StartOffset="12824"/>
 </Header>
@@ -6751,7 +6751,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="375" HierarchyLvlTypeId="14" Intrnl_Id="1306" Name="getPiece">
+<HierarchyLvl HierarchyLvlId="575" HierarchyLvlTypeId="14" Intrnl_Id="1306" Name="getPiece">
 <Header>
 <Loc EndOffset="13766" SrcFileId="7" StartOffset="13711"/>
 </Header>
@@ -6835,7 +6835,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="376" HierarchyLvlTypeId="14" Intrnl_Id="1321" Name="checkAllegiance">
+<HierarchyLvl HierarchyLvlId="576" HierarchyLvlTypeId="14" Intrnl_Id="1321" Name="checkAllegiance">
 <Header>
 <Loc EndOffset="14877" SrcFileId="7" StartOffset="14802"/>
 </Header>
@@ -6926,7 +6926,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="377" HierarchyLvlTypeId="14" Intrnl_Id="1340" Name="checkAllegiance">
+<HierarchyLvl HierarchyLvlId="577" HierarchyLvlTypeId="14" Intrnl_Id="1340" Name="checkAllegiance">
 <Header>
 <Loc EndOffset="15215" SrcFileId="7" StartOffset="15140"/>
 </Header>
@@ -7063,7 +7063,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="378" HierarchyLvlTypeId="14" Intrnl_Id="1368" Name="checkBounds">
+<HierarchyLvl HierarchyLvlId="578" HierarchyLvlTypeId="14" Intrnl_Id="1368" Name="checkBounds">
 <Header>
 <Loc EndOffset="15701" SrcFileId="7" StartOffset="15655"/>
 </Header>
@@ -7082,7 +7082,7 @@
 </StmntSeq>
 </HierarchyLvl>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="400" HierarchyLvlTypeId="13" Intrnl_Id="1371" Name="Analyze">
+<HierarchyLvl HierarchyLvlId="600" HierarchyLvlTypeId="13" Intrnl_Id="1371" Name="Analyze">
 <Header>
 <Loc EndOffset="237" SrcFileId="8" StartOffset="217"/>
 </Header>
@@ -7117,7 +7117,7 @@
 </LocList>
 </BasicStmnt>
 </StmntSeq>
-<HierarchyLvl HierarchyLvlId="380" HierarchyLvlTypeId="14" Intrnl_Id="1377" Name="Analyze">
+<HierarchyLvl HierarchyLvlId="580" HierarchyLvlTypeId="14" Intrnl_Id="1377" Name="Analyze">
 <Header>
 <Loc EndOffset="676" SrcFileId="8" StartOffset="617"/>
 </Header>
@@ -7141,7 +7141,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="381" HierarchyLvlTypeId="14" Intrnl_Id="1381" Name="analyzeBoard">
+<HierarchyLvl HierarchyLvlId="581" HierarchyLvlTypeId="14" Intrnl_Id="1381" Name="analyzeBoard">
 <Header>
 <Loc EndOffset="943" SrcFileId="8" StartOffset="837"/>
 </Header>
@@ -7279,7 +7279,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="382" HierarchyLvlTypeId="14" Intrnl_Id="1408" Name="checkMotorCalibration">
+<HierarchyLvl HierarchyLvlId="582" HierarchyLvlTypeId="14" Intrnl_Id="1408" Name="checkMotorCalibration">
 <Header>
 <Loc EndOffset="1586" SrcFileId="8" StartOffset="1550"/>
 </Header>
@@ -7340,7 +7340,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="383" HierarchyLvlTypeId="14" Intrnl_Id="1420" Name="makeListOfMoveables">
+<HierarchyLvl HierarchyLvlId="583" HierarchyLvlTypeId="14" Intrnl_Id="1420" Name="makeListOfMoveables">
 <Header>
 <Loc EndOffset="1850" SrcFileId="8" StartOffset="1785"/>
 </Header>
@@ -7524,7 +7524,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="384" HierarchyLvlTypeId="14" Intrnl_Id="1457" Name="checkMovement">
+<HierarchyLvl HierarchyLvlId="584" HierarchyLvlTypeId="14" Intrnl_Id="1457" Name="checkMovement">
 <Header>
 <Loc EndOffset="2777" SrcFileId="8" StartOffset="2643"/>
 </Header>
@@ -7673,7 +7673,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="385" HierarchyLvlTypeId="14" Intrnl_Id="1488" Name="countDownToPanic">
+<HierarchyLvl HierarchyLvlId="585" HierarchyLvlTypeId="14" Intrnl_Id="1488" Name="countDownToPanic">
 <Header>
 <Loc EndOffset="3375" SrcFileId="8" StartOffset="3265"/>
 </Header>
@@ -7841,7 +7841,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="386" HierarchyLvlTypeId="14" Intrnl_Id="1520" Name="trackMovement">
+<HierarchyLvl HierarchyLvlId="586" HierarchyLvlTypeId="14" Intrnl_Id="1520" Name="trackMovement">
 <Header>
 <Loc EndOffset="4102" SrcFileId="8" StartOffset="3989"/>
 </Header>
@@ -8017,7 +8017,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="387" HierarchyLvlTypeId="14" Intrnl_Id="1556" Name="checkMove">
+<HierarchyLvl HierarchyLvlId="587" HierarchyLvlTypeId="14" Intrnl_Id="1556" Name="checkMove">
 <Header>
 <Loc EndOffset="4658" SrcFileId="8" StartOffset="4549"/>
 </Header>
@@ -8452,7 +8452,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="388" HierarchyLvlTypeId="14" Intrnl_Id="1641" Name="validateMove">
+<HierarchyLvl HierarchyLvlId="588" HierarchyLvlTypeId="14" Intrnl_Id="1641" Name="validateMove">
 <Header>
 <Loc EndOffset="7113" SrcFileId="8" StartOffset="7009"/>
 </Header>
@@ -8742,7 +8742,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="389" HierarchyLvlTypeId="14" Intrnl_Id="1702" Name="jumpSequence">
+<HierarchyLvl HierarchyLvlId="589" HierarchyLvlTypeId="14" Intrnl_Id="1702" Name="jumpSequence">
 <Header>
 <Loc EndOffset="8456" SrcFileId="8" StartOffset="8276"/>
 </Header>
@@ -9005,7 +9005,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="390" HierarchyLvlTypeId="14" Intrnl_Id="1756" Name="findJumpPiece">
+<HierarchyLvl HierarchyLvlId="590" HierarchyLvlTypeId="14" Intrnl_Id="1756" Name="findJumpPiece">
 <Header>
 <Loc EndOffset="9995" SrcFileId="8" StartOffset="9895"/>
 </Header>
@@ -9167,7 +9167,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="391" HierarchyLvlTypeId="14" Intrnl_Id="1787" Name="checkForUpgradeKing">
+<HierarchyLvl HierarchyLvlId="591" HierarchyLvlTypeId="14" Intrnl_Id="1787" Name="checkForUpgradeKing">
 <Header>
 <Loc EndOffset="11303" SrcFileId="8" StartOffset="11188"/>
 </Header>
@@ -9480,7 +9480,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="392" HierarchyLvlTypeId="14" Intrnl_Id="1850" Name="checkRobotPieceReplaced">
+<HierarchyLvl HierarchyLvlId="592" HierarchyLvlTypeId="14" Intrnl_Id="1850" Name="checkRobotPieceReplaced">
 <Header>
 <Loc EndOffset="12914" SrcFileId="8" StartOffset="12852"/>
 </Header>
@@ -9607,7 +9607,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="393" HierarchyLvlTypeId="14" Intrnl_Id="1875" Name="findMyColors">
+<HierarchyLvl HierarchyLvlId="593" HierarchyLvlTypeId="14" Intrnl_Id="1875" Name="findMyColors">
 <Header>
 <Loc EndOffset="13570" SrcFileId="8" StartOffset="13497"/>
 </Header>
@@ -9733,7 +9733,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="394" HierarchyLvlTypeId="14" Intrnl_Id="1898" Name="getColor">
+<HierarchyLvl HierarchyLvlId="594" HierarchyLvlTypeId="14" Intrnl_Id="1898" Name="getColor">
 <Header>
 <Loc EndOffset="14139" SrcFileId="8" StartOffset="14080"/>
 </Header>
@@ -10143,7 +10143,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="395" HierarchyLvlTypeId="14" Intrnl_Id="1977" Name="checkForGameHasEnded">
+<HierarchyLvl HierarchyLvlId="595" HierarchyLvlTypeId="14" Intrnl_Id="1977" Name="checkForGameHasEnded">
 <Header>
 <Loc EndOffset="15066" SrcFileId="8" StartOffset="15003"/>
 </Header>
@@ -10270,7 +10270,7 @@
 </CondStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="396" HierarchyLvlTypeId="14" Intrnl_Id="1998" Name="gameHasEnded">
+<HierarchyLvl HierarchyLvlId="596" HierarchyLvlTypeId="14" Intrnl_Id="1998" Name="gameHasEnded">
 <Header>
 <Loc EndOffset="15659" SrcFileId="8" StartOffset="15611"/>
 </Header>
@@ -10895,7 +10895,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="397" HierarchyLvlTypeId="14" Intrnl_Id="2128" Name="hasTheMove">
+<HierarchyLvl HierarchyLvlId="597" HierarchyLvlTypeId="14" Intrnl_Id="2128" Name="hasTheMove">
 <Header>
 <Loc EndOffset="17810" SrcFileId="8" StartOffset="17764"/>
 </Header>
@@ -11082,7 +11082,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="398" HierarchyLvlTypeId="14" Intrnl_Id="2167" Name="isOnDoubleCorners">
+<HierarchyLvl HierarchyLvlId="598" HierarchyLvlTypeId="14" Intrnl_Id="2167" Name="isOnDoubleCorners">
 <Header>
 <Loc EndOffset="18340" SrcFileId="8" StartOffset="18294"/>
 </Header>
@@ -11207,7 +11207,7 @@
 </BasicStmnt>
 </StmntSeq>
 </HierarchyLvl>
-<HierarchyLvl HierarchyLvlId="399" HierarchyLvlTypeId="14" Intrnl_Id="2192" Name="isNearDoubleCorners">
+<HierarchyLvl HierarchyLvlId="599" HierarchyLvlTypeId="14" Intrnl_Id="2192" Name="isNearDoubleCorners">
 <Header>
 <Loc EndOffset="18705" SrcFileId="8" StartOffset="18657"/>
 </Header>
