@@ -186,11 +186,11 @@ public class AnalyzeTest extends FunktionForTesting {
         // need to run 10 times 9 times for getting totalAnalyzeRuns to 9 and one more for calling motorCalibration
         for(int i = 0 ; i <= 9; i++) {
             if(change) {
-                remote.analyzeTestVariable = 10;
+                remote.analyzeTestVariable = 100;
                 change = false;
             }
             else  {
-                remote.analyzeTestVariable = 11;
+                remote.analyzeTestVariable = 101;
                 change = true;
             }
             checkersBoard.analyzeFunctions.analyzeBoard();
@@ -254,16 +254,20 @@ public class AnalyzeTest extends FunktionForTesting {
     public final void testCheckMove() throws InterruptedException, IOException, NoKingLeft, IllegalMove {
         
         // test the first direction
-        assertTrue(!helpToTestCheckMove(5));
+        assertTrue(helpToTestCheckMove(5));
+        assertTrue(!helpToTestCheckMove(9));
         
         // test the Second direction
         assertTrue(helpToTestCheckMove(6));
+        assertTrue(!helpToTestCheckMove(10));
         
         //If king, also check backwards
         assertTrue(helpToTestCheckMove(7));
+        assertTrue(!helpToTestCheckMove(11));
         
         //If king, also check backwards 2.
         assertTrue(helpToTestCheckMove(8));
+        assertTrue(!helpToTestCheckMove(12));
         
         resetBoard();
     }
@@ -271,15 +275,45 @@ public class AnalyzeTest extends FunktionForTesting {
     {
         resetTotalAnalyzeRuns();
         emptyBoard();
-        checkersBoard.myBoard[2][3].setPieceOnField(producePiece(2, 3, 'b',true));
+        checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'b',true));
         checkersBoard.myBoard[5][4].setPieceOnField(producePiece(5, 4, 'g',true));
-        checkersBoard.myBoard[2][3].getPieceOnField().canJump = false;
-        checkersBoard.myBoard[5][4].getPieceOnField().canJump = false;        
+        checkersBoard.myBoard[5][6].setPieceOnField(producePiece(5, 6, 'g',true));
+        checkersBoard.myBoard[5][2].setPieceOnField(producePiece(5, 2, 'g',true));
+        
+        checkersBoard.myBoard[1][0].getPieceOnField().canJump = false;
+        checkersBoard.myBoard[5][4].getPieceOnField().canJump = false;
+        checkersBoard.myBoard[5][6].getPieceOnField().canJump = false;
+        checkersBoard.myBoard[5][2].getPieceOnField().canJump = false;
 
         remote.analyzeTestVariable = changeVariable;
         checkersBoard.analyzeFunctions.analyzeBoard();
         remote.analyzeTestVariable = 0;
         
         return !remote.analyzeresetMotorsTestVariable;
+    }
+    
+    // test for checkForUpgradeKing
+    @Test
+    public final void testCheckForUpgradeKing() throws InterruptedException, IOException, NoKingLeft, IllegalMove {
+        // test if the robot can upgrade a peasant to a kings
+        resetTotalAnalyzeRuns();
+        emptyBoard();
+        checkersBoard.myBoard[4][1].setPieceOnField(producePiece(4, 1, 'w',false));
+        checkersBoard.myBoard[3][6].setPieceOnField(producePiece(3, 6, 'r',false));
+        
+        remote.analyzeTestVariable = 13;
+        checkersBoard.analyzeFunctions.analyzeBoard();
+        
+        remote.analyzeTestVariable = 0;
+        assertTrue(checkersBoard.myBoard[3][0].getPieceOnField().color == 'g');
+        
+        // test if the robot can see if it owns kings
+    }
+
+    
+    // test for isNearDoubleCorners
+    @Test
+    public final void testIsNearDoubleCorners() {
+
     }
 }
