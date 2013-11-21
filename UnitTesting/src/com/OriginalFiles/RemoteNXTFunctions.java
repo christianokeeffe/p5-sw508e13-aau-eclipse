@@ -1,7 +1,12 @@
 package com.OriginalFiles;
 
 import com.CustomClasses.Color;
+
+import custom.Exceptions.NoKingLeft;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RemoteNXTFunctions {
     public Board checkersBoard;
@@ -16,13 +21,41 @@ public class RemoteNXTFunctions {
     }
 
     public void trashPieceOnField(Field field) {
-        // TODO Auto-generated method stub
+        field.setPieceOnField(null);
         
     }
 
-    public void doMove(Move move) {
-        // TODO Auto-generated method stub
+    public void doMove(Move move) throws IOException, NoKingLeft {
+        List<Field> takenPieces = new ArrayList<Field>();
+
+        int stop = move.moves.size() - 1;
+        for (int i = 0; i < stop; i++) {
+            Field jumpedField = movePieceOverField(move.moves.get(i),
+                                                   move.moves.get(i + 1));
+            if (jumpedField != null) {
+                takenPieces.add(jumpedField);
+            }
+        }
+
+        for (int i = 0; i < takenPieces.size(); i++) {
+            trashPieceOnField(takenPieces.get(i));
+        }
         
+    }
+    private Field movePieceOverField(Field fromField, Field toField)
+            throws IOException, NoKingLeft {
+        movePiece(fromField, toField);
+
+        if (Math.abs(fromField.x - toField.x) == 2) {
+            return checkersBoard.myBoard[(fromField.x + toField.x) / 2]
+                                        [(fromField.y + toField.y) / 2];
+        } else {
+            return null;
+        }
+    }
+    private void movePiece(Field fromField, Field toField)
+            throws IOException, NoKingLeft {
+        checkersBoard.movePieceInRepresentation(fromField, toField, false);
     }
 
     public void waitForRedButton() {
