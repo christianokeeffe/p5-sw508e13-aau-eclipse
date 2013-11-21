@@ -7,10 +7,17 @@ public class MI {
     public RemoteNXTFunctions remoteNXT;
     private final double inf = 100000.0;
     private List<Move> simulatedMoves = new ArrayList<Move>();
-    public MI(RemoteNXTFunctions inputRemoteNXT) {
-        remoteNXT = inputRemoteNXT;
-        updatePieceList();
+    private int side;
 
+    public MI(RemoteNXTFunctions inputRemoteNXT, boolean isRobot, int hardness) {
+        remoteNXT = inputRemoteNXT;
+        numberofmovelook = hardness;
+        updatePieceList();
+        if (isRobot) {
+            side = 1;
+        } else {
+            side = -1;
+        }
     }
 
     List<Piece> ownPieces = new ArrayList<Piece>();
@@ -38,7 +45,7 @@ public class MI {
     public final Move lookForBestMove() throws NoKingLeft, IOException,
                                          InterruptedException {
         updatePieceList();
-        List<Move> posMoves = possibleMoves(1);
+        List<Move> posMoves = possibleMoves(side);
         List<Move> bestMoves = new ArrayList<Move>();
         double price = -inf;
         double tempPrice;
@@ -50,7 +57,7 @@ public class MI {
         for (Move move : posMoves) {
             simulateMove(move);
 
-            tempPrice =  -negaMax(numberofmovelook, -1, -inf, -price);
+            tempPrice =  -negaMax(numberofmovelook, -side, -inf, -price);
             revertMove();
 
             if (tempPrice > price) {
@@ -92,11 +99,11 @@ public class MI {
         return bestValue;
     }
     /* how much the AI/MI looks forward */
-    private int numberofmovelook = 2;
+    private int numberofmovelook;
 
     /* how glad the MI/AI are for the result of the game */
     private double gameIsWon = inf / 2;
-    private final int gameIsDraw = 50;
+    private final int gameIsDraw = 200;
 
     private final int pieceDifferenceFactor = 4;
 
