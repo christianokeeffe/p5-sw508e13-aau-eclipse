@@ -38,8 +38,6 @@ public class RemoteNXTFunctions {
     private NXTMotor electromagnet;
     private NXTRegulatedMotor motorZ;
     private NXTRegulatedMotor motorX;
-    private Field humanTrashField = new Field(1, 10);
-
     private TouchSensor bigRedButton;
 
     public RemoteNXTFunctions() throws InterruptedException, IOException {
@@ -118,7 +116,6 @@ public class RemoteNXTFunctions {
 
     public final void trashPieceOnField(Field field)
             throws IOException, NoKingLeft {
-        if (checkersBoard.checkAllegiance(field, true)) {
             if (field.getPieceOnField().isCrowned) {
                 int j = checkersBoard.kingPlace.length - 1;
                 OUTERMOST: while (j >= 0) {
@@ -143,9 +140,6 @@ public class RemoteNXTFunctions {
                 }
                 movePiece(field, checkersBoard.trashPlace[l][h]);
             }
-        } else {
-            movePiece(field, humanTrashField);
-        }
     }
     //latex start NXTDoMove
     public final void doMove(Move move) throws IOException, NoKingLeft {
