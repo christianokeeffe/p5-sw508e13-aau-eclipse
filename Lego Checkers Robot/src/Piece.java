@@ -16,6 +16,7 @@ public class Piece {
     private final int closeBonus = 4;
     private final int backlineBonus = 7;
     private final int kingBonus = 15;
+    private final int crownAble = 10;
 
     public Piece(Board input) {
         checkersBoard = input;
@@ -72,6 +73,14 @@ public class Piece {
             }
             if (gameState == isEndGame) {
                 returnValue += closeBonus - closestPiece();
+            }
+
+            if (!isCrowned
+                    && ((checkersBoard.checkAllegiance(this, true)
+                            && y == 1)
+                    || (checkersBoard.checkAllegiance(this, false)
+                            && y == 6))) {
+                returnValue += crownAble;
             }
 
             if (!isCrowned

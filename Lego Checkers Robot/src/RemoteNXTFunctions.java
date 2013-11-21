@@ -170,7 +170,8 @@ public class RemoteNXTFunctions {
             throws IOException, NoKingLeft {
         movePiece(fromField, toField);
 
-        if (Math.abs(fromField.x - toField.x) == 2) {
+        if (checkersBoard.checkBounds(fromField.x, fromField.y)
+                && Math.abs(fromField.x - toField.x) == 2) {
             return checkersBoard.myBoard[(fromField.x + toField.x) / 2]
                                         [(fromField.y + toField.y) / 2];
         } else {
