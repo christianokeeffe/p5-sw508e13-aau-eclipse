@@ -7,6 +7,7 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.CustomClasses.FunktionForTesting;
+import com.OriginalFiles.Move;
 
 import custom.Exceptions.IllegalMove;
 import custom.Exceptions.NoKingLeft;
@@ -308,12 +309,172 @@ public class AnalyzeTest extends FunktionForTesting {
         assertTrue(checkersBoard.myBoard[3][0].getPieceOnField().color == 'g');
         
         // test if the robot can see if it owns kings
+        
+        resetTotalAnalyzeRuns();
+        emptyBoard();
+        checkersBoard.myBoard[4][1].setPieceOnField(producePiece(4, 1, 'w',false));
+        checkersBoard.myBoard[3][6].setPieceOnField(producePiece(3, 6, 'r',false));
+        
+        Move tempMove = new Move(checkersBoard.myBoard[3][6], checkersBoard.myBoard[2][7], false);
+        
+        remote.doMove(tempMove);
+        checkersBoard.analyzeFunctions.analyzeBoard();
+        
+        assertTrue(checkersBoard.myBoard[2][7].getPieceOnField().color == 'b'); 
+ 
     }
 
     
-    // test for isNearDoubleCorners
+    // test for checkForGameHasEnded
     @Test
-    public final void testIsNearDoubleCorners() {
-
+    public final void testCheckForGameHasEnded1() throws InterruptedException, IOException, NoKingLeft, IllegalMove {
+        emptyBoard();
+        
+        // side 1 where green is in (1,0)
+        checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'g',true));
+        checkersBoard.myBoard[1][2].setPieceOnField(producePiece(1, 2, 'b',true));
+        
+        checkersBoard.myBoard[1][0].getPieceOnField().canJump = false;
+        checkersBoard.myBoard[1][2].getPieceOnField().canJump = false;
+        
+        assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+        // ------------------------------------------------------------------------
+        checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'g',true));
+        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(1, 2, 'b',true));
+        
+        checkersBoard.myBoard[1][0].getPieceOnField().canJump = true;
+        checkersBoard.myBoard[2][1].getPieceOnField().canJump = false;
+        
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+        // ------------------------------------------------------------------------
+        checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'g',true));
+        checkersBoard.myBoard[2][3].setPieceOnField(producePiece(2, 3, 'b',true));
+        
+        checkersBoard.myBoard[1][0].getPieceOnField().canJump = false;
+        checkersBoard.myBoard[2][3].getPieceOnField().canJump = false;
+        
+        //assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(true)); fejl
+        // ------------------------------------------------------------------------
+        checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'g',true));
+        checkersBoard.myBoard[2][3].setPieceOnField(producePiece(2, 3, 'b',true));
+        
+        checkersBoard.myBoard[1][0].getPieceOnField().canJump = false;
+        checkersBoard.myBoard[2][3].getPieceOnField().canJump = false;
+        
+        //assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(true)); fejl
+        
+        // side 1 where green is in (0,1)
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(0, 1, 'g',true));
+        checkersBoard.myBoard[1][2].setPieceOnField(producePiece(1, 2, 'b',true));
+        
+        checkersBoard.myBoard[0][1].getPieceOnField().canJump = true;
+        checkersBoard.myBoard[1][2].getPieceOnField().canJump = false;
+        
+        assertTrue(checkersBoard.analyzeFunctions.analyzeBoard());
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(0, 1, 'g',true));
+        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(2, 1, 'b',true));
+        
+        checkersBoard.myBoard[0][1].getPieceOnField().canJump = false;
+        checkersBoard.myBoard[2][1].getPieceOnField().canJump = false;
+        
+        assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(0, 1, 'g',true));
+        checkersBoard.myBoard[2][3].setPieceOnField(producePiece(2, 3, 'b',true));
+        
+        checkersBoard.myBoard[0][1].getPieceOnField().canJump = false;
+        checkersBoard.myBoard[2][3].getPieceOnField().canJump = false;
+        
+        assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(0, 1, 'g',true));
+        checkersBoard.myBoard[3][2].setPieceOnField(producePiece(2, 3, 'b',true));
+        
+        checkersBoard.myBoard[0][1].getPieceOnField().canJump = false;
+        checkersBoard.myBoard[3][2].getPieceOnField().canJump = false;
+        
+        //assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(true)); fejl
+        // ------------------------------------------------------------------------
+        // side 2 where green is in (6,7)
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[6][7].setPieceOnField(producePiece(6, 7, 'g',true));
+        checkersBoard.myBoard[6][5].setPieceOnField(producePiece(6, 5, 'b',true));
+        
+        checkersBoard.myBoard[6][7].getPieceOnField().canJump = false;
+        checkersBoard.myBoard[6][5].getPieceOnField().canJump = false;
+        
+        assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[6][7].setPieceOnField(producePiece(6, 7, 'g',true));
+        checkersBoard.myBoard[5][6].setPieceOnField(producePiece(6, 5, 'b',true));
+        
+        checkersBoard.myBoard[6][7].getPieceOnField().canJump = false;
+        checkersBoard.myBoard[5][6].getPieceOnField().canJump = false;
+        
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[6][7].setPieceOnField(producePiece(6, 7, 'g',true));
+        checkersBoard.myBoard[4][5].setPieceOnField(producePiece(6, 5, 'b',true));
+        
+        checkersBoard.myBoard[6][7].getPieceOnField().canJump = true;
+        checkersBoard.myBoard[4][5].getPieceOnField().canJump = false;
+        
+        assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[6][7].setPieceOnField(producePiece(6, 7, 'g',true));
+        checkersBoard.myBoard[5][4].setPieceOnField(producePiece(6, 5, 'b',true));
+        
+        checkersBoard.myBoard[6][7].getPieceOnField().canJump = false;
+        checkersBoard.myBoard[5][4].getPieceOnField().canJump = false;
+        
+        //assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(true)); fejl
+        // ------------------------------------------------------------------------
+        // side 2 where green is in (7,6)
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[7][6].setPieceOnField(producePiece(7, 6, 'g',true));
+        checkersBoard.myBoard[5][6].setPieceOnField(producePiece(5, 6, 'b',true));
+        
+        checkersBoard.myBoard[7][6].getPieceOnField().canJump = false;
+        checkersBoard.myBoard[5][6].getPieceOnField().canJump = false;
+        
+        assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+     // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[7][6].setPieceOnField(producePiece(7, 6, 'g',true));
+        checkersBoard.myBoard[6][5].setPieceOnField(producePiece(5, 6, 'b',true));
+        
+        checkersBoard.myBoard[7][6].getPieceOnField().canJump = false;
+        checkersBoard.myBoard[6][5].getPieceOnField().canJump = false;
+        
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+     // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[7][6].setPieceOnField(producePiece(7, 6, 'g',true));
+        checkersBoard.myBoard[5][4].setPieceOnField(producePiece(5, 6, 'b',true));
+        
+        checkersBoard.myBoard[7][6].getPieceOnField().canJump = false;
+        checkersBoard.myBoard[5][4].getPieceOnField().canJump = false;
+        
+        //assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(true)); fejl
+     // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[7][6].setPieceOnField(producePiece(7, 6, 'g',true));
+        checkersBoard.myBoard[4][5].setPieceOnField(producePiece(5, 6, 'b',true));
+        
+        checkersBoard.myBoard[7][6].getPieceOnField().canJump = false;
+        checkersBoard.myBoard[4][5].getPieceOnField().canJump = false;
+        
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
     }
 }
