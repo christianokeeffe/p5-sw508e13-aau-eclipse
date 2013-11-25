@@ -438,18 +438,10 @@ public class Analyze {
         if (robotPieceList.size() == 1 && humanPieceList.size() == 1) {
             if (robotPieceList.get(0).isCrowned
                     && humanPieceList.get(0).isCrowned) {
-                if (humanTurn) {
-                    if (isOnDoubleCorners(humanPieceList.get(0))
-                            && isNearDoubleCorners(robotPieceList.get(0))
-                            && !hasTheMove(true)) {
-                        return 3;
-                    }
-                } else {
-                    if (isOnDoubleCorners(robotPieceList.get(0))
-                            && isNearDoubleCorners(humanPieceList.get(0))
-                            && !hasTheMove(false)) {
-                        return 3;
-                    }
+                if (isOnDoubleCorners(humanPieceList.get(0))) {
+                    return 3;
+                } else if (isOnDoubleCorners(robotPieceList.get(0))) {
+                    return 3;
                 }
             }
         }
