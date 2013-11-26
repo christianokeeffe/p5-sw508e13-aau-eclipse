@@ -11,12 +11,12 @@ public class Piece {
     private final int isEndGame = 2;
     private Board checkersBoard;
 
-    private final int valueOfPiece = 10;
+    private final int valueOfPiece = 100;
     private final int middleBonus = 3;
     private final int closeBonus = 4;
     private final int backlineBonus = 7;
-    private final int kingBonus = 15;
-    private final int crownAble = 10;
+    private final int kingBonus = 150;
+    private final int crownAble = 80;
 
     public Piece(Board input) {
         checkersBoard = input;

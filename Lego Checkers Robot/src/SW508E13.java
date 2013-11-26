@@ -16,7 +16,7 @@ public final class SW508E13 {
             throws IOException, NoKingLeft, InterruptedException {
         RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
         //Stopwatch sW = new Stopwatch();
-        MI mi = new MI(checkTopFunc, true, 4);
+        MI mi = new MI(checkTopFunc, true, 3);
 
         Move bestMove;
         /*if (checkTopFunc.checkersBoard.myPeasentColor == 'r') {
