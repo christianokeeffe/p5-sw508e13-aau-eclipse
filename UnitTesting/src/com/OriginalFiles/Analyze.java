@@ -431,13 +431,16 @@ public class Analyze {
         if (robotPieceList.size() == 1 && humanPieceList.size() == 1) {
             if (robotPieceList.get(0).isCrowned
                     && humanPieceList.get(0).isCrowned) {
+                boolean humanisInConer = isOnDoubleCorners(humanPieceList.get(0));
+                boolean robotisInConer = isOnDoubleCorners(robotPieceList.get(0));
                 if (humanTurn) {
-                    if (isOnDoubleCorners(humanPieceList.get(0))
+
+                    if ((humanisInConer || robotisInConer)
                             && !humanPieceList.get(0).canJump) {
                         return 3;
                     }
                 } else {
-                    if (isOnDoubleCorners(robotPieceList.get(0))
+                    if ((humanisInConer || robotisInConer)
                             && !robotPieceList.get(0).canJump) {
                         return 3;
                     }
