@@ -303,25 +303,25 @@ public class AnalyzeTest extends FunktionForTesting {
         // ------------------------------------------------------------------------
         emptyBoard();
         checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'g',true));
-        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(1, 2, 'b',true));
+        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(2, 1, 'b',true));
         
         assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
         // ------------------------------------------------------------------------
     // side 1 where green is in (0,1) human turn
         // ------------------------------------------------------------------------
         emptyBoard();
-        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(1, 0, 'g',true));
+        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(0, 1, 'g',true));
         checkersBoard.myBoard[1][2].setPieceOnField(producePiece(1, 2, 'b',true));
         
         assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
         // ------------------------------------------------------------------------
         emptyBoard();
-        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(1, 0, 'g',true));
-        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(1, 2, 'b',true));
+        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(0, 1, 'g',true));
+        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(2, 1, 'b',true));
         
         assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
         // ------------------------------------------------------------------------
-        // side 1 where blue is in (1,0) human turn
+    // side 1 where blue is in (1,0) human turn
         emptyBoard();
         checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'b',true));
         checkersBoard.myBoard[1][2].setPieceOnField(producePiece(1, 2, 'g',true));
@@ -330,21 +330,21 @@ public class AnalyzeTest extends FunktionForTesting {
         // ------------------------------------------------------------------------
         emptyBoard();
         checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'b',true));
-        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(1, 2, 'g',true));
+        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(2, 1, 'g',true));
         
-        assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
         // ------------------------------------------------------------------------
     // side 1 where blue is in (0,1) human turn
         // ------------------------------------------------------------------------
         emptyBoard();
-        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(1, 0, 'b',true));
+        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(0, 1, 'b',true));
         checkersBoard.myBoard[1][2].setPieceOnField(producePiece(1, 2, 'g',true));
         
-        assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
         // ------------------------------------------------------------------------
         emptyBoard();
-        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(1, 0, 'b',true));
-        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(1, 2, 'g',true));
+        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(0, 1, 'b',true));
+        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(2, 1, 'g',true));
         
         assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
         // ------------------------------------------------------------------------
@@ -362,7 +362,7 @@ public class AnalyzeTest extends FunktionForTesting {
         
         assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
         // ------------------------------------------------------------------------
-        // side 2 where green is in (7,6) human turn
+    // side 2 where green is in (7,6) human turn
         // ------------------------------------------------------------------------
         emptyBoard();
         checkersBoard.myBoard[7][6].setPieceOnField(producePiece(7, 6, 'g',true));
@@ -387,21 +387,21 @@ public class AnalyzeTest extends FunktionForTesting {
         // ------------------------------------------------------------------------
         emptyBoard();
         checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'g',true));
-        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(1, 2, 'b',true));
+        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(2, 1, 'b',true));
         
         assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
         // ------------------------------------------------------------------------
     // side 1 where green is in (0,1) robot turn
         // ------------------------------------------------------------------------
         emptyBoard();
-        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(1, 0, 'g',true));
+        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(0, 1, 'g',true));
         checkersBoard.myBoard[1][2].setPieceOnField(producePiece(1, 2, 'b',true));
         
         assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
         // ------------------------------------------------------------------------
         emptyBoard();
-        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(1, 0, 'g',true));
-        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(1, 2, 'b',true));
+        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(0, 1, 'g',true));
+        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(2, 1, 'b',true));
         
         assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
         // ------------------------------------------------------------------------
@@ -414,21 +414,21 @@ public class AnalyzeTest extends FunktionForTesting {
         // ------------------------------------------------------------------------
         emptyBoard();
         checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'b',true));
-        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(1, 2, 'g',true));
+        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(2, 1, 'g',true));
         
         assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
         // ------------------------------------------------------------------------
     // side 1 where blue is in (0,1) robot turn
         // ------------------------------------------------------------------------
         emptyBoard();
-        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(1, 0, 'b',true));
+        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(0, 1, 'b',true));
         checkersBoard.myBoard[1][2].setPieceOnField(producePiece(1, 2, 'g',true));
         
         assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
         // ------------------------------------------------------------------------
         emptyBoard();
-        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(1, 0, 'b',true));
-        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(1, 2, 'g',true));
+        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(0, 1, 'b',true));
+        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(2, 1, 'g',true));
         
         assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
         // ------------------------------------------------------------------------
@@ -444,7 +444,7 @@ public class AnalyzeTest extends FunktionForTesting {
         checkersBoard.myBoard[6][7].setPieceOnField(producePiece(6, 7, 'g',true));
         checkersBoard.myBoard[5][6].setPieceOnField(producePiece(5, 6, 'b',true));
         
-        assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
         // ------------------------------------------------------------------------
         // side 2 where green is in (7,6) robot turn
         // ------------------------------------------------------------------------
@@ -452,13 +452,40 @@ public class AnalyzeTest extends FunktionForTesting {
         checkersBoard.myBoard[7][6].setPieceOnField(producePiece(7, 6, 'g',true));
         checkersBoard.myBoard[6][5].setPieceOnField(producePiece(6, 5, 'b',true));
         
-        assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
         // ------------------------------------------------------------------------
         emptyBoard();
         checkersBoard.myBoard[7][6].setPieceOnField(producePiece(7, 6, 'g',true));
         checkersBoard.myBoard[5][6].setPieceOnField(producePiece(5, 6, 'b',true));
         
         assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
+        // ------------------------------------------------------------------------
+     // side 2 where blue is in (6,7) robot turn
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[6][7].setPieceOnField(producePiece(6, 7, 'b',true));
+        checkersBoard.myBoard[6][5].setPieceOnField(producePiece(6, 5, 'g',true));
         
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[6][7].setPieceOnField(producePiece(6, 7, 'b',true));
+        checkersBoard.myBoard[5][6].setPieceOnField(producePiece(5, 6, 'g',true));
+        
+        assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
+        // ------------------------------------------------------------------------
+     // side 2 where blue is in (7,6) robot turn
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[7][6].setPieceOnField(producePiece(7, 6, 'b',true));
+        checkersBoard.myBoard[6][5].setPieceOnField(producePiece(6, 5, 'g',true));
+        
+        assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[7][6].setPieceOnField(producePiece(7, 6, 'b',true));
+        checkersBoard.myBoard[5][6].setPieceOnField(producePiece(5, 6, 'g',true));
+        
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
     }
 }
