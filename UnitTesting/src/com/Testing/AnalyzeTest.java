@@ -35,26 +35,6 @@ public class AnalyzeTest extends FunktionForTesting {
         assertEquals(2, checkersBoard.analyzeFunctions.gameHasEnded(true));
         assertEquals(2, checkersBoard.analyzeFunctions.gameHasEnded(false));
         
-        emptyBoard();
-        
-        //test if the game ended when it is a draw when it is humans turn
-        //test if the game is not ended when it is the robots turn
-        checkersBoard.myBoard[4][5].setPieceOnField(producePiece(4, 5, 'b', true));
-        checkersBoard.myBoard[6][7].setPieceOnField(producePiece(4, 5, 'g', true));
-        
-        assertEquals(3, checkersBoard.analyzeFunctions.gameHasEnded(true));
-        assertNotEquals(3, checkersBoard.analyzeFunctions.gameHasEnded(false));
-        
-        emptyBoard();
-        
-        //test if the game ended when it is a draw when it is robots turn
-        //test if the game is not ended when it is the human turn
-        checkersBoard.myBoard[1][0].setPieceOnField(producePiece(4, 5, 'b',true));
-        checkersBoard.myBoard[1][2].setPieceOnField(producePiece(4, 5, 'g',true));
-        
-        assertEquals(3, checkersBoard.analyzeFunctions.gameHasEnded(false));
-        assertNotEquals(3, checkersBoard.analyzeFunctions.gameHasEnded(true));
-        
         resetBoard();
     }
 
@@ -79,23 +59,7 @@ public class AnalyzeTest extends FunktionForTesting {
         assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
         assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
         
-        emptyBoard();
-        
-        //draw case if humans turn
-        checkersBoard.myBoard[4][5].setPieceOnField(producePiece(4, 5, 'b',true));
-        checkersBoard.myBoard[6][7].setPieceOnField(producePiece(6, 7, 'g',true));
-        
-        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
-        assertFalse(checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
-        
-        emptyBoard();
-        
-        //draw case if robots turn
-        checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'b',true));
-        checkersBoard.myBoard[1][2].setPieceOnField(producePiece(1, 2, 'g',true));
-        
-        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
-        assertFalse(checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+        // test for Game Is Draw is in at the bottom
         
         resetBoard();
     }
@@ -328,17 +292,173 @@ public class AnalyzeTest extends FunktionForTesting {
     // test for checkForGameIsDraw
     @Test
     public final void testCheckForGameIsDraw() throws InterruptedException, IOException, NoKingLeft, IllegalMove {
-        emptyBoard();
         
-        // side 1 where green is in (1,0)
+        
+        // side 1 where green is in (1,0) human turn
+        emptyBoard();
         checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'g',true));
         checkersBoard.myBoard[1][2].setPieceOnField(producePiece(1, 2, 'b',true));
-        
-        checkersBoard.myBoard[1][0].getPieceOnField().canJump = false;
-        checkersBoard.myBoard[1][2].getPieceOnField().canJump = false;
-        
-        //assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
         // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'g',true));
+        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(1, 2, 'b',true));
+        
+        assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+        // ------------------------------------------------------------------------
+    // side 1 where green is in (0,1) human turn
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(1, 0, 'g',true));
+        checkersBoard.myBoard[1][2].setPieceOnField(producePiece(1, 2, 'b',true));
+        
+        assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(1, 0, 'g',true));
+        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(1, 2, 'b',true));
+        
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+        // ------------------------------------------------------------------------
+        // side 1 where blue is in (1,0) human turn
+        emptyBoard();
+        checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'b',true));
+        checkersBoard.myBoard[1][2].setPieceOnField(producePiece(1, 2, 'g',true));
+
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'b',true));
+        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(1, 2, 'g',true));
+        
+        assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+        // ------------------------------------------------------------------------
+    // side 1 where blue is in (0,1) human turn
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(1, 0, 'b',true));
+        checkersBoard.myBoard[1][2].setPieceOnField(producePiece(1, 2, 'g',true));
+        
+        assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(1, 0, 'b',true));
+        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(1, 2, 'g',true));
+        
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+        // ------------------------------------------------------------------------
+    // side 2 where green is in (6,7) human turn
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[6][7].setPieceOnField(producePiece(6, 7, 'g',true));
+        checkersBoard.myBoard[6][5].setPieceOnField(producePiece(6, 5, 'b',true));
+        
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[6][7].setPieceOnField(producePiece(6, 7, 'g',true));
+        checkersBoard.myBoard[5][6].setPieceOnField(producePiece(5, 6, 'b',true));
+        
+        assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+        // ------------------------------------------------------------------------
+        // side 2 where green is in (7,6) human turn
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[7][6].setPieceOnField(producePiece(7, 6, 'g',true));
+        checkersBoard.myBoard[6][5].setPieceOnField(producePiece(6, 5, 'b',true));
+        
+        assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[7][6].setPieceOnField(producePiece(7, 6, 'g',true));
+        checkersBoard.myBoard[5][6].setPieceOnField(producePiece(5, 6, 'b',true));
+        
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
+        // ------------------------------------------------------------------------
+// robot turn
+        // ------------------------------------------------------------------------
+     // side 1 where green is in (1,0) robot turn
+        emptyBoard();
+        checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'g',true));
+        checkersBoard.myBoard[1][2].setPieceOnField(producePiece(1, 2, 'b',true));
+
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'g',true));
+        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(1, 2, 'b',true));
+        
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
+        // ------------------------------------------------------------------------
+    // side 1 where green is in (0,1) robot turn
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(1, 0, 'g',true));
+        checkersBoard.myBoard[1][2].setPieceOnField(producePiece(1, 2, 'b',true));
+        
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(1, 0, 'g',true));
+        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(1, 2, 'b',true));
+        
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
+        // ------------------------------------------------------------------------
+        // side 1 where blue is in (1,0) robot turn
+        emptyBoard();
+        checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'b',true));
+        checkersBoard.myBoard[1][2].setPieceOnField(producePiece(1, 2, 'g',true));
+
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'b',true));
+        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(1, 2, 'g',true));
+        
+        assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
+        // ------------------------------------------------------------------------
+    // side 1 where blue is in (0,1) robot turn
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(1, 0, 'b',true));
+        checkersBoard.myBoard[1][2].setPieceOnField(producePiece(1, 2, 'g',true));
+        
+        assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[0][1].setPieceOnField(producePiece(1, 0, 'b',true));
+        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(1, 2, 'g',true));
+        
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
+        // ------------------------------------------------------------------------
+    // side 2 where green is in (6,7) robot turn
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[6][7].setPieceOnField(producePiece(6, 7, 'g',true));
+        checkersBoard.myBoard[6][5].setPieceOnField(producePiece(6, 5, 'b',true));
+        
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[6][7].setPieceOnField(producePiece(6, 7, 'g',true));
+        checkersBoard.myBoard[5][6].setPieceOnField(producePiece(5, 6, 'b',true));
+        
+        assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
+        // ------------------------------------------------------------------------
+        // side 2 where green is in (7,6) robot turn
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[7][6].setPieceOnField(producePiece(7, 6, 'g',true));
+        checkersBoard.myBoard[6][5].setPieceOnField(producePiece(6, 5, 'b',true));
+        
+        assertTrue(!checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
+        // ------------------------------------------------------------------------
+        emptyBoard();
+        checkersBoard.myBoard[7][6].setPieceOnField(producePiece(7, 6, 'g',true));
+        checkersBoard.myBoard[5][6].setPieceOnField(producePiece(5, 6, 'b',true));
+        
+        assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
         
     }
 }
