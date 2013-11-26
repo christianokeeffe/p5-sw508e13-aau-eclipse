@@ -440,15 +440,11 @@ public class Analyze {
                     && humanPieceList.get(0).isCrowned) {
                 boolean humanisInConer = isOnDoubleCorners(humanPieceList.get(0));
                 boolean robotisInConer = isOnDoubleCorners(robotPieceList.get(0));
-                if (humanTurn) {
-
-                    if ((humanisInConer || robotisInConer)
-                            && !humanPieceList.get(0).canJump) {
+                if (humanisInConer || robotisInConer) {
+                    if (humanTurn && !humanPieceList.get(0).canJump) {
                         return 3;
                     }
-                } else {
-                    if ((humanisInConer || robotisInConer)
-                            && !robotPieceList.get(0).canJump) {
+                    else if (!humanTurn && !robotPieceList.get(0).canJump) {
                         return 3;
                     }
                 }
