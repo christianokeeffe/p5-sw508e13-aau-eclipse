@@ -105,7 +105,7 @@ public class MI {
     private double gameIsWon = inf / 2;
     private final int gameIsDraw = 200;
 
-    private final int pieceDifferenceFactor = 4;
+    private final int pieceDifferenceFactor = 30;
 
     private final int isMidGame = 1;
     private final int isEndgame = 2;
