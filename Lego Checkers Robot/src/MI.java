@@ -40,7 +40,7 @@ public class MI {
     }
 
     /* ------------------------------------------------------------------  *
-    /* MI brain starts */
+    /* MI starts */
 
     public final Move lookForBestMove() throws NoKingLeft, IOException,
                                          InterruptedException {
@@ -164,7 +164,7 @@ public class MI {
     }
 
 
-    /* MI brain stops */
+    /* MI stops */
     /* ---------------------------------------------------------------------  */
 
     private void simulateMove(Move move) throws NoKingLeft, IOException {
