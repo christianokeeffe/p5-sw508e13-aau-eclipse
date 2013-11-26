@@ -361,7 +361,7 @@ public class Analyze {
         if (red > 230 && red < 290 && green < 130 && green > 60
                 && blue < 140 && blue > 60) {
             return 'r';
-         } else if (red > 230 && red < 285 && green > 235 && green < 285
+        } else if (red > 230 && red < 285 && green > 235 && green < 285
                 && blue > 230 && blue < 280) {
             return 'w';
         } else if (red < 230 && red > 170 && green > 210 && green < 290
@@ -433,15 +433,11 @@ public class Analyze {
                     && humanPieceList.get(0).isCrowned) {
                 boolean humanisInConer = isOnDoubleCorners(humanPieceList.get(0));
                 boolean robotisInConer = isOnDoubleCorners(robotPieceList.get(0));
-                if (humanTurn) {
-
-                    if ((humanisInConer || robotisInConer)
-                            && !humanPieceList.get(0).canJump) {
+                if (humanisInConer || robotisInConer) {
+                    if (humanTurn && !humanPieceList.get(0).canJump) {
                         return 3;
                     }
-                } else {
-                    if ((humanisInConer || robotisInConer)
-                            && !robotPieceList.get(0).canJump) {
+                    else if (!humanTurn && !robotPieceList.get(0).canJump) {
                         return 3;
                     }
                 }
