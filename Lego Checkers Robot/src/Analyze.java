@@ -25,7 +25,7 @@ public class Analyze {
     }
 
     //Analyzes the current board setup
-    //latex start analyseBoard
+    //latex start analyzeBoard
     public final boolean analyzeBoard() throws InterruptedException,
     IOException, NoKingLeft, IllegalMove {
         if (!checkForGameHasEnded(true)) {
