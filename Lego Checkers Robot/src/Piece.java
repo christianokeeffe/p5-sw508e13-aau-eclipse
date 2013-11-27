@@ -119,7 +119,7 @@ public class Piece {
             currentValue = returnValue;
         }
     }
-    
+
     private boolean isNearDoubleCorners() {
         if ((this.getX() == 1 && this.getY() == 2)
                 || (this.getX() == 2 && this.getY() == 1)
@@ -133,22 +133,21 @@ public class Piece {
         }
         return false;
     }
-    
-    private boolean checkBlocksBackline(int x, int y)
-    {
-        if(checkersBoard.checkAllegiance(checkersBoard.myBoard[x][y], true))
+
+    private boolean checkBlocksBackline(int inputX, int inputY) {
+        if(checkersBoard.checkAllegiance(checkersBoard.myBoard[inputX][inputY], true))
         {
-            if(checkersBoard.checkBounds(x+2, y))
+            if(checkersBoard.checkBounds(inputX+2, inputY))
             {
-                if(checkersBoard.myBoard[x+2][y].isEmpty())
+                if(checkersBoard.myBoard[inputX+2][inputY].isEmpty())
                 {
                     return true;
                 }
             }
-            
-            if(checkersBoard.checkBounds(x-2, y))
+
+            if(checkersBoard.checkBounds(inputX-2, inputY))
             {
-                if(checkersBoard.myBoard[x-2][y].isEmpty())
+                if(checkersBoard.myBoard[inputX-2][inputY].isEmpty())
                 {
                     return true;
                 }
@@ -156,66 +155,38 @@ public class Piece {
         }
         return false;
     }
-    
+
     private boolean checkBlocksSideline(int x, int y)
     {
-        if(checkersBoard.checkAllegiance(checkersBoard.myBoard[x][y], true))
-        {
-            if(checkersBoard.checkBounds(x, y+2))
-            {
-                if(checkersBoard.myBoard[x][y+2].isEmpty())
-                {
-                    return true;
-                }
-            }
-            
-            if(checkersBoard.checkBounds(x, y-2))
-            {
-                if(checkersBoard.myBoard[x][y-2].isEmpty())
-                {
-                    return true;
-                }
-            }
-        }
+
         return false;
     }
     
     private boolean blocksAPiece()
     {
-        if(this.y == 5)
+        int direction = -2;
+        boolean checkForOpponent = false;
+        
+        if(this.color == checkersBoard.myPeasentColor || this.color == checkersBoard.myKingColor)
         {
-            if(checkBlocksBackline(this.x, 7))
+            direction = 2;
+            checkForOpponent = true;   
+        }
+        
+        if(checkersBoard.checkAllegiance(checkersBoard.myBoard[this.x][this.y+direction], checkForOpponent))
+        {
+            return true;
+        }
+        
+        if (this.isCrowned) {
+            if(checkersBoard.checkAllegiance(checkersBoard.myBoard[this.x][this.y-direction], checkForOpponent)) 
             {
                 return true;
             }
+            
         }
+            
         
-        if(this.isCrowned)
-        {
-            if(this.y == 2)
-            {
-                if(checkBlocksBackline(this.x, 0))
-                {
-                    return true;
-                }
-            }
-            
-            if(this.x == 2)
-            {   
-                if(checkBlocksBackline(0, this.y))
-                {
-                    return true;
-                }
-            }
-            
-            if(this.x == 5)
-            {
-                if(checkBlocksBackline(7, this.y))
-                {
-                    return true;
-                }
-            }
-        }
         return false;
     }
 
