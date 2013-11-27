@@ -50,9 +50,9 @@ public class Piece {
         }
     }
 
-    public final double priceForPiece(int gameState, int pieceDifference, int turn) {
+    public final double priceForPiece(int gameState, int ownPieceCount, int oppPieceCount, int turn) {
         if (calculatedGameState != gameState || gameState == isEndGame) {
-                updatePrice(gameState, pieceDifference, turn);
+                updatePrice(gameState, ownPieceCount, oppPieceCount, turn);
         }
         return currentValue;
     }
@@ -65,10 +65,10 @@ public class Piece {
     }
 
     private void updatePriceMidgame() {
-        updatePrice(isMidGame, 0, 0);
+        updatePrice(isMidGame, 100, 100, 0);
     }
 
-    private void updatePrice(int gameState, int pieceDifference, int turn) {
+    private void updatePrice(int gameState, int ownPieceCount, int oppPieceCount, int turn) {
         if (isOnBoard()) {
             calculatedGameState = gameState;
             int returnValue = valueOfPiece;
@@ -77,48 +77,53 @@ public class Piece {
                         - min(Math.abs(3 - x), Math.abs(4 - x));
             }
             if (gameState == isEndGame) {
-                if (pieceDifference < 0) {
+                if (oppPieceCount - ownPieceCount < 0) {
                     returnValue -= closeBonus - closestPiece();
+                    if (ownPieceCount == 1)
+                    {
+                        if (isNearDoubleCorners()) {
+                            returnValue += nearDoubleBonus;
+                        }
+                        if (isNearDoubleCorners() && this.isCrowned) {
+                            returnValue += nearDoubleBonus;
+                        }
 
-                    if (isNearDoubleCorners() && this.isCrowned) {
-                        returnValue += nearDoubleBonus;
+                        if (checkersBoard.analyzeFunctions.
+                                isOnDoubleCorners(this) && this.isCrowned) {
+                            returnValue += doubleBonus;
+                        }
+                    } else {
+                        returnValue += closeBonus - closestPiece();
                     }
 
-                    if (checkersBoard.analyzeFunctions.
-                            isOnDoubleCorners(this) && this.isCrowned) {
-                        returnValue += doubleBonus;
+                    if (blocksAPiece()) {
+                        returnValue += blockBonus;
                     }
-                } else {
-                    returnValue += closeBonus - closestPiece();
                 }
 
-                if (blocksAPiece()) {
-                    returnValue += blockBonus;
+                if (!isCrowned
+                        && ((checkersBoard.checkAllegiance(this, true)
+                                && y == 1)
+                                || (checkersBoard.checkAllegiance(this, false)
+                                        && y == 6))) {
+                    returnValue += crownAble;
                 }
-            }
 
-            if (!isCrowned
-                    && ((checkersBoard.checkAllegiance(this, true)
-                            && y == 1)
-                    || (checkersBoard.checkAllegiance(this, false)
-                            && y == 6))) {
-                returnValue += crownAble;
-            }
-
-            if (!isCrowned
-                    && ((checkersBoard.checkAllegiance(this, true)
-                            && y == 7)
-                    || (checkersBoard.checkAllegiance(this, false)
-                            && y == 0))) {
-                if (gameState == isMidGame) {
+                if (!isCrowned
+                        && ((checkersBoard.checkAllegiance(this, true)
+                                && y == 7)
+                                || (checkersBoard.checkAllegiance(this, false)
+                                        && y == 0))) {
+                    if (gameState == isMidGame) {
+                        returnValue += backlineBonus / 2;
+                    }
                     returnValue += backlineBonus / 2;
                 }
-                returnValue += backlineBonus / 2;
+                if (isCrowned) {
+                    returnValue += kingBonus;
+                }
+                currentValue = returnValue;
             }
-            if (isCrowned) {
-                returnValue += kingBonus;
-            }
-            currentValue = returnValue;
         }
     }
 
