@@ -168,34 +168,41 @@ public class Piece {
             direction = 2;
             checkForOpponent = true;   
         }
-        
-        if(checkersBoard.checkAllegiance(checkersBoard.myBoard[this.x][this.y+direction], checkForOpponent))
+        if(checkersBoard.checkBounds(this.x, this.y+direction))
         {
-            return true;
-        }
-        
-        if (this.isCrowned) {
-            if(checkersBoard.checkAllegiance(checkersBoard.myBoard[this.x][this.y-direction], checkForOpponent)) 
+            if(checkersBoard.checkAllegiance(checkersBoard.myBoard[this.x][this.y+direction], checkForOpponent))
             {
                 return true;
             }
+        }
+        
+        if (this.isCrowned) {
             
-            if(checkersBoard.checkAllegiance(checkersBoard.myBoard[this.x][this.y-direction], checkForOpponent))
+            if(checkersBoard.checkBounds(this.x, this.y-direction))
             {
-                if(checkersBoard.myBoard[this.x][this.y-direction].getPieceOnField().isCrowned)
+                if(checkersBoard.checkAllegiance(checkersBoard.myBoard[this.x][this.y-direction], checkForOpponent)) 
+                {
+                    if(checkersBoard.myBoard[this.x][this.y-direction].getPieceOnField().isCrowned)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            if(checkersBoard.checkBounds(this.x-direction, this.y))
+            {
+                if(checkersBoard.checkAllegiance(checkersBoard.myBoard[this.x-direction][this.y], checkForOpponent)) 
                 {
                     return true;
                 }
             }
             
-            if(checkersBoard.checkAllegiance(checkersBoard.myBoard[this.x-direction][this.y], checkForOpponent)) 
+            if(checkersBoard.checkBounds(this.x+direction, this.y))
             {
-                return true;
-            }
-            
-            if(checkersBoard.checkAllegiance(checkersBoard.myBoard[this.x+direction][this.y], checkForOpponent)) 
-            {
-                return true;
+                if(checkersBoard.checkAllegiance(checkersBoard.myBoard[this.x+direction][this.y], checkForOpponent)) 
+                {
+                    return true;
+                }
             }
         }
         return false;
