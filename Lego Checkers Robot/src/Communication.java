@@ -1,3 +1,4 @@
+import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.Sound;
 
@@ -17,6 +18,59 @@ public class Communication {
         LCD.refresh();
         /*File soundFile = new File("yourturn.wav");
         Sound.playSample(soundFile, 100); // 100 ... volume*/
+    }
+
+    public final int getDifficulty() {
+        Sound.playNote(Sound.PIANO, 500, 500);
+        int dif = 2;
+        boolean dontStop = true;
+        while (dontStop) {
+            LCD.clear();
+            LCD.drawString("Set difficulty", 0, 0);
+            LCD.drawString("Press enter", 0, 3);
+            LCD.drawString("to select", 0, 4);
+            LCD.drawString(difficulty(dif), 0, 1);
+            LCD.refresh();
+            int button = Button.waitForAnyPress();
+            switch (button) {
+            case 1:
+                dontStop = false;
+                break;
+            case 2:
+                dif--;
+                break;
+            case 4:
+                dif++;
+                break;
+            default:
+                break;
+            }
+
+            dif = dif % 5;
+        }
+        LCD.clear();
+        LCD.drawString(difficulty(dif), 0, 0);
+        LCD.drawString("is choosen", 0, 1);
+        LCD.refresh();
+        return dif;
+    }
+
+    private String difficulty(int dif) {
+        switch (dif) {
+        case 0:
+            return "Very Easy";
+        case 1:
+            return "Easy";
+        case 2:
+            return "Medium";
+        case 3:
+            return "Hard";
+        case 4:
+            return "Very hard (slow)";
+        default:
+            break;
+        }
+        return "ERROR";
     }
 
     public final void robotTurn() {
