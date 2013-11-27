@@ -9,6 +9,19 @@ public class MI {
     private List<Move> simulatedMoves = new ArrayList<Move>();
     private int side;
 
+    /* how much the AI/MI looks forward */
+    private int numberofmovelook;
+
+    /* how glad the MI/AI are for the result of the game */
+    private double gameIsWon = inf / 2;
+    private final int gameIsDraw = 200;
+
+    private final int pieceDifferenceFactor = 30;
+
+    private final int isMidGame = 1;
+    private final int isEndgame = 2;
+    private final int midGameEnd = 7;
+
     public MI(RemoteNXTFunctions inputRemoteNXT, boolean isRobot, int hardness) {
         remoteNXT = inputRemoteNXT;
         numberofmovelook = hardness;
@@ -98,18 +111,6 @@ public class MI {
         //latex end
         return bestValue;
     }
-    /* how much the AI/MI looks forward */
-    private int numberofmovelook;
-
-    /* how glad the MI/AI are for the result of the game */
-    private double gameIsWon = inf / 2;
-    private final int gameIsDraw = 200;
-
-    private final int pieceDifferenceFactor = 30;
-
-    private final int isMidGame = 1;
-    private final int isEndgame = 2;
-    private final int midGameEnd = 7;
 
     private double evaluation(int turn) {
         double valueOfBoard = 0;
