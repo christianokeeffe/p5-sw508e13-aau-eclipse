@@ -467,7 +467,7 @@ public class Analyze {
         return false;
     }
 
-    private boolean isOnDoubleCorners(Piece piece) {
+    public boolean isOnDoubleCorners(Piece piece) {
         if ((piece.getX() == 0 && piece.getY() == 1)
                 || (piece.getX() == 1 && piece.getY() == 0)
                 || (piece.getX() == 7 && piece.getY() == 6)

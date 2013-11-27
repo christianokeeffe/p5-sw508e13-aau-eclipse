@@ -18,6 +18,7 @@ public class Piece {
     private final int kingBonus = 150;
     private final int crownAble = 80;
     private final int nearDoubleBonus = 5;
+    private final int DoubleBonus = 8;
     private final int blockBonus = -10;
 
     public Piece(Board input) {
@@ -75,14 +76,17 @@ public class Piece {
             }
             if (gameState == isEndGame) {
                 returnValue += closeBonus - closestPiece();
-                
-                if(pieceDifference < 0 && isNearDoubleCorners())
-                {
+
+                if (pieceDifference < 0 && isNearDoubleCorners()) {
                     returnValue += nearDoubleBonus;
                 }
-                
-                if(blocksAPiece())
-                {
+
+                if (pieceDifference < 0 && checkersBoard.
+                        analyzeFunctions.isOnDoubleCorners(this)) {
+                    returnValue += DoubleBonus;
+                }
+
+                if (blocksAPiece()) {
                     returnValue += blockBonus;
                 }
             }
