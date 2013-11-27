@@ -19,8 +19,8 @@ public class Piece {
     private final int kingBonus = 150;
     private final int crownAble = 80;
     private final int nearDoubleBonus = 5;
-    private final int DoubleBonus = 8;
-    private final int blockBonus = -10;
+    private final int doubleBonus = 8;
+    private final int blockBonus = 10;
   //latex end
 
     public Piece(Board input) {
@@ -86,7 +86,7 @@ public class Piece {
 
                     if (checkersBoard.analyzeFunctions.
                             isOnDoubleCorners(this)) {
-                        returnValue += DoubleBonus;
+                        returnValue += doubleBonus;
                     }
                 } else {
                     returnValue += closeBonus - closestPiece();
@@ -158,12 +158,6 @@ public class Piece {
         return false;
     }
 
-    private boolean checkBlocksSideline(int x, int y)
-    {
-
-        return false;
-    }
-    
     private boolean blocksAPiece()
     {
         int direction = -2;
@@ -186,9 +180,24 @@ public class Piece {
                 return true;
             }
             
-        }
+            if(checkersBoard.checkAllegiance(checkersBoard.myBoard[this.x][this.y-direction], checkForOpponent))
+            {
+                if(checkersBoard.myBoard[this.x][this.y-direction].getPieceOnField().isCrowned)
+                {
+                    return true;
+                }
+            }
             
-        
+            if(checkersBoard.checkAllegiance(checkersBoard.myBoard[this.x-direction][this.y], checkForOpponent)) 
+            {
+                return true;
+            }
+            
+            if(checkersBoard.checkAllegiance(checkersBoard.myBoard[this.x+direction][this.y], checkForOpponent)) 
+            {
+                return true;
+            }
+        }
         return false;
     }
 
