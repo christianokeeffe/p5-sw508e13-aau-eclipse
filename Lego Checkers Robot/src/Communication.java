@@ -8,11 +8,12 @@ public class Communication {
 
     Communication(RemoteNXTFunctions inputNxt) {
         nxt = inputNxt;
+        nxt.bottomNXT.C.setSpeed(900);
     }
 
     public final void playYourTurn() {
         Sound.twoBeeps();
-        nxt.bottomNXT.C.setPower(100);
+        nxt.bottomNXT.C.forward();
         LCD.clear();
         LCD.drawString("Your turn", 0, 0);
         LCD.refresh();
@@ -74,7 +75,7 @@ public class Communication {
     }
 
     public final void robotTurn() {
-        nxt.bottomNXT.C.setPower(100);
+        nxt.bottomNXT.C.stop(true);
         LCD.clear();
         LCD.drawString("Please wait", 0, 0);
         LCD.refresh();
