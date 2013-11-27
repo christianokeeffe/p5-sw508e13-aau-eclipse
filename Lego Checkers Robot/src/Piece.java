@@ -1,6 +1,6 @@
 
 public class Piece {
-  //latex start Piece
+  //latex start Piececode
     private int x = -1, y = -1;
     public char color;
     public boolean isMoveable = false;
