@@ -1,10 +1,9 @@
 import java.io.IOException;
 
-//import custom.Exceptions.IllegalMove;
+import custom.Exceptions.IllegalMove;
 import custom.Exceptions.NoKingLeft;
 import lejos.nxt.Button;
-import lejos.nxt.LCD;
-//import lejos.util.Stopwatch;
+import lejos.util.Delay;
 
 public final class SW508E13 {
 
@@ -15,11 +14,13 @@ public final class SW508E13 {
     public static void main(String[] args)
             throws IOException, NoKingLeft, InterruptedException {
         RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
-        //Stopwatch sW = new Stopwatch();
-        MI mi = new MI(checkTopFunc, true, 3);
+
+        MI mi = new MI(checkTopFunc, true,
+                checkTopFunc.checkersBoard.informer.getDifficulty());
+        Delay.msDelay(500);
 
         Move bestMove;
-        /*if (checkTopFunc.checkersBoard.myPeasentColor == 'r') {
+        if (checkTopFunc.checkersBoard.myPeasentColor == 'r') {
             bestMove = mi.lookForBestMove();
 
             checkTopFunc.doMove(bestMove);
@@ -32,12 +33,9 @@ public final class SW508E13 {
             try {
                 if (mi.remoteNXT.checkersBoard.analyzeFunctions.analyzeBoard())
                 {
-                    sW.reset();
+
                     bestMove = mi.lookForBestMove();
-                    //LCD.clear();
-                    //LCD.drawString("Total T: " + sW.elapsed(), 0, 0);
-                    //LCD.refresh();
-                    //Button.waitForAnyPress();
+
                     if (bestMove != null) {
                         mi.remoteNXT.doMove(bestMove);
                     }
@@ -52,7 +50,7 @@ public final class SW508E13 {
             } catch (IllegalMove e) {
                 mi.remoteNXT.checkersBoard.informer.illeagalMove();
             }
-        }*/
+        }
         /*FakeMI fm2 = new FakeMI(checkTopFunc, false);
         if (checkTopFunc.checkersBoard.myPeasentColor == 'r') {
             bestMove = mi.lookForBestMove();
@@ -75,7 +73,7 @@ public final class SW508E13 {
                 checkTopFunc.doMove(bestMove);
                 checkTopFunc.checkersBoard.updateMoveables();
             }
-        }*/
+        }*//*
         MI mi2 = new MI(checkTopFunc, false, 2);
         if (checkTopFunc.checkersBoard.myPeasentColor == 'r') {
             bestMove = mi.lookForBestMove();
@@ -103,6 +101,6 @@ public final class SW508E13 {
                 checkTopFunc.doMove(bestMove);
                 checkTopFunc.checkersBoard.updateMoveables();
             }
-        }
+        }*/
     }
 }

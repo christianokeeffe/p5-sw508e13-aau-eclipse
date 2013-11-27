@@ -77,12 +77,12 @@ public class Board {
         }
         //latex end
         for (int j = 0; j < 3; j++) {
-        for (int i = 0; i < 8; i++) {
-            Field temp = new Field();
-            temp.x = i;
-            temp.y = -3 - j;
-            trashPlace[i][j] = temp;
-        }
+            for (int i = 0; i < 8; i++) {
+                Field temp = new Field();
+                temp.x = i;
+                temp.y = -3 - j;
+                trashPlace[i][j] = temp;
+            }
         }
     }
 
