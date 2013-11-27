@@ -22,7 +22,8 @@ public class MI {
     private final int isEndgame = 2;
     private final int midGameEnd = 7;
 
-    public MI(RemoteNXTFunctions inputRemoteNXT, boolean isRobot, int hardness) {
+    public MI(RemoteNXTFunctions inputRemoteNXT,
+            boolean isRobot, int hardness) {
         remoteNXT = inputRemoteNXT;
         numberofmovelook = hardness;
         updatePieceList();
