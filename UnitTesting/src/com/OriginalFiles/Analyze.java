@@ -1,9 +1,10 @@
 package com.OriginalFiles;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.CustomClasses.Color;
 
 import custom.Exceptions.IllegalMove;
 import custom.Exceptions.NoKingLeft;
@@ -26,7 +27,7 @@ public class Analyze {
     }
 
     //Analyzes the current board setup
-    //latex start analyseBoard
+    //latex start analyzeBoard
     public final boolean analyzeBoard() throws InterruptedException,
     IOException, NoKingLeft, IllegalMove {
         if (!checkForGameHasEnded(true)) {
@@ -338,7 +339,6 @@ public class Analyze {
 
     //Sets the colors of the pieces of the robot
     public final void findMyColors() throws InterruptedException, IOException {
-        char test = getColor(0, 1);
         checkersBoard.myPeasentColor = getColor(0, 1);
         if (checkersBoard.myPeasentColor == 'r') {
             checkersBoard.myKingColor = 'b';
@@ -353,7 +353,7 @@ public class Analyze {
 
     //Returns the color on the given position
     public final char getColor(int x, int y) throws IOException {
-        com.CustomClasses.Color colorResult = remoteFunctions.getColorOnField(x, y);
+        Color colorResult = remoteFunctions.getColorOnField(x, y);
 
         int red = colorResult.getRed();
         int green = colorResult.getGreen();

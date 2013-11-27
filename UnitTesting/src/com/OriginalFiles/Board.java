@@ -9,7 +9,7 @@ public class Board {
 
     public Field[][] myBoard = new Field[8][8];
     public Field[] kingPlace = new Field[8];
-    public Field[][] trashPlace = new Field[8][2];
+    public Field[][] trashPlace = new Field[8][3];
     public Analyze analyzeFunctions;
 
     public Communication informer;
@@ -78,7 +78,7 @@ public class Board {
             kingPlace[i] = temp;
         }
         //latex end
-        for (int j = 0; j < 2; j++) {
+        for (int j = 0; j < 3; j++) {
         for (int i = 0; i < 8; i++) {
             Field temp = new Field();
             temp.x = i;
@@ -118,7 +118,6 @@ public class Board {
         }
     }
 
-   
     //Method to used in sorting the list of places to move the robot
     public final boolean isGreater(Field inputField,
             Field fieldToCompare, int compX, int compY) {
