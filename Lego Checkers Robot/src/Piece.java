@@ -75,15 +75,19 @@ public class Piece {
                         - min(Math.abs(3 - x), Math.abs(4 - x));
             }
             if (gameState == isEndGame) {
-                returnValue += closeBonus - closestPiece();
+                if (pieceDifference < 0) {
+                    returnValue -= closeBonus - closestPiece();
 
-                if (pieceDifference < 0 && isNearDoubleCorners()) {
-                    returnValue += nearDoubleBonus;
-                }
+                    if (isNearDoubleCorners()) {
+                        returnValue += nearDoubleBonus;
+                    }
 
-                if (pieceDifference < 0 && checkersBoard.
-                        analyzeFunctions.isOnDoubleCorners(this)) {
-                    returnValue += DoubleBonus;
+                    if (checkersBoard.analyzeFunctions.
+                            isOnDoubleCorners(this)) {
+                        returnValue += DoubleBonus;
+                    }
+                } else {
+                    returnValue += closeBonus - closestPiece();
                 }
 
                 if (blocksAPiece()) {
