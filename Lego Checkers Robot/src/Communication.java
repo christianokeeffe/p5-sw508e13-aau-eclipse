@@ -12,12 +12,18 @@ public class Communication {
     public final void playYourTurn() {
         Sound.twoBeeps();
         nxt.bottomNXT.C.setPower(100);
+        LCD.clear();
+        LCD.drawString("Your turn", 0, 0);
+        LCD.refresh();
         /*File soundFile = new File("yourturn.wav");
         Sound.playSample(soundFile, 100); // 100 ... volume*/
     }
 
     public final void robotTurn() {
         nxt.bottomNXT.C.setPower(100);
+        LCD.clear();
+        LCD.drawString("Please wait", 0, 0);
+        LCD.refresh();
     }
 
     public final void illeagalMove() {
