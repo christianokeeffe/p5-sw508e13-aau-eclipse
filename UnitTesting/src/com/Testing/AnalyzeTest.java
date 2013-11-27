@@ -285,7 +285,28 @@ public class AnalyzeTest extends FunktionForTesting {
         checkersBoard.analyzeFunctions.analyzeBoard();
         
         assertTrue(checkersBoard.myBoard[2][7].getPieceOnField().color == 'b'); 
- 
+
+        emptyBoard();
+        checkersBoard.myBoard[4][1].setPieceOnField(producePiece(4, 1, 'w',false));
+        checkersBoard.myBoard[3][6].setPieceOnField(producePiece(3, 6, 'r',false));
+        boolean change = false;
+        int i;
+        for( i = 0 ; i <= 7 ; i++ )
+        {
+        checkersBoard.kingPlace[i].setPieceOnField(null);;
+        }
+        
+        try
+        {
+            remote.analyzeTestVariable = 13;
+            checkersBoard.analyzeFunctions.analyzeBoard();
+            remote.analyzeTestVariable = 0;
+        }
+        catch (NoKingLeft e) {
+            change = true;
+        }
+        assertTrue(change);
+        resetBoard();
     }
 
     
@@ -488,4 +509,5 @@ public class AnalyzeTest extends FunktionForTesting {
         
         assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
     }
+
 }
