@@ -119,10 +119,10 @@ public class MI {
         int state = gameState();
 
         for (int i = 0; i < ownPieces.size(); i++) {
-            valueOfBoard += ownPieces.get(i).priceForPiece(state);
+            valueOfBoard += ownPieces.get(i).priceForPiece(state, ownPieces.size()-oppPieces.size(), turn);
         }
         for (int i = 0; i < oppPieces.size(); i++) {
-            valueOfBoard -= oppPieces.get(i).priceForPiece(state);
+            valueOfBoard -= oppPieces.get(i).priceForPiece(state, ownPieces.size()-oppPieces.size(), turn);
         }
 
         boolean isHuman = (turn == -1);

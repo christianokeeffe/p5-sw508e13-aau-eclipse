@@ -444,7 +444,7 @@ public class Analyze {
         return 0;
     }
 
-    private boolean hasTheMove(boolean humansTurn) {
+    public boolean hasTheMove(boolean humansTurn) {
         int rowToCheck = 0;
 
         if (!humansTurn) {
@@ -476,19 +476,4 @@ public class Analyze {
         }
         return false;
     }
-
-    private boolean isNearDoubleCorners(Piece piece) {
-        if ((piece.getX() == 1 && piece.getY() == 2)
-                || (piece.getX() == 2 && piece.getY() == 1)
-                || (piece.getX() == 6 && piece.getY() == 5)
-                || (piece.getX() == 5 && piece.getY() == 6)
-                || (piece.getX() == 2 && piece.getY() == 3)
-                || (piece.getX() == 3 && piece.getY() == 2)
-                || (piece.getX() == 4 && piece.getY() == 5)
-                || (piece.getX() == 5 && piece.getY() == 4)) {
-            return true;
-        }
-        return false;
-    }
-
 }

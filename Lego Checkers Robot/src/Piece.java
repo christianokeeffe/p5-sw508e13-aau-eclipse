@@ -17,6 +17,8 @@ public class Piece {
     private final int backlineBonus = 7;
     private final int kingBonus = 150;
     private final int crownAble = 80;
+    private final int nearDoubleBonus = 5;
+    private final int blockBonus = -10;
 
     public Piece(Board input) {
         checkersBoard = input;
@@ -45,9 +47,9 @@ public class Piece {
         }
     }
 
-    public final double priceForPiece(int gameState) {
+    public final double priceForPiece(int gameState, int pieceDifference, int turn) {
         if (calculatedGameState != gameState || gameState == isEndGame) {
-                updatePrice(gameState);
+                updatePrice(gameState, pieceDifference, turn);
         }
         return currentValue;
     }
@@ -60,10 +62,10 @@ public class Piece {
     }
 
     private void updatePriceMidgame() {
-        updatePrice(isMidGame);
+        updatePrice(isMidGame, 0, 0);
     }
 
-    private void updatePrice(int gameState) {
+    private void updatePrice(int gameState, int pieceDifference, int turn) {
         if (isOnBoard()) {
             calculatedGameState = gameState;
             int returnValue = valueOfPiece;
@@ -73,6 +75,16 @@ public class Piece {
             }
             if (gameState == isEndGame) {
                 returnValue += closeBonus - closestPiece();
+                
+                if(pieceDifference < 0 && isNearDoubleCorners())
+                {
+                    returnValue += nearDoubleBonus;
+                }
+                
+                if(blocksAPiece())
+                {
+                    returnValue += blockBonus;
+                }
             }
 
             if (!isCrowned
@@ -98,6 +110,105 @@ public class Piece {
             }
             currentValue = returnValue;
         }
+    }
+    
+    private boolean isNearDoubleCorners() {
+        if ((this.getX() == 1 && this.getY() == 2)
+                || (this.getX() == 2 && this.getY() == 1)
+                || (this.getX() == 6 && this.getY() == 5)
+                || (this.getX() == 5 && this.getY() == 6)
+                || (this.getX() == 2 && this.getY() == 3)
+                || (this.getX() == 3 && this.getY() == 2)
+                || (this.getX() == 4 && this.getY() == 5)
+                || (this.getX() == 5 && this.getY() == 4)) {
+            return true;
+        }
+        return false;
+    }
+    
+    private boolean checkBlocksBackline(int x, int y)
+    {
+        if(checkersBoard.checkAllegiance(checkersBoard.myBoard[x][y], true))
+        {
+            if(checkersBoard.checkBounds(x+2, y))
+            {
+                if(checkersBoard.myBoard[x+2][y].isEmpty())
+                {
+                    return true;
+                }
+            }
+            
+            if(checkersBoard.checkBounds(x-2, y))
+            {
+                if(checkersBoard.myBoard[x-2][y].isEmpty())
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    private boolean checkBlocksSideline(int x, int y)
+    {
+        if(checkersBoard.checkAllegiance(checkersBoard.myBoard[x][y], true))
+        {
+            if(checkersBoard.checkBounds(x, y+2))
+            {
+                if(checkersBoard.myBoard[x][y+2].isEmpty())
+                {
+                    return true;
+                }
+            }
+            
+            if(checkersBoard.checkBounds(x, y-2))
+            {
+                if(checkersBoard.myBoard[x][y-2].isEmpty())
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    private boolean blocksAPiece()
+    {
+        if(this.y == 5)
+        {
+            if(checkBlocksBackline(this.x, 7))
+            {
+                return true;
+            }
+        }
+        
+        if(this.isCrowned)
+        {
+            if(this.y == 2)
+            {
+                if(checkBlocksBackline(this.x, 0))
+                {
+                    return true;
+                }
+            }
+            
+            if(this.x == 2)
+            {   
+                if(checkBlocksBackline(0, this.y))
+                {
+                    return true;
+                }
+            }
+            
+            if(this.x == 5)
+            {
+                if(checkBlocksBackline(7, this.y))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private int closestPiece() {
