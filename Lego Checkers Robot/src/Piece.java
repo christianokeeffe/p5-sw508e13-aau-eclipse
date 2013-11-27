@@ -1,5 +1,6 @@
 
 public class Piece {
+  //latex start Piece
     private int x = -1, y = -1;
     public char color;
     public boolean isMoveable = false;
@@ -20,6 +21,7 @@ public class Piece {
     private final int nearDoubleBonus = 5;
     private final int DoubleBonus = 8;
     private final int blockBonus = -10;
+  //latex end
 
     public Piece(Board input) {
         checkersBoard = input;
