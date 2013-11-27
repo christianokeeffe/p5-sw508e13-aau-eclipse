@@ -80,12 +80,12 @@ public class Piece {
                 if (pieceDifference < 0) {
                     returnValue -= closeBonus - closestPiece();
 
-                    if (isNearDoubleCorners()) {
+                    if (isNearDoubleCorners() && this.isCrowned) {
                         returnValue += nearDoubleBonus;
                     }
 
                     if (checkersBoard.analyzeFunctions.
-                            isOnDoubleCorners(this)) {
+                            isOnDoubleCorners(this) && this.isCrowned) {
                         returnValue += doubleBonus;
                     }
                 } else {
