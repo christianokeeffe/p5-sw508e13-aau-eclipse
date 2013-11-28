@@ -55,7 +55,7 @@ public class Communication {
                 break;
             }
 
-            dif = dif % 5;
+            dif = (dif + 5) % 5;
         }
         LCD.clear();
         LCD.drawString(difficulty(dif), 0, 0);

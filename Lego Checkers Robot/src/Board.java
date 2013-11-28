@@ -9,6 +9,7 @@ public class Board {
     public Field[] kingPlace = new Field[8];
     public Field[] oppKingPlace = new Field[8];
     public Field[][] trashPlace = new Field[8][3];
+    public Field[][] oppTrashPlace = new Field[8][2];
     public Analyze analyzeFunctions;
 
     public Communication informer;
@@ -93,6 +94,15 @@ public class Board {
                 temp.x = i;
                 temp.y = -3 - j;
                 trashPlace[i][j] = temp;
+            }
+        }
+
+        for (int j = 0; j < 2; j++) {
+            for (int i = 0; i < 8; i++) {
+                Field temp = new Field();
+                temp.x = i;
+                temp.y = 10 + j;
+                oppTrashPlace[i][j] = temp;
             }
         }
     }
