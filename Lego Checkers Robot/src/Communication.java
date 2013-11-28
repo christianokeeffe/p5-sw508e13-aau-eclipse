@@ -1,3 +1,6 @@
+import java.io.IOException;
+
+import custom.Exceptions.NoKingLeft;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.Sound;
@@ -14,8 +17,16 @@ public class Communication {
         LCD.clear();
         LCD.drawString("Your turn", 0, 0);
         LCD.refresh();
-        /*File soundFile = new File("yourturn.wav");
-        Sound.playSample(soundFile, 100); // 100 ... volume*/
+    }
+
+    public final void cleanUp() throws IOException, NoKingLeft {
+        LCD.drawString("Press enter", 0, 2);
+        LCD.drawString("To clean up", 0, 3);
+        Button.ENTER.waitForPress();
+        LCD.clear();
+        LCD.drawString("Please wait", 0, 0);
+        LCD.refresh();
+        nxt.checkersBoard.analyzeFunctions.cleanUp();
     }
 
     public final int getDifficulty() {
@@ -48,7 +59,7 @@ public class Communication {
         }
         LCD.clear();
         LCD.drawString(difficulty(dif), 0, 0);
-        LCD.drawString("is choosen", 0, 1);
+        LCD.drawString("is chosen", 0, 1);
         LCD.refresh();
         return dif;
     }
@@ -84,25 +95,28 @@ public class Communication {
         LCD.refresh();
     }
 
-    public final void humanWon() {
+    public final void humanWon() throws IOException, NoKingLeft {
         Sound.beepSequenceUp();
         LCD.clear();
         LCD.drawString("You won!", 0, 0);
         LCD.refresh();
+        cleanUp();
     }
 
-    public final void robotWon() {
+    public final void robotWon() throws IOException, NoKingLeft {
         Sound.beepSequence();
         LCD.clear();
         LCD.drawString("You lost!", 0, 0);
         LCD.refresh();
+        cleanUp();
     }
 
-    public final void draw() {
+    public final void draw() throws IOException, NoKingLeft {
         Sound.beep();
         LCD.clear();
         LCD.drawString("You got draw!", 0, 0);
         LCD.refresh();
+        cleanUp();
     }
 
     public final void myKingNotPlaced() {

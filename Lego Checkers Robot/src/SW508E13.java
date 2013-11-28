@@ -18,6 +18,7 @@ public final class SW508E13 {
         MI mi = new MI(checkTopFunc, true,
                 checkTopFunc.checkersBoard.informer.getDifficulty());
         Delay.msDelay(500);
+        boolean gameEnd = false;
 
         Move bestMove;
         if (checkTopFunc.checkersBoard.myPeasentColor == 'r') {
@@ -26,8 +27,10 @@ public final class SW508E13 {
             checkTopFunc.doMove(bestMove);
             checkTopFunc.resetAfterMove();
             mi.remoteNXT.checkersBoard.informer.playYourTurn();
+        } else {
+            mi.remoteNXT.checkersBoard.informer.playYourTurn();
         }
-        while (!Button.ESCAPE.isDown()) {
+        while (!Button.ESCAPE.isDown() && !gameEnd) {
             checkTopFunc.waitForRedButton();
             mi.remoteNXT.checkersBoard.informer.robotTurn();
             try {
@@ -44,7 +47,11 @@ public final class SW508E13 {
                     if (!mi.remoteNXT.checkersBoard.
                             analyzeFunctions.checkForGameHasEnded(true)) {
                         mi.remoteNXT.checkersBoard.informer.playYourTurn();
+                    } else {
+                        gameEnd = true;
                     }
+                } else {
+                    gameEnd = true;
                 }
 
             } catch (IllegalMove e) {
@@ -102,5 +109,7 @@ public final class SW508E13 {
                 checkTopFunc.checkersBoard.updateMoveables();
             }
         }*/
+
+        checkTopFunc.resetAfterMove();
     }
 }
