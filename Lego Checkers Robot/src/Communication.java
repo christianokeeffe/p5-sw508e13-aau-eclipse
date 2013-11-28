@@ -1,19 +1,21 @@
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.Sound;
+import lejos.nxt.remote.RemoteMotor;
 
 
 public class Communication {
     RemoteNXTFunctions nxt;
+    RemoteMotor test;
 
     Communication(RemoteNXTFunctions inputNxt) {
         nxt = inputNxt;
-
+        test = nxt.bottomNXT.C;
     }
 
     public final void playYourTurn() {
         Sound.twoBeeps();
-        nxt.bottomNXT.C.setPower(100);
+        test.setPower(100);
         LCD.clear();
         LCD.drawString("Your turn", 0, 0);
         LCD.refresh();
@@ -75,7 +77,7 @@ public class Communication {
     }
 
     public final void robotTurn() {
-        nxt.bottomNXT.C.setPower(0);
+        test.setPower(0);
         LCD.clear();
         LCD.drawString("Please wait", 0, 0);
         LCD.refresh();
