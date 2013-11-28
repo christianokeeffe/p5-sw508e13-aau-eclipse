@@ -1,6 +1,6 @@
 
 public class Piece {
-  //latex start Piececode
+    //latex start Piececode
     private int x = -1, y = -1;
     public char color;
     public boolean isMoveable = false;
@@ -21,7 +21,7 @@ public class Piece {
     private final int nearDoubleBonus = 5;
     private final int doubleBonus = 8;
     private final int blockBonus = 10;
-  //latex end
+    //latex end
 
     public Piece(Board input) {
         checkersBoard = input;
@@ -52,7 +52,7 @@ public class Piece {
 
     public final double priceForPiece(int gameState, int ownPieceCount, int oppPieceCount, int turn) {
         if (calculatedGameState != gameState || gameState == isEndGame) {
-                updatePrice(gameState, ownPieceCount, oppPieceCount, turn);
+            updatePrice(gameState, ownPieceCount, oppPieceCount, turn);
         }
         return currentValue;
     }
@@ -69,6 +69,12 @@ public class Piece {
     }
 
     private void updatePrice(int gameState, int ownPieceCount, int oppPieceCount, int turn) {
+        boolean humanTurn;
+        if (turn == 1) {
+            humanTurn = false;
+        } else {
+            humanTurn = true;
+        }
         if (isOnBoard()) {
             calculatedGameState = gameState;
             int returnValue = valueOfPiece;
@@ -77,53 +83,57 @@ public class Piece {
                         - min(Math.abs(3 - x), Math.abs(4 - x));
             }
             if (gameState == isEndGame) {
-                if (oppPieceCount - ownPieceCount < 0) {
-                    returnValue -= closeBonus - closestPiece();
-                    if (ownPieceCount == 1)
-                    {
-                        if (isNearDoubleCorners()) {
-                            returnValue += nearDoubleBonus;
-                        }
-                        if (isNearDoubleCorners() && this.isCrowned) {
-                            returnValue += nearDoubleBonus;
-                        }
-
-                        if (checkersBoard.analyzeFunctions.
-                                isOnDoubleCorners(this) && this.isCrowned) {
-                            returnValue += doubleBonus;
-                        }
-                    } else {
-                        returnValue += closeBonus - closestPiece();
-                    }
-
+                if (ownPieceCount - oppPieceCount > 0) {
                     if (blocksAPiece()) {
                         returnValue += blockBonus;
                     }
-                }
-
-                if (!isCrowned
-                        && ((checkersBoard.checkAllegiance(this, true)
-                                && y == 1)
-                                || (checkersBoard.checkAllegiance(this, false)
-                                        && y == 6))) {
-                    returnValue += crownAble;
-                }
-
-                if (!isCrowned
-                        && ((checkersBoard.checkAllegiance(this, true)
-                                && y == 7)
-                                || (checkersBoard.checkAllegiance(this, false)
-                                        && y == 0))) {
-                    if (gameState == isMidGame) {
-                        returnValue += backlineBonus / 2;
+                    returnValue += closeBonus - closestPiece();
+                } else if (ownPieceCount - oppPieceCount < 0) {
+                    if (!this.isCrowned) {
+                        if (checkersBoard.checkAllegiance(this, true)) {
+                            returnValue += 7 - y;
+                        } else {
+                            returnValue += y;
+                        }
                     }
+                }
+                if (ownPieceCount == 1 && !checkersBoard.analyzeFunctions.hasTheMove(humanTurn)) {
+                    if (isNearDoubleCorners()) {
+                        returnValue += nearDoubleBonus;
+                    }
+                    if (isNearDoubleCorners() && this.isCrowned) {
+                        returnValue += nearDoubleBonus;
+                    }
+
+                    if (checkersBoard.analyzeFunctions.
+                            isOnDoubleCorners(this) && this.isCrowned) {
+                        returnValue += doubleBonus;
+                    }
+                }
+
+            }
+            if (!isCrowned
+                    && ((checkersBoard.checkAllegiance(this, true)
+                            && y == 1)
+                            || (checkersBoard.checkAllegiance(this, false)
+                                    && y == 6))) {
+                returnValue += crownAble;
+            }
+
+            if (!isCrowned
+                    && ((checkersBoard.checkAllegiance(this, true)
+                            && y == 7)
+                            || (checkersBoard.checkAllegiance(this, false)
+                                    && y == 0))) {
+                if (gameState == isMidGame) {
                     returnValue += backlineBonus / 2;
                 }
-                if (isCrowned) {
-                    returnValue += kingBonus;
-                }
-                currentValue = returnValue;
+                returnValue += backlineBonus / 2;
             }
+            if (isCrowned) {
+                returnValue += kingBonus;
+            }
+            currentValue = returnValue;
         }
     }
 
@@ -167,8 +177,7 @@ public class Piece {
         int direction = -2;
         boolean checkForOpponent = false;
 
-        if (this.color == checkersBoard.myPeasentColor
-                || this.color == checkersBoard.myKingColor) {
+        if (checkersBoard.checkAllegiance(this, !checkForOpponent)) {
             direction = 2;
             checkForOpponent = true;
         }
@@ -193,14 +202,14 @@ public class Piece {
 
             if (checkersBoard.checkBounds(this.x - direction, this.y)) {
                 if (checkersBoard.checkAllegiance(checkersBoard.
-                       myBoard[this.x - direction][this.y], checkForOpponent)) {
+                        myBoard[this.x - direction][this.y], checkForOpponent)) {
                     return true;
                 }
             }
 
             if (checkersBoard.checkBounds(this.x + direction, this.y)) {
                 if (checkersBoard.checkAllegiance(checkersBoard.
-                       myBoard[this.x + direction][this.y], checkForOpponent)) {
+                        myBoard[this.x + direction][this.y], checkForOpponent)) {
                     return true;
                 }
             }
