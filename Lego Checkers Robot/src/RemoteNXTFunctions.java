@@ -58,7 +58,28 @@ public class RemoteNXTFunctions {
         initColorSensor();
         checkersBoard = new Board(this);
     }
+    //function for creating a piece
+    protected Piece producePiece(int x, int y, char color, boolean upgrade){
+        Piece temp = new Piece(checkersBoard);
+        temp.color = color;
+        temp.setXY(x, y);
+        if (upgrade) {
+            temp.isMoveable = true;
+            temp.isCrowned = true;
+            temp.canJump = true;
+        }
 
+        return temp;
+    }
+
+    public final void emptyBoard() {
+        for (Field[] aF : checkersBoard.myBoard) {
+            for (Field f : aF) {
+                f.emptyThisField();
+            }
+        }
+
+    }
     //The Color sensor is calibrated
     public final void initColorSensor() throws IOException {
         getColorOnField(0, 3);
