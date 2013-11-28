@@ -282,8 +282,23 @@ public class Analyze {
                             k--;
                         }
                     } else {
+                        int l = 0;
+                        int h = 0;
+                        OUTER: while (h <= checkersBoard.
+                                oppTrashPlace[0].length - 1) {
+                            while (l <= checkersBoard.
+                                    oppTrashPlace.length - 1) {
+                                if (checkersBoard.
+                                        oppTrashPlace[l][h].isEmpty()) {
+                                    break OUTER;
+                                }
+                                l++;
+                            }
+                            h++;
+                            l = checkersBoard.oppTrashPlace.length - 1;
+                        }
                         checkersBoard.movePieceInRepresentation(takenField,
-                            trashField, false);
+                                checkersBoard.oppTrashPlace[l][h], false);
                     }
                 }
                 return true;
@@ -511,6 +526,14 @@ public class Analyze {
         }
 
         for (Field[] fa : checkersBoard.trashPlace) {
+            for (Field f : fa) {
+                if (!f.isEmpty()) {
+                    placePiece(f);
+                }
+            }
+        }
+
+        for (Field[] fa : checkersBoard.oppTrashPlace) {
             for (Field f : fa) {
                 if (!f.isEmpty()) {
                     placePiece(f);
