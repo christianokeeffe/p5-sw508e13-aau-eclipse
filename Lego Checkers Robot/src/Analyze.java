@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import lejos.robotics.Color;
 import custom.Exceptions.IllegalMove;
 import custom.Exceptions.NoKingLeft;
@@ -271,8 +270,21 @@ public class Analyze {
                     Field takenField = checkersBoard.myBoard
                             [(tempfield.x + tempfield2.x) / 2]
                                     [(tempfield.y + tempfield2.y) / 2];
-                    checkersBoard.movePieceInRepresentation(takenField,
+                    if (takenField.getPieceOnField().isCrowned) {
+                        int k = 7;
+                        while (!(k < 0)) {
+                            if (checkersBoard.oppKingPlace[k].isEmpty()) {
+                                //Insert king at location
+                                checkersBoard.movePieceInRepresentation(
+                                        takenField,
+                                        checkersBoard.oppKingPlace[k], true);
+                            }
+                            k--;
+                        }
+                    } else {
+                        checkersBoard.movePieceInRepresentation(takenField,
                             trashField, false);
+                    }
                 }
                 return true;
             }
@@ -318,13 +330,24 @@ public class Analyze {
 
     //Function to check if user have replaced the
     //robots peasant piece with a king piece
-    public final void checkRobotPieceReplaced() throws IOException {
+    public final void checkRobotPieceReplaced() throws IOException, NoKingLeft {
         if (fieldToCheck != null) {
             boolean checkCondition = true;
             while (checkCondition) {
                 if (getColor(fieldToCheck.x, fieldToCheck.y)
                         == checkersBoard.myKingColor) {
                     checkCondition = false;
+
+                    int i = 0;
+                    while (!(i > 7)) {
+                        if (!checkersBoard.oppKingPlace[i].isEmpty()) {
+                            //Insert king at location
+                            checkersBoard.movePieceInRepresentation(
+                                    checkersBoard.oppKingPlace[i],
+                                    fieldToCheck, true);
+                        }
+                        i++;
+                    }
                     fieldToCheck = null;
                 } else {
                     checkersBoard.informer.myKingNotPlaced();
@@ -372,7 +395,8 @@ public class Analyze {
         }
     }
 
-    public final boolean checkForGameHasEnded(boolean isHumansTurn) {
+    public final boolean checkForGameHasEnded(boolean isHumansTurn)
+            throws IOException, NoKingLeft {
         switch (gameHasEnded(isHumansTurn)) {
         case 0:
             return false;
@@ -475,5 +499,107 @@ public class Analyze {
             return true;
         }
         return false;
+    }
+
+    public final void cleanUp() throws IOException, NoKingLeft {
+        for (Field[] fa : checkersBoard.myBoard) {
+            for (Field f : fa) {
+                if (!f.isEmpty()) {
+                    placePiece(f);
+                }
+            }
+        }
+
+        for (Field[] fa : checkersBoard.trashPlace) {
+            for (Field f : fa) {
+                if (!f.isEmpty()) {
+                    placePiece(f);
+                }
+            }
+        }
+    }
+
+    private void placePiece(Field fieldToMove) throws IOException, NoKingLeft {
+        if (fieldToMove.getPieceOnField().isCrowned) {
+            if (isOnKingRow(fieldToMove.getPieceOnField())) {
+                return;
+            } else {
+                moveToKingRow(fieldToMove);
+            }
+        } else {
+            if (isInCorrectEnd(fieldToMove.getPieceOnField())) {
+                return;
+            } else {
+                movePeasent(fieldToMove);
+            }
+        }
+    }
+
+    private void movePeasent(Field fieldToMove) throws IOException, NoKingLeft {
+        if (checkersBoard.checkAllegiance(
+                fieldToMove.getPieceOnField(), true)) {
+            OUTERMOST: for (int i = 0; i <= 7; i++) {
+                for (int j = 5; j <= 7; j++) {
+                    if (checkersBoard.myBoard[i][j].isEmpty()
+                            && checkersBoard.myBoard[i][j].allowedField) {
+                        remoteFunctions.doMove(new Move(fieldToMove,
+                                checkersBoard.myBoard[i][j], false));
+                        break OUTERMOST;
+                    }
+                }
+            }
+        } else if (checkersBoard.checkAllegiance(
+                fieldToMove.getPieceOnField(), false)) {
+            OUTERMOST: for (int i = 0; i <= 7; i++) {
+                for (int j = 0; j <= 2; j++) {
+                    if (checkersBoard.myBoard[i][j].isEmpty()
+                            && checkersBoard.myBoard[i][j].allowedField) {
+                        remoteFunctions.doMove(new Move(fieldToMove,
+                                checkersBoard.myBoard[i][j], false));
+                        break OUTERMOST;
+                    }
+                }
+            }
+        }
+    }
+
+    private void moveToKingRow(Field fieldToMove)
+            throws IOException, NoKingLeft {
+        if (checkersBoard.checkAllegiance(
+                fieldToMove.getPieceOnField(), false)) {
+            int i = 0;
+            while (!(i > 7)) {
+                if (checkersBoard.oppKingPlace[i].isEmpty()) {
+                    //Insert king at location
+                    remoteFunctions.doMove(new Move(fieldToMove,
+                            checkersBoard.oppKingPlace[i], true));
+                    return;
+                }
+                i++;
+            }
+        } else if (checkersBoard.checkAllegiance(
+                fieldToMove.getPieceOnField(), true)) {
+            int i = 0;
+            while (!(i > 7)) {
+                if (checkersBoard.kingPlace[i].isEmpty()) {
+                    //Insert king at location
+                    remoteFunctions.doMove(new Move(fieldToMove,
+                            checkersBoard.kingPlace[i], true));
+                    return;
+                }
+                i++;
+            }
+        }
+    }
+
+    private boolean isInCorrectEnd(Piece pieceToCheck) {
+        return (checkersBoard.checkAllegiance(pieceToCheck, true)
+                    && (pieceToCheck.getY() >= 5 && pieceToCheck.getY() <= 7))
+                || (checkersBoard.checkAllegiance(pieceToCheck, false)
+                    && (pieceToCheck.getY() >= 0 && pieceToCheck.getY() <= 2));
+    }
+
+    private boolean isOnKingRow(Piece pieceToCheck) {
+        return pieceToCheck.getY() == -1 || pieceToCheck.getY() == 9;
     }
 }
