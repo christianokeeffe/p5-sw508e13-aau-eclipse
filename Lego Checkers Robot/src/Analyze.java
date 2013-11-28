@@ -354,6 +354,23 @@ public class Analyze {
                     checkCondition = false;
 
                     int i = 0;
+                    int l = 0;
+                    int h = 0;
+                    OUTER: while (h <= checkersBoard.
+                            oppTrashPlace[0].length - 1) {
+                        while (l <= checkersBoard.
+                                oppTrashPlace.length - 1) {
+                            if (checkersBoard.
+                                    oppTrashPlace[l][h].isEmpty()) {
+                                break OUTER;
+                            }
+                            l++;
+                        }
+                        h++;
+                        l = checkersBoard.oppTrashPlace.length - 1;
+                    }
+                    checkersBoard.movePieceInRepresentation(fieldToCheck,
+                            checkersBoard.oppTrashPlace[l][h], false);
                     while (!(i > 7)) {
                         if (!checkersBoard.oppKingPlace[i].isEmpty()) {
                             //Insert king at location
