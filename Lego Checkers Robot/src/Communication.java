@@ -13,8 +13,7 @@ public class Communication {
 
     public final void playYourTurn() {
         Sound.twoBeeps();
-        nxt.bottomNXT.C.setSpeed(900);
-        nxt.bottomNXT.C.forward();
+        nxt.bottomNXT.C.setPower(100);
         LCD.clear();
         LCD.drawString("Your turn", 0, 0);
         LCD.refresh();
@@ -76,7 +75,7 @@ public class Communication {
     }
 
     public final void robotTurn() {
-        nxt.bottomNXT.C.flt(true);
+        nxt.bottomNXT.C.setPower(0);
         LCD.clear();
         LCD.drawString("Please wait", 0, 0);
         LCD.refresh();
