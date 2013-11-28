@@ -77,6 +77,7 @@ public class Communication {
 
     public final void robotTurn() {
         nxt.bottomNXT.C.flt(true);
+        nxt.bottomNXT.C.setPower(0);
         LCD.clear();
         LCD.drawString("Please wait", 0, 0);
         LCD.refresh();
