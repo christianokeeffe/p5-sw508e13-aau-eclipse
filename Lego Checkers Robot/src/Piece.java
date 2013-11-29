@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Piece {
     //latex start Piececode
@@ -11,7 +14,9 @@ public class Piece {
     private final int isMidGame = 1;
     private final int isEndGame = 2;
     private Board checkersBoard;
-
+    private final int numberOfPastFieldsToCheck = 1;
+    
+    private final int hasBeenOnField = 5;
     private final int valueOfPiece = 100;
     private final int middleBonus = 3;
     private final int closeBonus = 4;
@@ -22,6 +27,7 @@ public class Piece {
     private final int doubleCornerBonus = 8;
     private final int blockBonus = 10;
     //latex end
+    private List<Field> pastFields = new ArrayList<Field>();
 
     public Piece(Board input) {
         checkersBoard = input;
@@ -38,6 +44,14 @@ public class Piece {
     public final void setXY(int inputX, int inputY) {
         x = inputX;
         y = inputY;
+        if (checkersBoard.checkBounds(x, y) && isCrowned) {
+            if (pastFields.size() > numberOfPastFieldsToCheck) {
+                pastFields.remove(0);
+            }
+            pastFields.add(checkersBoard.myBoard[x][y]);
+        } else {
+            pastFields.clear();
+        }
         updatePriceMidgame();
     }
 
@@ -72,6 +86,9 @@ public class Piece {
         if (isOnBoard()) {
             calculatedGameState = gameState;
             int returnValue = valueOfPiece;
+            if (pastFields.contains(checkersBoard.myBoard[x][y])) {
+                returnValue -= hasBeenOnField;
+            }
             if (gameState == isMidGame) {
                 returnValue += middleBonus
                         - min(Math.abs(3 - x), Math.abs(4 - x));
@@ -87,8 +104,7 @@ public class Piece {
                         returnValue += blockBonus;
                     }
                     returnValue += closeBonus - closestPiece();
-                }
-                else if (ownPieceCount - oppPieceCount < 0) {
+                } else if (ownPieceCount - oppPieceCount < 0) {
                     if (!this.isCrowned) {
                         if (checkersBoard.checkAllegiance(this, true)) {
                             returnValue += 7 - y;
