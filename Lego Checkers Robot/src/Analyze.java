@@ -500,24 +500,29 @@ public class Analyze {
         return 0;
     }
 
-    public boolean hasTheMove(boolean humansTurn) {
+    public boolean hasTheMove(boolean humansTurn, int ownPieces, int oppPieces) {
         int rowToCheck = 0;
+        if (ownPieces - oppPieces == 0) {
+            if (!humansTurn) {
+                rowToCheck = 1;
+            }
 
-        if (!humansTurn) {
-            rowToCheck = 1;
-        }
+            int pieceCount = 0;
 
-        int pieceCount = 0;
-
-        for (int i = rowToCheck; i < 8; i += 2) {
-            for (int j = 0; j < 8; j++) {
-                if (!checkersBoard.myBoard[i][j].isEmpty()) {
-                    pieceCount++;
+            for (int i = rowToCheck; i < 8; i += 2) {
+                for (int j = 0; j < 8; j++) {
+                    if (!checkersBoard.myBoard[i][j].isEmpty()) {
+                        pieceCount++;
+                    }
                 }
             }
-        }
 
-        if (pieceCount % 2 == 1) {
+            if (pieceCount % 2 == 1) {
+                return true;
+            }
+        } else if (!humansTurn && ownPieces > oppPieces) {
+            return true;
+        } else if (humansTurn && ownPieces < oppPieces) {
             return true;
         }
         return false;
@@ -634,9 +639,9 @@ public class Analyze {
 
     private boolean isInCorrectEnd(Piece pieceToCheck) {
         return (checkersBoard.checkAllegiance(pieceToCheck, true)
-                    && (pieceToCheck.getY() >= 5 && pieceToCheck.getY() <= 7))
+                && (pieceToCheck.getY() >= 5 && pieceToCheck.getY() <= 7))
                 || (checkersBoard.checkAllegiance(pieceToCheck, false)
-                    && (pieceToCheck.getY() >= 0 && pieceToCheck.getY() <= 2));
+                        && (pieceToCheck.getY() >= 0 && pieceToCheck.getY() <= 2));
     }
 
     private boolean isOnKingRow(Piece pieceToCheck) {
