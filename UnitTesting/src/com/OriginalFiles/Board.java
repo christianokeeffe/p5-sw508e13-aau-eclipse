@@ -9,7 +9,9 @@ public class Board {
 
     public Field[][] myBoard = new Field[8][8];
     public Field[] kingPlace = new Field[8];
+    public Field[] oppKingPlace = new Field[8];
     public Field[][] trashPlace = new Field[8][3];
+    public Field[][] oppTrashPlace = new Field[8][2];
     public Analyze analyzeFunctions;
 
     public Communication informer;
@@ -77,14 +79,33 @@ public class Board {
             temp.setPieceOnField(tempPiece);
             kingPlace[i] = temp;
         }
-        //latex end
-        for (int j = 0; j < 3; j++) {
         for (int i = 0; i < 8; i++) {
             Field temp = new Field();
             temp.x = i;
-            temp.y = -3 - j;
-            trashPlace[i][j] = temp;
+            temp.y = 9;
+            Piece tempPiece = new Piece(this);
+            tempPiece.color = myKingColor;
+            tempPiece.isCrowned = true;
+            temp.setPieceOnField(tempPiece);
+            oppKingPlace[i] = temp;
         }
+        //latex end
+        for (int j = 0; j < 3; j++) {
+            for (int i = 0; i < 8; i++) {
+                Field temp = new Field();
+                temp.x = i;
+                temp.y = -3 - j;
+                trashPlace[i][j] = temp;
+            }
+        }
+
+        for (int j = 0; j < 2; j++) {
+            for (int i = 0; i < 8; i++) {
+                Field temp = new Field();
+                temp.x = i;
+                temp.y = 10 + j;
+                oppTrashPlace[i][j] = temp;
+            }
         }
     }
 
