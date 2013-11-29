@@ -43,7 +43,7 @@ public class AnalyzeTest extends FunktionForTesting {
     
 
     @Test
-    public final void testCheckForGameHasEnded() throws InterruptedException, IOException {
+    public final void testCheckForGameHasEnded() throws InterruptedException, IOException, NoKingLeft {
         
         //test if the games ends in the different scenarios
         assertFalse(checkersBoard.analyzeFunctions.checkForGameHasEnded(true));
@@ -508,6 +508,27 @@ public class AnalyzeTest extends FunktionForTesting {
         checkersBoard.myBoard[5][6].setPieceOnField(producePiece(5, 6, 'g',true));
         
         assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
+        
+        
+
     }
 
+    @Test
+    public final void testcleanUp() throws InterruptedException, IOException, NoKingLeft, IllegalMove {
+    
+        emptyBoard();
+        checkersBoard.myBoard[7][6].setPieceOnField(producePiece(7, 6, 'b',true));
+        checkersBoard.myBoard[5][6].setPieceOnField(producePiece(5, 6, 'g',true));
+        
+        //Cleanup board
+        
+        checkersBoard.trashPlace[0][0].setPieceOnField(producePiece(6, 5, 'g',true));
+        checkersBoard.oppTrashPlace[0][0].setPieceOnField(producePiece(6, 5, 'g',true));
+        checkersBoard.analyzeFunctions.cleanUp();
+        
+        assertTrue(checkersBoard.trashPlace[0][0].isEmpty());
+        //assertNull(checkersBoard.oppTrashPlace[0][0]);
+        
+        //assertNotNull(checkersBoard.myBoard[0][1]);
+    }
 }
