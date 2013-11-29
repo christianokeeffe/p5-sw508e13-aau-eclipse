@@ -122,10 +122,10 @@ public class MI {
             humanTurn = true;
         }
         if (!humanTurn) {
-            robotHasTheMove = remoteNXT.checkersBoard.analyzeFunctions.hasTheMove(humanTurn);
+            robotHasTheMove = remoteNXT.checkersBoard.analyzeFunctions.hasTheMove(humanTurn, ownPieces.size(), oppPieces.size());
         }
         else {
-            robotHasTheMove = !remoteNXT.checkersBoard.analyzeFunctions.hasTheMove(humanTurn);
+            robotHasTheMove = !remoteNXT.checkersBoard.analyzeFunctions.hasTheMove(humanTurn, ownPieces.size(), oppPieces.size());
         }
         int state = gameState();
         
