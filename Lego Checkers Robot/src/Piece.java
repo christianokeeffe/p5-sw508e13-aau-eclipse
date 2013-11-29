@@ -45,7 +45,7 @@ public class Piece {
         x = inputX;
         y = inputY;
         if (checkersBoard.checkBounds(x, y) && isCrowned) {
-            if (pastFields.size() > numberOfPastFieldsToCheck) {
+            if (pastFields.size() > numberOfPastFieldsToCheck && pastFields.size() != 0) {
                 pastFields.remove(0);
             }
             pastFields.add(checkersBoard.myBoard[x][y]);
