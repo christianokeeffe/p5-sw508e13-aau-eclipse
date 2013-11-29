@@ -19,7 +19,7 @@ public class Piece {
     private final int kingBonus = 150;
     private final int crownAble = 80;
     private final int nearDoubleBonus = 5;
-    private final int doubleBonus = 8;
+    private final int doubleCornerBonus = 8;
     private final int blockBonus = 10;
     //latex end
 
@@ -50,9 +50,9 @@ public class Piece {
         }
     }
 
-    public final double priceForPiece(int gameState, int ownPieceCount, int oppPieceCount, int turn) {
+    public final double priceForPiece(int gameState, int ownPieceCount, int oppPieceCount, int turn, boolean hasMove) {
         if (calculatedGameState != gameState || gameState == isEndGame) {
-            updatePrice(gameState, ownPieceCount, oppPieceCount, turn);
+            updatePrice(gameState, ownPieceCount, oppPieceCount, turn, hasMove);
         }
         return currentValue;
     }
@@ -65,16 +65,10 @@ public class Piece {
     }
 
     private void updatePriceMidgame() {
-        updatePrice(isMidGame, 100, 100, 0);
+        updatePrice(isMidGame, 100, 100, 0, false);
     }
 
-    private void updatePrice(int gameState, int ownPieceCount, int oppPieceCount, int turn) {
-        boolean humanTurn;
-        if (turn == 1) {
-            humanTurn = false;
-        } else {
-            humanTurn = true;
-        }
+    private void updatePrice(int gameState, int ownPieceCount, int oppPieceCount, int turn, boolean hasMove) {
         if (isOnBoard()) {
             calculatedGameState = gameState;
             int returnValue = valueOfPiece;
@@ -88,7 +82,13 @@ public class Piece {
                         returnValue += blockBonus;
                     }
                     returnValue += closeBonus - closestPiece();
-                } else if (ownPieceCount - oppPieceCount < 0) {
+                } else if (ownPieceCount == oppPieceCount && hasMove) {
+                    if (blocksAPiece()) {
+                        returnValue += blockBonus;
+                    }
+                    returnValue += closeBonus - closestPiece();
+                }
+                else if (ownPieceCount - oppPieceCount < 0) {
                     if (!this.isCrowned) {
                         if (checkersBoard.checkAllegiance(this, true)) {
                             returnValue += 7 - y;
@@ -97,7 +97,7 @@ public class Piece {
                         }
                     }
                 }
-                if (ownPieceCount == 1 && !checkersBoard.analyzeFunctions.hasTheMove(humanTurn)) {
+                if (ownPieceCount == 1) {
                     if (isNearDoubleCorners()) {
                         returnValue += nearDoubleBonus;
                     }
@@ -107,7 +107,7 @@ public class Piece {
 
                     if (checkersBoard.analyzeFunctions.
                             isOnDoubleCorners(this) && this.isCrowned) {
-                        returnValue += doubleBonus;
+                        returnValue += doubleCornerBonus;
                     }
                 }
 

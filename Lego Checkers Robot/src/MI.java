@@ -115,14 +115,26 @@ public class MI {
 
     private double evaluation(int turn) {
         double valueOfBoard = 0;
-
-        int state = gameState();
-
-        for (int i = 0; i < ownPieces.size(); i++) {
-            valueOfBoard += ownPieces.get(i).priceForPiece(state, ownPieces.size(), oppPieces.size(), turn);
+        boolean robotHasTheMove = false;
+        boolean humanTurn = false;
+        
+        if (turn == -1) {
+            humanTurn = true;
         }
+        if (!humanTurn) {
+            robotHasTheMove = remoteNXT.checkersBoard.analyzeFunctions.hasTheMove(humanTurn);
+        }
+        else {
+            robotHasTheMove = !remoteNXT.checkersBoard.analyzeFunctions.hasTheMove(humanTurn);
+        }
+        int state = gameState();
+        
+        for (int i = 0; i < ownPieces.size(); i++) {
+            valueOfBoard += ownPieces.get(i).priceForPiece(state, ownPieces.size(), oppPieces.size(), turn, robotHasTheMove);
+        }
+        
         for (int i = 0; i < oppPieces.size(); i++) {
-            valueOfBoard -= oppPieces.get(i).priceForPiece(state, ownPieces.size(), oppPieces.size(), turn);
+            valueOfBoard -= oppPieces.get(i).priceForPiece(state, ownPieces.size(), oppPieces.size(), turn, !robotHasTheMove);
         }
 
         boolean isHuman = (turn == -1);
