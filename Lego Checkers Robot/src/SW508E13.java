@@ -14,19 +14,6 @@ public final class SW508E13 {
     public static void main(String[] args)
             throws IOException, NoKingLeft, InterruptedException {
         RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
-        checkTopFunc.emptyBoard();
-        
-        checkTopFunc.checkersBoard.myBoard[7][0].setPieceOnField(checkTopFunc.producePiece('w', false));
-        checkTopFunc.checkersBoard.myBoard[5][0].setPieceOnField(checkTopFunc.producePiece('w', false));
-        checkTopFunc.checkersBoard.myBoard[1][0].setPieceOnField(checkTopFunc.producePiece('w', false));
-        checkTopFunc.checkersBoard.myBoard[2][3].setPieceOnField(checkTopFunc.producePiece('g', true));
-        checkTopFunc.checkersBoard.myBoard[2][5].setPieceOnField(checkTopFunc.producePiece('b', true));
-        checkTopFunc.checkersBoard.myBoard[0][7].setPieceOnField(checkTopFunc.producePiece('r', false));
-        checkTopFunc.checkersBoard.myBoard[2][7].setPieceOnField(checkTopFunc.producePiece('r', false));
-        checkTopFunc.checkersBoard.myBoard[6][3].setPieceOnField(checkTopFunc.producePiece('r', false));
-        checkTopFunc.checkersBoard.myBoard[5][4].setPieceOnField(checkTopFunc.producePiece('r', false));
-        checkTopFunc.checkersBoard.kingPlace[0].emptyThisField();
-        
         MI mi = new MI(checkTopFunc, true,
                 checkTopFunc.checkersBoard.informer.getDifficulty());
         Delay.msDelay(500);
