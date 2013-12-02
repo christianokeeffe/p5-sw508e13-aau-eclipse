@@ -203,9 +203,9 @@ public class Piece {
                 int returnValue = 0;
                 Field thisField = checkersBoard.myBoard[xToCheck][yToCheck];
                 returnValue += checkBlockade(xToCheck - 1, yToCheck - 1, thisField);
-                /*returnValue += checkBlockade(xToCheck - 1, yToCheck + 1, thisField);
+                returnValue += checkBlockade(xToCheck - 1, yToCheck + 1, thisField);
                 returnValue += checkBlockade(xToCheck + 1, yToCheck - 1, thisField);
-                returnValue += checkBlockade(xToCheck + 1, yToCheck + 1, thisField);*/
+                returnValue += checkBlockade(xToCheck + 1, yToCheck + 1, thisField);
                 return returnValue;
             }
         }
