@@ -570,11 +570,7 @@ public class Analyze {
 
     private void placePiece(Field fieldToMove) throws IOException, NoKingLeft {
         if (fieldToMove.getPieceOnField().isCrowned) {
-            if (isOnKingRow(fieldToMove.getPieceOnField())) {
-                return;
-            } else {
-                moveToKingRow(fieldToMove);
-            }
+            moveToKingRow(fieldToMove);
         } else {
             if (isInCorrectEnd(fieldToMove.getPieceOnField())) {
                 return;
@@ -646,9 +642,5 @@ public class Analyze {
                 && (pieceToCheck.getY() >= 5 && pieceToCheck.getY() <= 7))
                 || (checkersBoard.checkAllegiance(pieceToCheck, false)
                         && (pieceToCheck.getY() >= 0 && pieceToCheck.getY() <= 2));
-    }
-
-    private boolean isOnKingRow(Piece pieceToCheck) {
-        return pieceToCheck.getY() == -1 || pieceToCheck.getY() == 9;
     }
 }

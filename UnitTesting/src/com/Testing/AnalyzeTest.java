@@ -508,27 +508,31 @@ public class AnalyzeTest extends FunktionForTesting {
         checkersBoard.myBoard[5][6].setPieceOnField(producePiece(5, 6, 'g',true));
         
         assertTrue(checkersBoard.analyzeFunctions.checkForGameHasEnded(false));
-        
-        
-
     }
 
     @Test
     public final void testcleanUp() throws InterruptedException, IOException, NoKingLeft, IllegalMove {
     
         emptyBoard();
-        checkersBoard.myBoard[7][6].setPieceOnField(producePiece(7, 6, 'b',true));
-        checkersBoard.myBoard[5][6].setPieceOnField(producePiece(5, 6, 'g',true));
+        checkersBoard.myBoard[7][6].setPieceOnField(producePiece(7, 6, 'r',false));
+        checkersBoard.myBoard[5][6].setPieceOnField(producePiece(5, 6, 'w',false));
+        checkersBoard.myBoard[4][7].setPieceOnField(producePiece(4, 7, 'g',true));
+        checkersBoard.myBoard[6][7].setPieceOnField(producePiece(6, 7, 'b',true));
+        checkersBoard.kingPlace[0].emptyThisField();
+        checkersBoard.oppKingPlace[0].emptyThisField();
         
         //Cleanup board
         
-        checkersBoard.trashPlace[0][0].setPieceOnField(producePiece(6, 5, 'g',true));
-        checkersBoard.oppTrashPlace[0][0].setPieceOnField(producePiece(6, 5, 'g',true));
+        checkersBoard.trashPlace[0][0].setPieceOnField(producePiece(6, 5, 'r',false));
+        checkersBoard.oppTrashPlace[0][0].setPieceOnField(producePiece(3, 4, 'w',false));
+
+        
         checkersBoard.analyzeFunctions.cleanUp();
         
-        assertTrue(checkersBoard.trashPlace[0][0].isEmpty());
-        //assertNull(checkersBoard.oppTrashPlace[0][0]);
-        
-        //assertNotNull(checkersBoard.myBoard[0][1]);
+        assertNull(checkersBoard.trashPlace[0][0].getPieceOnField());
+        assertNull(checkersBoard.oppTrashPlace[0][0].getPieceOnField());
+        assertNotNull(checkersBoard.myBoard[0][1].getPieceOnField());
+        assertNotNull(checkersBoard.kingPlace[0].getPieceOnField());
+
     }
 }
