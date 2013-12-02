@@ -1,6 +1,9 @@
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
 import lejos.robotics.Color;
 import custom.Exceptions.IllegalMove;
 import custom.Exceptions.NoKingLeft;
@@ -295,7 +298,7 @@ public class Analyze {
                                 l++;
                             }
                             h++;
-                            l = checkersBoard.oppTrashPlace.length - 1;
+                            l = 0;
                         }
                         checkersBoard.movePieceInRepresentation(takenField,
                                 checkersBoard.oppTrashPlace[l][h], false);
@@ -356,10 +359,13 @@ public class Analyze {
                     int i = 0;
                     int l = 0;
                     int h = 0;
+
                     OUTER: while (h <= checkersBoard.
                             oppTrashPlace[0].length - 1) {
+                        
                         while (l <= checkersBoard.
                                 oppTrashPlace.length - 1) {
+                            
                             if (checkersBoard.
                                     oppTrashPlace[l][h].isEmpty()) {
                                 break OUTER;
@@ -367,7 +373,7 @@ public class Analyze {
                             l++;
                         }
                         h++;
-                        l = checkersBoard.oppTrashPlace.length - 1;
+                        l = 0;
                     }
                     checkersBoard.movePieceInRepresentation(fieldToCheck,
                             checkersBoard.oppTrashPlace[l][h], false);
