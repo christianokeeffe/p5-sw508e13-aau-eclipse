@@ -16,8 +16,6 @@ public class MI {
     private double gameIsWon = inf / 2;
     private final int gameIsDraw = 200;
 
-    private final int pieceDifferenceFactor = 30;
-
     private final int isMidGame = 1;
     private final int isEndgame = 2;
     private final int midGameEnd = 7;
@@ -117,24 +115,27 @@ public class MI {
         double valueOfBoard = 0;
         boolean robotHasTheMove = false;
         boolean humanTurn = false;
-        
+
         if (turn == -1) {
             humanTurn = true;
         }
         if (!humanTurn) {
-            robotHasTheMove = remoteNXT.checkersBoard.analyzeFunctions.hasTheMove(humanTurn, ownPieces.size(), oppPieces.size());
-        }
-        else {
-            robotHasTheMove = !remoteNXT.checkersBoard.analyzeFunctions.hasTheMove(humanTurn, ownPieces.size(), oppPieces.size());
+            robotHasTheMove = remoteNXT.checkersBoard.analyzeFunctions.
+                    hasTheMove(humanTurn, ownPieces.size(), oppPieces.size());
+        } else {
+            robotHasTheMove = !remoteNXT.checkersBoard.analyzeFunctions.
+                    hasTheMove(humanTurn, ownPieces.size(), oppPieces.size());
         }
         int state = gameState();
-        
+
         for (int i = 0; i < ownPieces.size(); i++) {
-            valueOfBoard += ownPieces.get(i).priceForPiece(state, ownPieces.size(), oppPieces.size(), turn, robotHasTheMove);
+            valueOfBoard += ownPieces.get(i).priceForPiece(state,
+                    ownPieces.size(), oppPieces.size(), turn, robotHasTheMove);
         }
-        
+
         for (int i = 0; i < oppPieces.size(); i++) {
-            valueOfBoard -= oppPieces.get(i).priceForPiece(state, ownPieces.size(), oppPieces.size(), turn, !robotHasTheMove);
+            valueOfBoard -= oppPieces.get(i).priceForPiece(state,
+                    ownPieces.size(), oppPieces.size(), turn, !robotHasTheMove);
         }
 
         boolean isHuman = (turn == -1);
@@ -156,7 +157,7 @@ public class MI {
             break;
         default:
             valueOfBoard +=  242 + (ownPieces.size() - oppPieces.size())
-                                * ((24 - ownPieces.size() - oppPieces.size()) * 2);
+                          * ((24 - ownPieces.size() - oppPieces.size()) * 2);
             break;
         }
 

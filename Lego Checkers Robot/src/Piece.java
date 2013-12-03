@@ -45,7 +45,8 @@ public class Piece {
         x = inputX;
         y = inputY;
         if (checkersBoard.checkBounds(x, y) && isCrowned) {
-            if (pastFields.size() > numberOfPastFieldsToCheck && pastFields.size() != 0) {
+            if (pastFields.size() > numberOfPastFieldsToCheck
+                    && pastFields.size() != 0) {
                 pastFields.remove(0);
             }
             pastFields.add(checkersBoard.myBoard[x][y]);
@@ -64,7 +65,8 @@ public class Piece {
         }
     }
 
-    public final double priceForPiece(int gameState, int ownPieceCount, int oppPieceCount, int turn, boolean hasMove) {
+    public final double priceForPiece(int gameState, int ownPieceCount,
+            int oppPieceCount, int turn, boolean hasMove) {
         if (calculatedGameState != gameState || gameState == isEndGame) {
             updatePrice(gameState, ownPieceCount, oppPieceCount, turn, hasMove);
         }
@@ -82,7 +84,8 @@ public class Piece {
         updatePrice(isMidGame, 100, 100, 0, false);
     }
 
-    private void updatePrice(int gameState, int ownPieceCount, int oppPieceCount, int turn, boolean hasMove) {
+    private void updatePrice(int gameState, int ownPieceCount,
+            int oppPieceCount, int turn, boolean hasMove) {
         if (isOnBoard()) {
             calculatedGameState = gameState;
             int returnValue = valueOfPiece;
@@ -166,24 +169,28 @@ public class Piece {
         if (checkersBoard.checkAllegiance(this, true)) {
             diff = -1;
         }
-        returnValue += blockFields (this.x-1, this.y+diff);
-        returnValue += blockFields (this.x+1, this.y+diff);
+        returnValue += blockFields(this.x - 1, this.y + diff);
+        returnValue += blockFields(this.x + 1, this.y + diff);
         if (this.isCrowned) {
-            returnValue += blockFields (this.x - 1, this.y - diff);
-            returnValue += blockFields (this.x + 1, this.y - diff);
+            returnValue += blockFields(this.x - 1, this.y - diff);
+            returnValue += blockFields(this.x + 1, this.y - diff);
         }
-        return (returnValue/100)*blockBonus;
+        return (returnValue / 100) * blockBonus;
     }
 
-    private int blockFields (int xToCheck, int yToCheck) {
+    private int blockFields(int xToCheck, int yToCheck) {
         if (checkersBoard.checkBounds(xToCheck, yToCheck)) {
             if (checkersBoard.myBoard[xToCheck][yToCheck].isEmpty()) {
                 int returnValue = 0;
                 Field thisField = checkersBoard.myBoard[xToCheck][yToCheck];
-                returnValue += checkBlockade(xToCheck - 1, yToCheck - 1, thisField);
-                returnValue += checkBlockade(xToCheck - 1, yToCheck + 1, thisField);
-                returnValue += checkBlockade(xToCheck + 1, yToCheck - 1, thisField);
-                returnValue += checkBlockade(xToCheck + 1, yToCheck + 1, thisField);
+                returnValue += checkBlockade(xToCheck - 1,
+                        yToCheck - 1, thisField);
+                returnValue += checkBlockade(xToCheck - 1,
+                        yToCheck + 1, thisField);
+                returnValue += checkBlockade(xToCheck + 1,
+                        yToCheck - 1, thisField);
+                returnValue += checkBlockade(xToCheck + 1,
+                        yToCheck + 1, thisField);
                 return returnValue;
             }
         }
@@ -191,10 +198,11 @@ public class Piece {
         return 0;
     }
 
-    private int checkBlockade (int xToCheck, int yToCheck, Field blockField) {
+    private int checkBlockade(int xToCheck, int yToCheck, Field blockField) {
         boolean checkForOpponent = !checkersBoard.checkAllegiance(this, true);
         if (checkersBoard.checkBounds(xToCheck, yToCheck)) {
-            if (checkersBoard.checkAllegiance(checkersBoard.myBoard[xToCheck][yToCheck], checkForOpponent)) {
+            if (checkersBoard.checkAllegiance(checkersBoard.
+                    myBoard[xToCheck][yToCheck], checkForOpponent)) {
                 int diff = 1;
                 if (checkForOpponent) {
                     diff = -1;
@@ -202,30 +210,33 @@ public class Piece {
                 int procentBlocked = 0;
                 if (checkersBoard.fieldOccupied(blockField.x, blockField.y)) {
                     return 0;
-                }
-                else {
+                } else {
                     procentBlocked += 25;
                 }
-                if (checkersBoard.fieldOccupied(xToCheck-1, yToCheck+diff)) {
+                if (checkersBoard.fieldOccupied(xToCheck - 1,
+                        yToCheck + diff)) {
                     procentBlocked += 25;
                 }
-                if (checkersBoard.fieldOccupied(xToCheck+1, yToCheck+diff)) {
+                if (checkersBoard.fieldOccupied(xToCheck + 1,
+                        yToCheck + diff)) {
                     procentBlocked += 25;
                 }
-               
-                if (checkersBoard.myBoard[xToCheck][yToCheck].getPieceOnField().isCrowned) {
-                    if (checkersBoard.fieldOccupied(xToCheck-1, yToCheck-diff)) {
+
+                if (checkersBoard.myBoard[xToCheck][yToCheck].
+                        getPieceOnField().isCrowned) {
+                    if (checkersBoard.fieldOccupied(xToCheck - 1,
+                            yToCheck - diff)) {
                         procentBlocked += 25;
                     }
-                    if (checkersBoard.fieldOccupied(xToCheck+1, yToCheck-diff)) {
+                    if (checkersBoard.fieldOccupied(xToCheck + 1,
+                            yToCheck - diff)) {
                         procentBlocked += 25;
-                    }  
-                }
-                else {
+                    }
+                } else {
                     procentBlocked += 50;
                 }
                 return procentBlocked;
-            }        
+            }
         }
         return 0;
     }
@@ -241,7 +252,8 @@ public class Piece {
                             checkBounds(x + i, y + j)) {
                         if (checkersBoard.checkAllegiance(
                                 checkersBoard.
-                                myBoard[x + i][y + j], !checkersBoard.checkAllegiance(this, true))) {
+                                myBoard[x + i][y + j],
+                                !checkersBoard.checkAllegiance(this, true))) {
                             found = true;
                             break OUTERMOST;
                         }

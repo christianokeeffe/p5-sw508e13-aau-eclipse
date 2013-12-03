@@ -59,7 +59,7 @@ public class RemoteNXTFunctions {
         checkersBoard = new Board(this);
     }
     //function for creating a piece
-    protected Piece producePiece(char color, boolean upgrade){
+    protected final Piece producePiece(char color, boolean upgrade) {
         Piece temp = new Piece(checkersBoard);
         temp.color = color;
         if (upgrade) {

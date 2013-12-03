@@ -1,9 +1,6 @@
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import lejos.nxt.Button;
-import lejos.nxt.LCD;
 import lejos.robotics.Color;
 import custom.Exceptions.IllegalMove;
 import custom.Exceptions.NoKingLeft;
@@ -16,7 +13,6 @@ public class Analyze {
     private int totalAnalyzeRuns = 0;
     private final int analyzeRunsBeforeReset = 10;
     private RemoteNXTFunctions remoteFunctions;
-    private Field trashField = new Field(3, -6);
     private boolean pieceFound;
     private boolean mustJump;
 
@@ -362,10 +358,10 @@ public class Analyze {
 
                     OUTER: while (h <= checkersBoard.
                             oppTrashPlace[0].length - 1) {
-                        
+
                         while (l <= checkersBoard.
                                 oppTrashPlace.length - 1) {
-                            
+
                             if (checkersBoard.
                                     oppTrashPlace[l][h].isEmpty()) {
                                 break OUTER;
@@ -506,7 +502,8 @@ public class Analyze {
         return 0;
     }
 
-    public boolean hasTheMove(boolean humansTurn, int ownPieces, int oppPieces) {
+    public final boolean hasTheMove(boolean humansTurn,
+            int ownPieces, int oppPieces) {
         int rowToCheck = 0;
         if (ownPieces - oppPieces == 0) {
             if (!humansTurn) {
@@ -534,7 +531,7 @@ public class Analyze {
         return false;
     }
 
-    public boolean isOnDoubleCorners(Piece piece) {
+    public final boolean isOnDoubleCorners(Piece piece) {
         if ((piece.getX() == 0 && piece.getY() == 1)
                 || (piece.getX() == 1 && piece.getY() == 0)
                 || (piece.getX() == 7 && piece.getY() == 6)
@@ -643,6 +640,6 @@ public class Analyze {
         return (checkersBoard.checkAllegiance(pieceToCheck, true)
                 && (pieceToCheck.getY() >= 5 && pieceToCheck.getY() <= 7))
                 || (checkersBoard.checkAllegiance(pieceToCheck, false)
-                        && (pieceToCheck.getY() >= 0 && pieceToCheck.getY() <= 2));
+                && (pieceToCheck.getY() >= 0 && pieceToCheck.getY() <= 2));
     }
 }
