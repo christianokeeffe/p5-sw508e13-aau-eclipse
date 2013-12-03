@@ -1,0 +1,5012 @@
+<?xml version="1.0" encoding="UTF-8"?><TestSessionContainer xmlns="http://www.codecover.org/xml/testsession-container" Date="1384856881344" TestSessionContainerId="e05ed086-dac0-448f-8fec-ecd899409fc7" version="1.0">
+<SrcFileList>
+<SrcFile Content="package com.OriginalFiles;&#13;&#10;&#13;&#10;import java.io.IOException;&#13;&#10;import java.util.ArrayList;&#13;&#10;import java.util.List;&#13;&#10;import custom.Exceptions.NoKingLeft;&#13;&#10;&#13;&#10;public class MI {&#13;&#10;    public RemoteNXTFunctions remoteNXT;&#13;&#10;    private final double inf = 100000.0;&#13;&#10;    private List&lt;Move&gt; simulatedMoves = new ArrayList&lt;Move&gt;();&#13;&#10;    public MI(RemoteNXTFunctions inputRemoteNXT) {&#13;&#10;        remoteNXT = inputRemoteNXT;&#13;&#10;        updatePieceList();&#13;&#10;&#13;&#10;    }&#13;&#10;&#13;&#10;    List&lt;Piece&gt; ownPieces = new ArrayList&lt;Piece&gt;();&#13;&#10;    List&lt;Piece&gt; oppPieces = new ArrayList&lt;Piece&gt;();&#13;&#10;&#13;&#10;    private void updatePieceList() {&#13;&#10;        ownPieces.clear();&#13;&#10;        oppPieces.clear();&#13;&#10;        for (Field[] f: remoteNXT.checkersBoard.myBoard) {&#13;&#10;            for (Field q: f) {&#13;&#10;                if (!q.isEmpty()) {&#13;&#10;                    if (remoteNXT.checkersBoard.checkAllegiance(q, false)) {&#13;&#10;                        ownPieces.add(q.getPieceOnField());&#13;&#10;                    } else {&#13;&#10;                        oppPieces.add(q.getPieceOnField());&#13;&#10;                    }&#13;&#10;                }&#13;&#10;            }&#13;&#10;        }&#13;&#10;    }&#13;&#10;&#13;&#10;    /* ------------------------------------------------------------------  *&#13;&#10;    /* MI brain starts */&#13;&#10;&#13;&#10;    public final Move lookForBestMove() throws NoKingLeft, IOException,&#13;&#10;                                         InterruptedException {&#13;&#10;        updatePieceList();&#13;&#10;        List&lt;Move&gt; posMoves = possibleMoves(1);&#13;&#10;        List&lt;Move&gt; bestMoves = new ArrayList&lt;Move&gt;();&#13;&#10;        double price = -inf;&#13;&#10;        double tempPrice;&#13;&#10;&#13;&#10;        if (posMoves.size() == 1) {&#13;&#10;            return posMoves.get(0);&#13;&#10;        }&#13;&#10;&#13;&#10;        for (Move move : posMoves) {&#13;&#10;            simulateMove(move);&#13;&#10;&#13;&#10;            tempPrice =  -negaMax(numberofmovelook, -1, -inf, -price);&#13;&#10;            revertMove();&#13;&#10;&#13;&#10;            if (tempPrice &gt; price) {&#13;&#10;                price = tempPrice;&#13;&#10;                bestMoves.clear();&#13;&#10;                bestMoves.add(move);&#13;&#10;            } else if (tempPrice == price) {&#13;&#10;                bestMoves.add(move);&#13;&#10;            }&#13;&#10;        }&#13;&#10;        return bestMoves.get((int) (Math.random() * (bestMoves.size() - 1)));&#13;&#10;    }&#13;&#10;&#13;&#10;&#13;&#10;    private double negaMax(int depth, int turn, double alpha, double beta)&#13;&#10;            throws NoKingLeft, IOException, InterruptedException {&#13;&#10;      //latex start negaMax&#13;&#10;        if (depth == 0&#13;&#10;                || remoteNXT.checkersBoard.analyzeFunctions.&#13;&#10;                gameHasEnded(-1 == turn) != 0) {&#13;&#10;            return turn * evaluation(turn);&#13;&#10;        }&#13;&#10;        List&lt;Move&gt; moves;&#13;&#10;        moves = possibleMoves(turn);&#13;&#10;&#13;&#10;        double bestValue = -inf;&#13;&#10;        for (Move move : moves) {&#13;&#10;            simulateMove(move);&#13;&#10;            double newPrice = -negaMax(depth - 1, -turn, -beta, -alpha);&#13;&#10;            revertMove();&#13;&#10;&#13;&#10;            bestValue = max(bestValue, newPrice);&#13;&#10;            alpha = max(alpha, newPrice);&#13;&#10;            if (alpha &gt;= beta) {&#13;&#10;                break;&#13;&#10;            }&#13;&#10;        }&#13;&#10;        //latex end&#13;&#10;        return bestValue;&#13;&#10;    }&#13;&#10;    /* how much the AI/MI looks forward */&#13;&#10;    private int numberofmovelook = 2;&#13;&#10;&#13;&#10;    /* how glad the MI/AI are for the result of the game */&#13;&#10;    private double gameIsWon = inf / 2;&#13;&#10;    private final int gameIsDraw = 50;&#13;&#10;&#13;&#10;    private final int pieceDifferenceFactor = 4;&#13;&#10;&#13;&#10;    private final int isMidgame = 1;&#13;&#10;    private final int isEndgame = 2;&#13;&#10;    private final int midgameEnd = 7;&#13;&#10;&#13;&#10;    private double evaluation(int turn) {&#13;&#10;        double valueOfBoard = 0;&#13;&#10;&#13;&#10;        int state = gameState();&#13;&#10;&#13;&#10;        for (int i = 0; i &lt; ownPieces.size(); i++) {&#13;&#10;            valueOfBoard += ownPieces.get(i).priceForPiece(state);&#13;&#10;        }&#13;&#10;        for (int i = 0; i &lt; oppPieces.size(); i++) {&#13;&#10;            valueOfBoard -= oppPieces.get(i).priceForPiece(state);&#13;&#10;        }&#13;&#10;&#13;&#10;        boolean isHuman = (turn == -1);&#13;&#10;&#13;&#10;        switch (remoteNXT.checkersBoard.&#13;&#10;                analyzeFunctions.gameHasEnded(isHuman)) {&#13;&#10;        case 1:&#13;&#10;            valueOfBoard -= gameIsWon;&#13;&#10;            break;&#13;&#10;        case 2:&#13;&#10;            valueOfBoard += gameIsWon;&#13;&#10;            break;&#13;&#10;        case 3:&#13;&#10;            valueOfBoard += gameIsDraw;&#13;&#10;            break;&#13;&#10;        default:&#13;&#10;            valueOfBoard +=  pieceDifferenceFactor&#13;&#10;            * ((ownPieces.size() / oppPieces.size()) - 1);&#13;&#10;            break;&#13;&#10;        }&#13;&#10;&#13;&#10;        return valueOfBoard;&#13;&#10;    }&#13;&#10;&#13;&#10;    private int gameState() {&#13;&#10;        if (max(ownPieces.size(), oppPieces.size()) &gt;= midgameEnd) {&#13;&#10;            return isMidgame;&#13;&#10;        }&#13;&#10;        return isEndgame;&#13;&#10;    }&#13;&#10;&#13;&#10;    private double max(double x, double y) {&#13;&#10;        if (x &lt; y) {&#13;&#10;            return y;&#13;&#10;        }&#13;&#10;        return x;&#13;&#10;    }&#13;&#10;&#13;&#10;&#13;&#10;    /* MI brain stops */&#13;&#10;    /* ---------------------------------------------------------------------  */&#13;&#10;&#13;&#10;    private void simulateMove(Move move) throws NoKingLeft, IOException {&#13;&#10;        if (move.moves.size() &gt;= 2) {&#13;&#10;            int stop = move.moves.size() - 1;&#13;&#10;            for (int i = 0; i &lt; stop; i++) {&#13;&#10;                Field from = move.moves.get(i);&#13;&#10;                Field to = move.moves.get(i + 1);&#13;&#10;&#13;&#10;                if (Math.abs(from.x - to.x) == 2) {&#13;&#10;                    Piece takenPiece = remoteNXT.checkersBoard.myBoard&#13;&#10;                            [(from.x + to.x) / 2]&#13;&#10;                            [(from.y + to.y) / 2].getPieceOnField();&#13;&#10;                    if (remoteNXT.checkersBoard.&#13;&#10;                            checkAllegiance(takenPiece, true)) {&#13;&#10;                        oppPieces.remove(takenPiece);&#13;&#10;                    } else {&#13;&#10;                        ownPieces.remove(takenPiece);&#13;&#10;                    }&#13;&#10;                    move.takenPieces.add(takenPiece);&#13;&#10;                    remoteNXT.checkersBoard.myBoard&#13;&#10;                            [(from.x + to.x) / 2]&#13;&#10;                            [(from.y + to.y) / 2].setPieceOnField(null);&#13;&#10;                }&#13;&#10;                remoteNXT.checkersBoard.&#13;&#10;                    movePieceInRepresentation(from, to, true);&#13;&#10;            }&#13;&#10;            simulatedMoves.add(move);&#13;&#10;        }&#13;&#10;    }&#13;&#10;&#13;&#10;    private void revertMove() throws NoKingLeft, IOException {&#13;&#10;&#13;&#10;        if (simulatedMoves.size() != 0) {&#13;&#10;            Move temp = simulatedMoves.get(simulatedMoves.size() - 1);&#13;&#10;            simulatedMoves.remove(simulatedMoves.size() - 1);&#13;&#10;&#13;&#10;            int stop = temp.moves.size() - 1;&#13;&#10;            Field tempMove = null;&#13;&#10;&#13;&#10;            for (int j = stop; j &gt;= 1; j--) {&#13;&#10;                tempMove = temp.moves.get(j);&#13;&#10;                if (!tempMove.isEmpty()) {&#13;&#10;                    if (tempMove.getPieceOnField().isCrowned&#13;&#10;                            &amp;&amp; !temp.wasKingBefore) {&#13;&#10;                        if (remoteNXT.checkersBoard.&#13;&#10;                                checkAllegiance(tempMove, true)) {&#13;&#10;                            tempMove.getPieceOnField().color =&#13;&#10;                                   remoteNXT.checkersBoard.opponentPeasentColor;&#13;&#10;                        } else if (remoteNXT.checkersBoard.&#13;&#10;                                checkAllegiance(tempMove, false)) {&#13;&#10;                            tempMove.getPieceOnField().color =&#13;&#10;                                    remoteNXT.checkersBoard.myPeasentColor;&#13;&#10;                        }&#13;&#10;                        tempMove.getPieceOnField().isCrowned = false;&#13;&#10;                    }&#13;&#10;                }&#13;&#10;                remoteNXT.checkersBoard.movePieceInRepresentation(&#13;&#10;                        tempMove, temp.moves.get(j - 1), true);&#13;&#10;            }&#13;&#10;&#13;&#10;            stop = temp.takenPieces.size();&#13;&#10;&#13;&#10;            for (int i = 0; i &lt; stop; i++) {&#13;&#10;                Piece tempPiece = temp.takenPieces.get(i);&#13;&#10;                if (remoteNXT.checkersBoard.checkAllegiance(tempPiece, true)) {&#13;&#10;                    oppPieces.add(tempPiece);&#13;&#10;                } else {&#13;&#10;                    ownPieces.add(tempPiece);&#13;&#10;                }&#13;&#10;                remoteNXT.checkersBoard.myBoard&#13;&#10;                    [tempPiece.getX()][tempPiece.getY()].&#13;&#10;                    setPieceOnField(tempPiece);&#13;&#10;            }&#13;&#10;        }&#13;&#10;    }&#13;&#10;&#13;&#10;    //-1 = human, 1 = robot&#13;&#10;    private List&lt;Move&gt; possibleMoves(int moveForSide) throws&#13;&#10;                    InterruptedException, IOException, NoKingLeft {&#13;&#10;        List&lt;Move&gt; jumpMovements = new ArrayList&lt;Move&gt;();&#13;&#10;        List&lt;Move&gt; movements = new ArrayList&lt;Move&gt;();&#13;&#10;        remoteNXT.checkersBoard.updateMoveables();&#13;&#10;        for (Field[] f : remoteNXT.checkersBoard.myBoard) {&#13;&#10;            for (Field field : f) {&#13;&#10;                if (!field.isEmpty()) {&#13;&#10;                    if (field.getPieceOnField().isMoveable&#13;&#10;                            &amp;&amp; remoteNXT.checkersBoard.&#13;&#10;                            checkAllegiance(field, moveForSide == -1)) {&#13;&#10;                        //Jumps&#13;&#10;                        if (field.getPieceOnField().canJump) {&#13;&#10;                            List&lt;List&lt;Field&gt;&gt; listOfMoves =&#13;&#10;                                    remoteNXT.checkersBoard.&#13;&#10;                                    analyzeFunctions.jumpSequence(&#13;&#10;                                            field, moveForSide == 1,&#13;&#10;                                            field.getPieceOnField().isCrowned);&#13;&#10;&#13;&#10;                            for (List&lt;Field&gt; stackOfFields : listOfMoves) {&#13;&#10;                                if (stackOfFields.size() &gt;= 2) {&#13;&#10;                                    jumpMovements.add(new Move(stackOfFields,&#13;&#10;                                            field.getPieceOnField().isCrowned));&#13;&#10;                                }&#13;&#10;                            }&#13;&#10;                        } else {  // Moves&#13;&#10;                            List&lt;Field&gt; possibleMoves =&#13;&#10;                                    remoteNXT.checkersBoard.&#13;&#10;                                    checkMoveable(field, moveForSide);&#13;&#10;                            //Simple moves&#13;&#10;                            if (!possibleMoves.isEmpty()) {&#13;&#10;                                for (Field posField : possibleMoves) {&#13;&#10;                                    Move movement = new Move(field, posField,&#13;&#10;                                            field.getPieceOnField().isCrowned);&#13;&#10;                                    movements.add(movement);&#13;&#10;                                }&#13;&#10;                            }&#13;&#10;                        }&#13;&#10;                    }&#13;&#10;                }&#13;&#10;            }&#13;&#10;        }&#13;&#10;&#13;&#10;        if (jumpMovements.size() != 0) {&#13;&#10;            return jumpMovements;&#13;&#10;        } else {&#13;&#10;            return movements;&#13;&#10;        }&#13;&#10;    }&#13;&#10;}&#13;&#10;" Filename="MI.java" Intrnl_Id="1"/>
+</SrcFileList>
+<CritList>
+<CritListEntry Name="org.codecover.model.utils.criteria.LoopCoverage" PluginName="org.codecover"/>
+<CritListEntry Name="org.codecover.model.utils.criteria.BranchCoverage" PluginName="org.codecover"/>
+<CritListEntry Name="org.codecover.model.utils.criteria.ConditionCoverage" PluginName="org.codecover"/>
+<CritListEntry Name="org.codecover.model.utils.criteria.StatementCoverage" PluginName="org.codecover"/>
+</CritList>
+<BoolOpList>
+<BoolOp Arity="1" Intrnl_Id="2" Name="not (!)">
+<BoolAssgnmntBoolMapList>
+<MapEntry BoolAssgnmnt="0" Value="true"/>
+<MapEntry BoolAssgnmnt="1" Value="false"/>
+</BoolAssgnmntBoolMapList>
+</BoolOp>
+<BoolOp Arity="2" Intrnl_Id="3" Name="conditional and (&amp;&amp;)">
+<BoolAssgnmntBoolMapList>
+<MapEntry BoolAssgnmnt="10" Value="false"/>
+<MapEntry BoolAssgnmnt="02" Value="false"/>
+<MapEntry BoolAssgnmnt="11" Value="true"/>
+</BoolAssgnmntBoolMapList>
+</BoolOp>
+<BoolOp Arity="2" Intrnl_Id="4" Name="conditional or (||)">
+<BoolAssgnmntBoolMapList>
+<MapEntry BoolAssgnmnt="01" Value="true"/>
+<MapEntry BoolAssgnmnt="00" Value="false"/>
+<MapEntry BoolAssgnmnt="12" Value="true"/>
+</BoolAssgnmntBoolMapList>
+</BoolOp>
+</BoolOpList>
+<HierarchyLvlTypeList>
+<HierarchyLvlType EnglishName="package" IntrnlName="package" Intrnl_Id="5"/>
+<HierarchyLvlType EnglishName="class" IntrnlName="class" Intrnl_Id="6"/>
+<HierarchyLvlType EnglishName="method" IntrnlName="method" Intrnl_Id="7"/>
+<HierarchyLvlType EnglishName="default package" IntrnlName="default package" Intrnl_Id="8"/>
+</HierarchyLvlTypeList>
+<MASTRoot>
+<HierarchyLvl HierarchyLvlId="550" HierarchyLvlTypeId="8" Intrnl_Id="9" Name="default package">
+<Header/>
+<LocList/>
+<HierarchyLvl HierarchyLvlId="549" HierarchyLvlTypeId="5" Intrnl_Id="10" Name="com">
+<Header/>
+<LocList/>
+<HierarchyLvl HierarchyLvlId="548" HierarchyLvlTypeId="5" Intrnl_Id="11" Name="OriginalFiles">
+<Header/>
+<LocList/>
+<HierarchyLvl HierarchyLvlId="547" HierarchyLvlTypeId="6" Intrnl_Id="12" Name="MI">
+<Header>
+<Loc EndOffset="167" SrcFileId="1" StartOffset="152"/>
+</Header>
+<LocList>
+<Loc EndOffset="10435" SrcFileId="1" StartOffset="152"/>
+</LocList>
+<StmntSeq Intrnl_Id="13">
+<LocList>
+<Loc EndOffset="253" SrcFileId="1" StartOffset="217"/>
+<Loc EndOffset="317" SrcFileId="1" StartOffset="259"/>
+<Loc EndOffset="498" SrcFileId="1" StartOffset="451"/>
+<Loc EndOffset="551" SrcFileId="1" StartOffset="504"/>
+<Loc EndOffset="3081" SrcFileId="1" StartOffset="3048"/>
+<Loc EndOffset="3185" SrcFileId="1" StartOffset="3150"/>
+<Loc EndOffset="3225" SrcFileId="1" StartOffset="3191"/>
+<Loc EndOffset="3277" SrcFileId="1" StartOffset="3233"/>
+<Loc EndOffset="3317" SrcFileId="1" StartOffset="3285"/>
+<Loc EndOffset="3355" SrcFileId="1" StartOffset="3323"/>
+<Loc EndOffset="3394" SrcFileId="1" StartOffset="3361"/>
+</LocList>
+<BasicStmnt CovItemId="S1" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="14">
+<LocList>
+<Loc EndOffset="253" SrcFileId="1" StartOffset="217"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S2" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="15">
+<LocList>
+<Loc EndOffset="317" SrcFileId="1" StartOffset="259"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S5" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="16">
+<LocList>
+<Loc EndOffset="498" SrcFileId="1" StartOffset="451"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S6" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="17">
+<LocList>
+<Loc EndOffset="551" SrcFileId="1" StartOffset="504"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S45" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="18">
+<LocList>
+<Loc EndOffset="3081" SrcFileId="1" StartOffset="3048"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S46" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="19">
+<LocList>
+<Loc EndOffset="3185" SrcFileId="1" StartOffset="3150"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S47" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="20">
+<LocList>
+<Loc EndOffset="3225" SrcFileId="1" StartOffset="3191"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S48" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="21">
+<LocList>
+<Loc EndOffset="3277" SrcFileId="1" StartOffset="3233"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S49" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="22">
+<LocList>
+<Loc EndOffset="3317" SrcFileId="1" StartOffset="3285"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S50" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="23">
+<LocList>
+<Loc EndOffset="3355" SrcFileId="1" StartOffset="3323"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S51" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="24">
+<LocList>
+<Loc EndOffset="3394" SrcFileId="1" StartOffset="3361"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+<HierarchyLvl HierarchyLvlId="537" HierarchyLvlTypeId="7" Intrnl_Id="25" Name="MI">
+<Header>
+<Loc EndOffset="367" SrcFileId="1" StartOffset="323"/>
+</Header>
+<LocList>
+<Loc EndOffset="443" SrcFileId="1" StartOffset="323"/>
+</LocList>
+<StmntSeq Intrnl_Id="26">
+<LocList>
+<Loc EndOffset="406" SrcFileId="1" StartOffset="379"/>
+<Loc EndOffset="434" SrcFileId="1" StartOffset="416"/>
+</LocList>
+<BasicStmnt CovItemId="S3" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="27">
+<LocList>
+<Loc EndOffset="406" SrcFileId="1" StartOffset="379"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S4" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="28">
+<LocList>
+<Loc EndOffset="434" SrcFileId="1" StartOffset="416"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="538" HierarchyLvlTypeId="7" Intrnl_Id="29" Name="updatePieceList">
+<Header>
+<Loc EndOffset="589" SrcFileId="1" StartOffset="559"/>
+</Header>
+<LocList>
+<Loc EndOffset="1081" SrcFileId="1" StartOffset="559"/>
+</LocList>
+<StmntSeq Intrnl_Id="30">
+<LocList>
+<Loc EndOffset="619" SrcFileId="1" StartOffset="601"/>
+<Loc EndOffset="647" SrcFileId="1" StartOffset="629"/>
+<Loc EndOffset="1074" SrcFileId="1" StartOffset="657"/>
+</LocList>
+<BasicStmnt CovItemId="S7" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="31">
+<LocList>
+<Loc EndOffset="619" SrcFileId="1" StartOffset="601"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S8" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="32">
+<LocList>
+<Loc EndOffset="647" SrcFileId="1" StartOffset="629"/>
+</LocList>
+</BasicStmnt>
+<LoopStmnt CovItemId="S9" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="33" MltplExecId="L1-2" MltplExecPrefix="com.OriginalFiles.MI.java" NvrExecId="L1-0" NvrExecPrefix="com.OriginalFiles.MI.java" OnceExecutedId="L1-1" OnceExecutedPrefix="com.OriginalFiles.MI.java" OptBodyExec="true">
+<StmntSeq Intrnl_Id="34">
+<LocList>
+<Loc EndOffset="1063" SrcFileId="1" StartOffset="721"/>
+</LocList>
+<LoopStmnt CovItemId="S10" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="35" MltplExecId="L2-2" MltplExecPrefix="com.OriginalFiles.MI.java" NvrExecId="L2-0" NvrExecPrefix="com.OriginalFiles.MI.java" OnceExecutedId="L2-1" OnceExecutedPrefix="com.OriginalFiles.MI.java" OptBodyExec="true">
+<StmntSeq Intrnl_Id="36">
+<LocList>
+<Loc EndOffset="1048" SrcFileId="1" StartOffset="757"/>
+</LocList>
+<CondStmnt CovItemId="S11" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="37">
+<Branch CovItemId="B1" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="38">
+<Cond/>
+<LocList>
+<Loc EndOffset="1048" SrcFileId="1" StartOffset="775"/>
+</LocList>
+<StmntSeq Intrnl_Id="39">
+<LocList>
+<Loc EndOffset="1029" SrcFileId="1" StartOffset="798"/>
+</LocList>
+<CondStmnt CovItemId="S12" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="40">
+<Branch CovItemId="B3" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="41">
+<Cond/>
+<LocList>
+<Loc EndOffset="938" SrcFileId="1" StartOffset="853"/>
+</LocList>
+<StmntSeq Intrnl_Id="42">
+<LocList>
+<Loc EndOffset="915" SrcFileId="1" StartOffset="880"/>
+</LocList>
+<BasicStmnt CovItemId="S13" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="43">
+<LocList>
+<Loc EndOffset="915" SrcFileId="1" StartOffset="880"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B4" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="44">
+<Cond>
+<Loc EndOffset="943" SrcFileId="1" StartOffset="939"/>
+</Cond>
+<LocList>
+<Loc EndOffset="1029" SrcFileId="1" StartOffset="944"/>
+</LocList>
+<StmntSeq Intrnl_Id="45">
+<LocList>
+<Loc EndOffset="1006" SrcFileId="1" StartOffset="971"/>
+</LocList>
+<BasicStmnt CovItemId="S14" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="46">
+<LocList>
+<Loc EndOffset="1006" SrcFileId="1" StartOffset="971"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="800" SrcFileId="1" StartOffset="798"/>
+<LocList>
+<Loc EndOffset="1029" SrcFileId="1" StartOffset="798"/>
+</LocList>
+<RootTerm CovItemId="C2" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="47">
+<BasicBoolTerm Intrnl_Id="48">
+<LocList>
+<Loc EndOffset="851" SrcFileId="1" StartOffset="802"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B2" CovItemPrefix="com.OriginalFiles.MI.java" Implct="true" Intrnl_Id="49">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="50">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="759" SrcFileId="1" StartOffset="757"/>
+<LocList>
+<Loc EndOffset="1048" SrcFileId="1" StartOffset="757"/>
+</LocList>
+<RootTerm CovItemId="C1" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="51">
+<OpTerm BooleanOpId="2" Intrnl_Id="52">
+<BasicBoolTerm Intrnl_Id="53">
+<LocList>
+<Loc EndOffset="773" SrcFileId="1" StartOffset="762"/>
+</LocList>
+</BasicBoolTerm>
+<LocList>
+<Loc EndOffset="762" SrcFileId="1" StartOffset="761"/>
+</LocList>
+</OpTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+<Keyword EndOffset="724" SrcFileId="1" StartOffset="721"/>
+<LocList>
+<Loc EndOffset="1063" SrcFileId="1" StartOffset="721"/>
+</LocList>
+</LoopStmnt>
+</StmntSeq>
+<Keyword EndOffset="660" SrcFileId="1" StartOffset="657"/>
+<LocList>
+<Loc EndOffset="1074" SrcFileId="1" StartOffset="657"/>
+</LocList>
+</LoopStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="539" HierarchyLvlTypeId="7" Intrnl_Id="54" Name="lookForBestMove">
+<Header>
+<Loc EndOffset="1326" SrcFileId="1" StartOffset="1196"/>
+</Header>
+<LocList>
+<Loc EndOffset="2124" SrcFileId="1" StartOffset="1196"/>
+</LocList>
+<StmntSeq Intrnl_Id="55">
+<LocList>
+<Loc EndOffset="1356" SrcFileId="1" StartOffset="1338"/>
+<Loc EndOffset="1405" SrcFileId="1" StartOffset="1366"/>
+<Loc EndOffset="1460" SrcFileId="1" StartOffset="1415"/>
+<Loc EndOffset="1490" SrcFileId="1" StartOffset="1470"/>
+<Loc EndOffset="1604" SrcFileId="1" StartOffset="1529"/>
+<Loc EndOffset="2038" SrcFileId="1" StartOffset="1616"/>
+<Loc EndOffset="2117" SrcFileId="1" StartOffset="2048"/>
+</LocList>
+<BasicStmnt CovItemId="S15" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="56">
+<LocList>
+<Loc EndOffset="1356" SrcFileId="1" StartOffset="1338"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S16" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="57">
+<LocList>
+<Loc EndOffset="1405" SrcFileId="1" StartOffset="1366"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S17" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="58">
+<LocList>
+<Loc EndOffset="1460" SrcFileId="1" StartOffset="1415"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S18" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="59">
+<LocList>
+<Loc EndOffset="1490" SrcFileId="1" StartOffset="1470"/>
+</LocList>
+</BasicStmnt>
+<CondStmnt CovItemId="S19" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="60">
+<Branch CovItemId="B5" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="61">
+<Cond/>
+<LocList>
+<Loc EndOffset="1604" SrcFileId="1" StartOffset="1555"/>
+</LocList>
+<StmntSeq Intrnl_Id="62">
+<LocList>
+<Loc EndOffset="1593" SrcFileId="1" StartOffset="1570"/>
+</LocList>
+<BasicStmnt CovItemId="S20" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="63">
+<LocList>
+<Loc EndOffset="1593" SrcFileId="1" StartOffset="1570"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B6" CovItemPrefix="com.OriginalFiles.MI.java" Implct="true" Intrnl_Id="64">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="65">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="1531" SrcFileId="1" StartOffset="1529"/>
+<LocList>
+<Loc EndOffset="1604" SrcFileId="1" StartOffset="1529"/>
+</LocList>
+<RootTerm CovItemId="C3" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="66">
+<BasicBoolTerm Intrnl_Id="67">
+<LocList>
+<Loc EndOffset="1553" SrcFileId="1" StartOffset="1533"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+<LoopStmnt CovItemId="S21" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="68" MltplExecId="L3-2" MltplExecPrefix="com.OriginalFiles.MI.java" NvrExecId="L3-0" NvrExecPrefix="com.OriginalFiles.MI.java" OnceExecutedId="L3-1" OnceExecutedPrefix="com.OriginalFiles.MI.java" OptBodyExec="true">
+<StmntSeq Intrnl_Id="69">
+<LocList>
+<Loc EndOffset="1677" SrcFileId="1" StartOffset="1658"/>
+<Loc EndOffset="1751" SrcFileId="1" StartOffset="1693"/>
+<Loc EndOffset="1778" SrcFileId="1" StartOffset="1765"/>
+<Loc EndOffset="2027" SrcFileId="1" StartOffset="1794"/>
+</LocList>
+<BasicStmnt CovItemId="S22" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="70">
+<LocList>
+<Loc EndOffset="1677" SrcFileId="1" StartOffset="1658"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S23" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="71">
+<LocList>
+<Loc EndOffset="1751" SrcFileId="1" StartOffset="1693"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S24" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="72">
+<LocList>
+<Loc EndOffset="1778" SrcFileId="1" StartOffset="1765"/>
+</LocList>
+</BasicStmnt>
+<CondStmnt CovItemId="S25" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="73">
+<Branch CovItemId="B7" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="74">
+<Cond/>
+<LocList>
+<Loc EndOffset="1943" SrcFileId="1" StartOffset="1817"/>
+</LocList>
+<StmntSeq Intrnl_Id="75">
+<LocList>
+<Loc EndOffset="1854" SrcFileId="1" StartOffset="1836"/>
+<Loc EndOffset="1890" SrcFileId="1" StartOffset="1872"/>
+<Loc EndOffset="1928" SrcFileId="1" StartOffset="1908"/>
+</LocList>
+<BasicStmnt CovItemId="S26" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="76">
+<LocList>
+<Loc EndOffset="1854" SrcFileId="1" StartOffset="1836"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S27" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="77">
+<LocList>
+<Loc EndOffset="1890" SrcFileId="1" StartOffset="1872"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S28" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="78">
+<LocList>
+<Loc EndOffset="1928" SrcFileId="1" StartOffset="1908"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B8" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="79">
+<Cond>
+<Loc EndOffset="1948" SrcFileId="1" StartOffset="1944"/>
+</Cond>
+<LocList>
+<Loc EndOffset="2027" SrcFileId="1" StartOffset="1949"/>
+</LocList>
+<StmntSeq Intrnl_Id="80">
+<LocList>
+<Loc EndOffset="2027" SrcFileId="1" StartOffset="1949"/>
+</LocList>
+<CondStmnt CovItemId="S29" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="81">
+<Branch CovItemId="B9" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="82">
+<Cond/>
+<LocList>
+<Loc EndOffset="2027" SrcFileId="1" StartOffset="1973"/>
+</LocList>
+<StmntSeq Intrnl_Id="83">
+<LocList>
+<Loc EndOffset="2012" SrcFileId="1" StartOffset="1992"/>
+</LocList>
+<BasicStmnt CovItemId="S30" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="84">
+<LocList>
+<Loc EndOffset="2012" SrcFileId="1" StartOffset="1992"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B10" CovItemPrefix="com.OriginalFiles.MI.java" Implct="true" Intrnl_Id="85">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="86">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="1951" SrcFileId="1" StartOffset="1949"/>
+<LocList>
+<Loc EndOffset="2027" SrcFileId="1" StartOffset="1949"/>
+</LocList>
+<RootTerm CovItemId="C5" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="87">
+<BasicBoolTerm Intrnl_Id="88">
+<LocList>
+<Loc EndOffset="1971" SrcFileId="1" StartOffset="1953"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="1796" SrcFileId="1" StartOffset="1794"/>
+<LocList>
+<Loc EndOffset="2027" SrcFileId="1" StartOffset="1794"/>
+</LocList>
+<RootTerm CovItemId="C4" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="89">
+<BasicBoolTerm Intrnl_Id="90">
+<LocList>
+<Loc EndOffset="1815" SrcFileId="1" StartOffset="1798"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+<Keyword EndOffset="1619" SrcFileId="1" StartOffset="1616"/>
+<LocList>
+<Loc EndOffset="2038" SrcFileId="1" StartOffset="1616"/>
+</LocList>
+</LoopStmnt>
+<BasicStmnt CovItemId="S31" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="91">
+<LocList>
+<Loc EndOffset="2117" SrcFileId="1" StartOffset="2048"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="540" HierarchyLvlTypeId="7" Intrnl_Id="92" Name="negaMax">
+<Header>
+<Loc EndOffset="2270" SrcFileId="1" StartOffset="2134"/>
+</Header>
+<LocList>
+<Loc EndOffset="2998" SrcFileId="1" StartOffset="2134"/>
+</LocList>
+<StmntSeq Intrnl_Id="93">
+<LocList>
+<Loc EndOffset="2493" SrcFileId="1" StartOffset="2311"/>
+<Loc EndOffset="2558" SrcFileId="1" StartOffset="2530"/>
+<Loc EndOffset="2594" SrcFileId="1" StartOffset="2570"/>
+<Loc EndOffset="2943" SrcFileId="1" StartOffset="2604"/>
+<Loc EndOffset="2991" SrcFileId="1" StartOffset="2974"/>
+</LocList>
+<CondStmnt CovItemId="S32" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="94">
+<Branch CovItemId="B11" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="95">
+<Cond/>
+<LocList>
+<Loc EndOffset="2493" SrcFileId="1" StartOffset="2436"/>
+</LocList>
+<StmntSeq Intrnl_Id="96">
+<LocList>
+<Loc EndOffset="2482" SrcFileId="1" StartOffset="2451"/>
+</LocList>
+<BasicStmnt CovItemId="S33" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="97">
+<LocList>
+<Loc EndOffset="2482" SrcFileId="1" StartOffset="2451"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B12" CovItemPrefix="com.OriginalFiles.MI.java" Implct="true" Intrnl_Id="98">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="99">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="2313" SrcFileId="1" StartOffset="2311"/>
+<LocList>
+<Loc EndOffset="2493" SrcFileId="1" StartOffset="2311"/>
+</LocList>
+<RootTerm CovItemId="C6" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="100">
+<OpTerm BooleanOpId="4" Intrnl_Id="101">
+<BasicBoolTerm Intrnl_Id="102">
+<LocList>
+<Loc EndOffset="2325" SrcFileId="1" StartOffset="2315"/>
+</LocList>
+</BasicBoolTerm>
+<BasicBoolTerm Intrnl_Id="103">
+<LocList>
+<Loc EndOffset="2434" SrcFileId="1" StartOffset="2346"/>
+</LocList>
+</BasicBoolTerm>
+<LocList>
+<Loc EndOffset="2345" SrcFileId="1" StartOffset="2343"/>
+</LocList>
+</OpTerm>
+</RootTerm>
+</CondStmnt>
+<BasicStmnt CovItemId="S34" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="104">
+<LocList>
+<Loc EndOffset="2558" SrcFileId="1" StartOffset="2530"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S35" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="105">
+<LocList>
+<Loc EndOffset="2594" SrcFileId="1" StartOffset="2570"/>
+</LocList>
+</BasicStmnt>
+<LoopStmnt CovItemId="S36" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="106" MltplExecId="L4-2" MltplExecPrefix="com.OriginalFiles.MI.java" NvrExecId="L4-0" NvrExecPrefix="com.OriginalFiles.MI.java" OnceExecutedId="L4-1" OnceExecutedPrefix="com.OriginalFiles.MI.java" OptBodyExec="true">
+<StmntSeq Intrnl_Id="107">
+<LocList>
+<Loc EndOffset="2662" SrcFileId="1" StartOffset="2643"/>
+<Loc EndOffset="2736" SrcFileId="1" StartOffset="2676"/>
+<Loc EndOffset="2763" SrcFileId="1" StartOffset="2750"/>
+<Loc EndOffset="2816" SrcFileId="1" StartOffset="2779"/>
+<Loc EndOffset="2859" SrcFileId="1" StartOffset="2830"/>
+<Loc EndOffset="2932" SrcFileId="1" StartOffset="2873"/>
+</LocList>
+<BasicStmnt CovItemId="S37" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="108">
+<LocList>
+<Loc EndOffset="2662" SrcFileId="1" StartOffset="2643"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S38" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="109">
+<LocList>
+<Loc EndOffset="2736" SrcFileId="1" StartOffset="2676"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S39" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="110">
+<LocList>
+<Loc EndOffset="2763" SrcFileId="1" StartOffset="2750"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S40" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="111">
+<LocList>
+<Loc EndOffset="2816" SrcFileId="1" StartOffset="2779"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S41" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="112">
+<LocList>
+<Loc EndOffset="2859" SrcFileId="1" StartOffset="2830"/>
+</LocList>
+</BasicStmnt>
+<CondStmnt CovItemId="S42" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="113">
+<Branch CovItemId="B13" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="114">
+<Cond/>
+<LocList>
+<Loc EndOffset="2932" SrcFileId="1" StartOffset="2892"/>
+</LocList>
+<StmntSeq Intrnl_Id="115">
+<LocList>
+<Loc EndOffset="2917" SrcFileId="1" StartOffset="2911"/>
+</LocList>
+<BasicStmnt CovItemId="S43" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="116">
+<LocList>
+<Loc EndOffset="2917" SrcFileId="1" StartOffset="2911"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B14" CovItemPrefix="com.OriginalFiles.MI.java" Implct="true" Intrnl_Id="117">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="118">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="2875" SrcFileId="1" StartOffset="2873"/>
+<LocList>
+<Loc EndOffset="2932" SrcFileId="1" StartOffset="2873"/>
+</LocList>
+<RootTerm CovItemId="C7" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="119">
+<BasicBoolTerm Intrnl_Id="120">
+<LocList>
+<Loc EndOffset="2890" SrcFileId="1" StartOffset="2877"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+<Keyword EndOffset="2607" SrcFileId="1" StartOffset="2604"/>
+<LocList>
+<Loc EndOffset="2943" SrcFileId="1" StartOffset="2604"/>
+</LocList>
+</LoopStmnt>
+<BasicStmnt CovItemId="S44" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="121">
+<LocList>
+<Loc EndOffset="2991" SrcFileId="1" StartOffset="2974"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="541" HierarchyLvlTypeId="7" Intrnl_Id="122" Name="evaluation">
+<Header>
+<Loc EndOffset="3437" SrcFileId="1" StartOffset="3402"/>
+</Header>
+<LocList>
+<Loc EndOffset="4355" SrcFileId="1" StartOffset="3402"/>
+</LocList>
+<StmntSeq Intrnl_Id="123">
+<LocList>
+<Loc EndOffset="3473" SrcFileId="1" StartOffset="3449"/>
+<Loc EndOffset="3509" SrcFileId="1" StartOffset="3485"/>
+<Loc EndOffset="3644" SrcFileId="1" StartOffset="3521"/>
+<Loc EndOffset="3777" SrcFileId="1" StartOffset="3654"/>
+<Loc EndOffset="3820" SrcFileId="1" StartOffset="3789"/>
+<Loc EndOffset="4316" SrcFileId="1" StartOffset="3832"/>
+<Loc EndOffset="4348" SrcFileId="1" StartOffset="4328"/>
+</LocList>
+<BasicStmnt CovItemId="S52" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="124">
+<LocList>
+<Loc EndOffset="3473" SrcFileId="1" StartOffset="3449"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S53" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="125">
+<LocList>
+<Loc EndOffset="3509" SrcFileId="1" StartOffset="3485"/>
+</LocList>
+</BasicStmnt>
+<LoopStmnt CovItemId="S54" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="126" MltplExecId="L5-2" MltplExecPrefix="com.OriginalFiles.MI.java" NvrExecId="L5-0" NvrExecPrefix="com.OriginalFiles.MI.java" OnceExecutedId="L5-1" OnceExecutedPrefix="com.OriginalFiles.MI.java" OptBodyExec="true">
+<StmntSeq Intrnl_Id="127">
+<LocList>
+<Loc EndOffset="3633" SrcFileId="1" StartOffset="3579"/>
+</LocList>
+<BasicStmnt CovItemId="S55" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="128">
+<LocList>
+<Loc EndOffset="3633" SrcFileId="1" StartOffset="3579"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+<Keyword EndOffset="3524" SrcFileId="1" StartOffset="3521"/>
+<LocList>
+<Loc EndOffset="3644" SrcFileId="1" StartOffset="3521"/>
+</LocList>
+<RootTerm CovItemId="C8" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="129">
+<BasicBoolTerm Intrnl_Id="130">
+<LocList>
+<Loc EndOffset="3557" SrcFileId="1" StartOffset="3537"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</LoopStmnt>
+<LoopStmnt CovItemId="S56" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="131" MltplExecId="L6-2" MltplExecPrefix="com.OriginalFiles.MI.java" NvrExecId="L6-0" NvrExecPrefix="com.OriginalFiles.MI.java" OnceExecutedId="L6-1" OnceExecutedPrefix="com.OriginalFiles.MI.java" OptBodyExec="true">
+<StmntSeq Intrnl_Id="132">
+<LocList>
+<Loc EndOffset="3766" SrcFileId="1" StartOffset="3712"/>
+</LocList>
+<BasicStmnt CovItemId="S57" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="133">
+<LocList>
+<Loc EndOffset="3766" SrcFileId="1" StartOffset="3712"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+<Keyword EndOffset="3657" SrcFileId="1" StartOffset="3654"/>
+<LocList>
+<Loc EndOffset="3777" SrcFileId="1" StartOffset="3654"/>
+</LocList>
+<RootTerm CovItemId="C9" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="134">
+<BasicBoolTerm Intrnl_Id="135">
+<LocList>
+<Loc EndOffset="3690" SrcFileId="1" StartOffset="3670"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</LoopStmnt>
+<BasicStmnt CovItemId="S58" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="136">
+<LocList>
+<Loc EndOffset="3820" SrcFileId="1" StartOffset="3789"/>
+</LocList>
+</BasicStmnt>
+<CondStmnt CovItemId="S59" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="137">
+<Branch CovItemId="B15" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="138">
+<Cond>
+<Loc EndOffset="3939" SrcFileId="1" StartOffset="3933"/>
+</Cond>
+<LocList>
+<Loc EndOffset="4000" SrcFileId="1" StartOffset="3954"/>
+</LocList>
+<StmntSeq Intrnl_Id="139">
+<LocList>
+<Loc EndOffset="3980" SrcFileId="1" StartOffset="3954"/>
+<Loc EndOffset="4000" SrcFileId="1" StartOffset="3994"/>
+</LocList>
+<BasicStmnt CovItemId="S60" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="140">
+<LocList>
+<Loc EndOffset="3980" SrcFileId="1" StartOffset="3954"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S61" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="141">
+<LocList>
+<Loc EndOffset="4000" SrcFileId="1" StartOffset="3994"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B16" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="142">
+<Cond>
+<Loc EndOffset="4016" SrcFileId="1" StartOffset="4010"/>
+</Cond>
+<LocList>
+<Loc EndOffset="4077" SrcFileId="1" StartOffset="4031"/>
+</LocList>
+<StmntSeq Intrnl_Id="143">
+<LocList>
+<Loc EndOffset="4057" SrcFileId="1" StartOffset="4031"/>
+<Loc EndOffset="4077" SrcFileId="1" StartOffset="4071"/>
+</LocList>
+<BasicStmnt CovItemId="S62" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="144">
+<LocList>
+<Loc EndOffset="4057" SrcFileId="1" StartOffset="4031"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S63" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="145">
+<LocList>
+<Loc EndOffset="4077" SrcFileId="1" StartOffset="4071"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B17" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="146">
+<Cond>
+<Loc EndOffset="4093" SrcFileId="1" StartOffset="4087"/>
+</Cond>
+<LocList>
+<Loc EndOffset="4155" SrcFileId="1" StartOffset="4108"/>
+</LocList>
+<StmntSeq Intrnl_Id="147">
+<LocList>
+<Loc EndOffset="4135" SrcFileId="1" StartOffset="4108"/>
+<Loc EndOffset="4155" SrcFileId="1" StartOffset="4149"/>
+</LocList>
+<BasicStmnt CovItemId="S64" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="148">
+<LocList>
+<Loc EndOffset="4135" SrcFileId="1" StartOffset="4108"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S65" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="149">
+<LocList>
+<Loc EndOffset="4155" SrcFileId="1" StartOffset="4149"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B18" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="150">
+<Cond>
+<Loc EndOffset="4172" SrcFileId="1" StartOffset="4165"/>
+</Cond>
+<LocList>
+<Loc EndOffset="4305" SrcFileId="1" StartOffset="4187"/>
+</LocList>
+<StmntSeq Intrnl_Id="151">
+<LocList>
+<Loc EndOffset="4285" SrcFileId="1" StartOffset="4187"/>
+<Loc EndOffset="4305" SrcFileId="1" StartOffset="4299"/>
+</LocList>
+<BasicStmnt CovItemId="S66" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="152">
+<LocList>
+<Loc EndOffset="4285" SrcFileId="1" StartOffset="4187"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S67" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="153">
+<LocList>
+<Loc EndOffset="4305" SrcFileId="1" StartOffset="4299"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="3838" SrcFileId="1" StartOffset="3832"/>
+<LocList>
+<Loc EndOffset="4316" SrcFileId="1" StartOffset="3832"/>
+</LocList>
+</CondStmnt>
+<BasicStmnt CovItemId="S68" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="154">
+<LocList>
+<Loc EndOffset="4348" SrcFileId="1" StartOffset="4328"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="542" HierarchyLvlTypeId="7" Intrnl_Id="155" Name="gameState">
+<Header>
+<Loc EndOffset="4386" SrcFileId="1" StartOffset="4363"/>
+</Header>
+<LocList>
+<Loc EndOffset="4534" SrcFileId="1" StartOffset="4363"/>
+</LocList>
+<StmntSeq Intrnl_Id="156">
+<LocList>
+<Loc EndOffset="4500" SrcFileId="1" StartOffset="4398"/>
+<Loc EndOffset="4527" SrcFileId="1" StartOffset="4510"/>
+</LocList>
+<CondStmnt CovItemId="S69" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="157">
+<Branch CovItemId="B19" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="158">
+<Cond/>
+<LocList>
+<Loc EndOffset="4500" SrcFileId="1" StartOffset="4457"/>
+</LocList>
+<StmntSeq Intrnl_Id="159">
+<LocList>
+<Loc EndOffset="4489" SrcFileId="1" StartOffset="4472"/>
+</LocList>
+<BasicStmnt CovItemId="S70" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="160">
+<LocList>
+<Loc EndOffset="4489" SrcFileId="1" StartOffset="4472"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B20" CovItemPrefix="com.OriginalFiles.MI.java" Implct="true" Intrnl_Id="161">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="162">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="4400" SrcFileId="1" StartOffset="4398"/>
+<LocList>
+<Loc EndOffset="4500" SrcFileId="1" StartOffset="4398"/>
+</LocList>
+<RootTerm CovItemId="C10" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="163">
+<BasicBoolTerm Intrnl_Id="164">
+<LocList>
+<Loc EndOffset="4455" SrcFileId="1" StartOffset="4402"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+<BasicStmnt CovItemId="S71" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="165">
+<LocList>
+<Loc EndOffset="4527" SrcFileId="1" StartOffset="4510"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="543" HierarchyLvlTypeId="7" Intrnl_Id="166" Name="max">
+<Header>
+<Loc EndOffset="4580" SrcFileId="1" StartOffset="4542"/>
+</Header>
+<LocList>
+<Loc EndOffset="4664" SrcFileId="1" StartOffset="4542"/>
+</LocList>
+<StmntSeq Intrnl_Id="167">
+<LocList>
+<Loc EndOffset="4638" SrcFileId="1" StartOffset="4592"/>
+<Loc EndOffset="4657" SrcFileId="1" StartOffset="4648"/>
+</LocList>
+<CondStmnt CovItemId="S72" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="168">
+<Branch CovItemId="B21" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="169">
+<Cond/>
+<LocList>
+<Loc EndOffset="4638" SrcFileId="1" StartOffset="4603"/>
+</LocList>
+<StmntSeq Intrnl_Id="170">
+<LocList>
+<Loc EndOffset="4627" SrcFileId="1" StartOffset="4618"/>
+</LocList>
+<BasicStmnt CovItemId="S73" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="171">
+<LocList>
+<Loc EndOffset="4627" SrcFileId="1" StartOffset="4618"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B22" CovItemPrefix="com.OriginalFiles.MI.java" Implct="true" Intrnl_Id="172">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="173">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="4594" SrcFileId="1" StartOffset="4592"/>
+<LocList>
+<Loc EndOffset="4638" SrcFileId="1" StartOffset="4592"/>
+</LocList>
+<RootTerm CovItemId="C11" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="174">
+<BasicBoolTerm Intrnl_Id="175">
+<LocList>
+<Loc EndOffset="4601" SrcFileId="1" StartOffset="4596"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+<BasicStmnt CovItemId="S74" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="176">
+<LocList>
+<Loc EndOffset="4657" SrcFileId="1" StartOffset="4648"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="544" HierarchyLvlTypeId="7" Intrnl_Id="177" Name="simulateMove">
+<Header>
+<Loc EndOffset="4851" SrcFileId="1" StartOffset="4784"/>
+</Header>
+<LocList>
+<Loc EndOffset="6042" SrcFileId="1" StartOffset="4784"/>
+</LocList>
+<StmntSeq Intrnl_Id="178">
+<LocList>
+<Loc EndOffset="6035" SrcFileId="1" StartOffset="4863"/>
+</LocList>
+<CondStmnt CovItemId="S75" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="179">
+<Branch CovItemId="B23" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="180">
+<Cond/>
+<LocList>
+<Loc EndOffset="6035" SrcFileId="1" StartOffset="4891"/>
+</LocList>
+<StmntSeq Intrnl_Id="181">
+<LocList>
+<Loc EndOffset="4939" SrcFileId="1" StartOffset="4906"/>
+<Loc EndOffset="5985" SrcFileId="1" StartOffset="4953"/>
+<Loc EndOffset="6024" SrcFileId="1" StartOffset="5999"/>
+</LocList>
+<BasicStmnt CovItemId="S76" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="182">
+<LocList>
+<Loc EndOffset="4939" SrcFileId="1" StartOffset="4906"/>
+</LocList>
+</BasicStmnt>
+<LoopStmnt CovItemId="S77" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="183" MltplExecId="L7-2" MltplExecPrefix="com.OriginalFiles.MI.java" NvrExecId="L7-0" NvrExecPrefix="com.OriginalFiles.MI.java" OnceExecutedId="L7-1" OnceExecutedPrefix="com.OriginalFiles.MI.java" OptBodyExec="true">
+<StmntSeq Intrnl_Id="184">
+<LocList>
+<Loc EndOffset="5034" SrcFileId="1" StartOffset="5003"/>
+<Loc EndOffset="5085" SrcFileId="1" StartOffset="5052"/>
+<Loc EndOffset="5864" SrcFileId="1" StartOffset="5105"/>
+<Loc EndOffset="5970" SrcFileId="1" StartOffset="5882"/>
+</LocList>
+<BasicStmnt CovItemId="S78" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="185">
+<LocList>
+<Loc EndOffset="5034" SrcFileId="1" StartOffset="5003"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S79" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="186">
+<LocList>
+<Loc EndOffset="5085" SrcFileId="1" StartOffset="5052"/>
+</LocList>
+</BasicStmnt>
+<CondStmnt CovItemId="S80" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="187">
+<Branch CovItemId="B25" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="188">
+<Cond/>
+<LocList>
+<Loc EndOffset="5864" SrcFileId="1" StartOffset="5139"/>
+</LocList>
+<StmntSeq Intrnl_Id="189">
+<LocList>
+<Loc EndOffset="5333" SrcFileId="1" StartOffset="5162"/>
+<Loc EndOffset="5612" SrcFileId="1" StartOffset="5355"/>
+<Loc EndOffset="5667" SrcFileId="1" StartOffset="5634"/>
+<Loc EndOffset="5845" SrcFileId="1" StartOffset="5689"/>
+</LocList>
+<BasicStmnt CovItemId="S81" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="190">
+<LocList>
+<Loc EndOffset="5333" SrcFileId="1" StartOffset="5162"/>
+</LocList>
+</BasicStmnt>
+<CondStmnt CovItemId="S82" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="191">
+<Branch CovItemId="B27" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="192">
+<Cond/>
+<LocList>
+<Loc EndOffset="5527" SrcFileId="1" StartOffset="5448"/>
+</LocList>
+<StmntSeq Intrnl_Id="193">
+<LocList>
+<Loc EndOffset="5504" SrcFileId="1" StartOffset="5475"/>
+</LocList>
+<BasicStmnt CovItemId="S83" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="194">
+<LocList>
+<Loc EndOffset="5504" SrcFileId="1" StartOffset="5475"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B28" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="195">
+<Cond>
+<Loc EndOffset="5532" SrcFileId="1" StartOffset="5528"/>
+</Cond>
+<LocList>
+<Loc EndOffset="5612" SrcFileId="1" StartOffset="5533"/>
+</LocList>
+<StmntSeq Intrnl_Id="196">
+<LocList>
+<Loc EndOffset="5589" SrcFileId="1" StartOffset="5560"/>
+</LocList>
+<BasicStmnt CovItemId="S84" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="197">
+<LocList>
+<Loc EndOffset="5589" SrcFileId="1" StartOffset="5560"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="5357" SrcFileId="1" StartOffset="5355"/>
+<LocList>
+<Loc EndOffset="5612" SrcFileId="1" StartOffset="5355"/>
+</LocList>
+<RootTerm CovItemId="C15" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="198">
+<BasicBoolTerm Intrnl_Id="199">
+<LocList>
+<Loc EndOffset="5446" SrcFileId="1" StartOffset="5359"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+<BasicStmnt CovItemId="S85" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="200">
+<LocList>
+<Loc EndOffset="5667" SrcFileId="1" StartOffset="5634"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S86" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="201">
+<LocList>
+<Loc EndOffset="5845" SrcFileId="1" StartOffset="5689"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B26" CovItemPrefix="com.OriginalFiles.MI.java" Implct="true" Intrnl_Id="202">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="203">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="5107" SrcFileId="1" StartOffset="5105"/>
+<LocList>
+<Loc EndOffset="5864" SrcFileId="1" StartOffset="5105"/>
+</LocList>
+<RootTerm CovItemId="C14" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="204">
+<BasicBoolTerm Intrnl_Id="205">
+<LocList>
+<Loc EndOffset="5137" SrcFileId="1" StartOffset="5109"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+<BasicStmnt CovItemId="S87" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="206">
+<LocList>
+<Loc EndOffset="5970" SrcFileId="1" StartOffset="5882"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+<Keyword EndOffset="4956" SrcFileId="1" StartOffset="4953"/>
+<LocList>
+<Loc EndOffset="5985" SrcFileId="1" StartOffset="4953"/>
+</LocList>
+<RootTerm CovItemId="C13" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="207">
+<BasicBoolTerm Intrnl_Id="208">
+<LocList>
+<Loc EndOffset="4977" SrcFileId="1" StartOffset="4969"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</LoopStmnt>
+<BasicStmnt CovItemId="S88" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="209">
+<LocList>
+<Loc EndOffset="6024" SrcFileId="1" StartOffset="5999"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B24" CovItemPrefix="com.OriginalFiles.MI.java" Implct="true" Intrnl_Id="210">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="211">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="4865" SrcFileId="1" StartOffset="4863"/>
+<LocList>
+<Loc EndOffset="6035" SrcFileId="1" StartOffset="4863"/>
+</LocList>
+<RootTerm CovItemId="C12" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="212">
+<BasicBoolTerm Intrnl_Id="213">
+<LocList>
+<Loc EndOffset="4889" SrcFileId="1" StartOffset="4867"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="545" HierarchyLvlTypeId="7" Intrnl_Id="214" Name="revertMove">
+<Header>
+<Loc EndOffset="6106" SrcFileId="1" StartOffset="6050"/>
+</Header>
+<LocList>
+<Loc EndOffset="8022" SrcFileId="1" StartOffset="6050"/>
+</LocList>
+<StmntSeq Intrnl_Id="215">
+<LocList>
+<Loc EndOffset="8015" SrcFileId="1" StartOffset="6120"/>
+</LocList>
+<CondStmnt CovItemId="S89" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="216">
+<Branch CovItemId="B29" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="217">
+<Cond/>
+<LocList>
+<Loc EndOffset="8015" SrcFileId="1" StartOffset="6152"/>
+</LocList>
+<StmntSeq Intrnl_Id="218">
+<LocList>
+<Loc EndOffset="6225" SrcFileId="1" StartOffset="6167"/>
+<Loc EndOffset="6288" SrcFileId="1" StartOffset="6239"/>
+<Loc EndOffset="6337" SrcFileId="1" StartOffset="6304"/>
+<Loc EndOffset="6373" SrcFileId="1" StartOffset="6351"/>
+<Loc EndOffset="7457" SrcFileId="1" StartOffset="6389"/>
+<Loc EndOffset="7504" SrcFileId="1" StartOffset="7473"/>
+<Loc EndOffset="8004" SrcFileId="1" StartOffset="7520"/>
+</LocList>
+<BasicStmnt CovItemId="S90" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="219">
+<LocList>
+<Loc EndOffset="6225" SrcFileId="1" StartOffset="6167"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S91" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="220">
+<LocList>
+<Loc EndOffset="6288" SrcFileId="1" StartOffset="6239"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S92" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="221">
+<LocList>
+<Loc EndOffset="6337" SrcFileId="1" StartOffset="6304"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S93" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="222">
+<LocList>
+<Loc EndOffset="6373" SrcFileId="1" StartOffset="6351"/>
+</LocList>
+</BasicStmnt>
+<LoopStmnt CovItemId="S94" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="223" MltplExecId="L8-2" MltplExecPrefix="com.OriginalFiles.MI.java" NvrExecId="L8-0" NvrExecPrefix="com.OriginalFiles.MI.java" OnceExecutedId="L8-1" OnceExecutedPrefix="com.OriginalFiles.MI.java" OptBodyExec="true">
+<StmntSeq Intrnl_Id="224">
+<LocList>
+<Loc EndOffset="6469" SrcFileId="1" StartOffset="6440"/>
+<Loc EndOffset="7309" SrcFileId="1" StartOffset="6487"/>
+<Loc EndOffset="7442" SrcFileId="1" StartOffset="7327"/>
+</LocList>
+<BasicStmnt CovItemId="S95" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="225">
+<LocList>
+<Loc EndOffset="6469" SrcFileId="1" StartOffset="6440"/>
+</LocList>
+</BasicStmnt>
+<CondStmnt CovItemId="S96" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="226">
+<Branch CovItemId="B31" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="227">
+<Cond/>
+<LocList>
+<Loc EndOffset="7309" SrcFileId="1" StartOffset="6512"/>
+</LocList>
+<StmntSeq Intrnl_Id="228">
+<LocList>
+<Loc EndOffset="7290" SrcFileId="1" StartOffset="6535"/>
+</LocList>
+<CondStmnt CovItemId="S97" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="229">
+<Branch CovItemId="B33" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="230">
+<Cond/>
+<LocList>
+<Loc EndOffset="7290" SrcFileId="1" StartOffset="6629"/>
+</LocList>
+<StmntSeq Intrnl_Id="231">
+<LocList>
+<Loc EndOffset="7196" SrcFileId="1" StartOffset="6656"/>
+<Loc EndOffset="7267" SrcFileId="1" StartOffset="7222"/>
+</LocList>
+<CondStmnt CovItemId="S98" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="232">
+<Branch CovItemId="B35" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="233">
+<Cond/>
+<LocList>
+<Loc EndOffset="6925" SrcFileId="1" StartOffset="6751"/>
+</LocList>
+<StmntSeq Intrnl_Id="234">
+<LocList>
+<Loc EndOffset="6898" SrcFileId="1" StartOffset="6782"/>
+</LocList>
+<BasicStmnt CovItemId="S99" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="235">
+<LocList>
+<Loc EndOffset="6898" SrcFileId="1" StartOffset="6782"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B36" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="236">
+<Cond>
+<Loc EndOffset="6930" SrcFileId="1" StartOffset="6926"/>
+</Cond>
+<LocList>
+<Loc EndOffset="7196" SrcFileId="1" StartOffset="6931"/>
+</LocList>
+<StmntSeq Intrnl_Id="237">
+<LocList>
+<Loc EndOffset="7196" SrcFileId="1" StartOffset="6931"/>
+</LocList>
+<CondStmnt CovItemId="S100" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="238">
+<Branch CovItemId="B37" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="239">
+<Cond/>
+<LocList>
+<Loc EndOffset="7196" SrcFileId="1" StartOffset="7027"/>
+</LocList>
+<StmntSeq Intrnl_Id="240">
+<LocList>
+<Loc EndOffset="7169" SrcFileId="1" StartOffset="7058"/>
+</LocList>
+<BasicStmnt CovItemId="S101" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="241">
+<LocList>
+<Loc EndOffset="7169" SrcFileId="1" StartOffset="7058"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B38" CovItemPrefix="com.OriginalFiles.MI.java" Implct="true" Intrnl_Id="242">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="243">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="6933" SrcFileId="1" StartOffset="6931"/>
+<LocList>
+<Loc EndOffset="7196" SrcFileId="1" StartOffset="6931"/>
+</LocList>
+<RootTerm CovItemId="C21" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="244">
+<BasicBoolTerm Intrnl_Id="245">
+<LocList>
+<Loc EndOffset="7025" SrcFileId="1" StartOffset="6935"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="6658" SrcFileId="1" StartOffset="6656"/>
+<LocList>
+<Loc EndOffset="7196" SrcFileId="1" StartOffset="6656"/>
+</LocList>
+<RootTerm CovItemId="C20" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="246">
+<BasicBoolTerm Intrnl_Id="247">
+<LocList>
+<Loc EndOffset="6749" SrcFileId="1" StartOffset="6660"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+<BasicStmnt CovItemId="S102" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="248">
+<LocList>
+<Loc EndOffset="7267" SrcFileId="1" StartOffset="7222"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B34" CovItemPrefix="com.OriginalFiles.MI.java" Implct="true" Intrnl_Id="249">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="250">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="6537" SrcFileId="1" StartOffset="6535"/>
+<LocList>
+<Loc EndOffset="7290" SrcFileId="1" StartOffset="6535"/>
+</LocList>
+<RootTerm CovItemId="C19" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="251">
+<OpTerm BooleanOpId="3" Intrnl_Id="252">
+<BasicBoolTerm Intrnl_Id="253">
+<LocList>
+<Loc EndOffset="6575" SrcFileId="1" StartOffset="6539"/>
+</LocList>
+</BasicBoolTerm>
+<OpTerm BooleanOpId="2" Intrnl_Id="254">
+<BasicBoolTerm Intrnl_Id="255">
+<LocList>
+<Loc EndOffset="6627" SrcFileId="1" StartOffset="6609"/>
+</LocList>
+</BasicBoolTerm>
+<LocList>
+<Loc EndOffset="6609" SrcFileId="1" StartOffset="6608"/>
+</LocList>
+</OpTerm>
+<LocList>
+<Loc EndOffset="6607" SrcFileId="1" StartOffset="6605"/>
+</LocList>
+</OpTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B32" CovItemPrefix="com.OriginalFiles.MI.java" Implct="true" Intrnl_Id="256">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="257">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="6489" SrcFileId="1" StartOffset="6487"/>
+<LocList>
+<Loc EndOffset="7309" SrcFileId="1" StartOffset="6487"/>
+</LocList>
+<RootTerm CovItemId="C18" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="258">
+<OpTerm BooleanOpId="2" Intrnl_Id="259">
+<BasicBoolTerm Intrnl_Id="260">
+<LocList>
+<Loc EndOffset="6510" SrcFileId="1" StartOffset="6492"/>
+</LocList>
+</BasicBoolTerm>
+<LocList>
+<Loc EndOffset="6492" SrcFileId="1" StartOffset="6491"/>
+</LocList>
+</OpTerm>
+</RootTerm>
+</CondStmnt>
+<BasicStmnt CovItemId="S103" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="261">
+<LocList>
+<Loc EndOffset="7442" SrcFileId="1" StartOffset="7327"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+<Keyword EndOffset="6392" SrcFileId="1" StartOffset="6389"/>
+<LocList>
+<Loc EndOffset="7457" SrcFileId="1" StartOffset="6389"/>
+</LocList>
+<RootTerm CovItemId="C17" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="262">
+<BasicBoolTerm Intrnl_Id="263">
+<LocList>
+<Loc EndOffset="6414" SrcFileId="1" StartOffset="6408"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</LoopStmnt>
+<BasicStmnt CovItemId="S104" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="264">
+<LocList>
+<Loc EndOffset="7504" SrcFileId="1" StartOffset="7473"/>
+</LocList>
+</BasicStmnt>
+<LoopStmnt CovItemId="S105" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="265" MltplExecId="L9-2" MltplExecPrefix="com.OriginalFiles.MI.java" NvrExecId="L9-0" NvrExecPrefix="com.OriginalFiles.MI.java" OnceExecutedId="L9-1" OnceExecutedPrefix="com.OriginalFiles.MI.java" OptBodyExec="true">
+<StmntSeq Intrnl_Id="266">
+<LocList>
+<Loc EndOffset="7612" SrcFileId="1" StartOffset="7570"/>
+<Loc EndOffset="7832" SrcFileId="1" StartOffset="7630"/>
+<Loc EndOffset="7989" SrcFileId="1" StartOffset="7850"/>
+</LocList>
+<BasicStmnt CovItemId="S106" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="267">
+<LocList>
+<Loc EndOffset="7612" SrcFileId="1" StartOffset="7570"/>
+</LocList>
+</BasicStmnt>
+<CondStmnt CovItemId="S107" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="268">
+<Branch CovItemId="B39" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="269">
+<Cond/>
+<LocList>
+<Loc EndOffset="7759" SrcFileId="1" StartOffset="7692"/>
+</LocList>
+<StmntSeq Intrnl_Id="270">
+<LocList>
+<Loc EndOffset="7740" SrcFileId="1" StartOffset="7715"/>
+</LocList>
+<BasicStmnt CovItemId="S108" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="271">
+<LocList>
+<Loc EndOffset="7740" SrcFileId="1" StartOffset="7715"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B40" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="272">
+<Cond>
+<Loc EndOffset="7764" SrcFileId="1" StartOffset="7760"/>
+</Cond>
+<LocList>
+<Loc EndOffset="7832" SrcFileId="1" StartOffset="7765"/>
+</LocList>
+<StmntSeq Intrnl_Id="273">
+<LocList>
+<Loc EndOffset="7813" SrcFileId="1" StartOffset="7788"/>
+</LocList>
+<BasicStmnt CovItemId="S109" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="274">
+<LocList>
+<Loc EndOffset="7813" SrcFileId="1" StartOffset="7788"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="7632" SrcFileId="1" StartOffset="7630"/>
+<LocList>
+<Loc EndOffset="7832" SrcFileId="1" StartOffset="7630"/>
+</LocList>
+<RootTerm CovItemId="C23" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="275">
+<BasicBoolTerm Intrnl_Id="276">
+<LocList>
+<Loc EndOffset="7690" SrcFileId="1" StartOffset="7634"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+<BasicStmnt CovItemId="S110" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="277">
+<LocList>
+<Loc EndOffset="7989" SrcFileId="1" StartOffset="7850"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+<Keyword EndOffset="7523" SrcFileId="1" StartOffset="7520"/>
+<LocList>
+<Loc EndOffset="8004" SrcFileId="1" StartOffset="7520"/>
+</LocList>
+<RootTerm CovItemId="C22" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="278">
+<BasicBoolTerm Intrnl_Id="279">
+<LocList>
+<Loc EndOffset="7544" SrcFileId="1" StartOffset="7536"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</LoopStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B30" CovItemPrefix="com.OriginalFiles.MI.java" Implct="true" Intrnl_Id="280">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="281">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="6122" SrcFileId="1" StartOffset="6120"/>
+<LocList>
+<Loc EndOffset="8015" SrcFileId="1" StartOffset="6120"/>
+</LocList>
+<RootTerm CovItemId="C16" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="282">
+<BasicBoolTerm Intrnl_Id="283">
+<LocList>
+<Loc EndOffset="6150" SrcFileId="1" StartOffset="6124"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+</HierarchyLvl>
+<HierarchyLvl HierarchyLvlId="546" HierarchyLvlTypeId="7" Intrnl_Id="284" Name="possibleMoves">
+<Header>
+<Loc EndOffset="8182" SrcFileId="1" StartOffset="8059"/>
+</Header>
+<LocList>
+<Loc EndOffset="10432" SrcFileId="1" StartOffset="8059"/>
+</LocList>
+<StmntSeq Intrnl_Id="285">
+<LocList>
+<Loc EndOffset="8243" SrcFileId="1" StartOffset="8194"/>
+<Loc EndOffset="8298" SrcFileId="1" StartOffset="8253"/>
+<Loc EndOffset="8350" SrcFileId="1" StartOffset="8308"/>
+<Loc EndOffset="10286" SrcFileId="1" StartOffset="8360"/>
+<Loc EndOffset="10425" SrcFileId="1" StartOffset="10298"/>
+</LocList>
+<BasicStmnt CovItemId="S111" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="286">
+<LocList>
+<Loc EndOffset="8243" SrcFileId="1" StartOffset="8194"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S112" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="287">
+<LocList>
+<Loc EndOffset="8298" SrcFileId="1" StartOffset="8253"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S113" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="288">
+<LocList>
+<Loc EndOffset="8350" SrcFileId="1" StartOffset="8308"/>
+</LocList>
+</BasicStmnt>
+<LoopStmnt CovItemId="S114" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="289" MltplExecId="L10-2" MltplExecPrefix="com.OriginalFiles.MI.java" NvrExecId="L10-0" NvrExecPrefix="com.OriginalFiles.MI.java" OnceExecutedId="L10-1" OnceExecutedPrefix="com.OriginalFiles.MI.java" OptBodyExec="true">
+<StmntSeq Intrnl_Id="290">
+<LocList>
+<Loc EndOffset="10275" SrcFileId="1" StartOffset="8425"/>
+</LocList>
+<LoopStmnt CovItemId="S115" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="291" MltplExecId="L11-2" MltplExecPrefix="com.OriginalFiles.MI.java" NvrExecId="L11-0" NvrExecPrefix="com.OriginalFiles.MI.java" OnceExecutedId="L11-1" OnceExecutedPrefix="com.OriginalFiles.MI.java" OptBodyExec="true">
+<StmntSeq Intrnl_Id="292">
+<LocList>
+<Loc EndOffset="10260" SrcFileId="1" StartOffset="8466"/>
+</LocList>
+<CondStmnt CovItemId="S116" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="293">
+<Branch CovItemId="B41" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="294">
+<Cond/>
+<LocList>
+<Loc EndOffset="10260" SrcFileId="1" StartOffset="8488"/>
+</LocList>
+<StmntSeq Intrnl_Id="295">
+<LocList>
+<Loc EndOffset="10241" SrcFileId="1" StartOffset="8511"/>
+</LocList>
+<CondStmnt CovItemId="S117" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="296">
+<Branch CovItemId="B43" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="297">
+<Cond/>
+<LocList>
+<Loc EndOffset="10241" SrcFileId="1" StartOffset="8679"/>
+</LocList>
+<StmntSeq Intrnl_Id="298">
+<LocList>
+<Loc EndOffset="10218" SrcFileId="1" StartOffset="8739"/>
+</LocList>
+<CondStmnt CovItemId="S118" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="299">
+<Branch CovItemId="B45" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="300">
+<Cond/>
+<LocList>
+<Loc EndOffset="9518" SrcFileId="1" StartOffset="8776"/>
+</LocList>
+<StmntSeq Intrnl_Id="301">
+<LocList>
+<Loc EndOffset="9119" SrcFileId="1" StartOffset="8807"/>
+<Loc EndOffset="9491" SrcFileId="1" StartOffset="9151"/>
+</LocList>
+<BasicStmnt CovItemId="S119" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="302">
+<LocList>
+<Loc EndOffset="9119" SrcFileId="1" StartOffset="8807"/>
+</LocList>
+</BasicStmnt>
+<LoopStmnt CovItemId="S120" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="303" MltplExecId="L12-2" MltplExecPrefix="com.OriginalFiles.MI.java" NvrExecId="L12-0" NvrExecPrefix="com.OriginalFiles.MI.java" OnceExecutedId="L12-1" OnceExecutedPrefix="com.OriginalFiles.MI.java" OptBodyExec="true">
+<StmntSeq Intrnl_Id="304">
+<LocList>
+<Loc EndOffset="9460" SrcFileId="1" StartOffset="9232"/>
+</LocList>
+<CondStmnt CovItemId="S121" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="305">
+<Branch CovItemId="B47" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="306">
+<Cond/>
+<LocList>
+<Loc EndOffset="9460" SrcFileId="1" StartOffset="9263"/>
+</LocList>
+<StmntSeq Intrnl_Id="307">
+<LocList>
+<Loc EndOffset="9425" SrcFileId="1" StartOffset="9302"/>
+</LocList>
+<BasicStmnt CovItemId="S122" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="308">
+<LocList>
+<Loc EndOffset="9425" SrcFileId="1" StartOffset="9302"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B48" CovItemPrefix="com.OriginalFiles.MI.java" Implct="true" Intrnl_Id="309">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="310">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="9234" SrcFileId="1" StartOffset="9232"/>
+<LocList>
+<Loc EndOffset="9460" SrcFileId="1" StartOffset="9232"/>
+</LocList>
+<RootTerm CovItemId="C27" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="311">
+<BasicBoolTerm Intrnl_Id="312">
+<LocList>
+<Loc EndOffset="9261" SrcFileId="1" StartOffset="9236"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+<Keyword EndOffset="9154" SrcFileId="1" StartOffset="9151"/>
+<LocList>
+<Loc EndOffset="9491" SrcFileId="1" StartOffset="9151"/>
+</LocList>
+</LoopStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B46" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="313">
+<Cond>
+<Loc EndOffset="9523" SrcFileId="1" StartOffset="9519"/>
+</Cond>
+<LocList>
+<Loc EndOffset="10218" SrcFileId="1" StartOffset="9524"/>
+</LocList>
+<StmntSeq Intrnl_Id="314">
+<LocList>
+<Loc EndOffset="9726" SrcFileId="1" StartOffset="9565"/>
+<Loc EndOffset="10191" SrcFileId="1" StartOffset="9800"/>
+</LocList>
+<BasicStmnt CovItemId="S123" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="315">
+<LocList>
+<Loc EndOffset="9726" SrcFileId="1" StartOffset="9565"/>
+</LocList>
+</BasicStmnt>
+<CondStmnt CovItemId="S124" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="316">
+<Branch CovItemId="B49" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="317">
+<Cond/>
+<LocList>
+<Loc EndOffset="10191" SrcFileId="1" StartOffset="9830"/>
+</LocList>
+<StmntSeq Intrnl_Id="318">
+<LocList>
+<Loc EndOffset="10160" SrcFileId="1" StartOffset="9865"/>
+</LocList>
+<LoopStmnt CovItemId="S125" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="319" MltplExecId="L13-2" MltplExecPrefix="com.OriginalFiles.MI.java" NvrExecId="L13-0" NvrExecPrefix="com.OriginalFiles.MI.java" OnceExecutedId="L13-1" OnceExecutedPrefix="com.OriginalFiles.MI.java" OptBodyExec="true">
+<StmntSeq Intrnl_Id="320">
+<LocList>
+<Loc EndOffset="10063" SrcFileId="1" StartOffset="9941"/>
+<Loc EndOffset="10125" SrcFileId="1" StartOffset="10101"/>
+</LocList>
+<BasicStmnt CovItemId="S126" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="321">
+<LocList>
+<Loc EndOffset="10063" SrcFileId="1" StartOffset="9941"/>
+</LocList>
+</BasicStmnt>
+<BasicStmnt CovItemId="S127" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="322">
+<LocList>
+<Loc EndOffset="10125" SrcFileId="1" StartOffset="10101"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+<Keyword EndOffset="9868" SrcFileId="1" StartOffset="9865"/>
+<LocList>
+<Loc EndOffset="10160" SrcFileId="1" StartOffset="9865"/>
+</LocList>
+</LoopStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B50" CovItemPrefix="com.OriginalFiles.MI.java" Implct="true" Intrnl_Id="323">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="324">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="9802" SrcFileId="1" StartOffset="9800"/>
+<LocList>
+<Loc EndOffset="10191" SrcFileId="1" StartOffset="9800"/>
+</LocList>
+<RootTerm CovItemId="C28" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="325">
+<OpTerm BooleanOpId="2" Intrnl_Id="326">
+<BasicBoolTerm Intrnl_Id="327">
+<LocList>
+<Loc EndOffset="9828" SrcFileId="1" StartOffset="9805"/>
+</LocList>
+</BasicBoolTerm>
+<LocList>
+<Loc EndOffset="9805" SrcFileId="1" StartOffset="9804"/>
+</LocList>
+</OpTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="8741" SrcFileId="1" StartOffset="8739"/>
+<LocList>
+<Loc EndOffset="10218" SrcFileId="1" StartOffset="8739"/>
+</LocList>
+<RootTerm CovItemId="C26" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="328">
+<BasicBoolTerm Intrnl_Id="329">
+<LocList>
+<Loc EndOffset="8774" SrcFileId="1" StartOffset="8743"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B44" CovItemPrefix="com.OriginalFiles.MI.java" Implct="true" Intrnl_Id="330">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="331">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="8513" SrcFileId="1" StartOffset="8511"/>
+<LocList>
+<Loc EndOffset="10241" SrcFileId="1" StartOffset="8511"/>
+</LocList>
+<RootTerm CovItemId="C25" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="332">
+<OpTerm BooleanOpId="3" Intrnl_Id="333">
+<BasicBoolTerm Intrnl_Id="334">
+<LocList>
+<Loc EndOffset="8549" SrcFileId="1" StartOffset="8515"/>
+</LocList>
+</BasicBoolTerm>
+<BasicBoolTerm Intrnl_Id="335">
+<LocList>
+<Loc EndOffset="8677" SrcFileId="1" StartOffset="8582"/>
+</LocList>
+</BasicBoolTerm>
+<LocList>
+<Loc EndOffset="8581" SrcFileId="1" StartOffset="8579"/>
+</LocList>
+</OpTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B42" CovItemPrefix="com.OriginalFiles.MI.java" Implct="true" Intrnl_Id="336">
+<Cond/>
+<LocList/>
+<StmntSeq Intrnl_Id="337">
+<LocList/>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="8468" SrcFileId="1" StartOffset="8466"/>
+<LocList>
+<Loc EndOffset="10260" SrcFileId="1" StartOffset="8466"/>
+</LocList>
+<RootTerm CovItemId="C24" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="338">
+<OpTerm BooleanOpId="2" Intrnl_Id="339">
+<BasicBoolTerm Intrnl_Id="340">
+<LocList>
+<Loc EndOffset="8486" SrcFileId="1" StartOffset="8471"/>
+</LocList>
+</BasicBoolTerm>
+<LocList>
+<Loc EndOffset="8471" SrcFileId="1" StartOffset="8470"/>
+</LocList>
+</OpTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+<Keyword EndOffset="8428" SrcFileId="1" StartOffset="8425"/>
+<LocList>
+<Loc EndOffset="10275" SrcFileId="1" StartOffset="8425"/>
+</LocList>
+</LoopStmnt>
+</StmntSeq>
+<Keyword EndOffset="8363" SrcFileId="1" StartOffset="8360"/>
+<LocList>
+<Loc EndOffset="10286" SrcFileId="1" StartOffset="8360"/>
+</LocList>
+</LoopStmnt>
+<CondStmnt CovItemId="S128" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="341">
+<Branch CovItemId="B51" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="342">
+<Cond/>
+<LocList>
+<Loc EndOffset="10376" SrcFileId="1" StartOffset="10329"/>
+</LocList>
+<StmntSeq Intrnl_Id="343">
+<LocList>
+<Loc EndOffset="10365" SrcFileId="1" StartOffset="10344"/>
+</LocList>
+<BasicStmnt CovItemId="S129" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="344">
+<LocList>
+<Loc EndOffset="10365" SrcFileId="1" StartOffset="10344"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Branch CovItemId="B52" CovItemPrefix="com.OriginalFiles.MI.java" Implct="false" Intrnl_Id="345">
+<Cond>
+<Loc EndOffset="10381" SrcFileId="1" StartOffset="10377"/>
+</Cond>
+<LocList>
+<Loc EndOffset="10425" SrcFileId="1" StartOffset="10382"/>
+</LocList>
+<StmntSeq Intrnl_Id="346">
+<LocList>
+<Loc EndOffset="10414" SrcFileId="1" StartOffset="10397"/>
+</LocList>
+<BasicStmnt CovItemId="S130" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="347">
+<LocList>
+<Loc EndOffset="10414" SrcFileId="1" StartOffset="10397"/>
+</LocList>
+</BasicStmnt>
+</StmntSeq>
+</Branch>
+<Keyword EndOffset="10300" SrcFileId="1" StartOffset="10298"/>
+<LocList>
+<Loc EndOffset="10425" SrcFileId="1" StartOffset="10298"/>
+</LocList>
+<RootTerm CovItemId="C29" CovItemPrefix="com.OriginalFiles.MI.java" Intrnl_Id="348">
+<BasicBoolTerm Intrnl_Id="349">
+<LocList>
+<Loc EndOffset="10327" SrcFileId="1" StartOffset="10302"/>
+</LocList>
+</BasicBoolTerm>
+</RootTerm>
+</CondStmnt>
+</StmntSeq>
+</HierarchyLvl>
+</HierarchyLvl>
+</HierarchyLvl>
+</HierarchyLvl>
+</HierarchyLvl>
+</MASTRoot>
+<TestSession Comment="" Date="1384856882136" Name="Nov 19, 2013 11:28:02 AM">
+<TestCase Comment="" Date="1384856881950" Name="com.Testing.MiTest:testLookForBestMove">
+<CovList>
+<CovPrefix CovItemPrefix="com.OriginalFiles.MI.java">
+<Cov CovItemId="B1" Value="71"/>
+<Cov CovItemId="B10" Value="2"/>
+<Cov CovItemId="B11" Value="72"/>
+<Cov CovItemId="B12" Value="27"/>
+<Cov CovItemId="B13" Value="15"/>
+<Cov CovItemId="B14" Value="77"/>
+<Cov CovItemId="B18" Value="72"/>
+<Cov CovItemId="B19" Value="72"/>
+<Cov CovItemId="B2" Value="121"/>
+<Cov CovItemId="B21" Value="60"/>
+<Cov CovItemId="B22" Value="196"/>
+<Cov CovItemId="B23" Value="99"/>
+<Cov CovItemId="B25" Value="4"/>
+<Cov CovItemId="B26" Value="95"/>
+<Cov CovItemId="B27" Value="4"/>
+<Cov CovItemId="B29" Value="99"/>
+<Cov CovItemId="B3" Value="35"/>
+<Cov CovItemId="B31" Value="99"/>
+<Cov CovItemId="B34" Value="99"/>
+<Cov CovItemId="B39" Value="4"/>
+<Cov CovItemId="B4" Value="36"/>
+<Cov CovItemId="B41" Value="695"/>
+<Cov CovItemId="B42" Value="1161"/>
+<Cov CovItemId="B43" Value="154"/>
+<Cov CovItemId="B44" Value="541"/>
+<Cov CovItemId="B45" Value="5"/>
+<Cov CovItemId="B46" Value="149"/>
+<Cov CovItemId="B47" Value="5"/>
+<Cov CovItemId="B49" Value="149"/>
+<Cov CovItemId="B5" Value="1"/>
+<Cov CovItemId="B51" Value="5"/>
+<Cov CovItemId="B52" Value="24"/>
+<Cov CovItemId="B6" Value="1"/>
+<Cov CovItemId="B7" Value="2"/>
+<Cov CovItemId="B8" Value="5"/>
+<Cov CovItemId="B9" Value="3"/>
+<Cov CovItemId="L1-2" Value="3"/>
+<Cov CovItemId="L10-2" Value="29"/>
+<Cov CovItemId="L11-2" Value="232"/>
+<Cov CovItemId="L12-1" Value="5"/>
+<Cov CovItemId="L13-1" Value="88"/>
+<Cov CovItemId="L13-2" Value="61"/>
+<Cov CovItemId="L2-2" Value="24"/>
+<Cov CovItemId="L3-2" Value="1"/>
+<Cov CovItemId="L4-1" Value="16"/>
+<Cov CovItemId="L4-2" Value="11"/>
+<Cov CovItemId="L5-2" Value="72"/>
+<Cov CovItemId="L6-2" Value="72"/>
+<Cov CovItemId="L7-1" Value="99"/>
+<Cov CovItemId="L8-1" Value="99"/>
+<Cov CovItemId="L9-0" Value="95"/>
+<Cov CovItemId="L9-1" Value="4"/>
+<Cov CovItemId="S1" Value="1"/>
+<Cov CovItemId="S10" Value="24"/>
+<Cov CovItemId="S103" Value="99"/>
+<Cov CovItemId="S104" Value="99"/>
+<Cov CovItemId="S105" Value="99"/>
+<Cov CovItemId="S106" Value="4"/>
+<Cov CovItemId="S107" Value="4"/>
+<Cov CovItemId="S108" Value="4"/>
+<Cov CovItemId="S11" Value="192"/>
+<Cov CovItemId="S110" Value="4"/>
+<Cov CovItemId="S111" Value="29"/>
+<Cov CovItemId="S112" Value="29"/>
+<Cov CovItemId="S113" Value="29"/>
+<Cov CovItemId="S114" Value="29"/>
+<Cov CovItemId="S115" Value="232"/>
+<Cov CovItemId="S116" Value="1856"/>
+<Cov CovItemId="S117" Value="695"/>
+<Cov CovItemId="S118" Value="154"/>
+<Cov CovItemId="S119" Value="5"/>
+<Cov CovItemId="S12" Value="71"/>
+<Cov CovItemId="S120" Value="5"/>
+<Cov CovItemId="S121" Value="5"/>
+<Cov CovItemId="S122" Value="5"/>
+<Cov CovItemId="S123" Value="149"/>
+<Cov CovItemId="S124" Value="149"/>
+<Cov CovItemId="S125" Value="149"/>
+<Cov CovItemId="S126" Value="210"/>
+<Cov CovItemId="S127" Value="210"/>
+<Cov CovItemId="S128" Value="29"/>
+<Cov CovItemId="S129" Value="5"/>
+<Cov CovItemId="S13" Value="35"/>
+<Cov CovItemId="S130" Value="24"/>
+<Cov CovItemId="S14" Value="36"/>
+<Cov CovItemId="S15" Value="2"/>
+<Cov CovItemId="S16" Value="2"/>
+<Cov CovItemId="S17" Value="2"/>
+<Cov CovItemId="S18" Value="2"/>
+<Cov CovItemId="S19" Value="2"/>
+<Cov CovItemId="S2" Value="1"/>
+<Cov CovItemId="S20" Value="1"/>
+<Cov CovItemId="S21" Value="1"/>
+<Cov CovItemId="S22" Value="7"/>
+<Cov CovItemId="S23" Value="7"/>
+<Cov CovItemId="S24" Value="7"/>
+<Cov CovItemId="S25" Value="7"/>
+<Cov CovItemId="S26" Value="2"/>
+<Cov CovItemId="S27" Value="2"/>
+<Cov CovItemId="S28" Value="2"/>
+<Cov CovItemId="S29" Value="5"/>
+<Cov CovItemId="S3" Value="1"/>
+<Cov CovItemId="S30" Value="3"/>
+<Cov CovItemId="S31" Value="1"/>
+<Cov CovItemId="S32" Value="99"/>
+<Cov CovItemId="S33" Value="72"/>
+<Cov CovItemId="S34" Value="27"/>
+<Cov CovItemId="S35" Value="27"/>
+<Cov CovItemId="S36" Value="27"/>
+<Cov CovItemId="S37" Value="92"/>
+<Cov CovItemId="S38" Value="92"/>
+<Cov CovItemId="S39" Value="92"/>
+<Cov CovItemId="S4" Value="1"/>
+<Cov CovItemId="S40" Value="92"/>
+<Cov CovItemId="S41" Value="92"/>
+<Cov CovItemId="S42" Value="92"/>
+<Cov CovItemId="S43" Value="15"/>
+<Cov CovItemId="S44" Value="27"/>
+<Cov CovItemId="S45" Value="1"/>
+<Cov CovItemId="S46" Value="1"/>
+<Cov CovItemId="S47" Value="1"/>
+<Cov CovItemId="S48" Value="1"/>
+<Cov CovItemId="S49" Value="1"/>
+<Cov CovItemId="S5" Value="1"/>
+<Cov CovItemId="S50" Value="1"/>
+<Cov CovItemId="S51" Value="1"/>
+<Cov CovItemId="S52" Value="72"/>
+<Cov CovItemId="S53" Value="72"/>
+<Cov CovItemId="S54" Value="72"/>
+<Cov CovItemId="S55" Value="864"/>
+<Cov CovItemId="S56" Value="72"/>
+<Cov CovItemId="S57" Value="860"/>
+<Cov CovItemId="S58" Value="72"/>
+<Cov CovItemId="S59" Value="72"/>
+<Cov CovItemId="S6" Value="1"/>
+<Cov CovItemId="S66" Value="72"/>
+<Cov CovItemId="S67" Value="72"/>
+<Cov CovItemId="S68" Value="72"/>
+<Cov CovItemId="S69" Value="72"/>
+<Cov CovItemId="S7" Value="3"/>
+<Cov CovItemId="S70" Value="72"/>
+<Cov CovItemId="S72" Value="256"/>
+<Cov CovItemId="S73" Value="60"/>
+<Cov CovItemId="S74" Value="196"/>
+<Cov CovItemId="S75" Value="99"/>
+<Cov CovItemId="S76" Value="99"/>
+<Cov CovItemId="S77" Value="99"/>
+<Cov CovItemId="S78" Value="99"/>
+<Cov CovItemId="S79" Value="99"/>
+<Cov CovItemId="S8" Value="3"/>
+<Cov CovItemId="S80" Value="99"/>
+<Cov CovItemId="S81" Value="4"/>
+<Cov CovItemId="S82" Value="4"/>
+<Cov CovItemId="S83" Value="4"/>
+<Cov CovItemId="S85" Value="4"/>
+<Cov CovItemId="S86" Value="4"/>
+<Cov CovItemId="S87" Value="99"/>
+<Cov CovItemId="S88" Value="99"/>
+<Cov CovItemId="S89" Value="99"/>
+<Cov CovItemId="S9" Value="3"/>
+<Cov CovItemId="S90" Value="99"/>
+<Cov CovItemId="S91" Value="99"/>
+<Cov CovItemId="S92" Value="99"/>
+<Cov CovItemId="S93" Value="99"/>
+<Cov CovItemId="S94" Value="99"/>
+<Cov CovItemId="S95" Value="99"/>
+<Cov CovItemId="S96" Value="99"/>
+<Cov CovItemId="S97" Value="99"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.MI.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="0" Value="71"/>
+<MapEntry BoolAssgnmnt="1" Value="121"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C10">
+<MapEntry BoolAssgnmnt="1" Value="72"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C11">
+<MapEntry BoolAssgnmnt="0" Value="196"/>
+<MapEntry BoolAssgnmnt="1" Value="60"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C12">
+<MapEntry BoolAssgnmnt="1" Value="99"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C13">
+<MapEntry BoolAssgnmnt="0" Value="99"/>
+<MapEntry BoolAssgnmnt="1" Value="99"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C14">
+<MapEntry BoolAssgnmnt="0" Value="95"/>
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C15">
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C16">
+<MapEntry BoolAssgnmnt="1" Value="99"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C17">
+<MapEntry BoolAssgnmnt="0" Value="99"/>
+<MapEntry BoolAssgnmnt="1" Value="99"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C18">
+<MapEntry BoolAssgnmnt="0" Value="99"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C19">
+<MapEntry BoolAssgnmnt="02" Value="99"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C2">
+<MapEntry BoolAssgnmnt="0" Value="36"/>
+<MapEntry BoolAssgnmnt="1" Value="35"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C22">
+<MapEntry BoolAssgnmnt="0" Value="99"/>
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C23">
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C24">
+<MapEntry BoolAssgnmnt="0" Value="695"/>
+<MapEntry BoolAssgnmnt="1" Value="1161"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C25">
+<MapEntry BoolAssgnmnt="10" Value="161"/>
+<MapEntry BoolAssgnmnt="02" Value="380"/>
+<MapEntry BoolAssgnmnt="11" Value="154"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C26">
+<MapEntry BoolAssgnmnt="0" Value="149"/>
+<MapEntry BoolAssgnmnt="1" Value="5"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C27">
+<MapEntry BoolAssgnmnt="1" Value="5"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C28">
+<MapEntry BoolAssgnmnt="0" Value="149"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C29">
+<MapEntry BoolAssgnmnt="0" Value="24"/>
+<MapEntry BoolAssgnmnt="1" Value="5"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C3">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C4">
+<MapEntry BoolAssgnmnt="0" Value="5"/>
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C5">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+<MapEntry BoolAssgnmnt="1" Value="3"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C6">
+<MapEntry BoolAssgnmnt="00" Value="27"/>
+<MapEntry BoolAssgnmnt="12" Value="72"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C7">
+<MapEntry BoolAssgnmnt="0" Value="77"/>
+<MapEntry BoolAssgnmnt="1" Value="15"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C8">
+<MapEntry BoolAssgnmnt="0" Value="72"/>
+<MapEntry BoolAssgnmnt="1" Value="864"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C9">
+<MapEntry BoolAssgnmnt="0" Value="72"/>
+<MapEntry BoolAssgnmnt="1" Value="860"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+</AssgnmntList>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<TestCase Comment="" Date="1384856881968" Name="com.Testing.MiTest:testLookForBestMoveEndGame">
+<CovList>
+<CovPrefix CovItemPrefix="com.OriginalFiles.MI.java">
+<Cov CovItemId="B1" Value="32"/>
+<Cov CovItemId="B11" Value="61"/>
+<Cov CovItemId="B12" Value="26"/>
+<Cov CovItemId="B13" Value="16"/>
+<Cov CovItemId="B14" Value="64"/>
+<Cov CovItemId="B18" Value="61"/>
+<Cov CovItemId="B2" Value="96"/>
+<Cov CovItemId="B20" Value="61"/>
+<Cov CovItemId="B21" Value="55"/>
+<Cov CovItemId="B22" Value="166"/>
+<Cov CovItemId="B23" Value="87"/>
+<Cov CovItemId="B26" Value="87"/>
+<Cov CovItemId="B29" Value="87"/>
+<Cov CovItemId="B3" Value="16"/>
+<Cov CovItemId="B31" Value="87"/>
+<Cov CovItemId="B34" Value="87"/>
+<Cov CovItemId="B4" Value="16"/>
+<Cov CovItemId="B41" Value="216"/>
+<Cov CovItemId="B42" Value="1512"/>
+<Cov CovItemId="B43" Value="107"/>
+<Cov CovItemId="B44" Value="109"/>
+<Cov CovItemId="B46" Value="107"/>
+<Cov CovItemId="B49" Value="107"/>
+<Cov CovItemId="B52" Value="27"/>
+<Cov CovItemId="B6" Value="1"/>
+<Cov CovItemId="B7" Value="2"/>
+<Cov CovItemId="B8" Value="5"/>
+<Cov CovItemId="B9" Value="5"/>
+<Cov CovItemId="L1-2" Value="2"/>
+<Cov CovItemId="L10-2" Value="27"/>
+<Cov CovItemId="L11-2" Value="216"/>
+<Cov CovItemId="L13-1" Value="43"/>
+<Cov CovItemId="L13-2" Value="64"/>
+<Cov CovItemId="L2-2" Value="16"/>
+<Cov CovItemId="L3-2" Value="1"/>
+<Cov CovItemId="L4-1" Value="15"/>
+<Cov CovItemId="L4-2" Value="11"/>
+<Cov CovItemId="L5-2" Value="61"/>
+<Cov CovItemId="L6-2" Value="61"/>
+<Cov CovItemId="L7-1" Value="87"/>
+<Cov CovItemId="L8-1" Value="87"/>
+<Cov CovItemId="L9-0" Value="87"/>
+<Cov CovItemId="S1" Value="1"/>
+<Cov CovItemId="S10" Value="16"/>
+<Cov CovItemId="S103" Value="87"/>
+<Cov CovItemId="S104" Value="87"/>
+<Cov CovItemId="S105" Value="87"/>
+<Cov CovItemId="S11" Value="128"/>
+<Cov CovItemId="S111" Value="27"/>
+<Cov CovItemId="S112" Value="27"/>
+<Cov CovItemId="S113" Value="27"/>
+<Cov CovItemId="S114" Value="27"/>
+<Cov CovItemId="S115" Value="216"/>
+<Cov CovItemId="S116" Value="1728"/>
+<Cov CovItemId="S117" Value="216"/>
+<Cov CovItemId="S118" Value="107"/>
+<Cov CovItemId="S12" Value="32"/>
+<Cov CovItemId="S123" Value="107"/>
+<Cov CovItemId="S124" Value="107"/>
+<Cov CovItemId="S125" Value="107"/>
+<Cov CovItemId="S126" Value="171"/>
+<Cov CovItemId="S127" Value="171"/>
+<Cov CovItemId="S128" Value="27"/>
+<Cov CovItemId="S13" Value="16"/>
+<Cov CovItemId="S130" Value="27"/>
+<Cov CovItemId="S14" Value="16"/>
+<Cov CovItemId="S15" Value="1"/>
+<Cov CovItemId="S16" Value="1"/>
+<Cov CovItemId="S17" Value="1"/>
+<Cov CovItemId="S18" Value="1"/>
+<Cov CovItemId="S19" Value="1"/>
+<Cov CovItemId="S2" Value="1"/>
+<Cov CovItemId="S21" Value="1"/>
+<Cov CovItemId="S22" Value="7"/>
+<Cov CovItemId="S23" Value="7"/>
+<Cov CovItemId="S24" Value="7"/>
+<Cov CovItemId="S25" Value="7"/>
+<Cov CovItemId="S26" Value="2"/>
+<Cov CovItemId="S27" Value="2"/>
+<Cov CovItemId="S28" Value="2"/>
+<Cov CovItemId="S29" Value="5"/>
+<Cov CovItemId="S3" Value="1"/>
+<Cov CovItemId="S30" Value="5"/>
+<Cov CovItemId="S31" Value="1"/>
+<Cov CovItemId="S32" Value="87"/>
+<Cov CovItemId="S33" Value="61"/>
+<Cov CovItemId="S34" Value="26"/>
+<Cov CovItemId="S35" Value="26"/>
+<Cov CovItemId="S36" Value="26"/>
+<Cov CovItemId="S37" Value="80"/>
+<Cov CovItemId="S38" Value="80"/>
+<Cov CovItemId="S39" Value="80"/>
+<Cov CovItemId="S4" Value="1"/>
+<Cov CovItemId="S40" Value="80"/>
+<Cov CovItemId="S41" Value="80"/>
+<Cov CovItemId="S42" Value="80"/>
+<Cov CovItemId="S43" Value="16"/>
+<Cov CovItemId="S44" Value="26"/>
+<Cov CovItemId="S45" Value="1"/>
+<Cov CovItemId="S46" Value="1"/>
+<Cov CovItemId="S47" Value="1"/>
+<Cov CovItemId="S48" Value="1"/>
+<Cov CovItemId="S49" Value="1"/>
+<Cov CovItemId="S5" Value="1"/>
+<Cov CovItemId="S50" Value="1"/>
+<Cov CovItemId="S51" Value="1"/>
+<Cov CovItemId="S52" Value="61"/>
+<Cov CovItemId="S53" Value="61"/>
+<Cov CovItemId="S54" Value="61"/>
+<Cov CovItemId="S55" Value="244"/>
+<Cov CovItemId="S56" Value="61"/>
+<Cov CovItemId="S57" Value="244"/>
+<Cov CovItemId="S58" Value="61"/>
+<Cov CovItemId="S59" Value="61"/>
+<Cov CovItemId="S6" Value="1"/>
+<Cov CovItemId="S66" Value="61"/>
+<Cov CovItemId="S67" Value="61"/>
+<Cov CovItemId="S68" Value="61"/>
+<Cov CovItemId="S69" Value="61"/>
+<Cov CovItemId="S7" Value="2"/>
+<Cov CovItemId="S71" Value="61"/>
+<Cov CovItemId="S72" Value="221"/>
+<Cov CovItemId="S73" Value="55"/>
+<Cov CovItemId="S74" Value="166"/>
+<Cov CovItemId="S75" Value="87"/>
+<Cov CovItemId="S76" Value="87"/>
+<Cov CovItemId="S77" Value="87"/>
+<Cov CovItemId="S78" Value="87"/>
+<Cov CovItemId="S79" Value="87"/>
+<Cov CovItemId="S8" Value="2"/>
+<Cov CovItemId="S80" Value="87"/>
+<Cov CovItemId="S87" Value="87"/>
+<Cov CovItemId="S88" Value="87"/>
+<Cov CovItemId="S89" Value="87"/>
+<Cov CovItemId="S9" Value="2"/>
+<Cov CovItemId="S90" Value="87"/>
+<Cov CovItemId="S91" Value="87"/>
+<Cov CovItemId="S92" Value="87"/>
+<Cov CovItemId="S93" Value="87"/>
+<Cov CovItemId="S94" Value="87"/>
+<Cov CovItemId="S95" Value="87"/>
+<Cov CovItemId="S96" Value="87"/>
+<Cov CovItemId="S97" Value="87"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.MI.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="0" Value="32"/>
+<MapEntry BoolAssgnmnt="1" Value="96"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C10">
+<MapEntry BoolAssgnmnt="0" Value="61"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C11">
+<MapEntry BoolAssgnmnt="0" Value="166"/>
+<MapEntry BoolAssgnmnt="1" Value="55"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C12">
+<MapEntry BoolAssgnmnt="1" Value="87"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C13">
+<MapEntry BoolAssgnmnt="0" Value="87"/>
+<MapEntry BoolAssgnmnt="1" Value="87"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C14">
+<MapEntry BoolAssgnmnt="0" Value="87"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C16">
+<MapEntry BoolAssgnmnt="1" Value="87"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C17">
+<MapEntry BoolAssgnmnt="0" Value="87"/>
+<MapEntry BoolAssgnmnt="1" Value="87"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C18">
+<MapEntry BoolAssgnmnt="0" Value="87"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C19">
+<MapEntry BoolAssgnmnt="02" Value="87"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C2">
+<MapEntry BoolAssgnmnt="0" Value="16"/>
+<MapEntry BoolAssgnmnt="1" Value="16"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C22">
+<MapEntry BoolAssgnmnt="0" Value="87"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C24">
+<MapEntry BoolAssgnmnt="0" Value="216"/>
+<MapEntry BoolAssgnmnt="1" Value="1512"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C25">
+<MapEntry BoolAssgnmnt="10" Value="105"/>
+<MapEntry BoolAssgnmnt="02" Value="4"/>
+<MapEntry BoolAssgnmnt="11" Value="107"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C26">
+<MapEntry BoolAssgnmnt="0" Value="107"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C28">
+<MapEntry BoolAssgnmnt="0" Value="107"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C29">
+<MapEntry BoolAssgnmnt="0" Value="27"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C3">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C4">
+<MapEntry BoolAssgnmnt="0" Value="5"/>
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C5">
+<MapEntry BoolAssgnmnt="1" Value="5"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C6">
+<MapEntry BoolAssgnmnt="00" Value="26"/>
+<MapEntry BoolAssgnmnt="12" Value="61"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C7">
+<MapEntry BoolAssgnmnt="0" Value="64"/>
+<MapEntry BoolAssgnmnt="1" Value="16"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C8">
+<MapEntry BoolAssgnmnt="0" Value="61"/>
+<MapEntry BoolAssgnmnt="1" Value="244"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C9">
+<MapEntry BoolAssgnmnt="0" Value="61"/>
+<MapEntry BoolAssgnmnt="1" Value="244"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+</AssgnmntList>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<TestCase Comment="" Date="1384856881983" Name="com.Testing.MiTest:testMI">
+<CovList>
+<CovPrefix CovItemPrefix="com.OriginalFiles.MI.java">
+<Cov CovItemId="B1" Value="24"/>
+<Cov CovItemId="B2" Value="40"/>
+<Cov CovItemId="B3" Value="12"/>
+<Cov CovItemId="B4" Value="12"/>
+<Cov CovItemId="L1-2" Value="1"/>
+<Cov CovItemId="L2-2" Value="8"/>
+<Cov CovItemId="S1" Value="1"/>
+<Cov CovItemId="S10" Value="8"/>
+<Cov CovItemId="S11" Value="64"/>
+<Cov CovItemId="S12" Value="24"/>
+<Cov CovItemId="S13" Value="12"/>
+<Cov CovItemId="S14" Value="12"/>
+<Cov CovItemId="S2" Value="1"/>
+<Cov CovItemId="S3" Value="1"/>
+<Cov CovItemId="S4" Value="1"/>
+<Cov CovItemId="S45" Value="1"/>
+<Cov CovItemId="S46" Value="1"/>
+<Cov CovItemId="S47" Value="1"/>
+<Cov CovItemId="S48" Value="1"/>
+<Cov CovItemId="S49" Value="1"/>
+<Cov CovItemId="S5" Value="1"/>
+<Cov CovItemId="S50" Value="1"/>
+<Cov CovItemId="S51" Value="1"/>
+<Cov CovItemId="S6" Value="1"/>
+<Cov CovItemId="S7" Value="1"/>
+<Cov CovItemId="S8" Value="1"/>
+<Cov CovItemId="S9" Value="1"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.MI.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="0" Value="24"/>
+<MapEntry BoolAssgnmnt="1" Value="40"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C2">
+<MapEntry BoolAssgnmnt="0" Value="12"/>
+<MapEntry BoolAssgnmnt="1" Value="12"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+</AssgnmntList>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<TestCase Comment="" Date="1384856881984" Name="com.Testing.MiTest:testLookForBestMoveSimulateKing">
+<CovList>
+<CovPrefix CovItemPrefix="com.OriginalFiles.MI.java">
+<Cov CovItemId="B1" Value="26"/>
+<Cov CovItemId="B11" Value="8"/>
+<Cov CovItemId="B12" Value="6"/>
+<Cov CovItemId="B13" Value="1"/>
+<Cov CovItemId="B14" Value="11"/>
+<Cov CovItemId="B17" Value="2"/>
+<Cov CovItemId="B18" Value="6"/>
+<Cov CovItemId="B2" Value="102"/>
+<Cov CovItemId="B20" Value="8"/>
+<Cov CovItemId="B21" Value="17"/>
+<Cov CovItemId="B22" Value="15"/>
+<Cov CovItemId="B23" Value="14"/>
+<Cov CovItemId="B26" Value="14"/>
+<Cov CovItemId="B29" Value="14"/>
+<Cov CovItemId="B3" Value="13"/>
+<Cov CovItemId="B31" Value="14"/>
+<Cov CovItemId="B33" Value="6"/>
+<Cov CovItemId="B34" Value="8"/>
+<Cov CovItemId="B35" Value="4"/>
+<Cov CovItemId="B36" Value="2"/>
+<Cov CovItemId="B37" Value="2"/>
+<Cov CovItemId="B4" Value="13"/>
+<Cov CovItemId="B41" Value="14"/>
+<Cov CovItemId="B42" Value="434"/>
+<Cov CovItemId="B43" Value="7"/>
+<Cov CovItemId="B44" Value="7"/>
+<Cov CovItemId="B46" Value="7"/>
+<Cov CovItemId="B49" Value="7"/>
+<Cov CovItemId="B52" Value="7"/>
+<Cov CovItemId="B6" Value="1"/>
+<Cov CovItemId="B7" Value="1"/>
+<Cov CovItemId="B8" Value="1"/>
+<Cov CovItemId="B9" Value="1"/>
+<Cov CovItemId="L1-2" Value="2"/>
+<Cov CovItemId="L10-2" Value="7"/>
+<Cov CovItemId="L11-2" Value="56"/>
+<Cov CovItemId="L13-2" Value="7"/>
+<Cov CovItemId="L2-2" Value="16"/>
+<Cov CovItemId="L3-2" Value="1"/>
+<Cov CovItemId="L4-2" Value="6"/>
+<Cov CovItemId="L5-1" Value="8"/>
+<Cov CovItemId="L6-1" Value="8"/>
+<Cov CovItemId="L7-1" Value="14"/>
+<Cov CovItemId="L8-1" Value="14"/>
+<Cov CovItemId="L9-0" Value="14"/>
+<Cov CovItemId="S1" Value="1"/>
+<Cov CovItemId="S10" Value="16"/>
+<Cov CovItemId="S100" Value="2"/>
+<Cov CovItemId="S101" Value="2"/>
+<Cov CovItemId="S102" Value="6"/>
+<Cov CovItemId="S103" Value="14"/>
+<Cov CovItemId="S104" Value="14"/>
+<Cov CovItemId="S105" Value="14"/>
+<Cov CovItemId="S11" Value="128"/>
+<Cov CovItemId="S111" Value="7"/>
+<Cov CovItemId="S112" Value="7"/>
+<Cov CovItemId="S113" Value="7"/>
+<Cov CovItemId="S114" Value="7"/>
+<Cov CovItemId="S115" Value="56"/>
+<Cov CovItemId="S116" Value="448"/>
+<Cov CovItemId="S117" Value="14"/>
+<Cov CovItemId="S118" Value="7"/>
+<Cov CovItemId="S12" Value="26"/>
+<Cov CovItemId="S123" Value="7"/>
+<Cov CovItemId="S124" Value="7"/>
+<Cov CovItemId="S125" Value="7"/>
+<Cov CovItemId="S126" Value="14"/>
+<Cov CovItemId="S127" Value="14"/>
+<Cov CovItemId="S128" Value="7"/>
+<Cov CovItemId="S13" Value="13"/>
+<Cov CovItemId="S130" Value="7"/>
+<Cov CovItemId="S14" Value="13"/>
+<Cov CovItemId="S15" Value="1"/>
+<Cov CovItemId="S16" Value="1"/>
+<Cov CovItemId="S17" Value="1"/>
+<Cov CovItemId="S18" Value="1"/>
+<Cov CovItemId="S19" Value="1"/>
+<Cov CovItemId="S2" Value="1"/>
+<Cov CovItemId="S21" Value="1"/>
+<Cov CovItemId="S22" Value="2"/>
+<Cov CovItemId="S23" Value="2"/>
+<Cov CovItemId="S24" Value="2"/>
+<Cov CovItemId="S25" Value="2"/>
+<Cov CovItemId="S26" Value="1"/>
+<Cov CovItemId="S27" Value="1"/>
+<Cov CovItemId="S28" Value="1"/>
+<Cov CovItemId="S29" Value="1"/>
+<Cov CovItemId="S3" Value="1"/>
+<Cov CovItemId="S30" Value="1"/>
+<Cov CovItemId="S31" Value="1"/>
+<Cov CovItemId="S32" Value="14"/>
+<Cov CovItemId="S33" Value="8"/>
+<Cov CovItemId="S34" Value="6"/>
+<Cov CovItemId="S35" Value="6"/>
+<Cov CovItemId="S36" Value="6"/>
+<Cov CovItemId="S37" Value="12"/>
+<Cov CovItemId="S38" Value="12"/>
+<Cov CovItemId="S39" Value="12"/>
+<Cov CovItemId="S4" Value="1"/>
+<Cov CovItemId="S40" Value="12"/>
+<Cov CovItemId="S41" Value="12"/>
+<Cov CovItemId="S42" Value="12"/>
+<Cov CovItemId="S43" Value="1"/>
+<Cov CovItemId="S44" Value="6"/>
+<Cov CovItemId="S45" Value="1"/>
+<Cov CovItemId="S46" Value="1"/>
+<Cov CovItemId="S47" Value="1"/>
+<Cov CovItemId="S48" Value="1"/>
+<Cov CovItemId="S49" Value="1"/>
+<Cov CovItemId="S5" Value="1"/>
+<Cov CovItemId="S50" Value="1"/>
+<Cov CovItemId="S51" Value="1"/>
+<Cov CovItemId="S52" Value="8"/>
+<Cov CovItemId="S53" Value="8"/>
+<Cov CovItemId="S54" Value="8"/>
+<Cov CovItemId="S55" Value="8"/>
+<Cov CovItemId="S56" Value="8"/>
+<Cov CovItemId="S57" Value="8"/>
+<Cov CovItemId="S58" Value="8"/>
+<Cov CovItemId="S59" Value="8"/>
+<Cov CovItemId="S6" Value="1"/>
+<Cov CovItemId="S64" Value="2"/>
+<Cov CovItemId="S65" Value="2"/>
+<Cov CovItemId="S66" Value="6"/>
+<Cov CovItemId="S67" Value="6"/>
+<Cov CovItemId="S68" Value="8"/>
+<Cov CovItemId="S69" Value="8"/>
+<Cov CovItemId="S7" Value="2"/>
+<Cov CovItemId="S71" Value="8"/>
+<Cov CovItemId="S72" Value="32"/>
+<Cov CovItemId="S73" Value="17"/>
+<Cov CovItemId="S74" Value="15"/>
+<Cov CovItemId="S75" Value="14"/>
+<Cov CovItemId="S76" Value="14"/>
+<Cov CovItemId="S77" Value="14"/>
+<Cov CovItemId="S78" Value="14"/>
+<Cov CovItemId="S79" Value="14"/>
+<Cov CovItemId="S8" Value="2"/>
+<Cov CovItemId="S80" Value="14"/>
+<Cov CovItemId="S87" Value="14"/>
+<Cov CovItemId="S88" Value="14"/>
+<Cov CovItemId="S89" Value="14"/>
+<Cov CovItemId="S9" Value="2"/>
+<Cov CovItemId="S90" Value="14"/>
+<Cov CovItemId="S91" Value="14"/>
+<Cov CovItemId="S92" Value="14"/>
+<Cov CovItemId="S93" Value="14"/>
+<Cov CovItemId="S94" Value="14"/>
+<Cov CovItemId="S95" Value="14"/>
+<Cov CovItemId="S96" Value="14"/>
+<Cov CovItemId="S97" Value="14"/>
+<Cov CovItemId="S98" Value="6"/>
+<Cov CovItemId="S99" Value="4"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.MI.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="0" Value="26"/>
+<MapEntry BoolAssgnmnt="1" Value="102"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C10">
+<MapEntry BoolAssgnmnt="0" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C11">
+<MapEntry BoolAssgnmnt="0" Value="15"/>
+<MapEntry BoolAssgnmnt="1" Value="17"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C12">
+<MapEntry BoolAssgnmnt="1" Value="14"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C13">
+<MapEntry BoolAssgnmnt="0" Value="14"/>
+<MapEntry BoolAssgnmnt="1" Value="14"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C14">
+<MapEntry BoolAssgnmnt="0" Value="14"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C16">
+<MapEntry BoolAssgnmnt="1" Value="14"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C17">
+<MapEntry BoolAssgnmnt="0" Value="14"/>
+<MapEntry BoolAssgnmnt="1" Value="14"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C18">
+<MapEntry BoolAssgnmnt="0" Value="14"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C19">
+<MapEntry BoolAssgnmnt="10" Value="6"/>
+<MapEntry BoolAssgnmnt="11" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C2">
+<MapEntry BoolAssgnmnt="0" Value="13"/>
+<MapEntry BoolAssgnmnt="1" Value="13"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C20">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C21">
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C22">
+<MapEntry BoolAssgnmnt="0" Value="14"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C24">
+<MapEntry BoolAssgnmnt="0" Value="14"/>
+<MapEntry BoolAssgnmnt="1" Value="434"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C25">
+<MapEntry BoolAssgnmnt="10" Value="7"/>
+<MapEntry BoolAssgnmnt="11" Value="7"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C26">
+<MapEntry BoolAssgnmnt="0" Value="7"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C28">
+<MapEntry BoolAssgnmnt="0" Value="7"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C29">
+<MapEntry BoolAssgnmnt="0" Value="7"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C3">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C4">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C5">
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C6">
+<MapEntry BoolAssgnmnt="00" Value="6"/>
+<MapEntry BoolAssgnmnt="12" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C7">
+<MapEntry BoolAssgnmnt="0" Value="11"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C8">
+<MapEntry BoolAssgnmnt="0" Value="8"/>
+<MapEntry BoolAssgnmnt="1" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C9">
+<MapEntry BoolAssgnmnt="0" Value="8"/>
+<MapEntry BoolAssgnmnt="1" Value="8"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+</AssgnmntList>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<TestCase Comment="" Date="1384856881986" Name="com.Testing.MiTest:testLookForBestMoveLoseGame">
+<CovList>
+<CovPrefix CovItemPrefix="com.OriginalFiles.MI.java">
+<Cov CovItemId="B1" Value="26"/>
+<Cov CovItemId="B11" Value="2"/>
+<Cov CovItemId="B12" Value="2"/>
+<Cov CovItemId="B13" Value="1"/>
+<Cov CovItemId="B14" Value="1"/>
+<Cov CovItemId="B15" Value="2"/>
+<Cov CovItemId="B2" Value="102"/>
+<Cov CovItemId="B20" Value="2"/>
+<Cov CovItemId="B21" Value="6"/>
+<Cov CovItemId="B23" Value="4"/>
+<Cov CovItemId="B25" Value="2"/>
+<Cov CovItemId="B26" Value="2"/>
+<Cov CovItemId="B28" Value="2"/>
+<Cov CovItemId="B29" Value="4"/>
+<Cov CovItemId="B3" Value="13"/>
+<Cov CovItemId="B31" Value="4"/>
+<Cov CovItemId="B34" Value="4"/>
+<Cov CovItemId="B4" Value="13"/>
+<Cov CovItemId="B40" Value="2"/>
+<Cov CovItemId="B41" Value="6"/>
+<Cov CovItemId="B42" Value="186"/>
+<Cov CovItemId="B43" Value="3"/>
+<Cov CovItemId="B44" Value="3"/>
+<Cov CovItemId="B45" Value="2"/>
+<Cov CovItemId="B46" Value="1"/>
+<Cov CovItemId="B47" Value="2"/>
+<Cov CovItemId="B49" Value="1"/>
+<Cov CovItemId="B51" Value="2"/>
+<Cov CovItemId="B52" Value="1"/>
+<Cov CovItemId="B6" Value="1"/>
+<Cov CovItemId="B7" Value="1"/>
+<Cov CovItemId="B8" Value="1"/>
+<Cov CovItemId="B9" Value="1"/>
+<Cov CovItemId="L1-2" Value="2"/>
+<Cov CovItemId="L10-2" Value="3"/>
+<Cov CovItemId="L11-2" Value="24"/>
+<Cov CovItemId="L12-1" Value="2"/>
+<Cov CovItemId="L13-2" Value="1"/>
+<Cov CovItemId="L2-2" Value="16"/>
+<Cov CovItemId="L3-2" Value="1"/>
+<Cov CovItemId="L4-1" Value="2"/>
+<Cov CovItemId="L5-0" Value="2"/>
+<Cov CovItemId="L6-1" Value="2"/>
+<Cov CovItemId="L7-1" Value="4"/>
+<Cov CovItemId="L8-1" Value="4"/>
+<Cov CovItemId="L9-0" Value="2"/>
+<Cov CovItemId="L9-1" Value="2"/>
+<Cov CovItemId="S1" Value="1"/>
+<Cov CovItemId="S10" Value="16"/>
+<Cov CovItemId="S103" Value="4"/>
+<Cov CovItemId="S104" Value="4"/>
+<Cov CovItemId="S105" Value="4"/>
+<Cov CovItemId="S106" Value="2"/>
+<Cov CovItemId="S107" Value="2"/>
+<Cov CovItemId="S109" Value="2"/>
+<Cov CovItemId="S11" Value="128"/>
+<Cov CovItemId="S110" Value="2"/>
+<Cov CovItemId="S111" Value="3"/>
+<Cov CovItemId="S112" Value="3"/>
+<Cov CovItemId="S113" Value="3"/>
+<Cov CovItemId="S114" Value="3"/>
+<Cov CovItemId="S115" Value="24"/>
+<Cov CovItemId="S116" Value="192"/>
+<Cov CovItemId="S117" Value="6"/>
+<Cov CovItemId="S118" Value="3"/>
+<Cov CovItemId="S119" Value="2"/>
+<Cov CovItemId="S12" Value="26"/>
+<Cov CovItemId="S120" Value="2"/>
+<Cov CovItemId="S121" Value="2"/>
+<Cov CovItemId="S122" Value="2"/>
+<Cov CovItemId="S123" Value="1"/>
+<Cov CovItemId="S124" Value="1"/>
+<Cov CovItemId="S125" Value="1"/>
+<Cov CovItemId="S126" Value="2"/>
+<Cov CovItemId="S127" Value="2"/>
+<Cov CovItemId="S128" Value="3"/>
+<Cov CovItemId="S129" Value="2"/>
+<Cov CovItemId="S13" Value="13"/>
+<Cov CovItemId="S130" Value="1"/>
+<Cov CovItemId="S14" Value="13"/>
+<Cov CovItemId="S15" Value="1"/>
+<Cov CovItemId="S16" Value="1"/>
+<Cov CovItemId="S17" Value="1"/>
+<Cov CovItemId="S18" Value="1"/>
+<Cov CovItemId="S19" Value="1"/>
+<Cov CovItemId="S2" Value="1"/>
+<Cov CovItemId="S21" Value="1"/>
+<Cov CovItemId="S22" Value="2"/>
+<Cov CovItemId="S23" Value="2"/>
+<Cov CovItemId="S24" Value="2"/>
+<Cov CovItemId="S25" Value="2"/>
+<Cov CovItemId="S26" Value="1"/>
+<Cov CovItemId="S27" Value="1"/>
+<Cov CovItemId="S28" Value="1"/>
+<Cov CovItemId="S29" Value="1"/>
+<Cov CovItemId="S3" Value="1"/>
+<Cov CovItemId="S30" Value="1"/>
+<Cov CovItemId="S31" Value="1"/>
+<Cov CovItemId="S32" Value="4"/>
+<Cov CovItemId="S33" Value="2"/>
+<Cov CovItemId="S34" Value="2"/>
+<Cov CovItemId="S35" Value="2"/>
+<Cov CovItemId="S36" Value="2"/>
+<Cov CovItemId="S37" Value="2"/>
+<Cov CovItemId="S38" Value="2"/>
+<Cov CovItemId="S39" Value="2"/>
+<Cov CovItemId="S4" Value="1"/>
+<Cov CovItemId="S40" Value="2"/>
+<Cov CovItemId="S41" Value="2"/>
+<Cov CovItemId="S42" Value="2"/>
+<Cov CovItemId="S43" Value="1"/>
+<Cov CovItemId="S44" Value="2"/>
+<Cov CovItemId="S45" Value="1"/>
+<Cov CovItemId="S46" Value="1"/>
+<Cov CovItemId="S47" Value="1"/>
+<Cov CovItemId="S48" Value="1"/>
+<Cov CovItemId="S49" Value="1"/>
+<Cov CovItemId="S5" Value="1"/>
+<Cov CovItemId="S50" Value="1"/>
+<Cov CovItemId="S51" Value="1"/>
+<Cov CovItemId="S52" Value="2"/>
+<Cov CovItemId="S53" Value="2"/>
+<Cov CovItemId="S54" Value="2"/>
+<Cov CovItemId="S56" Value="2"/>
+<Cov CovItemId="S57" Value="2"/>
+<Cov CovItemId="S58" Value="2"/>
+<Cov CovItemId="S59" Value="2"/>
+<Cov CovItemId="S6" Value="1"/>
+<Cov CovItemId="S60" Value="2"/>
+<Cov CovItemId="S61" Value="2"/>
+<Cov CovItemId="S68" Value="2"/>
+<Cov CovItemId="S69" Value="2"/>
+<Cov CovItemId="S7" Value="2"/>
+<Cov CovItemId="S71" Value="2"/>
+<Cov CovItemId="S72" Value="6"/>
+<Cov CovItemId="S73" Value="6"/>
+<Cov CovItemId="S75" Value="4"/>
+<Cov CovItemId="S76" Value="4"/>
+<Cov CovItemId="S77" Value="4"/>
+<Cov CovItemId="S78" Value="4"/>
+<Cov CovItemId="S79" Value="4"/>
+<Cov CovItemId="S8" Value="2"/>
+<Cov CovItemId="S80" Value="4"/>
+<Cov CovItemId="S81" Value="2"/>
+<Cov CovItemId="S82" Value="2"/>
+<Cov CovItemId="S84" Value="2"/>
+<Cov CovItemId="S85" Value="2"/>
+<Cov CovItemId="S86" Value="2"/>
+<Cov CovItemId="S87" Value="4"/>
+<Cov CovItemId="S88" Value="4"/>
+<Cov CovItemId="S89" Value="4"/>
+<Cov CovItemId="S9" Value="2"/>
+<Cov CovItemId="S90" Value="4"/>
+<Cov CovItemId="S91" Value="4"/>
+<Cov CovItemId="S92" Value="4"/>
+<Cov CovItemId="S93" Value="4"/>
+<Cov CovItemId="S94" Value="4"/>
+<Cov CovItemId="S95" Value="4"/>
+<Cov CovItemId="S96" Value="4"/>
+<Cov CovItemId="S97" Value="4"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.MI.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="0" Value="26"/>
+<MapEntry BoolAssgnmnt="1" Value="102"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C10">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C11">
+<MapEntry BoolAssgnmnt="1" Value="6"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C12">
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C13">
+<MapEntry BoolAssgnmnt="0" Value="4"/>
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C14">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C15">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C16">
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C17">
+<MapEntry BoolAssgnmnt="0" Value="4"/>
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C18">
+<MapEntry BoolAssgnmnt="0" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C19">
+<MapEntry BoolAssgnmnt="02" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C2">
+<MapEntry BoolAssgnmnt="0" Value="13"/>
+<MapEntry BoolAssgnmnt="1" Value="13"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C22">
+<MapEntry BoolAssgnmnt="0" Value="4"/>
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C23">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C24">
+<MapEntry BoolAssgnmnt="0" Value="6"/>
+<MapEntry BoolAssgnmnt="1" Value="186"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C25">
+<MapEntry BoolAssgnmnt="10" Value="3"/>
+<MapEntry BoolAssgnmnt="11" Value="3"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C26">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C27">
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C28">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C29">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C3">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C4">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C5">
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C6">
+<MapEntry BoolAssgnmnt="01" Value="2"/>
+<MapEntry BoolAssgnmnt="00" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C7">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C8">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C9">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+</AssgnmntList>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<TestCase Comment="" Date="1384856881987" Name="com.Testing.MiTest:testLookForBestMoveDrawGame">
+<CovList>
+<CovPrefix CovItemPrefix="com.OriginalFiles.MI.java">
+<Cov CovItemId="B1" Value="26"/>
+<Cov CovItemId="B11" Value="5"/>
+<Cov CovItemId="B12" Value="3"/>
+<Cov CovItemId="B13" Value="1"/>
+<Cov CovItemId="B14" Value="4"/>
+<Cov CovItemId="B16" Value="1"/>
+<Cov CovItemId="B17" Value="3"/>
+<Cov CovItemId="B18" Value="1"/>
+<Cov CovItemId="B2" Value="102"/>
+<Cov CovItemId="B20" Value="5"/>
+<Cov CovItemId="B21" Value="8"/>
+<Cov CovItemId="B22" Value="7"/>
+<Cov CovItemId="B23" Value="8"/>
+<Cov CovItemId="B25" Value="1"/>
+<Cov CovItemId="B26" Value="7"/>
+<Cov CovItemId="B27" Value="1"/>
+<Cov CovItemId="B29" Value="8"/>
+<Cov CovItemId="B3" Value="13"/>
+<Cov CovItemId="B31" Value="8"/>
+<Cov CovItemId="B34" Value="8"/>
+<Cov CovItemId="B39" Value="1"/>
+<Cov CovItemId="B4" Value="13"/>
+<Cov CovItemId="B41" Value="8"/>
+<Cov CovItemId="B42" Value="248"/>
+<Cov CovItemId="B43" Value="4"/>
+<Cov CovItemId="B44" Value="4"/>
+<Cov CovItemId="B45" Value="1"/>
+<Cov CovItemId="B46" Value="3"/>
+<Cov CovItemId="B47" Value="1"/>
+<Cov CovItemId="B49" Value="3"/>
+<Cov CovItemId="B51" Value="1"/>
+<Cov CovItemId="B52" Value="3"/>
+<Cov CovItemId="B6" Value="1"/>
+<Cov CovItemId="B7" Value="1"/>
+<Cov CovItemId="B8" Value="2"/>
+<Cov CovItemId="B9" Value="2"/>
+<Cov CovItemId="L1-2" Value="2"/>
+<Cov CovItemId="L10-2" Value="4"/>
+<Cov CovItemId="L11-2" Value="32"/>
+<Cov CovItemId="L12-1" Value="1"/>
+<Cov CovItemId="L13-2" Value="3"/>
+<Cov CovItemId="L2-2" Value="16"/>
+<Cov CovItemId="L3-2" Value="1"/>
+<Cov CovItemId="L4-1" Value="1"/>
+<Cov CovItemId="L4-2" Value="2"/>
+<Cov CovItemId="L5-1" Value="5"/>
+<Cov CovItemId="L6-0" Value="1"/>
+<Cov CovItemId="L6-1" Value="4"/>
+<Cov CovItemId="L7-1" Value="8"/>
+<Cov CovItemId="L8-1" Value="8"/>
+<Cov CovItemId="L9-0" Value="7"/>
+<Cov CovItemId="L9-1" Value="1"/>
+<Cov CovItemId="S1" Value="1"/>
+<Cov CovItemId="S10" Value="16"/>
+<Cov CovItemId="S103" Value="8"/>
+<Cov CovItemId="S104" Value="8"/>
+<Cov CovItemId="S105" Value="8"/>
+<Cov CovItemId="S106" Value="1"/>
+<Cov CovItemId="S107" Value="1"/>
+<Cov CovItemId="S108" Value="1"/>
+<Cov CovItemId="S11" Value="128"/>
+<Cov CovItemId="S110" Value="1"/>
+<Cov CovItemId="S111" Value="4"/>
+<Cov CovItemId="S112" Value="4"/>
+<Cov CovItemId="S113" Value="4"/>
+<Cov CovItemId="S114" Value="4"/>
+<Cov CovItemId="S115" Value="32"/>
+<Cov CovItemId="S116" Value="256"/>
+<Cov CovItemId="S117" Value="8"/>
+<Cov CovItemId="S118" Value="4"/>
+<Cov CovItemId="S119" Value="1"/>
+<Cov CovItemId="S12" Value="26"/>
+<Cov CovItemId="S120" Value="1"/>
+<Cov CovItemId="S121" Value="1"/>
+<Cov CovItemId="S122" Value="1"/>
+<Cov CovItemId="S123" Value="3"/>
+<Cov CovItemId="S124" Value="3"/>
+<Cov CovItemId="S125" Value="3"/>
+<Cov CovItemId="S126" Value="7"/>
+<Cov CovItemId="S127" Value="7"/>
+<Cov CovItemId="S128" Value="4"/>
+<Cov CovItemId="S129" Value="1"/>
+<Cov CovItemId="S13" Value="13"/>
+<Cov CovItemId="S130" Value="3"/>
+<Cov CovItemId="S14" Value="13"/>
+<Cov CovItemId="S15" Value="1"/>
+<Cov CovItemId="S16" Value="1"/>
+<Cov CovItemId="S17" Value="1"/>
+<Cov CovItemId="S18" Value="1"/>
+<Cov CovItemId="S19" Value="1"/>
+<Cov CovItemId="S2" Value="1"/>
+<Cov CovItemId="S21" Value="1"/>
+<Cov CovItemId="S22" Value="3"/>
+<Cov CovItemId="S23" Value="3"/>
+<Cov CovItemId="S24" Value="3"/>
+<Cov CovItemId="S25" Value="3"/>
+<Cov CovItemId="S26" Value="1"/>
+<Cov CovItemId="S27" Value="1"/>
+<Cov CovItemId="S28" Value="1"/>
+<Cov CovItemId="S29" Value="2"/>
+<Cov CovItemId="S3" Value="1"/>
+<Cov CovItemId="S30" Value="2"/>
+<Cov CovItemId="S31" Value="1"/>
+<Cov CovItemId="S32" Value="8"/>
+<Cov CovItemId="S33" Value="5"/>
+<Cov CovItemId="S34" Value="3"/>
+<Cov CovItemId="S35" Value="3"/>
+<Cov CovItemId="S36" Value="3"/>
+<Cov CovItemId="S37" Value="5"/>
+<Cov CovItemId="S38" Value="5"/>
+<Cov CovItemId="S39" Value="5"/>
+<Cov CovItemId="S4" Value="1"/>
+<Cov CovItemId="S40" Value="5"/>
+<Cov CovItemId="S41" Value="5"/>
+<Cov CovItemId="S42" Value="5"/>
+<Cov CovItemId="S43" Value="1"/>
+<Cov CovItemId="S44" Value="3"/>
+<Cov CovItemId="S45" Value="1"/>
+<Cov CovItemId="S46" Value="1"/>
+<Cov CovItemId="S47" Value="1"/>
+<Cov CovItemId="S48" Value="1"/>
+<Cov CovItemId="S49" Value="1"/>
+<Cov CovItemId="S5" Value="1"/>
+<Cov CovItemId="S50" Value="1"/>
+<Cov CovItemId="S51" Value="1"/>
+<Cov CovItemId="S52" Value="5"/>
+<Cov CovItemId="S53" Value="5"/>
+<Cov CovItemId="S54" Value="5"/>
+<Cov CovItemId="S55" Value="5"/>
+<Cov CovItemId="S56" Value="5"/>
+<Cov CovItemId="S57" Value="4"/>
+<Cov CovItemId="S58" Value="5"/>
+<Cov CovItemId="S59" Value="5"/>
+<Cov CovItemId="S6" Value="1"/>
+<Cov CovItemId="S62" Value="1"/>
+<Cov CovItemId="S63" Value="1"/>
+<Cov CovItemId="S64" Value="3"/>
+<Cov CovItemId="S65" Value="3"/>
+<Cov CovItemId="S66" Value="1"/>
+<Cov CovItemId="S67" Value="1"/>
+<Cov CovItemId="S68" Value="5"/>
+<Cov CovItemId="S69" Value="5"/>
+<Cov CovItemId="S7" Value="2"/>
+<Cov CovItemId="S71" Value="5"/>
+<Cov CovItemId="S72" Value="15"/>
+<Cov CovItemId="S73" Value="8"/>
+<Cov CovItemId="S74" Value="7"/>
+<Cov CovItemId="S75" Value="8"/>
+<Cov CovItemId="S76" Value="8"/>
+<Cov CovItemId="S77" Value="8"/>
+<Cov CovItemId="S78" Value="8"/>
+<Cov CovItemId="S79" Value="8"/>
+<Cov CovItemId="S8" Value="2"/>
+<Cov CovItemId="S80" Value="8"/>
+<Cov CovItemId="S81" Value="1"/>
+<Cov CovItemId="S82" Value="1"/>
+<Cov CovItemId="S83" Value="1"/>
+<Cov CovItemId="S85" Value="1"/>
+<Cov CovItemId="S86" Value="1"/>
+<Cov CovItemId="S87" Value="8"/>
+<Cov CovItemId="S88" Value="8"/>
+<Cov CovItemId="S89" Value="8"/>
+<Cov CovItemId="S9" Value="2"/>
+<Cov CovItemId="S90" Value="8"/>
+<Cov CovItemId="S91" Value="8"/>
+<Cov CovItemId="S92" Value="8"/>
+<Cov CovItemId="S93" Value="8"/>
+<Cov CovItemId="S94" Value="8"/>
+<Cov CovItemId="S95" Value="8"/>
+<Cov CovItemId="S96" Value="8"/>
+<Cov CovItemId="S97" Value="8"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.MI.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="0" Value="26"/>
+<MapEntry BoolAssgnmnt="1" Value="102"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C10">
+<MapEntry BoolAssgnmnt="0" Value="5"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C11">
+<MapEntry BoolAssgnmnt="0" Value="7"/>
+<MapEntry BoolAssgnmnt="1" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C12">
+<MapEntry BoolAssgnmnt="1" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C13">
+<MapEntry BoolAssgnmnt="0" Value="8"/>
+<MapEntry BoolAssgnmnt="1" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C14">
+<MapEntry BoolAssgnmnt="0" Value="7"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C15">
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C16">
+<MapEntry BoolAssgnmnt="1" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C17">
+<MapEntry BoolAssgnmnt="0" Value="8"/>
+<MapEntry BoolAssgnmnt="1" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C18">
+<MapEntry BoolAssgnmnt="0" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C19">
+<MapEntry BoolAssgnmnt="11" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C2">
+<MapEntry BoolAssgnmnt="0" Value="13"/>
+<MapEntry BoolAssgnmnt="1" Value="13"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C22">
+<MapEntry BoolAssgnmnt="0" Value="8"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C23">
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C24">
+<MapEntry BoolAssgnmnt="0" Value="8"/>
+<MapEntry BoolAssgnmnt="1" Value="248"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C25">
+<MapEntry BoolAssgnmnt="10" Value="4"/>
+<MapEntry BoolAssgnmnt="11" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C26">
+<MapEntry BoolAssgnmnt="0" Value="3"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C27">
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C28">
+<MapEntry BoolAssgnmnt="0" Value="3"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C29">
+<MapEntry BoolAssgnmnt="0" Value="3"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C3">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C4">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C5">
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C6">
+<MapEntry BoolAssgnmnt="01" Value="2"/>
+<MapEntry BoolAssgnmnt="00" Value="3"/>
+<MapEntry BoolAssgnmnt="12" Value="3"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C7">
+<MapEntry BoolAssgnmnt="0" Value="4"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C8">
+<MapEntry BoolAssgnmnt="0" Value="5"/>
+<MapEntry BoolAssgnmnt="1" Value="5"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C9">
+<MapEntry BoolAssgnmnt="0" Value="5"/>
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+</AssgnmntList>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<TestCase Comment="" Date="1384856881989" Name="com.Testing.MiTest:testLookForBestMoveWinGame">
+<CovList>
+<CovPrefix CovItemPrefix="com.OriginalFiles.MI.java">
+<Cov CovItemId="B1" Value="27"/>
+<Cov CovItemId="B11" Value="2"/>
+<Cov CovItemId="B16" Value="2"/>
+<Cov CovItemId="B2" Value="101"/>
+<Cov CovItemId="B20" Value="2"/>
+<Cov CovItemId="B22" Value="2"/>
+<Cov CovItemId="B23" Value="2"/>
+<Cov CovItemId="B25" Value="2"/>
+<Cov CovItemId="B27" Value="2"/>
+<Cov CovItemId="B29" Value="2"/>
+<Cov CovItemId="B3" Value="14"/>
+<Cov CovItemId="B31" Value="2"/>
+<Cov CovItemId="B34" Value="2"/>
+<Cov CovItemId="B39" Value="2"/>
+<Cov CovItemId="B4" Value="13"/>
+<Cov CovItemId="B41" Value="3"/>
+<Cov CovItemId="B42" Value="61"/>
+<Cov CovItemId="B43" Value="2"/>
+<Cov CovItemId="B44" Value="1"/>
+<Cov CovItemId="B45" Value="2"/>
+<Cov CovItemId="B47" Value="2"/>
+<Cov CovItemId="B51" Value="1"/>
+<Cov CovItemId="B6" Value="1"/>
+<Cov CovItemId="B7" Value="1"/>
+<Cov CovItemId="B8" Value="1"/>
+<Cov CovItemId="B9" Value="1"/>
+<Cov CovItemId="L1-2" Value="2"/>
+<Cov CovItemId="L10-2" Value="1"/>
+<Cov CovItemId="L11-2" Value="8"/>
+<Cov CovItemId="L12-1" Value="2"/>
+<Cov CovItemId="L2-2" Value="16"/>
+<Cov CovItemId="L3-2" Value="1"/>
+<Cov CovItemId="L5-2" Value="2"/>
+<Cov CovItemId="L6-0" Value="2"/>
+<Cov CovItemId="L7-1" Value="2"/>
+<Cov CovItemId="L8-1" Value="2"/>
+<Cov CovItemId="L9-1" Value="2"/>
+<Cov CovItemId="S1" Value="1"/>
+<Cov CovItemId="S10" Value="16"/>
+<Cov CovItemId="S103" Value="2"/>
+<Cov CovItemId="S104" Value="2"/>
+<Cov CovItemId="S105" Value="2"/>
+<Cov CovItemId="S106" Value="2"/>
+<Cov CovItemId="S107" Value="2"/>
+<Cov CovItemId="S108" Value="2"/>
+<Cov CovItemId="S11" Value="128"/>
+<Cov CovItemId="S110" Value="2"/>
+<Cov CovItemId="S111" Value="1"/>
+<Cov CovItemId="S112" Value="1"/>
+<Cov CovItemId="S113" Value="1"/>
+<Cov CovItemId="S114" Value="1"/>
+<Cov CovItemId="S115" Value="8"/>
+<Cov CovItemId="S116" Value="64"/>
+<Cov CovItemId="S117" Value="3"/>
+<Cov CovItemId="S118" Value="2"/>
+<Cov CovItemId="S119" Value="2"/>
+<Cov CovItemId="S12" Value="27"/>
+<Cov CovItemId="S120" Value="2"/>
+<Cov CovItemId="S121" Value="2"/>
+<Cov CovItemId="S122" Value="2"/>
+<Cov CovItemId="S128" Value="1"/>
+<Cov CovItemId="S129" Value="1"/>
+<Cov CovItemId="S13" Value="14"/>
+<Cov CovItemId="S14" Value="13"/>
+<Cov CovItemId="S15" Value="1"/>
+<Cov CovItemId="S16" Value="1"/>
+<Cov CovItemId="S17" Value="1"/>
+<Cov CovItemId="S18" Value="1"/>
+<Cov CovItemId="S19" Value="1"/>
+<Cov CovItemId="S2" Value="1"/>
+<Cov CovItemId="S21" Value="1"/>
+<Cov CovItemId="S22" Value="2"/>
+<Cov CovItemId="S23" Value="2"/>
+<Cov CovItemId="S24" Value="2"/>
+<Cov CovItemId="S25" Value="2"/>
+<Cov CovItemId="S26" Value="1"/>
+<Cov CovItemId="S27" Value="1"/>
+<Cov CovItemId="S28" Value="1"/>
+<Cov CovItemId="S29" Value="1"/>
+<Cov CovItemId="S3" Value="1"/>
+<Cov CovItemId="S30" Value="1"/>
+<Cov CovItemId="S31" Value="1"/>
+<Cov CovItemId="S32" Value="2"/>
+<Cov CovItemId="S33" Value="2"/>
+<Cov CovItemId="S4" Value="1"/>
+<Cov CovItemId="S45" Value="1"/>
+<Cov CovItemId="S46" Value="1"/>
+<Cov CovItemId="S47" Value="1"/>
+<Cov CovItemId="S48" Value="1"/>
+<Cov CovItemId="S49" Value="1"/>
+<Cov CovItemId="S5" Value="1"/>
+<Cov CovItemId="S50" Value="1"/>
+<Cov CovItemId="S51" Value="1"/>
+<Cov CovItemId="S52" Value="2"/>
+<Cov CovItemId="S53" Value="2"/>
+<Cov CovItemId="S54" Value="2"/>
+<Cov CovItemId="S55" Value="4"/>
+<Cov CovItemId="S56" Value="2"/>
+<Cov CovItemId="S58" Value="2"/>
+<Cov CovItemId="S59" Value="2"/>
+<Cov CovItemId="S6" Value="1"/>
+<Cov CovItemId="S62" Value="2"/>
+<Cov CovItemId="S63" Value="2"/>
+<Cov CovItemId="S68" Value="2"/>
+<Cov CovItemId="S69" Value="2"/>
+<Cov CovItemId="S7" Value="2"/>
+<Cov CovItemId="S71" Value="2"/>
+<Cov CovItemId="S72" Value="2"/>
+<Cov CovItemId="S74" Value="2"/>
+<Cov CovItemId="S75" Value="2"/>
+<Cov CovItemId="S76" Value="2"/>
+<Cov CovItemId="S77" Value="2"/>
+<Cov CovItemId="S78" Value="2"/>
+<Cov CovItemId="S79" Value="2"/>
+<Cov CovItemId="S8" Value="2"/>
+<Cov CovItemId="S80" Value="2"/>
+<Cov CovItemId="S81" Value="2"/>
+<Cov CovItemId="S82" Value="2"/>
+<Cov CovItemId="S83" Value="2"/>
+<Cov CovItemId="S85" Value="2"/>
+<Cov CovItemId="S86" Value="2"/>
+<Cov CovItemId="S87" Value="2"/>
+<Cov CovItemId="S88" Value="2"/>
+<Cov CovItemId="S89" Value="2"/>
+<Cov CovItemId="S9" Value="2"/>
+<Cov CovItemId="S90" Value="2"/>
+<Cov CovItemId="S91" Value="2"/>
+<Cov CovItemId="S92" Value="2"/>
+<Cov CovItemId="S93" Value="2"/>
+<Cov CovItemId="S94" Value="2"/>
+<Cov CovItemId="S95" Value="2"/>
+<Cov CovItemId="S96" Value="2"/>
+<Cov CovItemId="S97" Value="2"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.MI.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="0" Value="27"/>
+<MapEntry BoolAssgnmnt="1" Value="101"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C10">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C11">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C12">
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C13">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C14">
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C15">
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C16">
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C17">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C18">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C19">
+<MapEntry BoolAssgnmnt="02" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C2">
+<MapEntry BoolAssgnmnt="0" Value="13"/>
+<MapEntry BoolAssgnmnt="1" Value="14"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C22">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C23">
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C24">
+<MapEntry BoolAssgnmnt="0" Value="3"/>
+<MapEntry BoolAssgnmnt="1" Value="61"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C25">
+<MapEntry BoolAssgnmnt="10" Value="1"/>
+<MapEntry BoolAssgnmnt="11" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C26">
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C27">
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C29">
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C3">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C4">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C5">
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C6">
+<MapEntry BoolAssgnmnt="01" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C8">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C9">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+</AssgnmntList>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<MetaDataList/>
+</TestSession>
+<TestSession Comment="" Date="1384857446671" Name="Nov 19, 2013 11:37:26 AM">
+<TestCase Comment="" Date="1384857446585" Name="com.Testing.MiTest:testLookForBestMove">
+<CovList>
+<CovPrefix CovItemPrefix="com.OriginalFiles.MI.java">
+<Cov CovItemId="B1" Value="71"/>
+<Cov CovItemId="B10" Value="2"/>
+<Cov CovItemId="B11" Value="72"/>
+<Cov CovItemId="B12" Value="27"/>
+<Cov CovItemId="B13" Value="15"/>
+<Cov CovItemId="B14" Value="77"/>
+<Cov CovItemId="B18" Value="72"/>
+<Cov CovItemId="B19" Value="72"/>
+<Cov CovItemId="B2" Value="121"/>
+<Cov CovItemId="B21" Value="60"/>
+<Cov CovItemId="B22" Value="196"/>
+<Cov CovItemId="B23" Value="99"/>
+<Cov CovItemId="B25" Value="4"/>
+<Cov CovItemId="B26" Value="95"/>
+<Cov CovItemId="B27" Value="4"/>
+<Cov CovItemId="B29" Value="99"/>
+<Cov CovItemId="B3" Value="35"/>
+<Cov CovItemId="B31" Value="99"/>
+<Cov CovItemId="B34" Value="99"/>
+<Cov CovItemId="B39" Value="4"/>
+<Cov CovItemId="B4" Value="36"/>
+<Cov CovItemId="B41" Value="695"/>
+<Cov CovItemId="B42" Value="1161"/>
+<Cov CovItemId="B43" Value="154"/>
+<Cov CovItemId="B44" Value="541"/>
+<Cov CovItemId="B45" Value="5"/>
+<Cov CovItemId="B46" Value="149"/>
+<Cov CovItemId="B47" Value="5"/>
+<Cov CovItemId="B49" Value="149"/>
+<Cov CovItemId="B5" Value="1"/>
+<Cov CovItemId="B51" Value="5"/>
+<Cov CovItemId="B52" Value="24"/>
+<Cov CovItemId="B6" Value="1"/>
+<Cov CovItemId="B7" Value="2"/>
+<Cov CovItemId="B8" Value="5"/>
+<Cov CovItemId="B9" Value="3"/>
+<Cov CovItemId="L1-2" Value="3"/>
+<Cov CovItemId="L10-2" Value="29"/>
+<Cov CovItemId="L11-2" Value="232"/>
+<Cov CovItemId="L12-1" Value="5"/>
+<Cov CovItemId="L13-1" Value="88"/>
+<Cov CovItemId="L13-2" Value="61"/>
+<Cov CovItemId="L2-2" Value="24"/>
+<Cov CovItemId="L3-2" Value="1"/>
+<Cov CovItemId="L4-1" Value="16"/>
+<Cov CovItemId="L4-2" Value="11"/>
+<Cov CovItemId="L5-2" Value="72"/>
+<Cov CovItemId="L6-2" Value="72"/>
+<Cov CovItemId="L7-1" Value="99"/>
+<Cov CovItemId="L8-1" Value="99"/>
+<Cov CovItemId="L9-0" Value="95"/>
+<Cov CovItemId="L9-1" Value="4"/>
+<Cov CovItemId="S1" Value="1"/>
+<Cov CovItemId="S10" Value="24"/>
+<Cov CovItemId="S103" Value="99"/>
+<Cov CovItemId="S104" Value="99"/>
+<Cov CovItemId="S105" Value="99"/>
+<Cov CovItemId="S106" Value="4"/>
+<Cov CovItemId="S107" Value="4"/>
+<Cov CovItemId="S108" Value="4"/>
+<Cov CovItemId="S11" Value="192"/>
+<Cov CovItemId="S110" Value="4"/>
+<Cov CovItemId="S111" Value="29"/>
+<Cov CovItemId="S112" Value="29"/>
+<Cov CovItemId="S113" Value="29"/>
+<Cov CovItemId="S114" Value="29"/>
+<Cov CovItemId="S115" Value="232"/>
+<Cov CovItemId="S116" Value="1856"/>
+<Cov CovItemId="S117" Value="695"/>
+<Cov CovItemId="S118" Value="154"/>
+<Cov CovItemId="S119" Value="5"/>
+<Cov CovItemId="S12" Value="71"/>
+<Cov CovItemId="S120" Value="5"/>
+<Cov CovItemId="S121" Value="5"/>
+<Cov CovItemId="S122" Value="5"/>
+<Cov CovItemId="S123" Value="149"/>
+<Cov CovItemId="S124" Value="149"/>
+<Cov CovItemId="S125" Value="149"/>
+<Cov CovItemId="S126" Value="210"/>
+<Cov CovItemId="S127" Value="210"/>
+<Cov CovItemId="S128" Value="29"/>
+<Cov CovItemId="S129" Value="5"/>
+<Cov CovItemId="S13" Value="35"/>
+<Cov CovItemId="S130" Value="24"/>
+<Cov CovItemId="S14" Value="36"/>
+<Cov CovItemId="S15" Value="2"/>
+<Cov CovItemId="S16" Value="2"/>
+<Cov CovItemId="S17" Value="2"/>
+<Cov CovItemId="S18" Value="2"/>
+<Cov CovItemId="S19" Value="2"/>
+<Cov CovItemId="S2" Value="1"/>
+<Cov CovItemId="S20" Value="1"/>
+<Cov CovItemId="S21" Value="1"/>
+<Cov CovItemId="S22" Value="7"/>
+<Cov CovItemId="S23" Value="7"/>
+<Cov CovItemId="S24" Value="7"/>
+<Cov CovItemId="S25" Value="7"/>
+<Cov CovItemId="S26" Value="2"/>
+<Cov CovItemId="S27" Value="2"/>
+<Cov CovItemId="S28" Value="2"/>
+<Cov CovItemId="S29" Value="5"/>
+<Cov CovItemId="S3" Value="1"/>
+<Cov CovItemId="S30" Value="3"/>
+<Cov CovItemId="S31" Value="1"/>
+<Cov CovItemId="S32" Value="99"/>
+<Cov CovItemId="S33" Value="72"/>
+<Cov CovItemId="S34" Value="27"/>
+<Cov CovItemId="S35" Value="27"/>
+<Cov CovItemId="S36" Value="27"/>
+<Cov CovItemId="S37" Value="92"/>
+<Cov CovItemId="S38" Value="92"/>
+<Cov CovItemId="S39" Value="92"/>
+<Cov CovItemId="S4" Value="1"/>
+<Cov CovItemId="S40" Value="92"/>
+<Cov CovItemId="S41" Value="92"/>
+<Cov CovItemId="S42" Value="92"/>
+<Cov CovItemId="S43" Value="15"/>
+<Cov CovItemId="S44" Value="27"/>
+<Cov CovItemId="S45" Value="1"/>
+<Cov CovItemId="S46" Value="1"/>
+<Cov CovItemId="S47" Value="1"/>
+<Cov CovItemId="S48" Value="1"/>
+<Cov CovItemId="S49" Value="1"/>
+<Cov CovItemId="S5" Value="1"/>
+<Cov CovItemId="S50" Value="1"/>
+<Cov CovItemId="S51" Value="1"/>
+<Cov CovItemId="S52" Value="72"/>
+<Cov CovItemId="S53" Value="72"/>
+<Cov CovItemId="S54" Value="72"/>
+<Cov CovItemId="S55" Value="864"/>
+<Cov CovItemId="S56" Value="72"/>
+<Cov CovItemId="S57" Value="860"/>
+<Cov CovItemId="S58" Value="72"/>
+<Cov CovItemId="S59" Value="72"/>
+<Cov CovItemId="S6" Value="1"/>
+<Cov CovItemId="S66" Value="72"/>
+<Cov CovItemId="S67" Value="72"/>
+<Cov CovItemId="S68" Value="72"/>
+<Cov CovItemId="S69" Value="72"/>
+<Cov CovItemId="S7" Value="3"/>
+<Cov CovItemId="S70" Value="72"/>
+<Cov CovItemId="S72" Value="256"/>
+<Cov CovItemId="S73" Value="60"/>
+<Cov CovItemId="S74" Value="196"/>
+<Cov CovItemId="S75" Value="99"/>
+<Cov CovItemId="S76" Value="99"/>
+<Cov CovItemId="S77" Value="99"/>
+<Cov CovItemId="S78" Value="99"/>
+<Cov CovItemId="S79" Value="99"/>
+<Cov CovItemId="S8" Value="3"/>
+<Cov CovItemId="S80" Value="99"/>
+<Cov CovItemId="S81" Value="4"/>
+<Cov CovItemId="S82" Value="4"/>
+<Cov CovItemId="S83" Value="4"/>
+<Cov CovItemId="S85" Value="4"/>
+<Cov CovItemId="S86" Value="4"/>
+<Cov CovItemId="S87" Value="99"/>
+<Cov CovItemId="S88" Value="99"/>
+<Cov CovItemId="S89" Value="99"/>
+<Cov CovItemId="S9" Value="3"/>
+<Cov CovItemId="S90" Value="99"/>
+<Cov CovItemId="S91" Value="99"/>
+<Cov CovItemId="S92" Value="99"/>
+<Cov CovItemId="S93" Value="99"/>
+<Cov CovItemId="S94" Value="99"/>
+<Cov CovItemId="S95" Value="99"/>
+<Cov CovItemId="S96" Value="99"/>
+<Cov CovItemId="S97" Value="99"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.MI.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="0" Value="71"/>
+<MapEntry BoolAssgnmnt="1" Value="121"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C10">
+<MapEntry BoolAssgnmnt="1" Value="72"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C11">
+<MapEntry BoolAssgnmnt="0" Value="196"/>
+<MapEntry BoolAssgnmnt="1" Value="60"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C12">
+<MapEntry BoolAssgnmnt="1" Value="99"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C13">
+<MapEntry BoolAssgnmnt="0" Value="99"/>
+<MapEntry BoolAssgnmnt="1" Value="99"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C14">
+<MapEntry BoolAssgnmnt="0" Value="95"/>
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C15">
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C16">
+<MapEntry BoolAssgnmnt="1" Value="99"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C17">
+<MapEntry BoolAssgnmnt="0" Value="99"/>
+<MapEntry BoolAssgnmnt="1" Value="99"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C18">
+<MapEntry BoolAssgnmnt="0" Value="99"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C19">
+<MapEntry BoolAssgnmnt="02" Value="99"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C2">
+<MapEntry BoolAssgnmnt="0" Value="36"/>
+<MapEntry BoolAssgnmnt="1" Value="35"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C22">
+<MapEntry BoolAssgnmnt="0" Value="99"/>
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C23">
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C24">
+<MapEntry BoolAssgnmnt="0" Value="695"/>
+<MapEntry BoolAssgnmnt="1" Value="1161"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C25">
+<MapEntry BoolAssgnmnt="10" Value="161"/>
+<MapEntry BoolAssgnmnt="02" Value="380"/>
+<MapEntry BoolAssgnmnt="11" Value="154"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C26">
+<MapEntry BoolAssgnmnt="0" Value="149"/>
+<MapEntry BoolAssgnmnt="1" Value="5"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C27">
+<MapEntry BoolAssgnmnt="1" Value="5"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C28">
+<MapEntry BoolAssgnmnt="0" Value="149"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C29">
+<MapEntry BoolAssgnmnt="0" Value="24"/>
+<MapEntry BoolAssgnmnt="1" Value="5"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C3">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C4">
+<MapEntry BoolAssgnmnt="0" Value="5"/>
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C5">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+<MapEntry BoolAssgnmnt="1" Value="3"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C6">
+<MapEntry BoolAssgnmnt="00" Value="27"/>
+<MapEntry BoolAssgnmnt="12" Value="72"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C7">
+<MapEntry BoolAssgnmnt="0" Value="77"/>
+<MapEntry BoolAssgnmnt="1" Value="15"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C8">
+<MapEntry BoolAssgnmnt="0" Value="72"/>
+<MapEntry BoolAssgnmnt="1" Value="864"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C9">
+<MapEntry BoolAssgnmnt="0" Value="72"/>
+<MapEntry BoolAssgnmnt="1" Value="860"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+</AssgnmntList>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<TestCase Comment="" Date="1384857446613" Name="com.Testing.MiTest:testLookForBestMoveEndGame">
+<CovList>
+<CovPrefix CovItemPrefix="com.OriginalFiles.MI.java">
+<Cov CovItemId="B1" Value="32"/>
+<Cov CovItemId="B11" Value="61"/>
+<Cov CovItemId="B12" Value="26"/>
+<Cov CovItemId="B13" Value="16"/>
+<Cov CovItemId="B14" Value="64"/>
+<Cov CovItemId="B18" Value="61"/>
+<Cov CovItemId="B2" Value="96"/>
+<Cov CovItemId="B20" Value="61"/>
+<Cov CovItemId="B21" Value="55"/>
+<Cov CovItemId="B22" Value="166"/>
+<Cov CovItemId="B23" Value="87"/>
+<Cov CovItemId="B26" Value="87"/>
+<Cov CovItemId="B29" Value="87"/>
+<Cov CovItemId="B3" Value="16"/>
+<Cov CovItemId="B31" Value="87"/>
+<Cov CovItemId="B34" Value="87"/>
+<Cov CovItemId="B4" Value="16"/>
+<Cov CovItemId="B41" Value="216"/>
+<Cov CovItemId="B42" Value="1512"/>
+<Cov CovItemId="B43" Value="107"/>
+<Cov CovItemId="B44" Value="109"/>
+<Cov CovItemId="B46" Value="107"/>
+<Cov CovItemId="B49" Value="107"/>
+<Cov CovItemId="B52" Value="27"/>
+<Cov CovItemId="B6" Value="1"/>
+<Cov CovItemId="B7" Value="2"/>
+<Cov CovItemId="B8" Value="5"/>
+<Cov CovItemId="B9" Value="5"/>
+<Cov CovItemId="L1-2" Value="2"/>
+<Cov CovItemId="L10-2" Value="27"/>
+<Cov CovItemId="L11-2" Value="216"/>
+<Cov CovItemId="L13-1" Value="43"/>
+<Cov CovItemId="L13-2" Value="64"/>
+<Cov CovItemId="L2-2" Value="16"/>
+<Cov CovItemId="L3-2" Value="1"/>
+<Cov CovItemId="L4-1" Value="15"/>
+<Cov CovItemId="L4-2" Value="11"/>
+<Cov CovItemId="L5-2" Value="61"/>
+<Cov CovItemId="L6-2" Value="61"/>
+<Cov CovItemId="L7-1" Value="87"/>
+<Cov CovItemId="L8-1" Value="87"/>
+<Cov CovItemId="L9-0" Value="87"/>
+<Cov CovItemId="S1" Value="1"/>
+<Cov CovItemId="S10" Value="16"/>
+<Cov CovItemId="S103" Value="87"/>
+<Cov CovItemId="S104" Value="87"/>
+<Cov CovItemId="S105" Value="87"/>
+<Cov CovItemId="S11" Value="128"/>
+<Cov CovItemId="S111" Value="27"/>
+<Cov CovItemId="S112" Value="27"/>
+<Cov CovItemId="S113" Value="27"/>
+<Cov CovItemId="S114" Value="27"/>
+<Cov CovItemId="S115" Value="216"/>
+<Cov CovItemId="S116" Value="1728"/>
+<Cov CovItemId="S117" Value="216"/>
+<Cov CovItemId="S118" Value="107"/>
+<Cov CovItemId="S12" Value="32"/>
+<Cov CovItemId="S123" Value="107"/>
+<Cov CovItemId="S124" Value="107"/>
+<Cov CovItemId="S125" Value="107"/>
+<Cov CovItemId="S126" Value="171"/>
+<Cov CovItemId="S127" Value="171"/>
+<Cov CovItemId="S128" Value="27"/>
+<Cov CovItemId="S13" Value="16"/>
+<Cov CovItemId="S130" Value="27"/>
+<Cov CovItemId="S14" Value="16"/>
+<Cov CovItemId="S15" Value="1"/>
+<Cov CovItemId="S16" Value="1"/>
+<Cov CovItemId="S17" Value="1"/>
+<Cov CovItemId="S18" Value="1"/>
+<Cov CovItemId="S19" Value="1"/>
+<Cov CovItemId="S2" Value="1"/>
+<Cov CovItemId="S21" Value="1"/>
+<Cov CovItemId="S22" Value="7"/>
+<Cov CovItemId="S23" Value="7"/>
+<Cov CovItemId="S24" Value="7"/>
+<Cov CovItemId="S25" Value="7"/>
+<Cov CovItemId="S26" Value="2"/>
+<Cov CovItemId="S27" Value="2"/>
+<Cov CovItemId="S28" Value="2"/>
+<Cov CovItemId="S29" Value="5"/>
+<Cov CovItemId="S3" Value="1"/>
+<Cov CovItemId="S30" Value="5"/>
+<Cov CovItemId="S31" Value="1"/>
+<Cov CovItemId="S32" Value="87"/>
+<Cov CovItemId="S33" Value="61"/>
+<Cov CovItemId="S34" Value="26"/>
+<Cov CovItemId="S35" Value="26"/>
+<Cov CovItemId="S36" Value="26"/>
+<Cov CovItemId="S37" Value="80"/>
+<Cov CovItemId="S38" Value="80"/>
+<Cov CovItemId="S39" Value="80"/>
+<Cov CovItemId="S4" Value="1"/>
+<Cov CovItemId="S40" Value="80"/>
+<Cov CovItemId="S41" Value="80"/>
+<Cov CovItemId="S42" Value="80"/>
+<Cov CovItemId="S43" Value="16"/>
+<Cov CovItemId="S44" Value="26"/>
+<Cov CovItemId="S45" Value="1"/>
+<Cov CovItemId="S46" Value="1"/>
+<Cov CovItemId="S47" Value="1"/>
+<Cov CovItemId="S48" Value="1"/>
+<Cov CovItemId="S49" Value="1"/>
+<Cov CovItemId="S5" Value="1"/>
+<Cov CovItemId="S50" Value="1"/>
+<Cov CovItemId="S51" Value="1"/>
+<Cov CovItemId="S52" Value="61"/>
+<Cov CovItemId="S53" Value="61"/>
+<Cov CovItemId="S54" Value="61"/>
+<Cov CovItemId="S55" Value="244"/>
+<Cov CovItemId="S56" Value="61"/>
+<Cov CovItemId="S57" Value="244"/>
+<Cov CovItemId="S58" Value="61"/>
+<Cov CovItemId="S59" Value="61"/>
+<Cov CovItemId="S6" Value="1"/>
+<Cov CovItemId="S66" Value="61"/>
+<Cov CovItemId="S67" Value="61"/>
+<Cov CovItemId="S68" Value="61"/>
+<Cov CovItemId="S69" Value="61"/>
+<Cov CovItemId="S7" Value="2"/>
+<Cov CovItemId="S71" Value="61"/>
+<Cov CovItemId="S72" Value="221"/>
+<Cov CovItemId="S73" Value="55"/>
+<Cov CovItemId="S74" Value="166"/>
+<Cov CovItemId="S75" Value="87"/>
+<Cov CovItemId="S76" Value="87"/>
+<Cov CovItemId="S77" Value="87"/>
+<Cov CovItemId="S78" Value="87"/>
+<Cov CovItemId="S79" Value="87"/>
+<Cov CovItemId="S8" Value="2"/>
+<Cov CovItemId="S80" Value="87"/>
+<Cov CovItemId="S87" Value="87"/>
+<Cov CovItemId="S88" Value="87"/>
+<Cov CovItemId="S89" Value="87"/>
+<Cov CovItemId="S9" Value="2"/>
+<Cov CovItemId="S90" Value="87"/>
+<Cov CovItemId="S91" Value="87"/>
+<Cov CovItemId="S92" Value="87"/>
+<Cov CovItemId="S93" Value="87"/>
+<Cov CovItemId="S94" Value="87"/>
+<Cov CovItemId="S95" Value="87"/>
+<Cov CovItemId="S96" Value="87"/>
+<Cov CovItemId="S97" Value="87"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.MI.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="0" Value="32"/>
+<MapEntry BoolAssgnmnt="1" Value="96"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C10">
+<MapEntry BoolAssgnmnt="0" Value="61"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C11">
+<MapEntry BoolAssgnmnt="0" Value="166"/>
+<MapEntry BoolAssgnmnt="1" Value="55"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C12">
+<MapEntry BoolAssgnmnt="1" Value="87"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C13">
+<MapEntry BoolAssgnmnt="0" Value="87"/>
+<MapEntry BoolAssgnmnt="1" Value="87"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C14">
+<MapEntry BoolAssgnmnt="0" Value="87"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C16">
+<MapEntry BoolAssgnmnt="1" Value="87"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C17">
+<MapEntry BoolAssgnmnt="0" Value="87"/>
+<MapEntry BoolAssgnmnt="1" Value="87"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C18">
+<MapEntry BoolAssgnmnt="0" Value="87"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C19">
+<MapEntry BoolAssgnmnt="02" Value="87"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C2">
+<MapEntry BoolAssgnmnt="0" Value="16"/>
+<MapEntry BoolAssgnmnt="1" Value="16"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C22">
+<MapEntry BoolAssgnmnt="0" Value="87"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C24">
+<MapEntry BoolAssgnmnt="0" Value="216"/>
+<MapEntry BoolAssgnmnt="1" Value="1512"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C25">
+<MapEntry BoolAssgnmnt="10" Value="105"/>
+<MapEntry BoolAssgnmnt="02" Value="4"/>
+<MapEntry BoolAssgnmnt="11" Value="107"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C26">
+<MapEntry BoolAssgnmnt="0" Value="107"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C28">
+<MapEntry BoolAssgnmnt="0" Value="107"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C29">
+<MapEntry BoolAssgnmnt="0" Value="27"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C3">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C4">
+<MapEntry BoolAssgnmnt="0" Value="5"/>
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C5">
+<MapEntry BoolAssgnmnt="1" Value="5"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C6">
+<MapEntry BoolAssgnmnt="00" Value="26"/>
+<MapEntry BoolAssgnmnt="12" Value="61"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C7">
+<MapEntry BoolAssgnmnt="0" Value="64"/>
+<MapEntry BoolAssgnmnt="1" Value="16"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C8">
+<MapEntry BoolAssgnmnt="0" Value="61"/>
+<MapEntry BoolAssgnmnt="1" Value="244"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C9">
+<MapEntry BoolAssgnmnt="0" Value="61"/>
+<MapEntry BoolAssgnmnt="1" Value="244"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+</AssgnmntList>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<TestCase Comment="" Date="1384857446627" Name="com.Testing.MiTest:testMI">
+<CovList>
+<CovPrefix CovItemPrefix="com.OriginalFiles.MI.java">
+<Cov CovItemId="B1" Value="24"/>
+<Cov CovItemId="B2" Value="40"/>
+<Cov CovItemId="B3" Value="12"/>
+<Cov CovItemId="B4" Value="12"/>
+<Cov CovItemId="L1-2" Value="1"/>
+<Cov CovItemId="L2-2" Value="8"/>
+<Cov CovItemId="S1" Value="1"/>
+<Cov CovItemId="S10" Value="8"/>
+<Cov CovItemId="S11" Value="64"/>
+<Cov CovItemId="S12" Value="24"/>
+<Cov CovItemId="S13" Value="12"/>
+<Cov CovItemId="S14" Value="12"/>
+<Cov CovItemId="S2" Value="1"/>
+<Cov CovItemId="S3" Value="1"/>
+<Cov CovItemId="S4" Value="1"/>
+<Cov CovItemId="S45" Value="1"/>
+<Cov CovItemId="S46" Value="1"/>
+<Cov CovItemId="S47" Value="1"/>
+<Cov CovItemId="S48" Value="1"/>
+<Cov CovItemId="S49" Value="1"/>
+<Cov CovItemId="S5" Value="1"/>
+<Cov CovItemId="S50" Value="1"/>
+<Cov CovItemId="S51" Value="1"/>
+<Cov CovItemId="S6" Value="1"/>
+<Cov CovItemId="S7" Value="1"/>
+<Cov CovItemId="S8" Value="1"/>
+<Cov CovItemId="S9" Value="1"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.MI.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="0" Value="24"/>
+<MapEntry BoolAssgnmnt="1" Value="40"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C2">
+<MapEntry BoolAssgnmnt="0" Value="12"/>
+<MapEntry BoolAssgnmnt="1" Value="12"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+</AssgnmntList>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<TestCase Comment="" Date="1384857446628" Name="com.Testing.MiTest:testLookForBestMoveSimulateKing">
+<CovList>
+<CovPrefix CovItemPrefix="com.OriginalFiles.MI.java">
+<Cov CovItemId="B1" Value="26"/>
+<Cov CovItemId="B11" Value="8"/>
+<Cov CovItemId="B12" Value="6"/>
+<Cov CovItemId="B13" Value="1"/>
+<Cov CovItemId="B14" Value="11"/>
+<Cov CovItemId="B17" Value="2"/>
+<Cov CovItemId="B18" Value="6"/>
+<Cov CovItemId="B2" Value="102"/>
+<Cov CovItemId="B20" Value="8"/>
+<Cov CovItemId="B21" Value="17"/>
+<Cov CovItemId="B22" Value="15"/>
+<Cov CovItemId="B23" Value="14"/>
+<Cov CovItemId="B26" Value="14"/>
+<Cov CovItemId="B29" Value="14"/>
+<Cov CovItemId="B3" Value="13"/>
+<Cov CovItemId="B31" Value="14"/>
+<Cov CovItemId="B33" Value="6"/>
+<Cov CovItemId="B34" Value="8"/>
+<Cov CovItemId="B35" Value="4"/>
+<Cov CovItemId="B36" Value="2"/>
+<Cov CovItemId="B37" Value="2"/>
+<Cov CovItemId="B4" Value="13"/>
+<Cov CovItemId="B41" Value="14"/>
+<Cov CovItemId="B42" Value="434"/>
+<Cov CovItemId="B43" Value="7"/>
+<Cov CovItemId="B44" Value="7"/>
+<Cov CovItemId="B46" Value="7"/>
+<Cov CovItemId="B49" Value="7"/>
+<Cov CovItemId="B52" Value="7"/>
+<Cov CovItemId="B6" Value="1"/>
+<Cov CovItemId="B7" Value="1"/>
+<Cov CovItemId="B8" Value="1"/>
+<Cov CovItemId="B9" Value="1"/>
+<Cov CovItemId="L1-2" Value="2"/>
+<Cov CovItemId="L10-2" Value="7"/>
+<Cov CovItemId="L11-2" Value="56"/>
+<Cov CovItemId="L13-2" Value="7"/>
+<Cov CovItemId="L2-2" Value="16"/>
+<Cov CovItemId="L3-2" Value="1"/>
+<Cov CovItemId="L4-2" Value="6"/>
+<Cov CovItemId="L5-1" Value="8"/>
+<Cov CovItemId="L6-1" Value="8"/>
+<Cov CovItemId="L7-1" Value="14"/>
+<Cov CovItemId="L8-1" Value="14"/>
+<Cov CovItemId="L9-0" Value="14"/>
+<Cov CovItemId="S1" Value="1"/>
+<Cov CovItemId="S10" Value="16"/>
+<Cov CovItemId="S100" Value="2"/>
+<Cov CovItemId="S101" Value="2"/>
+<Cov CovItemId="S102" Value="6"/>
+<Cov CovItemId="S103" Value="14"/>
+<Cov CovItemId="S104" Value="14"/>
+<Cov CovItemId="S105" Value="14"/>
+<Cov CovItemId="S11" Value="128"/>
+<Cov CovItemId="S111" Value="7"/>
+<Cov CovItemId="S112" Value="7"/>
+<Cov CovItemId="S113" Value="7"/>
+<Cov CovItemId="S114" Value="7"/>
+<Cov CovItemId="S115" Value="56"/>
+<Cov CovItemId="S116" Value="448"/>
+<Cov CovItemId="S117" Value="14"/>
+<Cov CovItemId="S118" Value="7"/>
+<Cov CovItemId="S12" Value="26"/>
+<Cov CovItemId="S123" Value="7"/>
+<Cov CovItemId="S124" Value="7"/>
+<Cov CovItemId="S125" Value="7"/>
+<Cov CovItemId="S126" Value="14"/>
+<Cov CovItemId="S127" Value="14"/>
+<Cov CovItemId="S128" Value="7"/>
+<Cov CovItemId="S13" Value="13"/>
+<Cov CovItemId="S130" Value="7"/>
+<Cov CovItemId="S14" Value="13"/>
+<Cov CovItemId="S15" Value="1"/>
+<Cov CovItemId="S16" Value="1"/>
+<Cov CovItemId="S17" Value="1"/>
+<Cov CovItemId="S18" Value="1"/>
+<Cov CovItemId="S19" Value="1"/>
+<Cov CovItemId="S2" Value="1"/>
+<Cov CovItemId="S21" Value="1"/>
+<Cov CovItemId="S22" Value="2"/>
+<Cov CovItemId="S23" Value="2"/>
+<Cov CovItemId="S24" Value="2"/>
+<Cov CovItemId="S25" Value="2"/>
+<Cov CovItemId="S26" Value="1"/>
+<Cov CovItemId="S27" Value="1"/>
+<Cov CovItemId="S28" Value="1"/>
+<Cov CovItemId="S29" Value="1"/>
+<Cov CovItemId="S3" Value="1"/>
+<Cov CovItemId="S30" Value="1"/>
+<Cov CovItemId="S31" Value="1"/>
+<Cov CovItemId="S32" Value="14"/>
+<Cov CovItemId="S33" Value="8"/>
+<Cov CovItemId="S34" Value="6"/>
+<Cov CovItemId="S35" Value="6"/>
+<Cov CovItemId="S36" Value="6"/>
+<Cov CovItemId="S37" Value="12"/>
+<Cov CovItemId="S38" Value="12"/>
+<Cov CovItemId="S39" Value="12"/>
+<Cov CovItemId="S4" Value="1"/>
+<Cov CovItemId="S40" Value="12"/>
+<Cov CovItemId="S41" Value="12"/>
+<Cov CovItemId="S42" Value="12"/>
+<Cov CovItemId="S43" Value="1"/>
+<Cov CovItemId="S44" Value="6"/>
+<Cov CovItemId="S45" Value="1"/>
+<Cov CovItemId="S46" Value="1"/>
+<Cov CovItemId="S47" Value="1"/>
+<Cov CovItemId="S48" Value="1"/>
+<Cov CovItemId="S49" Value="1"/>
+<Cov CovItemId="S5" Value="1"/>
+<Cov CovItemId="S50" Value="1"/>
+<Cov CovItemId="S51" Value="1"/>
+<Cov CovItemId="S52" Value="8"/>
+<Cov CovItemId="S53" Value="8"/>
+<Cov CovItemId="S54" Value="8"/>
+<Cov CovItemId="S55" Value="8"/>
+<Cov CovItemId="S56" Value="8"/>
+<Cov CovItemId="S57" Value="8"/>
+<Cov CovItemId="S58" Value="8"/>
+<Cov CovItemId="S59" Value="8"/>
+<Cov CovItemId="S6" Value="1"/>
+<Cov CovItemId="S64" Value="2"/>
+<Cov CovItemId="S65" Value="2"/>
+<Cov CovItemId="S66" Value="6"/>
+<Cov CovItemId="S67" Value="6"/>
+<Cov CovItemId="S68" Value="8"/>
+<Cov CovItemId="S69" Value="8"/>
+<Cov CovItemId="S7" Value="2"/>
+<Cov CovItemId="S71" Value="8"/>
+<Cov CovItemId="S72" Value="32"/>
+<Cov CovItemId="S73" Value="17"/>
+<Cov CovItemId="S74" Value="15"/>
+<Cov CovItemId="S75" Value="14"/>
+<Cov CovItemId="S76" Value="14"/>
+<Cov CovItemId="S77" Value="14"/>
+<Cov CovItemId="S78" Value="14"/>
+<Cov CovItemId="S79" Value="14"/>
+<Cov CovItemId="S8" Value="2"/>
+<Cov CovItemId="S80" Value="14"/>
+<Cov CovItemId="S87" Value="14"/>
+<Cov CovItemId="S88" Value="14"/>
+<Cov CovItemId="S89" Value="14"/>
+<Cov CovItemId="S9" Value="2"/>
+<Cov CovItemId="S90" Value="14"/>
+<Cov CovItemId="S91" Value="14"/>
+<Cov CovItemId="S92" Value="14"/>
+<Cov CovItemId="S93" Value="14"/>
+<Cov CovItemId="S94" Value="14"/>
+<Cov CovItemId="S95" Value="14"/>
+<Cov CovItemId="S96" Value="14"/>
+<Cov CovItemId="S97" Value="14"/>
+<Cov CovItemId="S98" Value="6"/>
+<Cov CovItemId="S99" Value="4"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.MI.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="0" Value="26"/>
+<MapEntry BoolAssgnmnt="1" Value="102"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C10">
+<MapEntry BoolAssgnmnt="0" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C11">
+<MapEntry BoolAssgnmnt="0" Value="15"/>
+<MapEntry BoolAssgnmnt="1" Value="17"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C12">
+<MapEntry BoolAssgnmnt="1" Value="14"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C13">
+<MapEntry BoolAssgnmnt="0" Value="14"/>
+<MapEntry BoolAssgnmnt="1" Value="14"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C14">
+<MapEntry BoolAssgnmnt="0" Value="14"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C16">
+<MapEntry BoolAssgnmnt="1" Value="14"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C17">
+<MapEntry BoolAssgnmnt="0" Value="14"/>
+<MapEntry BoolAssgnmnt="1" Value="14"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C18">
+<MapEntry BoolAssgnmnt="0" Value="14"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C19">
+<MapEntry BoolAssgnmnt="10" Value="6"/>
+<MapEntry BoolAssgnmnt="11" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C2">
+<MapEntry BoolAssgnmnt="0" Value="13"/>
+<MapEntry BoolAssgnmnt="1" Value="13"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C20">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C21">
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C22">
+<MapEntry BoolAssgnmnt="0" Value="14"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C24">
+<MapEntry BoolAssgnmnt="0" Value="14"/>
+<MapEntry BoolAssgnmnt="1" Value="434"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C25">
+<MapEntry BoolAssgnmnt="10" Value="7"/>
+<MapEntry BoolAssgnmnt="11" Value="7"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C26">
+<MapEntry BoolAssgnmnt="0" Value="7"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C28">
+<MapEntry BoolAssgnmnt="0" Value="7"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C29">
+<MapEntry BoolAssgnmnt="0" Value="7"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C3">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C4">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C5">
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C6">
+<MapEntry BoolAssgnmnt="00" Value="6"/>
+<MapEntry BoolAssgnmnt="12" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C7">
+<MapEntry BoolAssgnmnt="0" Value="11"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C8">
+<MapEntry BoolAssgnmnt="0" Value="8"/>
+<MapEntry BoolAssgnmnt="1" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C9">
+<MapEntry BoolAssgnmnt="0" Value="8"/>
+<MapEntry BoolAssgnmnt="1" Value="8"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+</AssgnmntList>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<TestCase Comment="" Date="1384857446641" Name="com.Testing.MiTest:testLookForBestMoveLoseGame">
+<CovList>
+<CovPrefix CovItemPrefix="com.OriginalFiles.MI.java">
+<Cov CovItemId="B1" Value="26"/>
+<Cov CovItemId="B11" Value="2"/>
+<Cov CovItemId="B12" Value="2"/>
+<Cov CovItemId="B13" Value="1"/>
+<Cov CovItemId="B14" Value="1"/>
+<Cov CovItemId="B15" Value="2"/>
+<Cov CovItemId="B2" Value="102"/>
+<Cov CovItemId="B20" Value="2"/>
+<Cov CovItemId="B21" Value="6"/>
+<Cov CovItemId="B23" Value="4"/>
+<Cov CovItemId="B25" Value="2"/>
+<Cov CovItemId="B26" Value="2"/>
+<Cov CovItemId="B28" Value="2"/>
+<Cov CovItemId="B29" Value="4"/>
+<Cov CovItemId="B3" Value="13"/>
+<Cov CovItemId="B31" Value="4"/>
+<Cov CovItemId="B34" Value="4"/>
+<Cov CovItemId="B4" Value="13"/>
+<Cov CovItemId="B40" Value="2"/>
+<Cov CovItemId="B41" Value="6"/>
+<Cov CovItemId="B42" Value="186"/>
+<Cov CovItemId="B43" Value="3"/>
+<Cov CovItemId="B44" Value="3"/>
+<Cov CovItemId="B45" Value="2"/>
+<Cov CovItemId="B46" Value="1"/>
+<Cov CovItemId="B47" Value="2"/>
+<Cov CovItemId="B49" Value="1"/>
+<Cov CovItemId="B51" Value="2"/>
+<Cov CovItemId="B52" Value="1"/>
+<Cov CovItemId="B6" Value="1"/>
+<Cov CovItemId="B7" Value="1"/>
+<Cov CovItemId="B8" Value="1"/>
+<Cov CovItemId="B9" Value="1"/>
+<Cov CovItemId="L1-2" Value="2"/>
+<Cov CovItemId="L10-2" Value="3"/>
+<Cov CovItemId="L11-2" Value="24"/>
+<Cov CovItemId="L12-1" Value="2"/>
+<Cov CovItemId="L13-2" Value="1"/>
+<Cov CovItemId="L2-2" Value="16"/>
+<Cov CovItemId="L3-2" Value="1"/>
+<Cov CovItemId="L4-1" Value="2"/>
+<Cov CovItemId="L5-0" Value="2"/>
+<Cov CovItemId="L6-1" Value="2"/>
+<Cov CovItemId="L7-1" Value="4"/>
+<Cov CovItemId="L8-1" Value="4"/>
+<Cov CovItemId="L9-0" Value="2"/>
+<Cov CovItemId="L9-1" Value="2"/>
+<Cov CovItemId="S1" Value="1"/>
+<Cov CovItemId="S10" Value="16"/>
+<Cov CovItemId="S103" Value="4"/>
+<Cov CovItemId="S104" Value="4"/>
+<Cov CovItemId="S105" Value="4"/>
+<Cov CovItemId="S106" Value="2"/>
+<Cov CovItemId="S107" Value="2"/>
+<Cov CovItemId="S109" Value="2"/>
+<Cov CovItemId="S11" Value="128"/>
+<Cov CovItemId="S110" Value="2"/>
+<Cov CovItemId="S111" Value="3"/>
+<Cov CovItemId="S112" Value="3"/>
+<Cov CovItemId="S113" Value="3"/>
+<Cov CovItemId="S114" Value="3"/>
+<Cov CovItemId="S115" Value="24"/>
+<Cov CovItemId="S116" Value="192"/>
+<Cov CovItemId="S117" Value="6"/>
+<Cov CovItemId="S118" Value="3"/>
+<Cov CovItemId="S119" Value="2"/>
+<Cov CovItemId="S12" Value="26"/>
+<Cov CovItemId="S120" Value="2"/>
+<Cov CovItemId="S121" Value="2"/>
+<Cov CovItemId="S122" Value="2"/>
+<Cov CovItemId="S123" Value="1"/>
+<Cov CovItemId="S124" Value="1"/>
+<Cov CovItemId="S125" Value="1"/>
+<Cov CovItemId="S126" Value="2"/>
+<Cov CovItemId="S127" Value="2"/>
+<Cov CovItemId="S128" Value="3"/>
+<Cov CovItemId="S129" Value="2"/>
+<Cov CovItemId="S13" Value="13"/>
+<Cov CovItemId="S130" Value="1"/>
+<Cov CovItemId="S14" Value="13"/>
+<Cov CovItemId="S15" Value="1"/>
+<Cov CovItemId="S16" Value="1"/>
+<Cov CovItemId="S17" Value="1"/>
+<Cov CovItemId="S18" Value="1"/>
+<Cov CovItemId="S19" Value="1"/>
+<Cov CovItemId="S2" Value="1"/>
+<Cov CovItemId="S21" Value="1"/>
+<Cov CovItemId="S22" Value="2"/>
+<Cov CovItemId="S23" Value="2"/>
+<Cov CovItemId="S24" Value="2"/>
+<Cov CovItemId="S25" Value="2"/>
+<Cov CovItemId="S26" Value="1"/>
+<Cov CovItemId="S27" Value="1"/>
+<Cov CovItemId="S28" Value="1"/>
+<Cov CovItemId="S29" Value="1"/>
+<Cov CovItemId="S3" Value="1"/>
+<Cov CovItemId="S30" Value="1"/>
+<Cov CovItemId="S31" Value="1"/>
+<Cov CovItemId="S32" Value="4"/>
+<Cov CovItemId="S33" Value="2"/>
+<Cov CovItemId="S34" Value="2"/>
+<Cov CovItemId="S35" Value="2"/>
+<Cov CovItemId="S36" Value="2"/>
+<Cov CovItemId="S37" Value="2"/>
+<Cov CovItemId="S38" Value="2"/>
+<Cov CovItemId="S39" Value="2"/>
+<Cov CovItemId="S4" Value="1"/>
+<Cov CovItemId="S40" Value="2"/>
+<Cov CovItemId="S41" Value="2"/>
+<Cov CovItemId="S42" Value="2"/>
+<Cov CovItemId="S43" Value="1"/>
+<Cov CovItemId="S44" Value="2"/>
+<Cov CovItemId="S45" Value="1"/>
+<Cov CovItemId="S46" Value="1"/>
+<Cov CovItemId="S47" Value="1"/>
+<Cov CovItemId="S48" Value="1"/>
+<Cov CovItemId="S49" Value="1"/>
+<Cov CovItemId="S5" Value="1"/>
+<Cov CovItemId="S50" Value="1"/>
+<Cov CovItemId="S51" Value="1"/>
+<Cov CovItemId="S52" Value="2"/>
+<Cov CovItemId="S53" Value="2"/>
+<Cov CovItemId="S54" Value="2"/>
+<Cov CovItemId="S56" Value="2"/>
+<Cov CovItemId="S57" Value="2"/>
+<Cov CovItemId="S58" Value="2"/>
+<Cov CovItemId="S59" Value="2"/>
+<Cov CovItemId="S6" Value="1"/>
+<Cov CovItemId="S60" Value="2"/>
+<Cov CovItemId="S61" Value="2"/>
+<Cov CovItemId="S68" Value="2"/>
+<Cov CovItemId="S69" Value="2"/>
+<Cov CovItemId="S7" Value="2"/>
+<Cov CovItemId="S71" Value="2"/>
+<Cov CovItemId="S72" Value="6"/>
+<Cov CovItemId="S73" Value="6"/>
+<Cov CovItemId="S75" Value="4"/>
+<Cov CovItemId="S76" Value="4"/>
+<Cov CovItemId="S77" Value="4"/>
+<Cov CovItemId="S78" Value="4"/>
+<Cov CovItemId="S79" Value="4"/>
+<Cov CovItemId="S8" Value="2"/>
+<Cov CovItemId="S80" Value="4"/>
+<Cov CovItemId="S81" Value="2"/>
+<Cov CovItemId="S82" Value="2"/>
+<Cov CovItemId="S84" Value="2"/>
+<Cov CovItemId="S85" Value="2"/>
+<Cov CovItemId="S86" Value="2"/>
+<Cov CovItemId="S87" Value="4"/>
+<Cov CovItemId="S88" Value="4"/>
+<Cov CovItemId="S89" Value="4"/>
+<Cov CovItemId="S9" Value="2"/>
+<Cov CovItemId="S90" Value="4"/>
+<Cov CovItemId="S91" Value="4"/>
+<Cov CovItemId="S92" Value="4"/>
+<Cov CovItemId="S93" Value="4"/>
+<Cov CovItemId="S94" Value="4"/>
+<Cov CovItemId="S95" Value="4"/>
+<Cov CovItemId="S96" Value="4"/>
+<Cov CovItemId="S97" Value="4"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.MI.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="0" Value="26"/>
+<MapEntry BoolAssgnmnt="1" Value="102"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C10">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C11">
+<MapEntry BoolAssgnmnt="1" Value="6"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C12">
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C13">
+<MapEntry BoolAssgnmnt="0" Value="4"/>
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C14">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C15">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C16">
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C17">
+<MapEntry BoolAssgnmnt="0" Value="4"/>
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C18">
+<MapEntry BoolAssgnmnt="0" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C19">
+<MapEntry BoolAssgnmnt="02" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C2">
+<MapEntry BoolAssgnmnt="0" Value="13"/>
+<MapEntry BoolAssgnmnt="1" Value="13"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C22">
+<MapEntry BoolAssgnmnt="0" Value="4"/>
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C23">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C24">
+<MapEntry BoolAssgnmnt="0" Value="6"/>
+<MapEntry BoolAssgnmnt="1" Value="186"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C25">
+<MapEntry BoolAssgnmnt="10" Value="3"/>
+<MapEntry BoolAssgnmnt="11" Value="3"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C26">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C27">
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C28">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C29">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C3">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C4">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C5">
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C6">
+<MapEntry BoolAssgnmnt="01" Value="2"/>
+<MapEntry BoolAssgnmnt="00" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C7">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C8">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C9">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+</AssgnmntList>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<TestCase Comment="" Date="1384857446642" Name="com.Testing.MiTest:testLookForBestMoveDrawGame">
+<CovList>
+<CovPrefix CovItemPrefix="com.OriginalFiles.MI.java">
+<Cov CovItemId="B1" Value="26"/>
+<Cov CovItemId="B11" Value="5"/>
+<Cov CovItemId="B12" Value="3"/>
+<Cov CovItemId="B13" Value="1"/>
+<Cov CovItemId="B14" Value="4"/>
+<Cov CovItemId="B16" Value="1"/>
+<Cov CovItemId="B17" Value="3"/>
+<Cov CovItemId="B18" Value="1"/>
+<Cov CovItemId="B2" Value="102"/>
+<Cov CovItemId="B20" Value="5"/>
+<Cov CovItemId="B21" Value="8"/>
+<Cov CovItemId="B22" Value="7"/>
+<Cov CovItemId="B23" Value="8"/>
+<Cov CovItemId="B25" Value="1"/>
+<Cov CovItemId="B26" Value="7"/>
+<Cov CovItemId="B27" Value="1"/>
+<Cov CovItemId="B29" Value="8"/>
+<Cov CovItemId="B3" Value="13"/>
+<Cov CovItemId="B31" Value="8"/>
+<Cov CovItemId="B34" Value="8"/>
+<Cov CovItemId="B39" Value="1"/>
+<Cov CovItemId="B4" Value="13"/>
+<Cov CovItemId="B41" Value="8"/>
+<Cov CovItemId="B42" Value="248"/>
+<Cov CovItemId="B43" Value="4"/>
+<Cov CovItemId="B44" Value="4"/>
+<Cov CovItemId="B45" Value="1"/>
+<Cov CovItemId="B46" Value="3"/>
+<Cov CovItemId="B47" Value="1"/>
+<Cov CovItemId="B49" Value="3"/>
+<Cov CovItemId="B51" Value="1"/>
+<Cov CovItemId="B52" Value="3"/>
+<Cov CovItemId="B6" Value="1"/>
+<Cov CovItemId="B7" Value="1"/>
+<Cov CovItemId="B8" Value="2"/>
+<Cov CovItemId="B9" Value="2"/>
+<Cov CovItemId="L1-2" Value="2"/>
+<Cov CovItemId="L10-2" Value="4"/>
+<Cov CovItemId="L11-2" Value="32"/>
+<Cov CovItemId="L12-1" Value="1"/>
+<Cov CovItemId="L13-2" Value="3"/>
+<Cov CovItemId="L2-2" Value="16"/>
+<Cov CovItemId="L3-2" Value="1"/>
+<Cov CovItemId="L4-1" Value="1"/>
+<Cov CovItemId="L4-2" Value="2"/>
+<Cov CovItemId="L5-1" Value="5"/>
+<Cov CovItemId="L6-0" Value="1"/>
+<Cov CovItemId="L6-1" Value="4"/>
+<Cov CovItemId="L7-1" Value="8"/>
+<Cov CovItemId="L8-1" Value="8"/>
+<Cov CovItemId="L9-0" Value="7"/>
+<Cov CovItemId="L9-1" Value="1"/>
+<Cov CovItemId="S1" Value="1"/>
+<Cov CovItemId="S10" Value="16"/>
+<Cov CovItemId="S103" Value="8"/>
+<Cov CovItemId="S104" Value="8"/>
+<Cov CovItemId="S105" Value="8"/>
+<Cov CovItemId="S106" Value="1"/>
+<Cov CovItemId="S107" Value="1"/>
+<Cov CovItemId="S108" Value="1"/>
+<Cov CovItemId="S11" Value="128"/>
+<Cov CovItemId="S110" Value="1"/>
+<Cov CovItemId="S111" Value="4"/>
+<Cov CovItemId="S112" Value="4"/>
+<Cov CovItemId="S113" Value="4"/>
+<Cov CovItemId="S114" Value="4"/>
+<Cov CovItemId="S115" Value="32"/>
+<Cov CovItemId="S116" Value="256"/>
+<Cov CovItemId="S117" Value="8"/>
+<Cov CovItemId="S118" Value="4"/>
+<Cov CovItemId="S119" Value="1"/>
+<Cov CovItemId="S12" Value="26"/>
+<Cov CovItemId="S120" Value="1"/>
+<Cov CovItemId="S121" Value="1"/>
+<Cov CovItemId="S122" Value="1"/>
+<Cov CovItemId="S123" Value="3"/>
+<Cov CovItemId="S124" Value="3"/>
+<Cov CovItemId="S125" Value="3"/>
+<Cov CovItemId="S126" Value="7"/>
+<Cov CovItemId="S127" Value="7"/>
+<Cov CovItemId="S128" Value="4"/>
+<Cov CovItemId="S129" Value="1"/>
+<Cov CovItemId="S13" Value="13"/>
+<Cov CovItemId="S130" Value="3"/>
+<Cov CovItemId="S14" Value="13"/>
+<Cov CovItemId="S15" Value="1"/>
+<Cov CovItemId="S16" Value="1"/>
+<Cov CovItemId="S17" Value="1"/>
+<Cov CovItemId="S18" Value="1"/>
+<Cov CovItemId="S19" Value="1"/>
+<Cov CovItemId="S2" Value="1"/>
+<Cov CovItemId="S21" Value="1"/>
+<Cov CovItemId="S22" Value="3"/>
+<Cov CovItemId="S23" Value="3"/>
+<Cov CovItemId="S24" Value="3"/>
+<Cov CovItemId="S25" Value="3"/>
+<Cov CovItemId="S26" Value="1"/>
+<Cov CovItemId="S27" Value="1"/>
+<Cov CovItemId="S28" Value="1"/>
+<Cov CovItemId="S29" Value="2"/>
+<Cov CovItemId="S3" Value="1"/>
+<Cov CovItemId="S30" Value="2"/>
+<Cov CovItemId="S31" Value="1"/>
+<Cov CovItemId="S32" Value="8"/>
+<Cov CovItemId="S33" Value="5"/>
+<Cov CovItemId="S34" Value="3"/>
+<Cov CovItemId="S35" Value="3"/>
+<Cov CovItemId="S36" Value="3"/>
+<Cov CovItemId="S37" Value="5"/>
+<Cov CovItemId="S38" Value="5"/>
+<Cov CovItemId="S39" Value="5"/>
+<Cov CovItemId="S4" Value="1"/>
+<Cov CovItemId="S40" Value="5"/>
+<Cov CovItemId="S41" Value="5"/>
+<Cov CovItemId="S42" Value="5"/>
+<Cov CovItemId="S43" Value="1"/>
+<Cov CovItemId="S44" Value="3"/>
+<Cov CovItemId="S45" Value="1"/>
+<Cov CovItemId="S46" Value="1"/>
+<Cov CovItemId="S47" Value="1"/>
+<Cov CovItemId="S48" Value="1"/>
+<Cov CovItemId="S49" Value="1"/>
+<Cov CovItemId="S5" Value="1"/>
+<Cov CovItemId="S50" Value="1"/>
+<Cov CovItemId="S51" Value="1"/>
+<Cov CovItemId="S52" Value="5"/>
+<Cov CovItemId="S53" Value="5"/>
+<Cov CovItemId="S54" Value="5"/>
+<Cov CovItemId="S55" Value="5"/>
+<Cov CovItemId="S56" Value="5"/>
+<Cov CovItemId="S57" Value="4"/>
+<Cov CovItemId="S58" Value="5"/>
+<Cov CovItemId="S59" Value="5"/>
+<Cov CovItemId="S6" Value="1"/>
+<Cov CovItemId="S62" Value="1"/>
+<Cov CovItemId="S63" Value="1"/>
+<Cov CovItemId="S64" Value="3"/>
+<Cov CovItemId="S65" Value="3"/>
+<Cov CovItemId="S66" Value="1"/>
+<Cov CovItemId="S67" Value="1"/>
+<Cov CovItemId="S68" Value="5"/>
+<Cov CovItemId="S69" Value="5"/>
+<Cov CovItemId="S7" Value="2"/>
+<Cov CovItemId="S71" Value="5"/>
+<Cov CovItemId="S72" Value="15"/>
+<Cov CovItemId="S73" Value="8"/>
+<Cov CovItemId="S74" Value="7"/>
+<Cov CovItemId="S75" Value="8"/>
+<Cov CovItemId="S76" Value="8"/>
+<Cov CovItemId="S77" Value="8"/>
+<Cov CovItemId="S78" Value="8"/>
+<Cov CovItemId="S79" Value="8"/>
+<Cov CovItemId="S8" Value="2"/>
+<Cov CovItemId="S80" Value="8"/>
+<Cov CovItemId="S81" Value="1"/>
+<Cov CovItemId="S82" Value="1"/>
+<Cov CovItemId="S83" Value="1"/>
+<Cov CovItemId="S85" Value="1"/>
+<Cov CovItemId="S86" Value="1"/>
+<Cov CovItemId="S87" Value="8"/>
+<Cov CovItemId="S88" Value="8"/>
+<Cov CovItemId="S89" Value="8"/>
+<Cov CovItemId="S9" Value="2"/>
+<Cov CovItemId="S90" Value="8"/>
+<Cov CovItemId="S91" Value="8"/>
+<Cov CovItemId="S92" Value="8"/>
+<Cov CovItemId="S93" Value="8"/>
+<Cov CovItemId="S94" Value="8"/>
+<Cov CovItemId="S95" Value="8"/>
+<Cov CovItemId="S96" Value="8"/>
+<Cov CovItemId="S97" Value="8"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.MI.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="0" Value="26"/>
+<MapEntry BoolAssgnmnt="1" Value="102"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C10">
+<MapEntry BoolAssgnmnt="0" Value="5"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C11">
+<MapEntry BoolAssgnmnt="0" Value="7"/>
+<MapEntry BoolAssgnmnt="1" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C12">
+<MapEntry BoolAssgnmnt="1" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C13">
+<MapEntry BoolAssgnmnt="0" Value="8"/>
+<MapEntry BoolAssgnmnt="1" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C14">
+<MapEntry BoolAssgnmnt="0" Value="7"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C15">
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C16">
+<MapEntry BoolAssgnmnt="1" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C17">
+<MapEntry BoolAssgnmnt="0" Value="8"/>
+<MapEntry BoolAssgnmnt="1" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C18">
+<MapEntry BoolAssgnmnt="0" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C19">
+<MapEntry BoolAssgnmnt="11" Value="8"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C2">
+<MapEntry BoolAssgnmnt="0" Value="13"/>
+<MapEntry BoolAssgnmnt="1" Value="13"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C22">
+<MapEntry BoolAssgnmnt="0" Value="8"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C23">
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C24">
+<MapEntry BoolAssgnmnt="0" Value="8"/>
+<MapEntry BoolAssgnmnt="1" Value="248"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C25">
+<MapEntry BoolAssgnmnt="10" Value="4"/>
+<MapEntry BoolAssgnmnt="11" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C26">
+<MapEntry BoolAssgnmnt="0" Value="3"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C27">
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C28">
+<MapEntry BoolAssgnmnt="0" Value="3"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C29">
+<MapEntry BoolAssgnmnt="0" Value="3"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C3">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C4">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C5">
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C6">
+<MapEntry BoolAssgnmnt="01" Value="2"/>
+<MapEntry BoolAssgnmnt="00" Value="3"/>
+<MapEntry BoolAssgnmnt="12" Value="3"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C7">
+<MapEntry BoolAssgnmnt="0" Value="4"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C8">
+<MapEntry BoolAssgnmnt="0" Value="5"/>
+<MapEntry BoolAssgnmnt="1" Value="5"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C9">
+<MapEntry BoolAssgnmnt="0" Value="5"/>
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+</AssgnmntList>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<TestCase Comment="" Date="1384857446644" Name="com.Testing.MiTest:testLookForBestMoveWinGame">
+<CovList>
+<CovPrefix CovItemPrefix="com.OriginalFiles.MI.java">
+<Cov CovItemId="B1" Value="27"/>
+<Cov CovItemId="B11" Value="2"/>
+<Cov CovItemId="B16" Value="2"/>
+<Cov CovItemId="B2" Value="101"/>
+<Cov CovItemId="B20" Value="2"/>
+<Cov CovItemId="B22" Value="2"/>
+<Cov CovItemId="B23" Value="2"/>
+<Cov CovItemId="B25" Value="2"/>
+<Cov CovItemId="B27" Value="2"/>
+<Cov CovItemId="B29" Value="2"/>
+<Cov CovItemId="B3" Value="14"/>
+<Cov CovItemId="B31" Value="2"/>
+<Cov CovItemId="B34" Value="2"/>
+<Cov CovItemId="B39" Value="2"/>
+<Cov CovItemId="B4" Value="13"/>
+<Cov CovItemId="B41" Value="3"/>
+<Cov CovItemId="B42" Value="61"/>
+<Cov CovItemId="B43" Value="2"/>
+<Cov CovItemId="B44" Value="1"/>
+<Cov CovItemId="B45" Value="2"/>
+<Cov CovItemId="B47" Value="2"/>
+<Cov CovItemId="B51" Value="1"/>
+<Cov CovItemId="B6" Value="1"/>
+<Cov CovItemId="B7" Value="1"/>
+<Cov CovItemId="B8" Value="1"/>
+<Cov CovItemId="B9" Value="1"/>
+<Cov CovItemId="L1-2" Value="2"/>
+<Cov CovItemId="L10-2" Value="1"/>
+<Cov CovItemId="L11-2" Value="8"/>
+<Cov CovItemId="L12-1" Value="2"/>
+<Cov CovItemId="L2-2" Value="16"/>
+<Cov CovItemId="L3-2" Value="1"/>
+<Cov CovItemId="L5-2" Value="2"/>
+<Cov CovItemId="L6-0" Value="2"/>
+<Cov CovItemId="L7-1" Value="2"/>
+<Cov CovItemId="L8-1" Value="2"/>
+<Cov CovItemId="L9-1" Value="2"/>
+<Cov CovItemId="S1" Value="1"/>
+<Cov CovItemId="S10" Value="16"/>
+<Cov CovItemId="S103" Value="2"/>
+<Cov CovItemId="S104" Value="2"/>
+<Cov CovItemId="S105" Value="2"/>
+<Cov CovItemId="S106" Value="2"/>
+<Cov CovItemId="S107" Value="2"/>
+<Cov CovItemId="S108" Value="2"/>
+<Cov CovItemId="S11" Value="128"/>
+<Cov CovItemId="S110" Value="2"/>
+<Cov CovItemId="S111" Value="1"/>
+<Cov CovItemId="S112" Value="1"/>
+<Cov CovItemId="S113" Value="1"/>
+<Cov CovItemId="S114" Value="1"/>
+<Cov CovItemId="S115" Value="8"/>
+<Cov CovItemId="S116" Value="64"/>
+<Cov CovItemId="S117" Value="3"/>
+<Cov CovItemId="S118" Value="2"/>
+<Cov CovItemId="S119" Value="2"/>
+<Cov CovItemId="S12" Value="27"/>
+<Cov CovItemId="S120" Value="2"/>
+<Cov CovItemId="S121" Value="2"/>
+<Cov CovItemId="S122" Value="2"/>
+<Cov CovItemId="S128" Value="1"/>
+<Cov CovItemId="S129" Value="1"/>
+<Cov CovItemId="S13" Value="14"/>
+<Cov CovItemId="S14" Value="13"/>
+<Cov CovItemId="S15" Value="1"/>
+<Cov CovItemId="S16" Value="1"/>
+<Cov CovItemId="S17" Value="1"/>
+<Cov CovItemId="S18" Value="1"/>
+<Cov CovItemId="S19" Value="1"/>
+<Cov CovItemId="S2" Value="1"/>
+<Cov CovItemId="S21" Value="1"/>
+<Cov CovItemId="S22" Value="2"/>
+<Cov CovItemId="S23" Value="2"/>
+<Cov CovItemId="S24" Value="2"/>
+<Cov CovItemId="S25" Value="2"/>
+<Cov CovItemId="S26" Value="1"/>
+<Cov CovItemId="S27" Value="1"/>
+<Cov CovItemId="S28" Value="1"/>
+<Cov CovItemId="S29" Value="1"/>
+<Cov CovItemId="S3" Value="1"/>
+<Cov CovItemId="S30" Value="1"/>
+<Cov CovItemId="S31" Value="1"/>
+<Cov CovItemId="S32" Value="2"/>
+<Cov CovItemId="S33" Value="2"/>
+<Cov CovItemId="S4" Value="1"/>
+<Cov CovItemId="S45" Value="1"/>
+<Cov CovItemId="S46" Value="1"/>
+<Cov CovItemId="S47" Value="1"/>
+<Cov CovItemId="S48" Value="1"/>
+<Cov CovItemId="S49" Value="1"/>
+<Cov CovItemId="S5" Value="1"/>
+<Cov CovItemId="S50" Value="1"/>
+<Cov CovItemId="S51" Value="1"/>
+<Cov CovItemId="S52" Value="2"/>
+<Cov CovItemId="S53" Value="2"/>
+<Cov CovItemId="S54" Value="2"/>
+<Cov CovItemId="S55" Value="4"/>
+<Cov CovItemId="S56" Value="2"/>
+<Cov CovItemId="S58" Value="2"/>
+<Cov CovItemId="S59" Value="2"/>
+<Cov CovItemId="S6" Value="1"/>
+<Cov CovItemId="S62" Value="2"/>
+<Cov CovItemId="S63" Value="2"/>
+<Cov CovItemId="S68" Value="2"/>
+<Cov CovItemId="S69" Value="2"/>
+<Cov CovItemId="S7" Value="2"/>
+<Cov CovItemId="S71" Value="2"/>
+<Cov CovItemId="S72" Value="2"/>
+<Cov CovItemId="S74" Value="2"/>
+<Cov CovItemId="S75" Value="2"/>
+<Cov CovItemId="S76" Value="2"/>
+<Cov CovItemId="S77" Value="2"/>
+<Cov CovItemId="S78" Value="2"/>
+<Cov CovItemId="S79" Value="2"/>
+<Cov CovItemId="S8" Value="2"/>
+<Cov CovItemId="S80" Value="2"/>
+<Cov CovItemId="S81" Value="2"/>
+<Cov CovItemId="S82" Value="2"/>
+<Cov CovItemId="S83" Value="2"/>
+<Cov CovItemId="S85" Value="2"/>
+<Cov CovItemId="S86" Value="2"/>
+<Cov CovItemId="S87" Value="2"/>
+<Cov CovItemId="S88" Value="2"/>
+<Cov CovItemId="S89" Value="2"/>
+<Cov CovItemId="S9" Value="2"/>
+<Cov CovItemId="S90" Value="2"/>
+<Cov CovItemId="S91" Value="2"/>
+<Cov CovItemId="S92" Value="2"/>
+<Cov CovItemId="S93" Value="2"/>
+<Cov CovItemId="S94" Value="2"/>
+<Cov CovItemId="S95" Value="2"/>
+<Cov CovItemId="S96" Value="2"/>
+<Cov CovItemId="S97" Value="2"/>
+</CovPrefix>
+</CovList>
+<AssgnmntList>
+<AssgnmntPrefix RootTermCovItemPrefix="com.OriginalFiles.MI.java">
+<AssgnmntListEntry Length="1" RootTermCovItemId="C1">
+<MapEntry BoolAssgnmnt="0" Value="27"/>
+<MapEntry BoolAssgnmnt="1" Value="101"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C10">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C11">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C12">
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C13">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C14">
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C15">
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C16">
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C17">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C18">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C19">
+<MapEntry BoolAssgnmnt="02" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C2">
+<MapEntry BoolAssgnmnt="0" Value="13"/>
+<MapEntry BoolAssgnmnt="1" Value="14"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C22">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C23">
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C24">
+<MapEntry BoolAssgnmnt="0" Value="3"/>
+<MapEntry BoolAssgnmnt="1" Value="61"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C25">
+<MapEntry BoolAssgnmnt="10" Value="1"/>
+<MapEntry BoolAssgnmnt="11" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C26">
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C27">
+<MapEntry BoolAssgnmnt="1" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C29">
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C3">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C4">
+<MapEntry BoolAssgnmnt="0" Value="1"/>
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C5">
+<MapEntry BoolAssgnmnt="1" Value="1"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="2" RootTermCovItemId="C6">
+<MapEntry BoolAssgnmnt="01" Value="2"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C8">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+<MapEntry BoolAssgnmnt="1" Value="4"/>
+</AssgnmntListEntry>
+<AssgnmntListEntry Length="1" RootTermCovItemId="C9">
+<MapEntry BoolAssgnmnt="0" Value="2"/>
+</AssgnmntListEntry>
+</AssgnmntPrefix>
+</AssgnmntList>
+<ObjMetaDataList/>
+<MetaDataList/>
+</TestCase>
+<MetaDataList/>
+</TestSession>
+</TestSessionContainer>

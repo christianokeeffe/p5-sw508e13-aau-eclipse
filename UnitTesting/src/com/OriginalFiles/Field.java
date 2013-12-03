@@ -1,5 +1,6 @@
 package com.OriginalFiles;
 
+
 public class Field {
     //allowedField determines if is an allowed field to play on (a black field)
     public boolean allowedField;
