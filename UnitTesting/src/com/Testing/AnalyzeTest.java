@@ -532,8 +532,8 @@ public class AnalyzeTest extends FunktionForTesting {
         checkersBoard.myBoard[5][6].setPieceOnField(producePiece(5, 6, 'w',false));
         checkersBoard.myBoard[4][7].setPieceOnField(producePiece(4, 7, 'g',true));
         checkersBoard.myBoard[6][7].setPieceOnField(producePiece(6, 7, 'b',true));
-        checkersBoard.kingPlace[0].emptyThisField();
-        checkersBoard.oppKingPlace[0].emptyThisField();
+        checkersBoard.kingPlace[4].emptyThisField();
+        checkersBoard.oppKingPlace[2].emptyThisField();
         
         //Cleanup board
         
