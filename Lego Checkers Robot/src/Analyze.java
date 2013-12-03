@@ -131,8 +131,6 @@ public class Analyze {
     //Determine simple move
     private boolean checkMove(Field field, int directY) throws
     InterruptedException, IOException, NoKingLeft {
-        //Verify that the given field is inbound
-        if (checkersBoard.checkBounds(field.x, field.y)) {
             //Check the first direction
             if (checkersBoard.checkMoveDirection(field, 1, directY)) {
                 if (validateMove(checkersBoard.
@@ -176,7 +174,6 @@ public class Analyze {
                     }
                 }
             }
-        }
         return false;
     }
 
@@ -444,8 +441,6 @@ public class Analyze {
     public final boolean checkForGameHasEnded(boolean isHumansTurn)
             throws IOException, NoKingLeft {
         switch (gameHasEnded(isHumansTurn)) {
-        case 0:
-            return false;
         case 1:
             checkersBoard.informer.humanWon();
             return true;
