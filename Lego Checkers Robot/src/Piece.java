@@ -160,28 +160,6 @@ public class Piece {
         return false;
     }
 
-    private boolean checkBlocksBackline(int inputX, int inputY) {
-        if(checkersBoard.checkAllegiance(checkersBoard.myBoard[inputX][inputY], true))
-        {
-            if(checkersBoard.checkBounds(inputX+2, inputY))
-            {
-                if(checkersBoard.myBoard[inputX+2][inputY].isEmpty())
-                {
-                    return true;
-                }
-            }
-
-            if(checkersBoard.checkBounds(inputX-2, inputY))
-            {
-                if(checkersBoard.myBoard[inputX-2][inputY].isEmpty())
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    
     private int blockValue() {
         int returnValue = 0;
         int diff = 1;
@@ -250,50 +228,6 @@ public class Piece {
             }        
         }
         return 0;
-    }
-
-    private boolean blocksAPiece() {
-        int direction = -2;
-        boolean checkForOpponent = false;
-
-        if (checkersBoard.checkAllegiance(this, !checkForOpponent)) {
-            direction = 2;
-            checkForOpponent = true;
-        }
-        if (checkersBoard.checkBounds(this.x, this.y + direction)) {
-            if (checkersBoard.checkAllegiance(checkersBoard.
-                    myBoard[this.x][this.y + direction], checkForOpponent)) {
-                return true;
-            }
-        }
-
-        if (this.isCrowned) {
-            if (checkersBoard.checkBounds(this.x, this.y - direction)) {
-                if (checkersBoard.checkAllegiance(checkersBoard.
-                        myBoard[this.x][this.y - direction],
-                        checkForOpponent)) {
-                    if (checkersBoard.myBoard[this.x][this.y - direction].
-                            getPieceOnField().isCrowned) {
-                        return true;
-                    }
-                }
-            }
-
-            if (checkersBoard.checkBounds(this.x - direction, this.y)) {
-                if (checkersBoard.checkAllegiance(checkersBoard.
-                        myBoard[this.x - direction][this.y], checkForOpponent)) {
-                    return true;
-                }
-            }
-
-            if (checkersBoard.checkBounds(this.x + direction, this.y)) {
-                if (checkersBoard.checkAllegiance(checkersBoard.
-                        myBoard[this.x + direction][this.y], checkForOpponent)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     private int closestPiece() {
