@@ -135,8 +135,6 @@ public class Analyze {
     //Determine simple move
     private boolean checkMove(Field field, int directY) throws
     InterruptedException, IOException, NoKingLeft {
-        //Verify that the given field is inbound
-        if (checkersBoard.checkBounds(field.x, field.y)) {
             //Check the first direction
             if (checkersBoard.checkMoveDirection(field, 1, directY)) {
                 if (validateMove(checkersBoard.
@@ -180,7 +178,6 @@ public class Analyze {
                     }
                 }
             }
-        }
         return false;
     }
 
@@ -314,9 +311,11 @@ public class Analyze {
             throws NoKingLeft, IOException {
         if (checkersBoard.peasentIsOnEndRow(field)) {
             if (checkersBoard.checkAllegiance(field, false)) {
-                field.getPieceOnField().color = checkersBoard.myKingColor;
-                field.getPieceOnField().isCrowned = true;
-                if (!isSimulated) {
+                if (isSimulated) {
+                    field.getPieceOnField().color = checkersBoard.myKingColor;
+                    field.getPieceOnField().isCrowned = true;
+                } else {
+                    replaceRobotKing(field);
                     fieldToCheck = field;
                 }
             } else {
@@ -346,6 +345,46 @@ public class Analyze {
         }
     }
 
+    private void replaceRobotKing(Field toKingField)
+            throws NoKingLeft, IOException {
+        int i = 0;
+        int l = 0;
+        int h = 0;
+
+        OUTER: while (h <= checkersBoard.
+                oppTrashPlace[0].length - 1) {
+
+            while (l <= checkersBoard.
+                    oppTrashPlace.length - 1) {
+
+                if (checkersBoard.
+                        oppTrashPlace[l][h].isEmpty()) {
+                    break OUTER;
+                }
+                l++;
+            }
+            h++;
+            l = 0;
+        }
+        checkersBoard.movePieceInRepresentation(toKingField,
+                checkersBoard.oppTrashPlace[l][h], false);
+        OUTER: while (!(i > 7)) {
+            if (!checkersBoard.oppKingPlace[i].isEmpty()) {
+                //Insert king at location
+                checkersBoard.movePieceInRepresentation(
+                        checkersBoard.oppKingPlace[i],
+                        toKingField, true);
+                break OUTER;
+            } else {
+                i++;
+            }
+        }
+
+        if (i > 7) {
+           throw new custom.Exceptions.NoKingLeft();
+        }
+    }
+
     //Function to check if user have replaced the
     //robots peasant piece with a king piece
     public final void checkRobotPieceReplaced() throws IOException, NoKingLeft {
@@ -356,36 +395,6 @@ public class Analyze {
                         == checkersBoard.myKingColor) {
                     checkCondition = false;
 
-                    int i = 0;
-                    int l = 0;
-                    int h = 0;
-
-                    OUTER: while (h <= checkersBoard.
-                            oppTrashPlace[0].length - 1) {
-
-                        while (l <= checkersBoard.
-                                oppTrashPlace.length - 1) {
-
-                            if (checkersBoard.
-                                    oppTrashPlace[l][h].isEmpty()) {
-                                break OUTER;
-                            }
-                            l++;
-                        }
-                        h++;
-                        l = 0;
-                    }
-                    checkersBoard.movePieceInRepresentation(fieldToCheck,
-                            checkersBoard.oppTrashPlace[l][h], false);
-                    while (!(i > 7)) {
-                        if (!checkersBoard.oppKingPlace[i].isEmpty()) {
-                            //Insert king at location
-                            checkersBoard.movePieceInRepresentation(
-                                    checkersBoard.oppKingPlace[i],
-                                    fieldToCheck, true);
-                        }
-                        i++;
-                    }
                     fieldToCheck = null;
                 } else {
                     checkersBoard.informer.myKingNotPlaced();
@@ -436,8 +445,6 @@ public class Analyze {
     public final boolean checkForGameHasEnded(boolean isHumansTurn)
             throws IOException, NoKingLeft {
         switch (gameHasEnded(isHumansTurn)) {
-        case 0:
-            return false;
         case 1:
             checkersBoard.informer.humanWon();
             return true;
