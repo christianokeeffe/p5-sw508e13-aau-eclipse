@@ -142,6 +142,9 @@ public class Piece {
                             || (checkersBoard.checkAllegiance(this, false)
                                     && y == 0))) {
                 returnValue += backlineBonus / 2;
+                if(gameState == isMidGame) {
+                    returnValue += backlineBonus / 2; 
+                }
             }
             if (isCrowned) {
                 returnValue += kingBonus;
