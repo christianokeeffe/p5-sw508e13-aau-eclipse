@@ -155,7 +155,7 @@ public class MI {
             }
             break;
         default:
-            valueOfBoard +=  150 + (ownPieces.size() - oppPieces.size())
+            valueOfBoard +=  121 + (ownPieces.size() - oppPieces.size())
                                 * (24 - ownPieces.size() - oppPieces.size());
             break;
         }
