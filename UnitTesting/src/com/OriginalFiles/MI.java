@@ -9,10 +9,29 @@ public class MI {
     public RemoteNXTFunctions remoteNXT;
     private final double inf = 100000.0;
     private List<Move> simulatedMoves = new ArrayList<Move>();
-    public MI(RemoteNXTFunctions inputRemoteNXT) {
-        remoteNXT = inputRemoteNXT;
-        updatePieceList();
+    private int side;
 
+    /* how much the AI/MI looks forward */
+    private int numberofmovelook;
+
+    /* how glad the MI/AI are for the result of the game */
+    private double gameIsWon = inf / 2;
+    private final int gameIsDraw = 200;
+
+    private final int isMidGame = 1;
+    private final int isEndgame = 2;
+    private final int midGameEnd = 7;
+
+    public MI(RemoteNXTFunctions inputRemoteNXT,
+            boolean isRobot, int hardness) {
+        remoteNXT = inputRemoteNXT;
+        numberofmovelook = hardness;
+        updatePieceList();
+        if (isRobot) {
+            side = 1;
+        } else {
+            side = -1;
+        }
     }
 
     List<Piece> ownPieces = new ArrayList<Piece>();
@@ -35,12 +54,12 @@ public class MI {
     }
 
     /* ------------------------------------------------------------------  *
-    /* MI brain starts */
+    /* MI starts */
 
     public final Move lookForBestMove() throws NoKingLeft, IOException,
                                          InterruptedException {
         updatePieceList();
-        List<Move> posMoves = possibleMoves(1);
+        List<Move> posMoves = possibleMoves(side);
         List<Move> bestMoves = new ArrayList<Move>();
         double price = -inf;
         double tempPrice;
@@ -52,7 +71,7 @@ public class MI {
         for (Move move : posMoves) {
             simulateMove(move);
 
-            tempPrice =  -negaMax(numberofmovelook, -1, -inf, -price);
+            tempPrice =  -negaMax(numberofmovelook, -side, -inf, -price);
             revertMove();
 
             if (tempPrice > price) {
@@ -93,29 +112,32 @@ public class MI {
         //latex end
         return bestValue;
     }
-    /* how much the AI/MI looks forward */
-    private int numberofmovelook = 2;
-
-    /* how glad the MI/AI are for the result of the game */
-    private double gameIsWon = inf / 2;
-    private final int gameIsDraw = 50;
-
-    private final int pieceDifferenceFactor = 4;
-
-    private final int isMidgame = 1;
-    private final int isEndgame = 2;
-    private final int midgameEnd = 7;
 
     private double evaluation(int turn) {
         double valueOfBoard = 0;
+        boolean robotHasTheMove = false;
+        boolean humanTurn = false;
 
+        if (turn == -1) {
+            humanTurn = true;
+        }
+        if (!humanTurn) {
+            robotHasTheMove = remoteNXT.checkersBoard.analyzeFunctions.
+                    hasTheMove(humanTurn, ownPieces.size(), oppPieces.size());
+        } else {
+            robotHasTheMove = !remoteNXT.checkersBoard.analyzeFunctions.
+                    hasTheMove(humanTurn, ownPieces.size(), oppPieces.size());
+        }
         int state = gameState();
 
         for (int i = 0; i < ownPieces.size(); i++) {
-            valueOfBoard += ownPieces.get(i).priceForPiece(state);
+            valueOfBoard += ownPieces.get(i).priceForPiece(state,
+                    ownPieces.size(), oppPieces.size(), turn, robotHasTheMove);
         }
+
         for (int i = 0; i < oppPieces.size(); i++) {
-            valueOfBoard -= oppPieces.get(i).priceForPiece(state);
+            valueOfBoard -= oppPieces.get(i).priceForPiece(state,
+                    ownPieces.size(), oppPieces.size(), turn, !robotHasTheMove);
         }
 
         boolean isHuman = (turn == -1);
@@ -129,11 +151,15 @@ public class MI {
             valueOfBoard += gameIsWon;
             break;
         case 3:
-            valueOfBoard += gameIsDraw;
+            if (ownPieces.size() - oppPieces.size() > 0) {
+                valueOfBoard -= gameIsDraw;
+            } else if (ownPieces.size() - oppPieces.size() < 0) {
+                valueOfBoard += gameIsDraw;
+            }
             break;
         default:
-            valueOfBoard +=  pieceDifferenceFactor
-            * ((ownPieces.size() / oppPieces.size()) - 1);
+            valueOfBoard +=  242 + (ownPieces.size() - oppPieces.size())
+                          * ((24 - ownPieces.size() - oppPieces.size()) * 2);
             break;
         }
 
@@ -141,8 +167,8 @@ public class MI {
     }
 
     private int gameState() {
-        if (max(ownPieces.size(), oppPieces.size()) >= midgameEnd) {
-            return isMidgame;
+        if (max(ownPieces.size(), oppPieces.size()) >= midGameEnd) {
+            return isMidGame;
         }
         return isEndgame;
     }
@@ -155,7 +181,7 @@ public class MI {
     }
 
 
-    /* MI brain stops */
+    /* MI stops */
     /* ---------------------------------------------------------------------  */
 
     private void simulateMove(Move move) throws NoKingLeft, IOException {

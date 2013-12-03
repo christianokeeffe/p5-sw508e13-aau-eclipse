@@ -19,14 +19,14 @@ public class MiTest {
     @Test
     public void testMI() throws InterruptedException, IOException {
         RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
-        MI tMI = new MI(checkTopFunc);
+        MI tMI = new MI(checkTopFunc, true, 2);
         assertNotNull(tMI);
     }
 
     @Test
     public void testLookForBestMove() throws InterruptedException, IOException, NoKingLeft {
         RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
-        MI tMI = new MI(checkTopFunc);
+        MI tMI = new MI(checkTopFunc, true, 2);
         
         Move tMove = tMI.lookForBestMove();
         assertNotNull(tMove);
@@ -43,7 +43,7 @@ public class MiTest {
     @Test
     public void testLookForBestMoveWinGame() throws InterruptedException, IOException, NoKingLeft {
         RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
-        MI tMI = new MI(checkTopFunc);
+        MI tMI = new MI(checkTopFunc, true, 2);
         
         Piece oPiece = checkTopFunc.checkersBoard.myBoard[1][6].getPieceOnField();
         Piece mPiece = checkTopFunc.checkersBoard.myBoard[0][1].getPieceOnField();
@@ -68,7 +68,7 @@ public class MiTest {
     @Test
     public void testLookForBestMoveLoseGame() throws InterruptedException, IOException, NoKingLeft {
         RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
-        MI tMI = new MI(checkTopFunc);
+        MI tMI = new MI(checkTopFunc, true, 2);
         
         Piece oPiece = checkTopFunc.checkersBoard.myBoard[1][6].getPieceOnField();
         Piece mPiece = checkTopFunc.checkersBoard.myBoard[0][1].getPieceOnField();
@@ -92,7 +92,7 @@ public class MiTest {
     @Test
     public void testLookForBestMoveDrawGame() throws InterruptedException, IOException, NoKingLeft {
         RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
-        MI tMI = new MI(checkTopFunc);
+        MI tMI = new MI(checkTopFunc, true, 2);
         
         Piece oPiece = checkTopFunc.checkersBoard.myBoard[1][6].getPieceOnField();
         Piece mPiece = checkTopFunc.checkersBoard.myBoard[0][1].getPieceOnField();
@@ -121,7 +121,7 @@ public class MiTest {
     @Test
     public void testLookForBestMoveEndGame() throws InterruptedException, IOException, NoKingLeft {
         RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
-        MI tMI = new MI(checkTopFunc);
+        MI tMI = new MI(checkTopFunc, true, 2);
         
         Field emptyField = new Field(-10,-10);
         
@@ -149,7 +149,7 @@ public class MiTest {
     @Test
     public void testLookForBestMoveSimulateKing() throws InterruptedException, IOException, NoKingLeft {
         RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
-        MI tMI = new MI(checkTopFunc);
+        MI tMI = new MI(checkTopFunc, true, 2);
         
         Piece oPiece = checkTopFunc.checkersBoard.myBoard[1][6].getPieceOnField();
         Piece mPiece = checkTopFunc.checkersBoard.myBoard[0][1].getPieceOnField();
