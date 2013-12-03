@@ -19,7 +19,7 @@ public class MI {
     private final int isMidGame = 1;
     private final int isEndgame = 2;
     private final int midGameEndMax = 7;
-    private final int midGameEndMin = 3;
+    private final int midGameEndMin = 4;
 
     public MI(RemoteNXTFunctions inputRemoteNXT,
             boolean isRobot, int hardness) {
