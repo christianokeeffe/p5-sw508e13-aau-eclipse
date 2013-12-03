@@ -18,7 +18,7 @@ public class Piece {
     private final int numberOfPastFieldsToCheck = 1;
     private Field presentField = null;
 
-    private final int hasBeenOnField = 5;
+    private final int hasBeenOnField = 7;
     private final int valueOfPiece = 100;
     private final int middleBonus = 3;
     private final int closeBonus = 4;
