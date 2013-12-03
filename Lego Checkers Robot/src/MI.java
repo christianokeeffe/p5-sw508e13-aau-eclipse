@@ -18,7 +18,8 @@ public class MI {
 
     private final int isMidGame = 1;
     private final int isEndgame = 2;
-    private final int midGameEnd = 7;
+    private final int midGameEndMax = 7;
+    private final int midGameEndMin = 3;
 
     public MI(RemoteNXTFunctions inputRemoteNXT,
             boolean isRobot, int hardness) {
@@ -161,7 +162,8 @@ public class MI {
     }
 
     private int gameState() {
-        if (max(ownPieces.size(), oppPieces.size()) >= midGameEnd) {
+        if (max(ownPieces.size(), oppPieces.size()) >= midGameEndMax
+                && min(ownPieces.size(), oppPieces.size()) >= midGameEndMin) {
             return isMidGame;
         }
         return isEndgame;
@@ -172,6 +174,12 @@ public class MI {
             return y;
         }
         return x;
+    }
+    private double min(double x, double y) {
+        if (x < y) {
+            return x;
+        }
+        return y;
     }
 
 
