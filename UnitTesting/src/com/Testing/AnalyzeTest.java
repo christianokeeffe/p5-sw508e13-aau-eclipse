@@ -235,10 +235,16 @@ public class AnalyzeTest extends FunktionForTesting {
         assertTrue(!helpToTestCheckMove(12));
         
         //check Jump
-        
-        assertTrue(true);
         emptyBoard();
-        checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'b', false));
+        checkersBoard.myBoard[4][1].setPieceOnField(producePiece(4, 1, 'b', true));
+        checkersBoard.myBoard[4][3].setPieceOnField(producePiece(4, 3, 'r', false));
+        checkersBoard.myBoard[5][4].setPieceOnField(producePiece(5, 4, 'w', false));
+        checkersBoard.myBoard[5][4].getPieceOnField().canJump = true;
+        checkersBoard.myBoard[5][4].getPieceOnField().isMoveable = true;
+        checkersBoard.oppKingPlace[4].emptyThisField();
+        remote.analyzeTestVariable = 15;
+        assertTrue(checkersBoard.analyzeFunctions.analyzeBoard());
+        
         resetBoard();
     }
     public boolean helpToTestCheckMove(int changeVariable) throws InterruptedException, IOException, NoKingLeft, IllegalMove
