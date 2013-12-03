@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Piece {
     //latex start Piececode
     private int x = -1, y = -1;
@@ -15,6 +14,7 @@ public class Piece {
     private final int isEndGame = 2;
     private Board checkersBoard;
     private final int numberOfPastFieldsToCheck = 1;
+    private Field presentField = null;
 
     private final int hasBeenOnField = 5;
     private final int valueOfPiece = 100;
@@ -49,7 +49,11 @@ public class Piece {
                     && pastFields.size() != 0) {
                 pastFields.remove(0);
             }
-            pastFields.add(checkersBoard.myBoard[x][y]);
+            if (presentField != null) {
+                pastFields.add(presentField);
+            }
+
+            presentField = checkersBoard.myBoard[x][y];
         } else {
             pastFields.clear();
         }
@@ -137,9 +141,6 @@ public class Piece {
                             && y == 7)
                             || (checkersBoard.checkAllegiance(this, false)
                                     && y == 0))) {
-                if (gameState == isMidGame) {
-                    returnValue += backlineBonus / 2;
-                }
                 returnValue += backlineBonus / 2;
             }
             if (isCrowned) {
