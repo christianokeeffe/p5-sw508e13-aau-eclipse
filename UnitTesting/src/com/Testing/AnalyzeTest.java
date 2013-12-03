@@ -67,7 +67,7 @@ public class AnalyzeTest extends FunktionForTesting {
     @Test
     public final void testAnalyzeBoard() throws InterruptedException, IOException, NoKingLeft, IllegalMove, custom.Exceptions.NoKingLeft, custom.Exceptions.IllegalMove{
         boolean testException = false;
-        
+        resetBoard();
         //test if analyzeboard works when moving a piece
         assertTrue(checkersBoard.analyzeFunctions.analyzeBoard());
         
@@ -234,6 +234,11 @@ public class AnalyzeTest extends FunktionForTesting {
         assertTrue(helpToTestCheckMove(8));
         assertTrue(!helpToTestCheckMove(12));
         
+        //check Jump
+        
+        assertTrue(true);
+        emptyBoard();
+        checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'b', false));
         resetBoard();
     }
     public boolean helpToTestCheckMove(int changeVariable) throws InterruptedException, IOException, NoKingLeft, IllegalMove
@@ -256,6 +261,15 @@ public class AnalyzeTest extends FunktionForTesting {
         
         return !remote.analyzeresetMotorsTestVariable;
     }
+    
+    // test for hasTheMove
+    @Test
+    public void testHasTheMove() {
+        assertTrue(checkersBoard.analyzeFunctions.hasTheMove(false, 5, 4));
+        assertTrue(checkersBoard.analyzeFunctions.hasTheMove(true, 4, 5));
+        assertFalse(checkersBoard.analyzeFunctions.hasTheMove(true, 5, 4));
+    }
+    
     
     // test for checkForUpgradeKing
     @Test
