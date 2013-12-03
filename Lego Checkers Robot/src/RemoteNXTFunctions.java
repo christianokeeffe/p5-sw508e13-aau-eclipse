@@ -185,6 +185,7 @@ public class RemoteNXTFunctions {
         movePiece(fromField, toField);
 
         if (checkersBoard.checkBounds(fromField.x, fromField.y)
+                && checkersBoard.checkBounds(toField.x, toField.y)
                 && Math.abs(fromField.x - toField.x) == 2) {
             return checkersBoard.myBoard[(fromField.x + toField.x) / 2]
                                         [(fromField.y + toField.y) / 2];
