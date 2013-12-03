@@ -367,12 +367,13 @@ public class Analyze {
         }
         checkersBoard.movePieceInRepresentation(toKingField,
                 checkersBoard.oppTrashPlace[l][h], false);
-        while (!(i > 7)) {
+        OUTER: while (!(i > 7)) {
             if (!checkersBoard.oppKingPlace[i].isEmpty()) {
                 //Insert king at location
                 checkersBoard.movePieceInRepresentation(
                         checkersBoard.oppKingPlace[i],
                         toKingField, true);
+                break OUTER;
             } else {
                 i++;
             }
