@@ -114,6 +114,8 @@ public class FieldTest extends FunktionForTesting{
         testField.getPieceOnField().color = 'g';
         assertFalse(testField.isPieceOfColor('b'));
         assertTrue(testField.isPieceOfColor('g'));
+        
+        assertFalse(checkersBoard.myBoard[1][4].isPieceOfColor('w'));
     }
 
     @Test
