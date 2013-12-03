@@ -22,7 +22,7 @@ public class RemoteNXTFunctions {
 
     public void trashPieceOnField(Field field) {
         field.setPieceOnField(null);
-        
+
     }
 
     public void doMove(Move move) throws IOException, NoKingLeft {
@@ -31,7 +31,7 @@ public class RemoteNXTFunctions {
         int stop = move.moves.size() - 1;
         for (int i = 0; i < stop; i++) {
             Field jumpedField = movePieceOverField(move.moves.get(i),
-                                                   move.moves.get(i + 1));
+                    move.moves.get(i + 1));
             if (jumpedField != null) {
                 takenPieces.add(jumpedField);
             }
@@ -40,7 +40,7 @@ public class RemoteNXTFunctions {
         for (int i = 0; i < takenPieces.size(); i++) {
             trashPieceOnField(takenPieces.get(i));
         }
-        
+
     }
     private Field movePieceOverField(Field fromField, Field toField)
             throws IOException, NoKingLeft {
@@ -49,7 +49,7 @@ public class RemoteNXTFunctions {
         if (checkersBoard.checkBounds(fromField.x, fromField.y)
                 && Math.abs(fromField.x - toField.x) == 2) {
             return checkersBoard.myBoard[(fromField.x + toField.x) / 2]
-                                        [(fromField.y + toField.y) / 2];
+                    [(fromField.y + toField.y) / 2];
         } else {
             return null;
         }
@@ -71,7 +71,7 @@ public class RemoteNXTFunctions {
 
     public final Color getColorOnField(int x, int y) {
         Color output = new Color();
-        
+
         if(analyzeTestVariable == 0) {
             if(x == 0 && y == 1)
             {
@@ -277,9 +277,19 @@ public class RemoteNXTFunctions {
                 } else {
                     output.setColor(' ');
                 }
+            } else if (analyzeTestVariable == 15) {
+                if(x == 5 && y == 4) {
+                    output.setColor(' ');
+                }
+                if(x == 5 && y == 0) {
+                    output.setColor('w');
+                }
+                else if (checkersBoard.myBoard[x][y].getPieceOnField() != null) {
+                    output.setColor(checkersBoard.myBoard[x][y].getPieceOnField().color);
+                }
             }
         }
-        
+
         return output;
     }
 
