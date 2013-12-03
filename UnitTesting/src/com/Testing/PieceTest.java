@@ -90,5 +90,21 @@ public class PieceTest extends FunktionForTesting{
         checkersBoard.myBoard[3][4].setPieceOnField(null);
         secondPrice = checkersBoard.myBoard[1][0].getPieceOnField().priceForPiece(isMidgame, 1, 1, 1, true);
         assertTrue(firstPrice < secondPrice);//Backline bonus
+        
+        emptyBoard();
+        checkersBoard.myBoard[1][0].setPieceOnField(producePiece(1, 0, 'r', false));
+        firstPrice = checkersBoard.myBoard[1][0].getPieceOnField().priceForPiece(isEndgame, 1, 1, 1, true);
+        checkersBoard.myBoard[2][1].setPieceOnField(checkersBoard.myBoard[1][0].getPieceOnField());
+        checkersBoard.myBoard[1][0].setPieceOnField(null);
+        secondPrice = checkersBoard.myBoard[2][1].getPieceOnField().priceForPiece(isEndgame, 1, 1, 1, true);
+        assertTrue(firstPrice < secondPrice);//Backline penalty for end game
+        
+        emptyBoard();
+        checkersBoard.myBoard[6][7].setPieceOnField(producePiece(1, 0, '2', false));
+        firstPrice = checkersBoard.myBoard[6][7].getPieceOnField().priceForPiece(isEndgame, 1, 1, 1, true);
+        checkersBoard.myBoard[5][6].setPieceOnField(checkersBoard.myBoard[6][7].getPieceOnField());
+        checkersBoard.myBoard[6][7].setPieceOnField(null);
+        secondPrice = checkersBoard.myBoard[5][6].getPieceOnField().priceForPiece(isEndgame, 1, 1, 1, true);
+        assertTrue(firstPrice < secondPrice);//Backline penalty for end game
     }
 }
