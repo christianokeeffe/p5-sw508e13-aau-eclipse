@@ -143,7 +143,7 @@ public class Piece {
                             && y == 7)
                             || (checkersBoard.checkAllegiance(this, false)
                                     && y == 0))) {
-                returnValue += backlineBonus;
+                returnValue += backlineBonus / 2;
             }
             if (isCrowned) {
                 returnValue += kingBonus;
