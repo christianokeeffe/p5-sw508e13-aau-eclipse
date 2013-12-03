@@ -22,7 +22,7 @@ public class RemoteNXTFunctions {
     //how far the motor associated with that axis will move.
     private static final int Y_FACTOR = -268;
     private static final int X_FACTOR = -228;
-    private static final int Z_FACTOR = 680;
+    private static final int Z_FACTOR = 690;
     //The displacement is multiplied with the
     //Y_FACTOR to place the magnet on the right field.
     private static final double DISPLACEMENT_FACTOR_Y = 4.7;
