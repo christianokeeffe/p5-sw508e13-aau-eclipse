@@ -155,8 +155,8 @@ public class MI {
             }
             break;
         default:
-            valueOfBoard +=  pieceDifferenceFactor
-            * ((ownPieces.size() / oppPieces.size()) - 1);
+            valueOfBoard +=  150 + (ownPieces.size() - oppPieces.size())
+                                * (24 - ownPieces.size() - oppPieces.size());
             break;
         }
 
