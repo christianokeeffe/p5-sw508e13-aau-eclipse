@@ -365,6 +365,17 @@ public class BoardTest extends FunktionForTesting {
 		assertFalse(checkersBoard.checkAllegiance(checkField,false));
 	}
 	
+
+    @Test
+    public void testUpdateMoveables() {
+        emptyBoard();
+        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(2,1,'b',true));
+        checkersBoard.myBoard[3][2].setPieceOnField(producePiece(3,2,'w',false));
+        
+        checkersBoard.updateMoveables();
+        assertTrue(checkersBoard.myBoard[2][1].getPieceOnField().canJump);
+    }
+	
 	@Test
 	public void testFindMissingPiece() throws InterruptedException, IOException {
 	    checkersBoard.findMissingPiece();
