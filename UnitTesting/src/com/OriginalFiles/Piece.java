@@ -24,7 +24,7 @@ public class Piece {
     private final int closeBonus = 4;
     private final int backlineBonus = 7;
     private final int kingBonus = 150;
-    private final int crownAble = 80;
+    private final int crownAble = 70;
     private final int nearDoubleBonus = 5;
     private final int doubleCornerBonus = 8;
     private final int blockBonus = 10;
