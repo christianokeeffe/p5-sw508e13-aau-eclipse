@@ -151,11 +151,7 @@ public class MI {
             valueOfBoard += gameIsWon;
             break;
         case 3:
-            if (ownPieces.size() - oppPieces.size() > 0) {
-                valueOfBoard -= gameIsDraw;
-            } else if (ownPieces.size() - oppPieces.size() < 0) {
                 valueOfBoard += gameIsDraw;
-            }
             break;
         default:
             valueOfBoard +=  242 + (ownPieces.size() - oppPieces.size())
