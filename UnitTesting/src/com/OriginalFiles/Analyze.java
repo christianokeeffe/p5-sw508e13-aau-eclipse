@@ -272,13 +272,12 @@ public class Analyze {
                                     [(tempfield.y + tempfield2.y) / 2];
                     if (takenField.getPieceOnField().isCrowned) {
                         int k = 7;
-                        while (k >= 0) {
+                        while (!(k < 0)) {
                             if (checkersBoard.oppKingPlace[k].isEmpty()) {
                                 //Insert king at location
                                 checkersBoard.movePieceInRepresentation(
                                         takenField,
                                         checkersBoard.oppKingPlace[k], true);
-                                break;
                             }
                             k--;
                         }
