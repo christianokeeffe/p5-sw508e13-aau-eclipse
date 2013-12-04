@@ -214,11 +214,7 @@ public class Piece {
                     diff = -1;
                 }
                 int procentBlocked = 0;
-                if (checkersBoard.fieldOccupied(blockField.x, blockField.y)) {
-                    return 0;
-                } else {
-                    procentBlocked += 25;
-                }
+                procentBlocked += 25;
                 if (checkersBoard.fieldOccupied(xToCheck - 1,
                         yToCheck + diff)) {
                     procentBlocked += 25;
