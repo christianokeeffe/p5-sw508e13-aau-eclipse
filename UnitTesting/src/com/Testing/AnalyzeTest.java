@@ -236,12 +236,17 @@ public class AnalyzeTest extends FunktionForTesting {
         
         //check Jump
         emptyBoard();
+        for (int i = 0; i < 8; i++) {
+        checkersBoard.oppTrashPlace[i][0].setPieceOnField(producePiece(i, 0, 'r', false));
+        }
         checkersBoard.myBoard[4][1].setPieceOnField(producePiece(4, 1, 'b', true));
         checkersBoard.myBoard[4][3].setPieceOnField(producePiece(4, 3, 'r', false));
         checkersBoard.myBoard[5][4].setPieceOnField(producePiece(5, 4, 'w', false));
+        checkersBoard.myBoard[1][4].setPieceOnField(producePiece(1, 4, 'r', false));
+        
         checkersBoard.myBoard[5][4].getPieceOnField().canJump = true;
         checkersBoard.myBoard[5][4].getPieceOnField().isMoveable = true;
-        checkersBoard.oppKingPlace[4].emptyThisField();
+        checkersBoard.oppKingPlace[0].emptyThisField();
         remote.analyzeTestVariable = 15;
         assertTrue(checkersBoard.analyzeFunctions.analyzeBoard());
         
