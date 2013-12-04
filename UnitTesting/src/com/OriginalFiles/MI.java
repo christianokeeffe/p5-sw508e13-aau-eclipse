@@ -164,8 +164,8 @@ public class MI {
     }
 
     private int gameState() {
-        if (min(ownPieces.size(), oppPieces.size()) >= midGameEndMin && 
-                max(ownPieces.size(), oppPieces.size()) >= midGameEndMax) {
+        if (min(ownPieces.size(), oppPieces.size()) >= midGameEndMin
+                && max(ownPieces.size(), oppPieces.size()) >= midGameEndMax) {
             return isMidGame;
         }
         return isEndgame;
