@@ -284,9 +284,6 @@ public class RemoteNXTFunctions {
                 if(x == 5 && y == 0) {
                     output.setColor('w');
                 }
-                else if (checkersBoard.myBoard[x][y].getPieceOnField() != null) {
-                    output.setColor(checkersBoard.myBoard[x][y].getPieceOnField().color);
-                }
             }
         }
 
