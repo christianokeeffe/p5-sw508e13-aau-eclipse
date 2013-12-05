@@ -142,8 +142,8 @@ public class Piece {
                             || (checkersBoard.checkAllegiance(this, false)
                                     && y == 0))) {
                 returnValue += backlineBonus / 2;
-                if(gameState == isMidGame) {
-                    returnValue += backlineBonus / 2; 
+                if (gameState == isMidGame) {
+                    returnValue += backlineBonus / 2;
                 }
             }
             if (isCrowned) {
@@ -245,7 +245,7 @@ public class Piece {
         boolean found = false;
         int distance = 0;
         while (!found && distance < 8) {
-            distance += 1;
+            distance++;
             OUTERMOST: for (int i = -distance; i < 1 + distance; i++) {
                 for (int j = -distance; j < 1 + distance; j++) {
                     if (checkersBoard.
