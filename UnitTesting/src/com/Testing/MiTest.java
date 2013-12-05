@@ -21,6 +21,9 @@ public class MiTest {
         RemoteNXTFunctions checkTopFunc = new RemoteNXTFunctions();
         MI tMI = new MI(checkTopFunc, true, 2);
         assertNotNull(tMI);
+        
+        tMI = new MI(checkTopFunc, false, 2);
+        assertNotNull(tMI);
     }
 
     @Test
