@@ -192,5 +192,14 @@ public class PieceTest extends FunktionForTesting{
         checkersBoard.myBoard[6][1].emptyThisField();
         secondPrice = checkersBoard.myBoard[5][2].getPieceOnField().priceForPiece(isEndgame, 1, 1, 1, true);
         assertTrue(firstPrice < secondPrice);
+        
+        emptyBoard();
+        checkersBoard.myBoard[7][0].setPieceOnField(producePiece(7, 0, 'b', true));
+        checkersBoard.myBoard[7][0].getPieceOnField().canJump = false;
+        firstPrice = checkersBoard.myBoard[7][0].getPieceOnField().priceForPiece(isMidgame, 1, 1, 1, true);
+        checkersBoard.myBoard[7][0].getPieceOnField().setXY(4, 1);
+        checkersBoard.myBoard[7][0].getPieceOnField().setXY(7, 0);
+        secondPrice = checkersBoard.myBoard[7][0].getPieceOnField().priceForPiece(isMidgame, 1, 1, 1, true);
+        assertTrue(firstPrice > secondPrice);
     }
 }
