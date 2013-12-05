@@ -9,6 +9,8 @@ import org.junit.Test;
 import com.CustomClasses.FunktionForTesting;
 import com.OriginalFiles.Piece;
 
+import custom.Exceptions.NoKingLeft;
+
 public class PieceTest extends FunktionForTesting{
     Piece testPiece;
 
@@ -108,7 +110,7 @@ public class PieceTest extends FunktionForTesting{
         assertTrue(firstPrice < secondPrice);//Backline penalty for end game
     }
     @Test
-    public final void testBlock() {
+    public final void testBlock() throws NoKingLeft, IOException {
         double firstPrice =0, secondPrice =0;
         
         emptyBoard();
@@ -193,13 +195,73 @@ public class PieceTest extends FunktionForTesting{
         secondPrice = checkersBoard.myBoard[5][2].getPieceOnField().priceForPiece(isEndgame, 1, 1, 1, true);
         assertTrue(firstPrice < secondPrice);
         
-        emptyBoard();
+        emptyBoard(); // test for past field
         checkersBoard.myBoard[7][0].setPieceOnField(producePiece(7, 0, 'b', true));
         checkersBoard.myBoard[7][0].getPieceOnField().canJump = false;
         firstPrice = checkersBoard.myBoard[7][0].getPieceOnField().priceForPiece(isMidgame, 1, 1, 1, true);
-        checkersBoard.myBoard[7][0].getPieceOnField().setXY(4, 1);
-        checkersBoard.myBoard[7][0].getPieceOnField().setXY(7, 0);
+        checkersBoard.movePieceInRepresentation(checkersBoard.myBoard[7][0], checkersBoard.myBoard[4][1], true);
+        checkersBoard.movePieceInRepresentation(checkersBoard.myBoard[4][1], checkersBoard.myBoard[7][0], true);
         secondPrice = checkersBoard.myBoard[7][0].getPieceOnField().priceForPiece(isMidgame, 1, 1, 1, true);
         assertTrue(firstPrice > secondPrice);
+        checkersBoard.movePieceInRepresentation(checkersBoard.myBoard[7][0], checkersBoard.myBoard[6][7], true);
+        firstPrice = checkersBoard.myBoard[6][7].getPieceOnField().priceForPiece(isMidgame, 1, 1, 1, true);
+        assertTrue(firstPrice > secondPrice);
+        
+        
+        //test for isNearDoubleCorners bonus
+        emptyBoard(); // test for past field
+        checkersBoard.myBoard[3][4].setPieceOnField(producePiece(7, 0, 'b', true));
+        checkersBoard.myBoard[3][4].getPieceOnField().canJump = false;
+        firstPrice = checkersBoard.myBoard[3][4].getPieceOnField().priceForPiece(isEndgame, 1, 1, 1, true);
+        
+        checkersBoard.myBoard[1][2].setPieceOnField(producePiece(7, 0, 'b', true));
+        checkersBoard.myBoard[1][2].getPieceOnField().canJump = false;
+        secondPrice = checkersBoard.myBoard[1][2].getPieceOnField().priceForPiece(isEndgame, 1, 1, 1, true);
+        checkersBoard.myBoard[1][2].emptyThisField();
+        assertTrue(firstPrice < secondPrice);
+        
+        checkersBoard.myBoard[2][1].setPieceOnField(producePiece(7, 0, 'b', true));
+        checkersBoard.myBoard[2][1].getPieceOnField().canJump = false;
+        secondPrice = checkersBoard.myBoard[2][1].getPieceOnField().priceForPiece(isEndgame, 1, 1, 1, true);
+        checkersBoard.myBoard[2][1].emptyThisField();
+        assertTrue(firstPrice < secondPrice);
+        
+        checkersBoard.myBoard[6][5].setPieceOnField(producePiece(7, 0, 'b', true));
+        checkersBoard.myBoard[6][5].getPieceOnField().canJump = false;
+        secondPrice = checkersBoard.myBoard[6][5].getPieceOnField().priceForPiece(isEndgame, 1, 1, 1, true);
+        checkersBoard.myBoard[6][5].emptyThisField();
+        assertTrue(firstPrice < secondPrice);
+        
+        checkersBoard.myBoard[5][6].setPieceOnField(producePiece(7, 0, 'b', true));
+        checkersBoard.myBoard[5][6].getPieceOnField().canJump = false;
+        secondPrice = checkersBoard.myBoard[5][6].getPieceOnField().priceForPiece(isEndgame, 1, 1, 1, true);
+        checkersBoard.myBoard[5][6].emptyThisField();
+        assertTrue(firstPrice < secondPrice);
+        
+        checkersBoard.myBoard[2][3].setPieceOnField(producePiece(7, 0, 'b', true));
+        checkersBoard.myBoard[2][3].getPieceOnField().canJump = false;
+        secondPrice = checkersBoard.myBoard[2][3].getPieceOnField().priceForPiece(isEndgame, 1, 1, 1, true);
+        checkersBoard.myBoard[2][3].emptyThisField();
+        assertTrue(firstPrice < secondPrice);
+        
+        checkersBoard.myBoard[3][2].setPieceOnField(producePiece(7, 0, 'b', true));
+        checkersBoard.myBoard[3][2].getPieceOnField().canJump = false;
+        secondPrice = checkersBoard.myBoard[3][2].getPieceOnField().priceForPiece(isEndgame, 1, 1, 1, true);
+        checkersBoard.myBoard[3][2].emptyThisField();
+        assertTrue(firstPrice < secondPrice);
+        
+        checkersBoard.myBoard[4][5].setPieceOnField(producePiece(7, 0, 'b', true));
+        checkersBoard.myBoard[4][5].getPieceOnField().canJump = false;
+        secondPrice = checkersBoard.myBoard[4][5].getPieceOnField().priceForPiece(isEndgame, 1, 1, 1, true);
+        checkersBoard.myBoard[4][5].emptyThisField();
+        assertTrue(firstPrice < secondPrice);
+        
+        checkersBoard.myBoard[5][4].setPieceOnField(producePiece(7, 0, 'b', true));
+        checkersBoard.myBoard[5][4].getPieceOnField().canJump = false;
+        secondPrice = checkersBoard.myBoard[5][4].getPieceOnField().priceForPiece(isEndgame, 1, 1, 1, true);
+        checkersBoard.myBoard[5][4].emptyThisField();
+        assertTrue(firstPrice < secondPrice);
+      
+        
     }
 }
