@@ -232,8 +232,7 @@ public class MI {
                                 checkAllegiance(tempMove, true)) {
                             tempMove.getPieceOnField().color =
                                    remoteNXT.checkersBoard.opponentPeasentColor;
-                        } else if (remoteNXT.checkersBoard.
-                                checkAllegiance(tempMove, false)) {
+                        } else {
                             tempMove.getPieceOnField().color =
                                     remoteNXT.checkersBoard.myPeasentColor;
                         }
