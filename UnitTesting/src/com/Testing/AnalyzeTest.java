@@ -312,18 +312,19 @@ public class AnalyzeTest extends FunktionForTesting {
         assertTrue(checkersBoard.myBoard[2][7].getPieceOnField().color == 'b'); 
 
         emptyBoard();
-        checkersBoard.myBoard[4][1].setPieceOnField(producePiece(4, 1, 'w',false));
-        checkersBoard.myBoard[3][6].setPieceOnField(producePiece(3, 6, 'r',false));
+        checkersBoard.myBoard[4][1].setPieceOnField(producePiece(4, 1, 'w', false));
+        checkersBoard.myBoard[3][6].setPieceOnField(producePiece(3, 6, 'r', false));
         boolean change = false;
         int i;
         for( i = 0 ; i <= 7 ; i++ )
         {
-        checkersBoard.kingPlace[i].setPieceOnField(null);;
+        checkersBoard.oppKingPlace[i].setPieceOnField(null);
+        checkersBoard.oppTrashPlace[i][0].setPieceOnField(producePiece(i, 0, 'r', false));
         }
         
         try
         {
-            remote.analyzeTestVariable = 13;
+            remote.analyzeTestVariable = 16;
             checkersBoard.analyzeFunctions.analyzeBoard();
             remote.analyzeTestVariable = 0;
         }

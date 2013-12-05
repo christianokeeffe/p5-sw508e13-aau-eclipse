@@ -284,6 +284,16 @@ public class RemoteNXTFunctions {
                 if(x == 5 && y == 0) {
                     output.setColor('w');
                 }
+            } else if (analyzeTestVariable == 16) {
+                if(x == 3 && y == 6) {
+                    output.setColor(' ');
+                } else if(x == 2 && y == 7) {
+                    output.setColor('r');
+                } else if (checkersBoard.myBoard[x][y].getPieceOnField() != null) {
+                    output.setColor(checkersBoard.myBoard[x][y].getPieceOnField().color);
+                } else {
+                    output.setColor(' ');
+                }
             }
         }
 
