@@ -1,5 +1,4 @@
 package com.OriginalFiles;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,8 +94,7 @@ public class MI {
                 gameHasEnded(-1 == turn) != 0) {
             return turn * evaluation(turn);
         }
-        List<Move> moves;
-        moves = possibleMoves(turn);
+        List<Move> moves = possibleMoves(turn);
 
         double bestValue = -inf;
         for (Move move : moves) {
@@ -283,9 +281,9 @@ public class MI {
                                             field, moveForSide == 1,
                                             field.getPieceOnField().isCrowned);
 
-                            for (List<Field> stackOfFields : listOfMoves) {
-                                if (stackOfFields.size() >= 2) {
-                                    jumpMovements.add(new Move(stackOfFields,
+                            for (List<Field> listOfFields : listOfMoves) {
+                                if (listOfFields.size() >= 2) {
+                                    jumpMovements.add(new Move(listOfFields,
                                             field.getPieceOnField().isCrowned));
                                 }
                             }

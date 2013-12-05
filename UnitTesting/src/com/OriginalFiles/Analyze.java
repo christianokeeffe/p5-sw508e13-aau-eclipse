@@ -1,11 +1,8 @@
 package com.OriginalFiles;
-
+import com.CustomClasses.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.CustomClasses.Color;
-
 import custom.Exceptions.IllegalMove;
 import custom.Exceptions.NoKingLeft;
 
