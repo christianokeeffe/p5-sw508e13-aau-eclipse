@@ -275,11 +275,11 @@ public class RemoteNXTFunctions {
             bottomNXT = new RemoteNXT("CheckBottom", Bluetooth.getConnector());
             LCD.clear();
             LCD.drawString("Connected", 0, 1);
-            Thread.sleep(2000);
+            Delay.msDelay(2000);
         } catch (IOException ioe) {
             LCD.clear();
             LCD.drawString("Conn Failed", 0, 0);
-            Thread.sleep(2000);
+            Delay.msDelay(2000);
             System.exit(1);
         }
     }
